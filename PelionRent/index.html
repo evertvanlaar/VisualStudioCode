@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PelionRent Bicycles - Rent bikes in Pelion, Greece. City bikes, mountain bikes, e-bikes, and kids bikes available.">
+    <title>PelionRent Bicycles - Bike Rentals in Pelion, Greece</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <h1>PelionRent</h1>
+            </div>
+            <ul class="navbar-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#bikes">Bikes</a></li>
+                <li><a href="#reserve">Reserve</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#reviews">Reviews</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h2>Explore Pelion on Two Wheels</h2>
+            <p class="hero-slogan">Discover the beauty of Greece with our premium bicycle rentals</p>
+            <div class="hero-buttons">
+                <a href="#reserve" class="btn btn-primary">Reserve Now</a>
+                <a href="#bikes" class="btn btn-secondary">View Our Bikes</a>
+            </div>
+        </div>
+        <div class="hero-overlay"></div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2>About PelionRent</h2>
+            <p>Welcome to PelionRent Bicycles, your premier bike rental service in beautiful Pelion, Greece. With over 10 years of experience, we provide high-quality bicycles for tourists and locals who want to explore the stunning landscapes of Pelion.</p>
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="about-icon">🚴</div>
+                    <h3>Quality Bikes</h3>
+                    <p>Well-maintained fleet of modern bicycles for all levels</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">🗺️</div>
+                    <h3>Expert Routes</h3>
+                    <p>Curated cycling routes through scenic landscapes</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">🏆</div>
+                    <h3>Best Service</h3>
+                    <p>Friendly staff dedicated to your cycling adventure</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">✅</div>
+                    <h3>Safety First</h3>
+                    <p>Helmets and insurance included with every rental</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bikes Catalog -->
+    <section id="bikes" class="bikes">
+        <div class="container">
+            <h2>Our Bikes</h2>
+            <p class="section-subtitle">Choose the perfect bike for your adventure</p>
+            <div class="bikes-grid">
+                <!-- City Bike -->
+                <div class="bike-card">
+                    <img src="assets/images/city-bike.jpg" alt="City Bike">
+                    <h3>City Bike</h3>
+                    <p class="bike-description">Perfect for leisurely rides through town. Comfortable seating and smooth handling.</p>
+                    <ul class="bike-features">
+                        <li>✓ Comfortable seat</li>
+                        <li>✓ 7-speed gears</li>
+                        <li>✓ Basket included</li>
+                    </ul>
+                    <p class="bike-price">€15/day</p>
+                    <button class="btn btn-primary bike-reserve" data-bike="City Bike">Reserve</button>
+                </div>
+
+                <!-- Mountain Bike -->
+                <div class="bike-card">
+                    <img src="assets/images/mountain-bike.jpg" alt="Mountain Bike">
+                    <h3>Mountain Bike</h3>
+                    <p class="bike-description">Rugged and durable for off-road trails. Built for challenging terrain.</p>
+                    <ul class="bike-features">
+                        <li>✓ Suspension system</li>
+                        <li>✓ 21-speed gears</li>
+                        <li>✓ All-terrain tires</li>
+                    </ul>
+                    <p class="bike-price">€25/day</p>
+                    <button class="btn btn-primary bike-reserve" data-bike="Mountain Bike">Reserve</button>
+                </div>
+
+                <!-- E-Bike -->
+                <div class="bike-card">
+                    <img src="assets/images/ebike.jpg" alt="E-Bike">
+                    <h3>E-Bike</h3>
+                    <p class="bike-description">Electric-powered for effortless riding. Perfect for longer distances.</p>
+                    <ul class="bike-features">
+                        <li>✓ Electric motor</li>
+                        <li>✓ 50km range</li>
+                        <li>✓ Fast charging</li>
+                    </ul>
+                    <p class="bike-price">€35/day</p>
+                    <button class="btn btn-primary bike-reserve" data-bike="E-Bike">Reserve</button>
+                </div>
+
+                <!-- Kids Bike -->
+                <div class="bike-card">
+                    <img src="assets/images/kids-bike.jpg" alt="Kids Bike">
+                    <h3>Kids Bike</h3>
+                    <p class="bike-description">Safe and fun for young riders. Adjustable for growing children.</p>
+                    <ul class="bike-features">
+                        <li>✓ Training wheels</li>
+                        <li>✓ Safety padding</li>
+                        <li>✓ Bright colors</li>
+                    </ul>
+                    <p class="bike-price">€10/day</p>
+                    <button class="btn btn-primary bike-reserve" data-bike="Kids Bike">Reserve</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reservation System -->
+    <section id="reserve" class="reserve">
+        <div class="container">
+            <h2>Make a Reservation</h2>
+            <form id="reservationForm" class="reservation-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fullName">Full Name *</label>
+                        <input type="text" id="fullName" name="fullName" required>
+                        <span class="error-message" id="fullNameError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
+                        <span class="error-message" id="emailError"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" name="phone" required>
+                        <span class="error-message" id="phoneError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="bikeType">Bike Type *</label>
+                        <select id="bikeType" name="bikeType" required>
+                            <option value="">Select a bike</option>
+                            <option value="City Bike">City Bike</option>
+                            <option value="Mountain Bike">Mountain Bike</option>
+                            <option value="E-Bike">E-Bike</option>
+                            <option value="Kids Bike">Kids Bike</option>
+                        </select>
+                        <span class="error-message" id="bikeTypeError"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="rentalDate">Rental Date *</label>
+                        <input type="date" id="rentalDate" name="rentalDate" required>
+                        <span class="error-message" id="rentalDateError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="days">Number of Days *</label>
+                        <input type="number" id="days" name="days" min="1" max="30" value="1" required>
+                        <span class="error-message" id="daysError"></span>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="notes">Additional Notes</label>
+                    <textarea id="notes" name="notes" rows="4" placeholder="Any special requests..."></textarea>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>
+                        <input type="checkbox" id="terms" name="terms" required>
+                        I agree to the terms and conditions
+                    </label>
+                    <span class="error-message" id="termsError"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large">Complete Reservation</button>
+                <div id="successMessage" class="success-message" style="display: none;">
+                    ✓ Reservation submitted successfully! We'll contact you soon.
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Pricing & Packages -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <h2>Pricing & Packages</h2>
+            <p class="section-subtitle">Flexible pricing for every budget</p>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Hourly Rental</h3>
+                    <ul class="pricing-list">
+                        <li>City Bike: €5</li>
+                        <li>Mountain Bike: €8</li>
+                        <li>E-Bike: €12</li>
+                        <li>Kids Bike: €3</li>
+                    </ul>
+                    <p class="pricing-note">Minimum 2 hours</p>
+                </div>
+
+                <div class="pricing-card featured">
+                    <h3>Daily Rental</h3>
+                    <ul class="pricing-list">
+                        <li>City Bike: €15</li>
+                        <li>Mountain Bike: €25</li>
+                        <li>E-Bike: €35</li>
+                        <li>Kids Bike: €10</li>
+                    </ul>
+                    <p class="pricing-note">Best Value</p>
+                </div>
+
+                <div class="pricing-card">
+                    <h3>Weekly Package</h3>
+                    <ul class="pricing-list">
+                        <li>City Bike: €80</li>
+                        <li>Mountain Bike: €140</li>
+                        <li>E-Bike: €190</li>
+                        <li>Kids Bike: €50</li>
+                    </ul>
+                    <p class="pricing-note">Save 15%</p>
+                </div>
+            </div>
+            <p class="pricing-footer">Helmet and insurance included with all rentals. Free delivery available for weekly rentals.</p>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section id="reviews" class="reviews">
+        <div class="container">
+            <h2>Guest Reviews</h2>
+            <p class="section-subtitle">What our customers say</p>
+            <div class="reviews-grid">
+                <div class="review-card">
+                    <div class="review-stars">★★★★★</div>
+                    <p class="review-text">"Amazing experience! The bikes were in perfect condition and the staff was incredibly helpful. We explored beautiful trails we wouldn't have found on our own."</p>
+                    <p class="review-author">- Sarah M.</p>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-stars">★★★★★</div>
+                    <p class="review-text">"Great value for money. The E-bike made it so easy to cover more ground. Definitely coming back when we visit Pelion again!"</p>
+                    <p class="review-author">- John K.</p>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-stars">★★★★★</div>
+                    <p class="review-text">"Perfect for families! Our kids loved the rental bikes and the staff made sure everything was safe and comfortable. Highly recommended!"</p>
+                    <p class="review-author">- Emma R.</p>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-stars">★★★★★</div>
+                    <p class="review-text">"Professional service, well-maintained equipment, and great customer care. Best bike rental experience we've had in Greece!"</p>
+                    <p class="review-author">- Marco P.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h2>Get in Touch</h2>
+                    <div class="contact-item">
+                        <h3>Address</h3>
+                        <p>42 Iolkou Street<br>Volos, Pelion 38221<br>Greece</p>
+                    </div>
+                    <div class="contact-item">
+                        <h3>Phone</h3>
+                        <p><a href="tel:+302431234567">+30 243 123 4567</a></p>
+                    </div>
+                    <div class="contact-item">
+                        <h3>Email</h3>
+                        <p><a href="mailto:info@pelionrent.gr">info@pelionrent.gr</a></p>
+                    </div>
+                    <div class="contact-item">
+                        <h3>Hours</h3>
+                        <p>Mon-Sun: 8:00 AM - 7:00 PM<br>Holidays: 9:00 AM - 5:00 PM</p>
+                    </div>
+                </div>
+                <div class="contact-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3121.8347264356843!2d23.6289!3d39.3615!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1358c8d8d8d8d8d9%3A0x1234567890abcdef!2sVolos%2C%20Pelion!5e0!3m2!1sen!2sgr!4v1234567890" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>PelionRent</h4>
+                    <p>Your trusted bike rental partner in Pelion, Greece.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#bikes">Bikes</a></li>
+                        <li><a href="#reserve">Reserve</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <ul>
+                        <li><a href="#">Facebook</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">Twitter</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>Phone: +30 243 123 4567<br>Email: info@pelionrent.gr</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 PelionRent Bicycles. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
