@@ -3,21 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kala Nera Business Directory</title>
+    <title>Kala Nera | Business Directory</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <header class="listeo-header">
-        <div class="container-wide">
-            <div class="logo">Kala Nera <span>Business Directory</span></div>
-            <nav>
-                <a href="#">Home</a>
-                <a href="#">Listings</a>
-                <a href="#">Pages</a>
-                <a href="#" class="add-listing">+ Add Listing</a>
-                <a href="#" class="login-link">Sign In</a>
+    <header class="listeo-header" id="main-header">
+        <div class="container-wide header-inner">
+            <div class="logo">Kala Nera <span>Directory</span></div>
+            
+            <button class="menu-toggle" id="mobile-menu-btn" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav class="nav-menu" id="nav-menu">
+                <a href="#" class="nav-link">Home</a>
+                <a href="#" class="nav-link">Discover</a>
+                <a href="#" class="nav-link">Services</a>
+                <div class="nav-actions">
+                    <a href="#" class="login-link">Sign In</a>
+                    <a href="#" class="add-listing">+ Add Listing</a>
+                </div>
             </nav>
         </div>
     </header>
@@ -25,115 +36,150 @@
     <section class="hero-listeo">
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <h1>Find your next experience</h1>
-            <p>Discover the best-reviewed places, shops and services in our village.</p>
-
-            <div class="main-search-container">
+            <h1>Gateway to Magical Pelion</h1>
+            <p>Kala Nera is a charming seaside village on the Pelion Peninsula, known for its clear waters, lush greenery, and relaxed Mediterranean atmosphere. It’s the perfect base for enjoying the beach, discovering traditional mountain villages, and experiencing authentic Greek hospitality.</p>
+            <h2>Discover the best rated locations and exclusive services in Kala Nera.</h2>
+            
+<!--             <div class="main-search-container">
                 <div class="search-input">
-                    <input type="text" placeholder="What are you looking for?">
+                    <label>What</label>
+                    <input type="text" placeholder="Ex: Restaurant, Hotel, Spa">
                 </div>
                 <div class="search-input">
-                    <input type="text" placeholder="Location">
-                </div>
-                <div class="search-input">
+                    <label>Where</label>
                     <select>
-                        <option>All Categories</option>
-                        <option>Restaurants</option>
-                        <option>Hotels</option>
+                        <option>All Regions</option>
+                        <option>Pelion Central</option>
+                        <option>Beachfront</option>
+                        <option>Mountain Side</option>
                     </select>
                 </div>
                 <button class="search-btn">Search</button>
-            </div>
+            </div> -->
         </div>
     </section>
 
-    <section class="container-wide section-padding">
-        <h2 class="section-title">Popular Destinations</h2>
+    <main class="container-wide section-padding">
+        <div class="section-header">
+            <h2 class="section-title">Popular Listings</h2>
+            <p>The most visited places this week</p>
+        </div>
         
         <div class="listeo-grid">
-            <div class="listeo-card">
-                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=400&q=80')">
+            <article class="listeo-card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1550966841-3ee3ad34305f?auto=format&fit=crop&w=600&q=80')">
                     <div class="card-badge open">Open Now</div>
-                    <div class="card-category"><i class="icon">🍴</i> Restaurant</div>
+                    <div class="card-category">🍴 Restaurant</div>
                 </div>
                 <div class="card-info">
-                    <h3>Burger & Cocktail Bar</h3>
-                    <p class="location">📍 Amsterdam, Centrum</p>
+                    <h3>The Greek Bistro</h3>
+                    <span class="location">📍 Main Street, Kala Nera</span>
                     <div class="card-rating">
                         <span class="stars">★★★★★</span>
-                        <span class="count">(12 reviews)</span>
+                        <span class="review-count">(24 reviews)</span>
                     </div>
                 </div>
-            </div>
+            </article>
 
-            <div class="listeo-card">
-                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=400&q=80')">
+            <article class="listeo-card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1551882547-ff43c63ef53e?auto=format&fit=crop&w=600&q=80')">
                     <div class="card-badge closed">Closed</div>
-                    <div class="card-category"><i class="icon">🏨</i> Hotel</div>
+                    <div class="card-category">🏨 Hotel</div>
                 </div>
                 <div class="card-info">
-                    <h3>Luxury Sky Hotel</h3>
-                    <p class="location">📍 Rotterdam, Kop van Zuid</p>
+                    <h3>Azure Beach Resort</h3>
+                    <span class="location">📍 Coast Road, Pelion</span>
+                    <div class="card-rating">
+                        <span class="stars">★★★★☆</span>
+                        <span class="review-count">(56 reviews)</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="listeo-card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80')">
+                    <div class="card-badge open">Open Now</div>
+                    <div class="card-category">💪 Fitness</div>
+                </div>
+                <div class="card-info">
+                    <h3>Mountain View Gym</h3>
+                    <span class="location">📍 Hillside, Kala Nera</span>
                     <div class="card-rating">
                         <span class="stars">★★★★★</span>
-                        <span class="count">(48 reviews)</span>
+                        <span class="review-count">(12 reviews)</span>
                     </div>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer class="listeo-footer">
+        <div class="container-wide footer-inner">
+            <div class="footer-col about">
+                <div class="logo">Kala Nera <br><span>Business Directory</span></div>
+                <p>The most complete directory for discovering local gems. From luxury hotels to the best burgers in town.</p>
+                <div class="social-icons">
+                    <a href="#" class="social-link">f</a>
+                    <a href="#" class="social-link">t</a>
+                    <a href="#" class="social-link">ig</a>
+                    <a href="#" class="social-link">in</a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Navigatie</h4>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">How It Works</a></li>
+                    <li><a href="#">Pricing</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Populair Sectors</h4>
+                <ul>
+                    <li><a href="#">Hotels & Resorts</a></li>
+                    <li><a href="#">Restaurants</a></li>
+                    <li><a href="#">Events</a></li>
+                    <li><a href="#">Fitness & Wellness</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col newsletter">
+                <h4>Newsletter</h4>
+                <p>Stay up to date with the latest listings.</p>
+                <div class="newsletter-form">
+                    <input type="email" placeholder="Your email address">
+                    <button class="btn-primary">Subscribe</button>
                 </div>
             </div>
         </div>
-    </section>
 
-<footer class="listeo-footer">
-    <div class="container-wide footer-inner">
-        
-        <div class="footer-col about">
-            <div class="logo">Kala Nera <br><span>Business Directory</span></div>
-            <p>The most complete directory for discovering local gems. From luxury hotels to the best burgers in town.</p>
-            <div class="social-icons">
-                <a href="#" class="social-link">f</a>
-                <a href="#" class="social-link">t</a>
-                <a href="#" class="social-link">ig</a>
-                <a href="#" class="social-link">in</a>
+        <div class="footer-bottom">
+            <div class="container-wide">
+                <p>&copy; 2026 Kala Nera. Designed with attention to detail.</p>
             </div>
         </div>
+    </footer>
 
-        <div class="footer-col">
-            <h4>Navigatie</h4>
-            <ul>
-                <li><a href="#">About Us</a></li>
-                <li><a href="#">How It Works</a></li>
-                <li><a href="#">Pricing</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </div>
+    <script>
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const navMenu = document.getElementById('nav-menu');
 
-        <div class="footer-col">
-            <h4>Populair Sectors</h4>
-            <ul>
-                <li><a href="#">Hotels & Resorts</a></li>
-                <li><a href="#">Restaurants</a></li>
-                <li><a href="#">Events</a></li>
-                <li><a href="#">Fitness & Wellness</a></li>
-            </ul>
-        </div>
+        menuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            menuBtn.classList.toggle('open');
+        });
 
-        <div class="footer-col newsletter">
-            <h4>Newsletter</h4>
-            <p>Stay up to date with the latest listings.</p>
-            <div class="newsletter-form">
-                <input type="email" placeholder="Your email address">
-                <button class="btn-primary">Subscribe</button>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="footer-bottom">
-        <div class="container-wide">
-            <p>&copy; 2026 Kala Nera. Designed with attention to detail.</p>
-        </div>
-    </div>
-</footer>
-
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('main-header');
+            if (window.scrollY > 80) {
+                header.classList.add('sticky');
+            } else {
+                header.classList.remove('sticky');
+            }
+        });
+    </script>
 </body>
 </html>
