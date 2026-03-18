@@ -5,7 +5,7 @@
     --text-dark: #1a2b3c;
     --text-muted: #66788a;
     --pill-bg: #e8eef2;
-    --active-green: #4a6c4a; /* De groene kleur uit je voorbeeld */
+    --active-green: #4a6c4a;
     --border-radius: 16px;
 }
 
@@ -66,9 +66,7 @@ h1 {
     margin-bottom: 30px;
     overflow-x: auto;
     padding-bottom: 10px;
-    scrollbar-width: none; /* Verberg scrollbar Firefox */
 }
-.filter-container::-webkit-scrollbar { display: none; } /* Verberg scrollbar Chrome/Safari */
 
 .filter-btn {
     padding: 10px 22px;
@@ -79,7 +77,6 @@ h1 {
     cursor: pointer;
     font-weight: 600;
     white-space: nowrap;
-    transition: all 0.2s;
 }
 
 .filter-btn.active {
@@ -96,17 +93,12 @@ h1 {
     gap: 22px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.04);
     position: relative;
-    margin-bottom: 10px;
-    transition: transform 0.2s;
-}
-
-.business-card:hover {
-    transform: translateY(-2px);
+    margin-bottom: 15px;
 }
 
 .col-img img {
-    width: 120px;
-    height: 120px;
+    width: 110px;
+    height: 110px;
     border-radius: 12px;
     object-fit: cover;
     background-color: #eee;
@@ -119,27 +111,38 @@ h1 {
 }
 
 .biz-name {
-    margin: 0 0 6px 0;
+    margin: 0 0 4px 0;
     font-size: 22px;
     color: var(--text-dark);
 }
 
-.biz-desc {
-    margin: 0 0 18px 0;
-    font-size: 15px;
-    color: var(--text-muted);
-    line-height: 1.5;
+/* De nieuwe Web-link styling */
+.biz-desc-container {
+    margin-bottom: 12px;
 }
 
-/* Actie Knoppen */
+.web-link {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    word-break: break-all;
+}
+
+.web-link:hover {
+    text-decoration: underline;
+    color: var(--active-green);
+}
+
+/* Actie Knoppen (Ronde bolletjes voor Tel/Loc) */
 .icon-actions {
     display: flex;
     gap: 12px;
 }
 
 .action-btn {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     background-color: var(--primary-blue);
     color: white;
@@ -147,10 +150,7 @@ h1 {
     justify-content: center;
     align-items: center;
     text-decoration: none;
-    transition: opacity 0.2s;
 }
-
-.action-btn:hover { opacity: 0.8; }
 
 /* Categorie Tag */
 .col-cat {
@@ -173,7 +173,7 @@ h1 {
 /* Mobiel */
 @media (max-width: 600px) {
     .business-card { flex-direction: column; text-align: center; }
-    .col-img img { width: 100%; height: 180px; }
+    .col-img img { width: 100px; height: 100px; margin: 0 auto; }
     .col-cat { position: static; margin-top: 20px; }
     .icon-actions { justify-content: center; }
 }

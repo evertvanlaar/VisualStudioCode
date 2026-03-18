@@ -50,20 +50,16 @@
         // 1. Genereer unieke knoppen op basis van de data uit de Sheet
         function generateCategoryButtons(data) {
             const filterContainer = document.getElementById('filter-buttons');
-            
-            // Haal alle unieke categorieën op en filter lege waarden eruit
             const categories = [...new Set(data.map(biz => biz.Category).filter(cat => cat))];
-            categories.sort(); // Alfabetisch
+            categories.sort();
 
             let buttonsHtml = `<button class="filter-btn active" data-category="all">All</button>`;
-            
             categories.forEach(cat => {
                 buttonsHtml += `<button class="filter-btn" data-category="${cat}">${cat}</button>`;
             });
 
             filterContainer.innerHTML = buttonsHtml;
 
-            // Event listeners toevoegen aan de nieuwe knoppen
             filterContainer.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -84,30 +80,41 @@
                 return;
             }
 
-            container.innerHTML = data.map(biz => `
+            container.innerHTML = data.map(biz => {
+                // Zorg dat de URL altijd begint met http(s)
+                const rawUrl = biz.Description || '';
+                const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
+
+                return `
                 <div class="business-card">
                     <div class="col-img">
                         <img src="${biz.Image || 'https://via.placeholder.com/120'}" alt="${biz.Name}" onerror="this.src='https://via.placeholder.com/120'">
                     </div>
                     <div class="card-content">
                         <h2 class="biz-name">${biz.Name || 'Unknown'}</h2>
-                        <p class="biz-desc">
-                            <a href="${biz.Description.startsWith('http') ? biz.Description : 'https://' + biz.Description}" 
-                            target="_blank" 
-                            class="biz-link">
-                            ${biz.Description || 'Bezoek website'}
+                        
+                        <div class="biz-desc-container">
+                            <a href="${cleanUrl}" target="_blank" class="web-link">
+                                ${rawUrl || 'Bezoek website'}
                             </a>
-                        </p>
+                        </div>
+                        
                         <div class="icon-actions">
-                            <a href="tel:${biz.Phone}" class="action-btn" title="Call"><i class="fa fa-phone"></i></a>
-                            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Location)}" target="_blank" class="action-btn" title="Location"><i class="fa fa-location-dot"></i></a>
+                            <a href="tel:${biz.Phone}" class="action-btn" title="Call">
+                                <i class="fa fa-phone"></i>
+                            </a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Location || biz.Name)}" 
+                               target="_blank" class="action-btn" title="Location">
+                                <i class="fa fa-location-dot"></i>
+                            </a>
                         </div>
                         <div class="col-cat">
                             <span class="category-pill">${biz.Category || 'General'}</span>
                         </div>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // 3. De Filter Logica (Zoekbalk + Categorie)
@@ -117,7 +124,7 @@
             const filtered = allBusinesses.filter(biz => {
                 const name = (biz.Name || "").toLowerCase();
                 const desc = (biz.Description || "").toLowerCase();
-                const cat = biz.Category || "";
+                const cat = (biz.Category || "");
 
                 const matchesSearch = name.includes(searchTerm) || desc.includes(searchTerm);
                 const matchesCategory = (activeCategory === 'all') || (cat === activeCategory);
