@@ -1,0 +1,179 @@
+:root {
+    --primary-blue: #0077cc;
+    --bg-color: #f4f7f9;
+    --card-bg: #ffffff;
+    --text-dark: #1a2b3c;
+    --text-muted: #66788a;
+    --pill-bg: #e8eef2;
+    --active-green: #4a6c4a; /* De groene kleur uit je voorbeeld */
+    --border-radius: 16px;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.main-container {
+    width: 100%;
+    max-width: 800px;
+}
+
+h1 {
+    color: var(--text-dark);
+    font-size: 32px;
+    margin-bottom: 25px;
+    font-weight: 800;
+}
+
+/* Zoekbalk */
+.search-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 14px 15px 14px 45px;
+    border-radius: 12px;
+    border: 1px solid #d1d9e0;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: all 0.2s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--active-green);
+    box-shadow: 0 0 0 3px rgba(74, 108, 74, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 17px;
+    color: #99aab5;
+}
+
+/* Dynamische Filters */
+.filter-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    scrollbar-width: none; /* Verberg scrollbar Firefox */
+}
+.filter-container::-webkit-scrollbar { display: none; } /* Verberg scrollbar Chrome/Safari */
+
+.filter-btn {
+    padding: 10px 22px;
+    border-radius: 25px;
+    border: none;
+    background-color: var(--pill-bg);
+    color: #4b5a68;
+    cursor: pointer;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.filter-btn.active {
+    background-color: var(--active-green);
+    color: white;
+}
+
+/* Business Card */
+.business-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 22px;
+    display: flex;
+    gap: 22px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    position: relative;
+    margin-bottom: 10px;
+    transition: transform 0.2s;
+}
+
+.business-card:hover {
+    transform: translateY(-2px);
+}
+
+.col-img img {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    object-fit: cover;
+    background-color: #eee;
+}
+
+.card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.biz-name {
+    margin: 0 0 6px 0;
+    font-size: 22px;
+    color: var(--text-dark);
+}
+
+.biz-desc {
+    margin: 0 0 18px 0;
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* Actie Knoppen */
+.icon-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.action-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--primary-blue);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.action-btn:hover { opacity: 0.8; }
+
+/* Categorie Tag */
+.col-cat {
+    position: absolute;
+    right: 22px;
+    bottom: 22px;
+}
+
+.category-pill {
+    background-color: #f1f4f6;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #707d8a;
+    font-weight: 500;
+}
+
+.status-msg { text-align: center; color: var(--text-muted); padding: 50px; }
+
+/* Mobiel */
+@media (max-width: 600px) {
+    .business-card { flex-direction: column; text-align: center; }
+    .col-img img { width: 100%; height: 180px; }
+    .col-cat { position: static; margin-top: 20px; }
+    .icon-actions { justify-content: center; }
+}

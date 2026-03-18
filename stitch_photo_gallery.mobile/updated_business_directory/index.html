@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Directory - Kalanera</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="main-container">
+        <h1>Local Directory</h1>
+
+        <div class="search-container">
+            <i class="fa fa-search search-icon"></i>
+            <input type="text" class="search-input" id="search-input" placeholder="Search businesses...">
+        </div>
+
+        <div class="filter-container" id="filter-buttons">
+            <p class="loading-small">Loading categories...</p>
+        </div>
+
+        <div id="business-list" class="business-container">
+            <p class="status-msg">Loading local businesses...</p>
+        </div>
+    </div>
+
+    <script>
+        const N8N_WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/local-businesses';
+        let allBusinesses = []; 
+        let activeCategory = 'all';
+
+        async function init() {
+            const container = document.getElementById('business-list');
+            try {
+                const response = await fetch(N8N_WEBHOOK_URL);
+                if (!response.ok) throw new Error('Network error');
+                
+                allBusinesses = await response.json();
+                
+                generateCategoryButtons(allBusinesses);
+                renderBusinesses(allBusinesses);
+            } catch (error) {
+                console.error('Fout:', error);
+                container.innerHTML = '<p class="status-msg error">Fout bij het laden van de gegevens.</p>';
+            }
+        }
+
+        // 1. Genereer unieke knoppen op basis van de data uit de Sheet
+        function generateCategoryButtons(data) {
+            const filterContainer = document.getElementById('filter-buttons');
+            
+            // Haal alle unieke categorieën op en filter lege waarden eruit
+            const categories = [...new Set(data.map(biz => biz.Category).filter(cat => cat))];
+            categories.sort(); // Alfabetisch
+
+            let buttonsHtml = `<button class="filter-btn active" data-category="all">All</button>`;
+            
+            categories.forEach(cat => {
+                buttonsHtml += `<button class="filter-btn" data-category="${cat}">${cat}</button>`;
+            });
+
+            filterContainer.innerHTML = buttonsHtml;
+
+            // Event listeners toevoegen aan de nieuwe knoppen
+            filterContainer.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    activeCategory = e.target.getAttribute('data-category');
+                    applyFilters();
+                });
+            });
+        }
+
+        // 2. Toon de kaartjes op het scherm
+        function renderBusinesses(data) {
+            const container = document.getElementById('business-list');
+            container.innerHTML = '';
+
+            if (data.length === 0) {
+                container.innerHTML = '<p class="status-msg">No results found for your search.</p>';
+                return;
+            }
+
+            container.innerHTML = data.map(biz => `
+                <div class="business-card">
+                    <div class="col-img">
+                        <img src="${biz.Image || 'https://via.placeholder.com/120'}" alt="${biz.Name}" onerror="this.src='https://via.placeholder.com/120'">
+                    </div>
+                    <div class="card-content">
+                        <h2 class="biz-name">${biz.Name || 'Unknown'}</h2>
+                        <p class="biz-desc">${biz.Description || '-'}</p>
+                        <div class="icon-actions">
+                            <a href="tel:${biz.Phone}" class="action-btn" title="Call"><i class="fa fa-phone"></i></a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Location)}" target="_blank" class="action-btn" title="Location"><i class="fa fa-location-dot"></i></a>
+                        </div>
+                        <div class="col-cat">
+                            <span class="category-pill">${biz.Category || 'General'}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 3. De Filter Logica (Zoekbalk + Categorie)
+        function applyFilters() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            
+            const filtered = allBusinesses.filter(biz => {
+                const name = (biz.Name || "").toLowerCase();
+                const desc = (biz.Description || "").toLowerCase();
+                const cat = biz.Category || "";
+
+                const matchesSearch = name.includes(searchTerm) || desc.includes(searchTerm);
+                const matchesCategory = (activeCategory === 'all') || (cat === activeCategory);
+                
+                return matchesSearch && matchesCategory;
+            });
+
+            renderBusinesses(filtered);
+        }
+
+        document.getElementById('search-input').addEventListener('input', applyFilters);
+
+        init();
+    </script>
+</body>
+</html>

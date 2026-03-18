@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kala Nera - Discover the Magic</title>
+<!-- Google Font: Be Vietnam Pro -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'olive-green': '#556B2F',
+            'sea-blue': '#0077BE',
+            'kala-white': '#FFFFFF',
+          },
+          fontFamily: {
+            sans: ['Be Vietnam Pro', 'sans-serif'],
+          },
+          borderRadius: {
+            'twelve': '12px',
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-utilities">
+    .roundness-twelve { border-radius: 12px; }
+    .hero-gradient {
+      background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3));
+    }
+  </style>
+</head>
+<body class="bg-kala-white text-gray-800 font-sans antialiased">
+<!-- BEGIN: Navigation -->
+<nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 px-4 py-3 flex justify-between items-center" data-purpose="mobile-header">
+<div class="text-olive-green font-bold text-xl tracking-tight">KALA NERA</div>
+<button aria-label="Open Menu" class="p-2 text-gray-600" id="mobile-menu-btn">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</nav>
+<!-- END: Navigation -->
+<!-- BEGIN: HeroSection -->
+<section class="relative h-[60vh] flex items-center justify-center overflow-hidden" data-purpose="hero-banner">
+<!-- Hero Image Background -->
+<img alt="Beautiful Kala Nera Coastline" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAykrPvxoZeBCchNWmKr0lTy8RdnkqlIGsF5EilAXsSOQ4bgLbKcykD66hSGZ3DtZzIQepCOxfyT5DG7EWbohjzsFIeYWWasww6bx3ljatBAqOXzLMH1K7aNoKv4HXSyayoX25zbZQKr4xnHIlwzZexg0whb-BQMOPoO1lyyupP3AEAeE1EJ4avloxHdnPbThVG8tEwWITX1tXaIFXt1aBO4yPh3dRRqtWywXB1c-A65p4RGv_i5KMHCmsZmFKJqxRXOWWjIpqw1CTZ"/>
+<div class="absolute inset-0 hero-gradient"></div>
+<div class="relative z-10 text-center px-6">
+<h1 class="text-4xl font-bold text-white mb-4 drop-shadow-lg">Discover the Magic of Kala Nera</h1>
+<p class="text-lg text-white opacity-90 mb-8 leading-relaxed max-w-sm mx-auto">
+        Experience the authentic charm of a traditional seaside village nestled in the heart of Pelion.
+      </p>
+<a class="bg-olive-green text-white px-8 py-3 rounded-twelve font-semibold shadow-xl inline-block transition-transform active:scale-95" href="#explore">
+        Start Exploring
+      </a>
+</div>
+</section>
+<!-- END: HeroSection -->
+<!-- BEGIN: GalleryPreview -->
+<section class="py-12 px-4" data-purpose="gallery-preview">
+<div class="flex justify-between items-end mb-6">
+<h2 class="text-2xl font-bold text-olive-green">Village Life</h2>
+<a class="text-sea-blue font-medium text-sm" href="#">View All Photos</a>
+</div>
+<!-- Mobile optimized grid -->
+<div class="grid grid-cols-2 gap-3">
+<div class="aspect-square overflow-hidden rounded-twelve shadow-sm">
+<img alt="Sunset over the Pagasetic Gulf" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAq1RdAtDHFgyRAJOb6ZL6_R3aPRajbF8Ype5LyFxY1YKKn3gQXqiChjNVVz9NEeYGOLuxZt6y-jNcAmihje0ibr0TbqAoKd7U--y1_wN9oLePjujbjpUH9AUZ9TfLt1qS0UmwCm9pAMTnHKVGGSH0YmG9Wh2hKRykrHX2Y9ZDp1fSjKqqDRMB0HnKNIroHTce4I28AUlwix_x1DEnDLamHShE8bs2wTAaFWCwFaa5sKK2FGisekndliX96fw6Jn4oD4HYdrIMTvEey"/>
+</div>
+<div class="aspect-square overflow-hidden rounded-twelve shadow-sm">
+<img alt="Kala Nera Beach" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5nVR5ubMGP2_mEPCstiNuLcCO-KUjH6bRgkVwVuajd3ysyzhZk530msWHIiKkw8J98_7ZQfaIVTOk3-iNKBCiAJl8ErzQiBhpisFnFls1YyAP88aOwCae3QZwsHCWuLCJ0cEKRn7HnTJ9TsZy0tA8Ocmoc_gQ5YreR7fos33wrRB_FKWwyud5o2D5uk-b5GDrQxFAMatvSzE2yIiy6HAO47xvSniZFeo2r1r_cYRxaE7zf5CmmAVGbQIMxl1-JS9sBmUHts3EBRVt"/>
+</div>
+<div class="aspect-[4/3] col-span-2 overflow-hidden rounded-twelve shadow-sm mt-1">
+<img alt="Pelion Traditional Architecture" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnNHIxtAU0DwlIecORLIPXPBtIGAyhqZWqbBGylGm3HwPGnZ1fFRN1UrhGkBSsvA-Jj67wKlKZ88BxfPsWJhkHb0gnsbNUI9-fXn4kduNnwhohChSQGoKyBGAQv2BqCvhLDLXZgYPQvJJ_1CjyldQp4n2_iIWsCXauJ-wskpSrMdQRnMt0bwwxeN1zrr7FQFaiWXXvSbxcnDsNxl8AUe9mheipLu6ZbOvrs5EeM7XelKnwnPeSR8WB1HIXPhbanPouQQD4X-RhlbEo"/>
+</div>
+</div>
+</section>
+<!-- END: GalleryPreview -->
+<!-- BEGIN: BusinessDirectory -->
+<section class="py-12 bg-gray-50 px-4" data-purpose="directory-snippet" id="explore">
+<div class="text-center mb-10">
+<h2 class="text-3xl font-bold text-olive-green mb-2">Plan Your Visit</h2>
+<p class="text-gray-600">Find the best local gems for an unforgettable stay.</p>
+</div>
+<!-- Category Cards -->
+<div class="space-y-4">
+<!-- Stay -->
+<div class="bg-white p-5 rounded-twelve shadow-sm border-l-4 border-sea-blue flex items-center space-x-4">
+<div class="bg-blue-50 p-3 rounded-full text-sea-blue">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div class="flex-1">
+<h3 class="font-bold text-lg">Where to Stay</h3>
+<p class="text-gray-500 text-sm">Boutique hotels &amp; traditional villas</p>
+</div>
+</div>
+<!-- Eat -->
+<div class="bg-white p-5 rounded-twelve shadow-sm border-l-4 border-olive-green flex items-center space-x-4">
+<div class="bg-green-50 p-3 rounded-full text-olive-green">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div class="flex-1">
+<h3 class="font-bold text-lg">Where to Eat</h3>
+<p class="text-gray-500 text-sm">Authentic tavernas &amp; seaside cafes</p>
+</div>
+</div>
+<!-- Shops -->
+<div class="bg-white p-5 rounded-twelve shadow-sm border-l-4 border-yellow-500 flex items-center space-x-4">
+<div class="bg-yellow-50 p-3 rounded-full text-yellow-600">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div class="flex-1">
+<h3 class="font-bold text-lg">Local Shops</h3>
+<p class="text-gray-500 text-sm">Local products &amp; artisan crafts</p>
+</div>
+</div>
+</div>
+<div class="mt-8">
+<a class="w-full bg-sea-blue text-white py-4 rounded-twelve font-bold shadow-lg hover:bg-opacity-90 transition-all inline-block text-center" href="{{DATA:SCREEN:SCREEN_3}}">
+        Explore the Directory
+      </a>
+</div>
+</section>
+<!-- END: BusinessDirectory -->
+<!-- BEGIN: Footer -->
+<footer class="bg-gray-900 text-white pt-12 pb-24 px-6 relative" data-purpose="main-footer">
+<div class="mb-8">
+<h3 class="text-2xl font-bold text-olive-green mb-4">Kala Nera</h3>
+<p class="text-gray-400 text-sm mb-6 leading-relaxed">
+        The hidden paradise of the Pagasetic Gulf. Visit us and experience true Greek hospitality.
+      </p>
+<div class="space-y-3 mb-8">
+<p class="flex items-center text-sm text-gray-300">
+<svg class="h-5 w-5 mr-3 text-sea-blue" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+          Pelion, Magnesia, Greece
+        </p>
+<p class="flex items-center text-sm text-gray-300">
+<svg class="h-5 w-5 mr-3 text-sea-blue" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+          info@kalanera.travel
+        </p>
+</div>
+<nav class="flex flex-wrap gap-4 text-xs font-medium text-gray-400 uppercase tracking-widest border-t border-gray-800 pt-6">
+<a class="hover:text-white" href="{{DATA:SCREEN:SCREEN_3}}">Directory</a>
+<a class="hover:text-white" href="#">Gallery</a>
+<a class="hover:text-white" href="#">Events</a>
+<a class="hover:text-white" href="#">Contact</a>
+</nav>
+</div>
+<!-- Social Floating Button -->
+<a aria-label="Visit us on Facebook" class="fixed bottom-6 right-6 bg-blue-600 p-4 rounded-full shadow-2xl z-50 transition-transform active:scale-90" href="https://facebook.com" target="_blank">
+<svg class="w-6 h-6 fill-current text-white" viewbox="0 0 24 24">
+<path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path>
+</svg>
+</a>
+<div class="text-center text-[10px] text-gray-600 mt-10">
+      © 2023 Kala Nera Travel Guide. All rights reserved.
+    </div>
+</footer>
+<!-- END: Footer -->
+<script data-purpose="ui-interactivity">
+    // Minimal interaction logic for mobile UX
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    menuBtn.addEventListener('click', () => {
+      // Logic for mobile menu would go here
+      console.log('Mobile menu toggled');
+    });
+  </script>
+</body></html>
