@@ -1,6 +1,6 @@
 :root {
     --primary-blue: #0077cc;
-    --bg-color: #f4f7f9;
+    --bg-color: #f0f4f8;
     --card-bg: #ffffff;
     --text-dark: #1a2b3c;
     --text-muted: #66788a;
@@ -10,7 +10,7 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: 'Inter', -apple-system, sans-serif;
     background-color: var(--bg-color);
     margin: 0;
     padding: 20px;
@@ -20,7 +20,7 @@ body {
 
 .main-container {
     width: 100%;
-    max-width: 800px;
+    max-width: 850px;
 }
 
 h1 {
@@ -43,13 +43,12 @@ h1 {
     border: 1px solid #d1d9e0;
     font-size: 16px;
     box-sizing: border-box;
-    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .search-input:focus {
     outline: none;
     border-color: var(--active-green);
-    box-shadow: 0 0 0 3px rgba(74, 108, 74, 0.1);
 }
 
 .search-icon {
@@ -59,7 +58,7 @@ h1 {
     color: #99aab5;
 }
 
-/* Dynamische Filters */
+/* Filters */
 .filter-container {
     display: flex;
     gap: 10px;
@@ -72,11 +71,12 @@ h1 {
     padding: 10px 22px;
     border-radius: 25px;
     border: none;
-    background-color: var(--pill-bg);
+    background-color: #dee4e8;
     color: #4b5a68;
     cursor: pointer;
     font-weight: 600;
     white-space: nowrap;
+    transition: 0.2s;
 }
 
 .filter-btn.active {
@@ -84,41 +84,64 @@ h1 {
     color: white;
 }
 
-/* Business Card */
+/* Business Card met Preview */
 .business-card {
     background-color: var(--card-bg);
     border-radius: var(--border-radius);
-    padding: 22px;
+    padding: 20px;
     display: flex;
-    gap: 22px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    gap: 25px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
     position: relative;
     margin-bottom: 15px;
+    align-items: center;
+}
+
+/* Preview Image Styling */
+.col-img {
+    position: relative;
+    width: 160px;
+    height: 120px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 10px;
+    border: 1px solid #eee;
 }
 
 .col-img img {
-    width: 110px;
-    height: 110px;
-    border-radius: 12px;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    background-color: #eee;
+    transition: transform 0.5s ease;
 }
+
+.preview-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.col-img:hover img { transform: scale(1.1); }
+.col-img:hover .preview-overlay { opacity: 1; }
 
 .card-content {
     flex: 1;
-    display: flex;
-    flex-direction: column;
 }
 
 .biz-name {
-    margin: 0 0 4px 0;
+    margin: 0 0 5px 0;
     font-size: 22px;
     color: var(--text-dark);
 }
 
-/* De nieuwe Web-link styling */
 .biz-desc-container {
-    margin-bottom: 12px;
+    margin-bottom: 15px;
 }
 
 .web-link {
@@ -126,23 +149,23 @@ h1 {
     text-decoration: none;
     font-size: 14px;
     font-weight: 500;
-    word-break: break-all;
+    display: inline-block;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-.web-link:hover {
-    text-decoration: underline;
-    color: var(--active-green);
-}
+.web-link:hover { text-decoration: underline; }
 
-/* Actie Knoppen (Ronde bolletjes voor Tel/Loc) */
 .icon-actions {
     display: flex;
     gap: 12px;
 }
 
 .action-btn {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background-color: var(--primary-blue);
     color: white;
@@ -150,13 +173,15 @@ h1 {
     justify-content: center;
     align-items: center;
     text-decoration: none;
+    transition: 0.2s;
 }
 
-/* Categorie Tag */
+.action-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+
 .col-cat {
     position: absolute;
-    right: 22px;
-    bottom: 22px;
+    right: 20px;
+    bottom: 20px;
 }
 
 .category-pill {
@@ -165,15 +190,16 @@ h1 {
     border-radius: 8px;
     font-size: 13px;
     color: #707d8a;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .status-msg { text-align: center; color: var(--text-muted); padding: 50px; }
 
 /* Mobiel */
-@media (max-width: 600px) {
+@media (max-width: 650px) {
     .business-card { flex-direction: column; text-align: center; }
-    .col-img img { width: 100px; height: 100px; margin: 0 auto; }
-    .col-cat { position: static; margin-top: 20px; }
+    .col-img { width: 100%; height: 180px; }
+    .col-cat { position: static; margin-top: 15px; }
     .icon-actions { justify-content: center; }
+    .web-link { max-width: 100%; }
 }

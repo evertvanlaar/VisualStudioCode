@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Local Directory - Kalanera</title>
+    <title>Local Directory - Kalanera Preview</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -14,15 +14,15 @@
 
         <div class="search-container">
             <i class="fa fa-search search-icon"></i>
-            <input type="text" class="search-input" id="search-input" placeholder="Search businesses...">
+            <input type="text" class="search-input" id="search-input" placeholder="Zoek op naam of omschrijving...">
         </div>
 
         <div class="filter-container" id="filter-buttons">
-            <p class="loading-small">Loading categories...</p>
+            <p class="loading-small">Categorieën laden...</p>
         </div>
 
         <div id="business-list" class="business-container">
-            <p class="status-msg">Loading local businesses...</p>
+            <p class="status-msg">Laden van bedrijven en previews...</p>
         </div>
     </div>
 
@@ -35,7 +35,7 @@
             const container = document.getElementById('business-list');
             try {
                 const response = await fetch(N8N_WEBHOOK_URL);
-                if (!response.ok) throw new Error('Network error');
+                if (!response.ok) throw new Error('Netwerkfout');
                 
                 allBusinesses = await response.json();
                 
@@ -43,11 +43,11 @@
                 renderBusinesses(allBusinesses);
             } catch (error) {
                 console.error('Fout:', error);
-                container.innerHTML = '<p class="status-msg error">Fout bij het laden van de gegevens.</p>';
+                container.innerHTML = '<p class="status-msg error">Kon de data niet ophalen. Controleer de n8n webhook.</p>';
             }
         }
 
-        // 1. Genereer unieke knoppen op basis van de data uit de Sheet
+        // 1. Categorie knoppen genereren uit de data
         function generateCategoryButtons(data) {
             const filterContainer = document.getElementById('filter-buttons');
             const categories = [...new Set(data.map(biz => biz.Category).filter(cat => cat))];
@@ -70,46 +70,53 @@
             });
         }
 
-        // 2. Toon de kaartjes op het scherm
+        // 2. De kaartjes renderen met Website Preview
         function renderBusinesses(data) {
             const container = document.getElementById('business-list');
             container.innerHTML = '';
 
             if (data.length === 0) {
-                container.innerHTML = '<p class="status-msg">No results found for your search.</p>';
+                container.innerHTML = '<p class="status-msg">Geen resultaten gevonden.</p>';
                 return;
             }
 
             container.innerHTML = data.map(biz => {
-                // Zorg dat de URL altijd begint met http(s)
                 const rawUrl = biz.Description || '';
                 const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
+                
+                // Screenshot service: WordPress mshots
+                const screenshotUrl = rawUrl 
+                    ? `https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=400&h=300`
+                    : 'https://via.placeholder.com/400x300?text=Geen+Website';
 
                 return `
                 <div class="business-card">
                     <div class="col-img">
-                        <img src="${biz.Image || 'https://via.placeholder.com/120'}" alt="${biz.Name}" onerror="this.src='https://via.placeholder.com/120'">
+                        <a href="${cleanUrl}" target="_blank" title="Bekijk website">
+                            <img src="${screenshotUrl}" alt="Preview" class="web-preview" onerror="this.src='https://via.placeholder.com/400x300?text=Preview+niet+beschikbaar'">
+                            <div class="preview-overlay"><i class="fa fa-external-link"></i></div>
+                        </a>
                     </div>
                     <div class="card-content">
-                        <h2 class="biz-name">${biz.Name || 'Unknown'}</h2>
+                        <h2 class="biz-name">${biz.Name || 'Onbekend'}</h2>
                         
                         <div class="biz-desc-container">
                             <a href="${cleanUrl}" target="_blank" class="web-link">
-                                ${rawUrl || 'Bezoek website'}
+                                <i class="fa fa-link" style="font-size: 11px; margin-right: 5px;"></i>${rawUrl || 'Bezoek website'}
                             </a>
                         </div>
                         
                         <div class="icon-actions">
-                            <a href="tel:${biz.Phone}" class="action-btn" title="Call">
+                            <a href="tel:${biz.Phone}" class="action-btn" title="Bellen">
                                 <i class="fa fa-phone"></i>
                             </a>
                             <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Location || biz.Name)}" 
-                               target="_blank" class="action-btn" title="Location">
+                               target="_blank" class="action-btn" title="Locatie">
                                 <i class="fa fa-location-dot"></i>
                             </a>
                         </div>
                         <div class="col-cat">
-                            <span class="category-pill">${biz.Category || 'General'}</span>
+                            <span class="category-pill">${biz.Category || 'Algemeen'}</span>
                         </div>
                     </div>
                 </div>
@@ -117,26 +124,20 @@
             }).join('');
         }
 
-        // 3. De Filter Logica (Zoekbalk + Categorie)
         function applyFilters() {
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            
             const filtered = allBusinesses.filter(biz => {
                 const name = (biz.Name || "").toLowerCase();
                 const desc = (biz.Description || "").toLowerCase();
                 const cat = (biz.Category || "");
-
                 const matchesSearch = name.includes(searchTerm) || desc.includes(searchTerm);
                 const matchesCategory = (activeCategory === 'all') || (cat === activeCategory);
-                
                 return matchesSearch && matchesCategory;
             });
-
             renderBusinesses(filtered);
         }
 
         document.getElementById('search-input').addEventListener('input', applyFilters);
-
         init();
     </script>
 </body>
