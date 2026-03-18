@@ -91,7 +91,7 @@
                     </div>
                     <div class="card-content">
                         <h2 class="biz-name">${biz.Name || 'Unknown'}</h2>
-                        <p class="biz-desc">${biz.Description || '-'}</p>
+                        <p class="biz-desc"><a href="${biz.Description || '#'}" target="_blank" class="action-btn" title="Visit Website">${biz.Description || '-'}</a></p>
                         <div class="icon-actions">
                             <a href="tel:${biz.Phone}" class="action-btn" title="Call"><i class="fa fa-phone"></i></a>
                             <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Location)}" target="_blank" class="action-btn" title="Location"><i class="fa fa-location-dot"></i></a>
