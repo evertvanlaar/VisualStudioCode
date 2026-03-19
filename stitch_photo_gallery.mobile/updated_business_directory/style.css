@@ -40,3 +40,48 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 .btn-icon { width: 30px; height: 30px; background: var(--pill); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--muted); text-decoration: none; font-size: 13px; }
 
 @media (max-width: 850px) { .business-grid { grid-template-columns: 1fr; } }
+
+.mini-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.action-right {
+    display: flex;
+    gap: 8px; /* Ruimte tussen ster-icoon en locatie-icoon */
+}
+
+.review-btn {
+    color: #f1c40f; /* Goudkleur voor het sterretje */
+    background: #fef9e7; /* Zachte gele achtergrond */
+}
+
+.review-btn:hover {
+    background: #f1c40f !important;
+    color: white !important;
+}
+
+.add-business-container {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.add-biz-btn {
+    display: inline-block;
+    background: var(--active-green);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+    transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(74, 108, 74, 0.2);
+}
+
+.add-biz-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 108, 74, 0.3);
+    background: #3e5a3e;
+}

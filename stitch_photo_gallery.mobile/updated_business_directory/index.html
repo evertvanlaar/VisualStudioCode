@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Business Directory</title>
+    <title>Premium Business Directory - Reviews Edit</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -12,6 +12,12 @@
 
     <div class="main-container">
         <h1>Local Directory</h1>
+
+        <div class="add-business-container">
+            <a href="HIER_DE_LINK_NAAR_JE_FORMULIER" target="_blank" class="add-biz-btn">
+                <i class="fa fa-plus-circle"></i> Uw bedrijf aanmelden
+            </a>
+        </div>
 
         <div class="search-container">
             <i class="fa fa-search search-icon"></i>
@@ -30,34 +36,18 @@
         let allBusinesses = []; 
         let activeCategory = 'all';
 
-        // Uitgebreide Icon Map (50+ categorieën)
+        // Icon Map
         const iconMap = {
-            // Eten & Drinken
             'Bakery': 'fa-bread-slice', 'Bakker': 'fa-bread-slice', 'Cafe': 'fa-coffee', 'Koffie': 'fa-coffee',
             'Restaurant': 'fa-utensils', 'Eten': 'fa-utensils', 'Bar': 'fa-glass-cheers', 'Pub': 'fa-beer',
-            'Pizza': 'fa-pizza-slice', 'Ijs': 'fa-ice-cream', 'Wine': 'fa-wine-glass',
-            // Winkels
             'Shop': 'fa-shopping-cart', 'Winkel': 'fa-shopping-bag', 'Supermarket': 'fa-shopping-basket',
-            'Clothing': 'fa-tshirt', 'Kleding': 'fa-tshirt', 'Jewelry': 'fa-gem', 'Books': 'fa-book',
-            'Flowers': 'fa-leaf', 'Bloemen': 'fa-seedling', 'Electronics': 'fa-laptop',
-            // Gezondheid & Beauty
-            'Beauty': 'fa-spa', 'Kapper': 'fa-cut', 'Hairdresser': 'fa-cut', 'Gym': 'fa-dumbbell',
-            'Sport': 'fa-running', 'Pharmacy': 'fa-pills', 'Apotheek': 'fa-medkit', 'Doctor': 'fa-user-md',
-            'Dentist': 'fa-tooth', 'Wellness': 'fa-hot-tub',
-            // Diensten & Techniek
-            'Construction': 'fa-hammer', 'Bouw': 'fa-hard-hat', 'Garage': 'fa-car', 'Auto': 'fa-car-side',
-            'Plumber': 'fa-faucet', 'Electrician': 'fa-bolt', 'Cleaning': 'fa-broom', 'IT': 'fa-code',
-            'Real Estate': 'fa-home', 'Makelaar': 'fa-building', 'Bank': 'fa-university',
-            // Toerisme & Vrije tijd
-            'Hotel': 'fa-bed', 'B&B': 'fa-hotel', 'Camping': 'fa-campground', 'Travel': 'fa-plane',
-            'Cinema': 'fa-film', 'Museum': 'fa-monument', 'Park': 'fa-tree', 'Beach': 'fa-umbrella-beach',
-            'Taxi': 'fa-taxi', 'Pharmacy': 'fa-hand-holding-medical'
+            'Hotel': 'fa-bed', 'B&B': 'fa-hotel', 'Camping': 'fa-campground', 'Beauty': 'fa-spa',
+            'Kapper': 'fa-cut', 'Sport': 'fa-running', 'Pharmacy': 'fa-pills', 'Garage': 'fa-car'
         };
 
         function getIcon(cat) {
             const key = Object.keys(iconMap).find(k => cat.toLowerCase().includes(k.toLowerCase()));
-            const iconClass = key ? iconMap[key] : 'fa-tag';
-            return `<i class="fa ${iconClass}"></i>`;
+            return `<i class="fa ${key ? iconMap[key] : 'fa-tag'}"></i>`;
         }
 
         function getColor(str) {
@@ -122,25 +112,37 @@
                     const displayUrl = rawUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
                     const catColor = getColor(category);
                     
+                    // DE NIEUWE REVIEW LINK:
+                    // We zoeken op Bedrijfsnaam + Locatie + "reviews"
+                    const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' ' + (biz.Location || '') + ' reviews')}`;
+                    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' ' + (biz.Location || ''))}`;
+
                     grid.innerHTML += `
                     <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
                         <div class="mini-preview">
                             <a href="${cleanUrl}" target="_blank">
-                                <img src="https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130" onerror="this.src='https://via.placeholder.com/180x130?text=Geen+Website'">
+                                <img src="https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130" onerror="this.src='https://via.placeholder.com/180x130?text=No+Web'">
                             </a>
                         </div>
                         <div class="mini-content">
                             <div class="mini-row-top">
                                 <h2 class="biz-name">${biz.Name}</h2>
-                                <a href="${cleanUrl}" target="_blank" class="mini-web-link"><i class="fa fa-external-link"></i> ${displayUrl || 'Link'}</a>
+                                <a href="${cleanUrl}" target="_blank" class="mini-web-link"><i class="fa fa-external-link"></i> ${displayUrl || 'Site'}</a>
                             </div>
                             <div class="mini-actions">
                                 <div class="phone-group">
-                                    <a href="tel:${biz.Phone}" class="btn-icon"><i class="fa fa-phone"></i></a>
+                                    <a href="tel:${biz.Phone}" class="btn-icon" title="Bellen"><i class="fa fa-phone"></i></a>
                                     <span class="phone-txt">${biz.Phone || '-'}</span>
                                     <button class="copy-btn" onclick="copyToClipboard('${biz.Phone}', this)"><i class="fa fa-copy"></i></button>
                                 </div>
-                                <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Location || biz.Name)}" target="_blank" class="btn-icon"><i class="fa fa-location-dot"></i></a>
+                                <div class="action-right">
+                                    <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn" title="Bekijk Reviews">
+                                        <i class="fa fa-star"></i>
+                                    </a>
+                                    <a href="${mapsUrl}" target="_blank" class="btn-icon" title="Navigeer">
+                                        <i class="fa fa-location-dot"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>`;
