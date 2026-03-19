@@ -64,25 +64,29 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 
 .add-business-container {
     text-align: center;
-    margin-bottom: 25px;
-    display: block; /* Zorgt dat de container altijd ruimte inneemt */
+    margin-bottom: 30px;
 }
 
 .add-biz-btn {
     display: inline-block;
-    background-color: #2ecc71 !important; /* VERVANG DIT door de kleur van je filterbuttons */
+    /* De exacte kleur van je 'Alles' button */
+    background-color: #4a6c4a !important; 
     color: #ffffff !important;
-    padding: 12px 25px;
-    border-radius: 50px;
+    
+    /* Styling gebaseerd op je filters */
+    padding: 10px 22px;
+    border-radius: 8px; /* Filters in je screenshot zijn licht afgerond, niet 100% rond */
     text-decoration: none;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 15px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Iets subtielere schaduw */
+    transition: all 0.2s ease;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .add-biz-btn:hover {
-    transform: translateY(-2px);
-    background-color: #27ae60 !important; /* Maak dit een fractie donkerder dan de hoofdkleur */
-    color: #ffffff !important;
+    /* Een fractie lichter of donkerder voor de interactie */
+    background-color: #3e5a3e !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
