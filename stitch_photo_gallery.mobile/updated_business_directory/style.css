@@ -70,21 +70,19 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 
 .add-biz-btn {
     display: inline-block;
-    background-color: #4a6c4a !important; /* Harde kleur ipv variabele */
-    color: #ffffff !important;           /* Forceer witte tekst */
+    background-color: #2ecc71 !important; /* VERVANG DIT door de kleur van je filterbuttons */
+    color: #ffffff !important;
     padding: 12px 25px;
     border-radius: 50px;
     text-decoration: none;
     font-weight: 700;
     font-size: 15px;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(74, 108, 74, 0.2);
-    opacity: 1 !important;               /* Zorg dat hij niet transparant is */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Iets subtielere schaduw */
 }
 
 .add-biz-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(74, 108, 74, 0.3);
-    background-color: #3e5a3e !important; /* Iets donkerder bij hover */
+    background-color: #27ae60 !important; /* Maak dit een fractie donkerder dan de hoofdkleur */
     color: #ffffff !important;
 }
