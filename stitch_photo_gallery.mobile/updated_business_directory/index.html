@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Local Directory - Kalanera Preview</title>
+    <title>Premium Business Directory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -14,15 +15,13 @@
 
         <div class="search-container">
             <i class="fa fa-search search-icon"></i>
-            <input type="text" class="search-input" id="search-input" placeholder="Zoek op naam of omschrijving...">
+            <input type="text" class="search-input" id="search-input" placeholder="Zoek op naam of categorie...">
         </div>
 
-        <div class="filter-container" id="filter-buttons">
-            <p class="loading-small">Categorieën laden...</p>
-        </div>
+        <div class="filter-container" id="filter-buttons"></div>
 
-        <div id="business-list" class="business-container">
-            <p class="status-msg">Laden van bedrijven en previews...</p>
+        <div id="business-list">
+            <p class="status-msg">Data wordt geladen...</p>
         </div>
     </div>
 
@@ -31,36 +30,63 @@
         let allBusinesses = []; 
         let activeCategory = 'all';
 
+        // Uitgebreide Icon Map (50+ categorieën)
+        const iconMap = {
+            // Eten & Drinken
+            'Bakery': 'fa-bread-slice', 'Bakker': 'fa-bread-slice', 'Cafe': 'fa-coffee', 'Koffie': 'fa-coffee',
+            'Restaurant': 'fa-utensils', 'Eten': 'fa-utensils', 'Bar': 'fa-glass-cheers', 'Pub': 'fa-beer',
+            'Pizza': 'fa-pizza-slice', 'Ijs': 'fa-ice-cream', 'Wine': 'fa-wine-glass',
+            // Winkels
+            'Shop': 'fa-shopping-cart', 'Winkel': 'fa-shopping-bag', 'Supermarket': 'fa-shopping-basket',
+            'Clothing': 'fa-tshirt', 'Kleding': 'fa-tshirt', 'Jewelry': 'fa-gem', 'Books': 'fa-book',
+            'Flowers': 'fa-leaf', 'Bloemen': 'fa-seedling', 'Electronics': 'fa-laptop',
+            // Gezondheid & Beauty
+            'Beauty': 'fa-spa', 'Kapper': 'fa-cut', 'Hairdresser': 'fa-cut', 'Gym': 'fa-dumbbell',
+            'Sport': 'fa-running', 'Pharmacy': 'fa-pills', 'Apotheek': 'fa-medkit', 'Doctor': 'fa-user-md',
+            'Dentist': 'fa-tooth', 'Wellness': 'fa-hot-tub',
+            // Diensten & Techniek
+            'Construction': 'fa-hammer', 'Bouw': 'fa-hard-hat', 'Garage': 'fa-car', 'Auto': 'fa-car-side',
+            'Plumber': 'fa-faucet', 'Electrician': 'fa-bolt', 'Cleaning': 'fa-broom', 'IT': 'fa-code',
+            'Real Estate': 'fa-home', 'Makelaar': 'fa-building', 'Bank': 'fa-university',
+            // Toerisme & Vrije tijd
+            'Hotel': 'fa-bed', 'B&B': 'fa-hotel', 'Camping': 'fa-campground', 'Travel': 'fa-plane',
+            'Cinema': 'fa-film', 'Museum': 'fa-monument', 'Park': 'fa-tree', 'Beach': 'fa-umbrella-beach',
+            'Taxi': 'fa-taxi', 'Pharmacy': 'fa-hand-holding-medical'
+        };
+
+        function getIcon(cat) {
+            const key = Object.keys(iconMap).find(k => cat.toLowerCase().includes(k.toLowerCase()));
+            const iconClass = key ? iconMap[key] : 'fa-tag';
+            return `<i class="fa ${iconClass}"></i>`;
+        }
+
+        function getColor(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            return `hsl(${Math.abs(hash) % 360}, 60%, 45%)`;
+        }
+
         async function init() {
-            const container = document.getElementById('business-list');
             try {
                 const response = await fetch(N8N_WEBHOOK_URL);
-                if (!response.ok) throw new Error('Netwerkfout');
-                
-                allBusinesses = await response.json();
-                
+                const rawData = await response.json();
+                allBusinesses = rawData.filter(biz => biz.Status === 'Active');
                 generateCategoryButtons(allBusinesses);
                 renderBusinesses(allBusinesses);
             } catch (error) {
-                console.error('Fout:', error);
-                container.innerHTML = '<p class="status-msg error">Kon de data niet ophalen. Controleer de n8n webhook.</p>';
+                document.getElementById('business-list').innerHTML = '<p class="status-msg">Fout bij laden.</p>';
             }
         }
 
-        // 1. Categorie knoppen genereren uit de data
         function generateCategoryButtons(data) {
-            const filterContainer = document.getElementById('filter-buttons');
-            const categories = [...new Set(data.map(biz => biz.Category).filter(cat => cat))];
-            categories.sort();
-
-            let buttonsHtml = `<button class="filter-btn active" data-category="all">All</button>`;
+            const container = document.getElementById('filter-buttons');
+            const categories = [...new Set(data.map(biz => biz.Category).filter(cat => cat))].sort();
+            let html = `<button class="filter-btn active" data-category="all">Alles</button>`;
             categories.forEach(cat => {
-                buttonsHtml += `<button class="filter-btn" data-category="${cat}">${cat}</button>`;
+                html += `<button class="filter-btn" data-category="${cat}">${cat}</button>`;
             });
-
-            filterContainer.innerHTML = buttonsHtml;
-
-            filterContainer.querySelectorAll('.filter-btn').forEach(btn => {
+            container.innerHTML = html;
+            container.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                     e.target.classList.add('active');
@@ -70,69 +96,73 @@
             });
         }
 
-        // 2. De kaartjes renderen met Website Preview
         function renderBusinesses(data) {
             const container = document.getElementById('business-list');
             container.innerHTML = '';
 
-            if (data.length === 0) {
-                container.innerHTML = '<p class="status-msg">Geen resultaten gevonden.</p>';
-                return;
-            }
+            const grouped = data.reduce((acc, biz) => {
+                const cat = biz.Category || 'Overig';
+                if (!acc[cat]) acc[cat] = [];
+                acc[cat].push(biz);
+                return acc;
+            }, {});
 
-            container.innerHTML = data.map(biz => {
-                const rawUrl = biz.Description || '';
-                const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
+            Object.keys(grouped).sort().forEach(category => {
+                const header = document.createElement('div');
+                header.className = 'category-section-header';
+                header.innerHTML = `<span>${getIcon(category)} ${category} <small>(${grouped[category].length})</small></span>`;
+                container.appendChild(header);
+
+                const grid = document.createElement('div');
+                grid.className = 'business-grid';
                 
-                // Screenshot service: WordPress mshots
-                const screenshotUrl = rawUrl 
-                    ? `https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=400&h=300`
-                    : 'https://via.placeholder.com/400x300?text=Geen+Website';
+                grouped[category].sort((a, b) => a.Name.localeCompare(b.Name)).forEach(biz => {
+                    const rawUrl = biz.Description || '';
+                    const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
+                    const displayUrl = rawUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
+                    const catColor = getColor(category);
+                    
+                    grid.innerHTML += `
+                    <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
+                        <div class="mini-preview">
+                            <a href="${cleanUrl}" target="_blank">
+                                <img src="https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130" onerror="this.src='https://via.placeholder.com/180x130?text=Geen+Website'">
+                            </a>
+                        </div>
+                        <div class="mini-content">
+                            <div class="mini-row-top">
+                                <h2 class="biz-name">${biz.Name}</h2>
+                                <a href="${cleanUrl}" target="_blank" class="mini-web-link"><i class="fa fa-external-link"></i> ${displayUrl || 'Link'}</a>
+                            </div>
+                            <div class="mini-actions">
+                                <div class="phone-group">
+                                    <a href="tel:${biz.Phone}" class="btn-icon"><i class="fa fa-phone"></i></a>
+                                    <span class="phone-txt">${biz.Phone || '-'}</span>
+                                    <button class="copy-btn" onclick="copyToClipboard('${biz.Phone}', this)"><i class="fa fa-copy"></i></button>
+                                </div>
+                                <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Location || biz.Name)}" target="_blank" class="btn-icon"><i class="fa fa-location-dot"></i></a>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+                container.appendChild(grid);
+            });
+        }
 
-                return `
-                <div class="business-card">
-                    <div class="col-img">
-                        <a href="${cleanUrl}" target="_blank" title="Bekijk website">
-                            <img src="${screenshotUrl}" alt="Preview" class="web-preview" onerror="this.src='https://via.placeholder.com/400x300?text=Preview+niet+beschikbaar'">
-                            <div class="preview-overlay"><i class="fa fa-external-link"></i></div>
-                        </a>
-                    </div>
-                    <div class="card-content">
-                        <h2 class="biz-name">${biz.Name || 'Onbekend'}</h2>
-                        
-                        <div class="biz-desc-container">
-                            <a href="${cleanUrl}" target="_blank" class="web-link">
-                                <i class="fa fa-link" style="font-size: 11px; margin-right: 5px;"></i>${rawUrl || 'Bezoek website'}
-                            </a>
-                        </div>
-                        
-                        <div class="icon-actions">
-                            <a href="tel:${biz.Phone}" class="action-btn" title="Bellen">
-                                <i class="fa fa-phone"></i>
-                            </a>
-                            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Location || biz.Name)}" 
-                               target="_blank" class="action-btn" title="Locatie">
-                                <i class="fa fa-location-dot"></i>
-                            </a>
-                        </div>
-                        <div class="col-cat">
-                            <span class="category-pill">${biz.Category || 'Algemeen'}</span>
-                        </div>
-                    </div>
-                </div>
-                `;
-            }).join('');
+        function copyToClipboard(text, el) {
+            navigator.clipboard.writeText(text).then(() => {
+                const icon = el.querySelector('i');
+                icon.className = 'fa fa-check';
+                setTimeout(() => { icon.className = 'fa fa-copy'; }, 2000);
+            });
         }
 
         function applyFilters() {
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
             const filtered = allBusinesses.filter(biz => {
-                const name = (biz.Name || "").toLowerCase();
-                const desc = (biz.Description || "").toLowerCase();
-                const cat = (biz.Category || "");
-                const matchesSearch = name.includes(searchTerm) || desc.includes(searchTerm);
-                const matchesCategory = (activeCategory === 'all') || (cat === activeCategory);
-                return matchesSearch && matchesCategory;
+                const nameMatch = (biz.Name || "").toLowerCase().includes(searchTerm);
+                const categoryMatch = activeCategory === 'all' || biz.Category === activeCategory;
+                return nameMatch && categoryMatch;
             });
             renderBusinesses(filtered);
         }
