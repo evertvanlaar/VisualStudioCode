@@ -310,3 +310,93 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     .nav-links { display: none; } /* Simpele oplossing voor nu, of gebruik een menu icoon */
     .hero-overlay h1 { font-size: 32px; }
 }
+
+/* =========================================
+   NIEUWE ONDERDELEN (HEADER, BUTTON, FOOTER)
+   ========================================= */
+
+/* De navigatiebalk */
+.main-nav {
+    background-color: #ffffff !important;
+    padding: 15px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* De grote foto sectie */
+.hero-section {
+    width: 100%;
+    height: 60vh;
+    min-height: 400px;
+    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('JOUW-FOTO-LINK-HIER.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white !important;
+}
+
+/* De groene aanmeldknop */
+.add-biz-btn {
+    display: inline-block !important;
+    background-color: #4a6c4a !important; 
+    color: white !important;
+    padding: 12px 25px !important;
+    border-radius: 8px !important;
+    text-decoration: none !important;
+    font-weight: 700 !important;
+    transition: 0.3s;
+}
+
+.add-biz-btn:hover {
+    background-color: #3e5a3e !important;
+    transform: translateY(-2px);
+}
+
+/* De Footer */
+.site-footer {
+    background-color: #2c3e50 !important;
+    color: white !important;
+    padding: 60px 20px 20px !important;
+    margin-top: 60px;
+}
+
+.footer-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+}
+
+.footer-column {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+}
+
+.social-icons {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.social-icon {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.1);
+    color: white !important;
+    border-radius: 50%;
+    font-size: 18px;
+}
+
+.social-icon:hover {
+    background-color: #4a6c4a !important;
+}
