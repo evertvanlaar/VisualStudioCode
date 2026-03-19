@@ -391,62 +391,91 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     margin: 0 !important;
 }
 
-/* DE FOOTER - DEZELFDE KLEUR ALS DE OVERLAY */
+/* =========================================
+   DEFINITIEVE FOOTER FIX
+   ========================================= */
 .site-footer {
-    background-color: #232f3e !important; /* Een diepe, neutrale donkere kleur */
+    background-color: #232f3e !important; /* Diep donkerblauw */
     color: #ffffff !important;
     padding: 60px 0 30px 0 !important;
     margin-top: 80px !important;
+    width: 100% !important;
+    font-family: sans-serif !important;
 }
 
 .footer-container {
     max-width: 1100px !important;
     margin: 0 auto !important;
     display: flex !important;
+    flex-wrap: wrap !important;
     justify-content: space-between !important;
     padding: 0 20px !important;
 }
 
 .footer-column {
     flex: 1 !important;
+    min-width: 250px !important; /* Voorkomt dat ze te dicht op elkaar kruipen */
+    margin-bottom: 30px !important;
     display: flex !important;
     flex-direction: column !important;
-    align-items: flex-start !important;
+    align-items: flex-start !important; /* Alles strak naar links */
+    text-align: left !important;
 }
 
 .footer-column h3 {
-    color: #ffffff !important;
-    font-size: 18px !important;
     margin-bottom: 20px !important;
+    font-size: 18px !important;
     font-weight: 700 !important;
+    color: #ffffff !important;
 }
 
-.footer-column p, .footer-column a {
-    color: #ced4da !important; /* Iets zachter wit voor de tekst */
+.footer-column p {
     font-size: 14px !important;
     line-height: 1.6 !important;
-    text-decoration: none !important;
+    color: #ced4da !important;
+    margin: 0 !important;
 }
 
-/* Facebook Icoon in jouw Groen */
+.footer-column ul {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.footer-column ul li {
+    margin-bottom: 10px !important;
+}
+
+.footer-column ul li a {
+    color: #ced4da !important;
+    text-decoration: none !important;
+    transition: 0.3s !important;
+}
+
+.footer-column ul li a:hover {
+    color: #4a6c4a !important; /* Jouw groen */
+}
+
+/* Facebook Icoon Fix */
 .social-icon {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 42px !important;
-    height: 42px !important;
-    background-color: #4a6c4a !important; /* Direct jouw groen! */
+    width: 40px !important;
+    height: 40px !important;
+    background-color: #4a6c4a !important; /* Direct jouw groen */
     color: #ffffff !important;
     border-radius: 50% !important;
-    margin-top: 10px !important;
-    font-size: 20px !important;
+    text-decoration: none !important;
+    margin-top: 5px !important;
 }
 
 .footer-bottom {
+    width: 100% !important;
     text-align: center !important;
-    margin-top: 50px !important;
     border-top: 1px solid rgba(255,255,255,0.1) !important;
+    margin-top: 40px !important;
     padding-top: 20px !important;
-    font-size: 12px !important;
     color: #868e96 !important;
+    font-size: 12px !important;
 }
