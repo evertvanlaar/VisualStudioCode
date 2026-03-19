@@ -213,3 +213,100 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
         justify-content: center;
     }
 }
+
+/* Navigatiebalk */
+.main-nav {
+    background-color: #ffffff;
+    padding: 15px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 800;
+    color: #2c3e50;
+    text-transform: uppercase;
+}
+
+.logo span {
+    color: #4a6c4a; /* Jouw kenmerkende groen */
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: #4a6c4a;
+}
+
+/* Hero Sectie met Foto */
+.hero-section {
+    width: 100%;
+    height: 60vh; /* 60% van de schermhoogte */
+    min-height: 400px;
+    /* VERVANG DE LINK HIERONDER DOOR JE EIGEN FOTO URL */
+    background-image: url('villageoverview.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: scroll; /* Kan op 'fixed' voor een parallax effect */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Donker laagje over de foto zodat tekst leesbaar is */
+.hero-overlay {
+    background: rgba(0, 0, 0, 0.3); 
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    padding: 0 20px;
+}
+
+.hero-overlay h1 {
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+}
+
+.hero-overlay p {
+    font-size: 20px;
+    font-weight: 400;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+}
+
+/* Mobiele aanpassing */
+@media (max-width: 768px) {
+    .nav-links { display: none; } /* Simpele oplossing voor nu, of gebruik een menu icoon */
+    .hero-overlay h1 { font-size: 32px; }
+}
