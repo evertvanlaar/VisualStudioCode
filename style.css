@@ -479,3 +479,29 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     color: #868e96 !important;
     font-size: 12px !important;
 }
+
+/* Styling voor het Tally formulier */
+.form-section {
+    display: flex;
+    justify-content: center;
+    padding: 60px 20px; /* Ruimte boven en onder het formulier */
+    background-color: #f9f9f9; /* Optioneel: een lichte achtergrondkleur om het formulier heen */
+}
+
+.form-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto; /* Extra zekerheid voor centreren */
+    background: #ffffff;
+    padding: 20px; /* Iets meer ademruimte voor de velden */
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    
+    /* Zorg dat de inhoud van de container zelf ook gecentreerd wordt */
+    text-align: center; 
+}
+
+/* Zorg dat de iframe netjes binnen de container blijft */
+.form-container iframe {
+    border-radius: 8px;
+}
