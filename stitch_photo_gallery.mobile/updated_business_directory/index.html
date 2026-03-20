@@ -129,7 +129,7 @@
                 grid.className = 'business-grid';
                 
                 grouped[category].sort((a, b) => a.Name.localeCompare(b.Name)).forEach(biz => {
-                    const rawUrl = biz.Description || '';
+                    const rawUrl = biz.Website || '';
                     const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
                     const displayUrl = rawUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
                     const catColor = getColor(category);
