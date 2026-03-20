@@ -570,3 +570,66 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
         padding: 0 20px !important;
     }
 }
+
+/* --- HAMBURGER MENU STYLING --- */
+@media screen and (max-width: 768px) {
+    .menu-toggle {
+        display: flex !important;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 30px;
+        height: 21px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        z-index: 10001;
+    }
+
+    .bar {
+        height: 3px;
+        width: 100%;
+        background-color: var(--dark-blue);
+        border-radius: 10px;
+        transition: 0.3s;
+    }
+
+    .nav-links {
+        display: none !important; /* Standaard dicht op mobiel */
+        flex-direction: column;
+        position: absolute;
+        top: 60px; /* Precies onder de header */
+        left: 0;
+        width: 100%;
+        background: white;
+        padding: 20px;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        z-index: 9998;
+    }
+
+    /* Als het menu de class 'active' krijgt (via JS), toon het dan */
+    .nav-links.active {
+        display: flex !important;
+    }
+
+    .nav-links li {
+        margin: 15px 0;
+        text-align: center;
+    }
+}
+
+/* Verberg de hamburger op PC */
+@media screen and (min-width: 769px) {
+    .menu-toggle { display: none; }
+    /* Animatie naar een X */
+.menu-toggle.is-active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.is-active .bar:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.menu-toggle.is-active .bar:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+}
