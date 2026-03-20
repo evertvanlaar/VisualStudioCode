@@ -639,3 +639,31 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     transform: translateY(-9px) rotate(-45deg);
 }
 }
+
+/* --- CATEGORIE BUTTONS MOBIEL FIX --- */
+@media (max-width: 768px) {
+    .filter-container {
+        display: flex !important;
+        overflow-x: auto !important; /* Maakt horizontaal scrollen mogelijk */
+        white-space: nowrap !important; /* Voorkomt dat knoppen onder elkaar springen */
+        padding: 10px 20px !important; /* Geeft links en rechts ruimte (lost wegvallen op) */
+        gap: 10px !important;
+        justify-content: flex-start !important; /* Start altijd links */
+        -webkit-overflow-scrolling: touch; /* Zorgt voor soepel scrollen op iPhone */
+        
+        /* Verberg de scrollbar voor een strakker uiterlijk */
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
+    }
+
+    /* Verberg scrollbar voor Chrome, Safari en Opera */
+    .filter-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .filter-btn {
+        flex-shrink: 0 !important; /* Voorkomt dat knoppen worden platgedrukt */
+        padding: 8px 16px !important;
+        font-size: 14px !important;
+    }
+}
