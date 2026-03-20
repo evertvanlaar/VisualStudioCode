@@ -1,144 +1,124 @@
-/* 1. VARIABELEN & BASIS */
+/* 1. BASIS & VARIABELEN */
 :root {
-    --primary: #4a6c4a;      /* Jouw groene accentkleur */
+    --primary: #4a6c4a;
     --primary-dark: #3e5a3e;
-    --secondary: #2c3e50;    /* Donkerblauwe/grijze basis */
+    --secondary: #2c3e50;
     --bg: #f8fafc;
     --card: #ffffff;
     --text: #1e293b;
     --muted: #64748b;
     --border: #e2e8f0;
-    --shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
 
-body { 
-    font-family: 'Inter', 'Segoe UI', sans-serif; 
-    background: var(--bg); 
-    color: var(--text); 
-    overflow-x: hidden;
+/* 2. LAYOUT CONTAINERS */
+.main-container { 
+    width: 100%; 
+    max-width: 1100px; 
+    margin: 0 auto; 
+    padding: 20px; 
+}
+
+/* 3. GRID SYSTEM (De PC Hersteller) */
+#business-list {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)) !important; /* Forceert kolommen op PC */
+    gap: 20px !important;
+    width: 100% !important;
+}
+
+/* 4. BUSINESS CARD (PC STYLE) */
+.biz-card-mini {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex !important; /* Foto links, content rechts */
+    height: 150px !important; /* Vaste hoogte voor uniformiteit */
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+}
+
+.biz-card-mini:hover { transform: translateY(-2px); }
+
+/* FOTO LINKS */
+.mini-preview {
+    width: 160px !important; /* Breedte van de foto op PC */
+    height: 100% !important;
+    flex-shrink: 0;
+}
+
+.mini-preview img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-/* 2. NAVIGATIE */
-.main-nav {
-    background-color: #ffffff;
-    padding: 15px 0;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.nav-container {
-    max-width: 1100px;
-    margin: 0 auto;
+/* CONTENT RECHTS */
+.mini-content {
+    flex: 1;
+    padding: 15px;
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
+    min-width: 0; /* Voorkomt tekst-overflow */
 }
 
-.logo { font-size: 24px; font-weight: 800; color: var(--secondary); text-transform: uppercase; text-decoration: none; }
-.logo span { color: var(--primary); }
+.biz-name { font-size: 17px; font-weight: 700; color: var(--secondary); margin-bottom: 4px; }
 
-.nav-links { list-style: none; display: flex; gap: 30px; }
-.nav-links a { text-decoration: none; color: var(--secondary); font-weight: 600; transition: 0.3s; }
-.nav-links a:hover { color: var(--primary); }
+.mini-web-link {
+    font-size: 12px;
+    color: #0077cc;
+    text-decoration: none;
+    font-weight: 700;
+    background: #eff6ff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 8px;
+}
 
-/* 3. HERO SECTIE */
-.hero-section {
-    width: 100%;
-    height: 60vh;
-    min-height: 400px;
-    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('villageoverview.jpg');
-    background-size: cover;
-    background-position: center;
+/* ACTIES & ICONEN */
+.mini-actions { display: flex; justify-content: space-between; align-items: center; }
+.phone-group { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.action-right { display: flex; gap: 10px; }
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    background: #f1f5f9;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    text-align: center;
-}
-
-.hero-content h1 { font-size: 48px; font-weight: 800; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); margin-bottom: 10px; }
-.hero-content p { font-size: 20px; text-shadow: 1px 1px 5px rgba(0,0,0,0.5); margin-bottom: 25px; }
-
-/* 4. ZOEKBALK & FILTERS */
-.main-container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
-
-.search-container { position: relative; max-width: 500px; margin: 0 auto 30px; }
-.search-input { width: 100%; padding: 14px 45px; border-radius: 50px; border: 1px solid var(--border); box-shadow: var(--shadow); outline: none; }
-
-.add-business-container { text-align: center; margin-bottom: 40px; }
-.add-biz-btn { 
-    display: inline-block; 
-    background: var(--primary); 
-    color: white; 
-    padding: 12px 28px; 
-    border-radius: 8px; 
-    text-decoration: none; 
-    font-weight: 700; 
-    transition: 0.3s; 
-}
-.add-biz-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
-
-/* 5. BUSINESS GRID & CARDS (PC FIX) */
-.business-grid { 
-    display: grid; 
-    /* Fix: repeat(auto-fill, minmax(400px, 1fr)) zorgt voor meerdere kolommen op PC */
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); 
-    gap: 25px; 
-}
-
-.biz-card-mini { 
-    background: var(--card); 
-    border-radius: 12px; 
-    display: flex; 
-    overflow: hidden; 
-    border: 1px solid var(--border); 
-    box-shadow: var(--shadow);
-    /* Fix: Vaste hoogte teruggezet voor PC-weergave */
-    height: 140px; 
-    width: 100%; /* Vult de grid-kolom breedte */
-}
-
-.mini-preview { 
-    /* Fix: Vaste breedte teruggezet */
-    width: 120px; 
-    height: 100%;
-    flex-shrink: 0; 
-}
-.mini-preview img { width: 100%; height: 100%; object-fit: cover; }
-
-.mini-content { flex: 1; padding: 15px; display: flex; flex-direction: column; justify-content: space-between; }
-.biz-name { font-size: 16px; font-weight: 700; color: var(--secondary); margin-bottom: 3px; }
-
-.mini-web-link { 
-    font-size: 11px; 
-    color: #0077cc; 
-    text-decoration: none; 
-    font-weight: 700; 
-    background: #eff6ff; 
-    padding: 3px 8px; 
-    border-radius: 5px; 
-    align-self: flex-start;
-}
-
-.mini-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
-.action-right { display: flex; gap: 8px; }
-
-.btn-icon { 
-    width: 32px; height: 32px; background: var(--bg); border-radius: 50%; 
-    display: flex; align-items: center; justify-content: center; color: var(--muted); text-decoration: none; 
+    text-decoration: none;
+    color: var(--muted);
 }
 .review-btn { color: #f1c40f; background: #fef9e7; }
 
-/* 6. FORMULIER SECTIE */
-.form-section { padding: 60px 20px; background: var(--bg); display: flex; justify-content: center; }
-.form-container { width: 100%; max-width: 800px; background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow); }
+/* 5. MOBIEL (De "Netjes Onder Elkaar" Fix) */
+@media (max-width: 768px) {
+    #business-list {
+        grid-template-columns: 1fr !important; /* 1 kolom op mobiel */
+        padding: 10px;
+    }
 
-/* 7. FOOTER */
-.site-footer { background: var(--secondary); color: white; padding: 60px 20px 20px; margin-top: 80px; }
-.footer-
+    .biz-card-mini {
+        flex-direction: column !important; /* Foto boven, tekst onder op mobiel */
+        height: auto !important; /* Laat de kaart groeien met de tekst */
+    }
+
+    .mini-preview {
+        width: 100% !important;
+        height: 180px !important;
+    }
+
+    .mini-content {
+        padding: 20px;
+    }
+}
+
+/* 6. OVERIGE ELEMENTEN (Nav/Hero/Footer) */
+/* Behoud hier de styling van je navigatie en footer zoals je die mooi vond */
