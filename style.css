@@ -573,8 +573,9 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 
 /* --- HAMBURGER MENU STYLING --- */
 @media screen and (max-width: 768px) {
+/* De knop zelf */
     .menu-toggle {
-        display: flex !important;
+        display: flex !important; /* Forceer zichtbaarheid */
         flex-direction: column;
         justify-content: space-between;
         width: 30px;
@@ -582,13 +583,18 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
         background: transparent;
         border: none;
         cursor: pointer;
-        z-index: 10001;
+        position: relative;
+        z-index: 10001 !important; /* Altijd bovenop */
+        padding: 0;
+        margin-right: 15px;
     }
 
+/* De drie streepjes */
     .bar {
+        display: block !important;
         height: 3px;
         width: 100%;
-        background-color: var(--dark-blue);
+        background-color: #333333 !important; /* Donkergrijs/Zwart */
         border-radius: 10px;
         transition: 0.3s;
     }
