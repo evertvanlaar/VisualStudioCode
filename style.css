@@ -1,92 +1,45 @@
-/* 1. RESET & BASIS (Anti-Overflow) */
 :root {
-    --primary: #0077cc;
-    --green: #4a6c4a;
-    --dark-blue: #232f3e;
-    --bg: #f8fafc;
-    --card: #ffffff;
-    --text: #1e293b;
-    --muted: #64748b;
-    --border: #e2e8f0;
+    --primary: #0077cc; --bg: #f8fafc; --card: #ffffff; --text: #1e293b;
+    --muted: #64748b; --pill: #f1f5f9; --green: #4a6c4a; --border: #e2e8f0;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 20px; color: var(--text); }
+.main-container { width: 100%; max-width: 1100px; margin: 0 auto; }
+h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px; }
 
-html, body {
-    overflow-x: hidden;
-    width: 100%;
-    background: var(--bg);
-    font-family: 'Inter', sans-serif;
-}
+.search-container { position: relative; margin-bottom: 20px; max-width: 500px; margin-inline: auto; }
+.search-input { width: 100%; padding: 12px 45px; border-radius: 50px; border: 1px solid var(--border); outline: none; }
+.search-icon { position: absolute; left: 18px; top: 15px; color: #94a3b8; }
 
-/* 2. CONTAINERS */
-.main-container {
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 20px;
-}
+.filter-container { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; justify-content: center; padding-bottom: 10px; }
+.filter-btn { padding: 8px 18px; border-radius: 20px; border: none; background: #e2e8f0; cursor: pointer; font-weight: 600; font-size: 13px; white-space: nowrap; }
+.filter-btn.active { background: var(--green); color: white; }
 
-/* 3. DE GRID (Vastgezet op 2 kolommen voor PC) */
-.business-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    width: 100%;
-    margin-bottom: 40px;
-}
+.category-section-header { width: 100%; margin: 30px 0 15px 0; display: flex; align-items: center; gap: 15px; font-size: 13px; font-weight: 800; color: var(--muted); text-transform: uppercase; }
+.category-section-header i { color: var(--text); font-size: 16px; }
+.category-section-header::after { content: ""; flex-grow: 1; height: 2px; background: #e2e8f0; }
 
-/* 4. HET KAARTJE (PC-STYLING) */
-.biz-card-mini {
-    background: var(--card);
-    border-radius: 12px;
-    display: flex; /* Foto links, tekst rechts op PC */
-    height: 160px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    width: 100%;
-}
+.business-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
 
-.mini-preview {
-    width: 150px;
-    height: 100%;
-    flex-shrink: 0;
-}
-.mini-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+.biz-card-mini { background: var(--card); border-radius: 10px; padding: 12px; display: flex; gap: 14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); position: relative; align-items: center; border: 1px solid var(--border); }
 
-.mini-content {
-    flex: 1;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-width: 0; /* Laat tekst afkappen ipv kaartje breder maken */
-}
+.mini-preview { width: 90px; height: 68px; flex-shrink: 0; border-radius: 6px; overflow: hidden; border: 1px solid #f1f5f9; }
+.mini-preview img { width: 100%; height: 100%; object-fit: cover; }
 
-.biz-name {
-    font-size: 16px;
-    font-weight: 700;
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+.mini-content { flex: 1; display: flex; flex-direction: column; gap: 6px; overflow: hidden; }
+.mini-row-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.biz-name { margin: 0; font-size: 15px; font-weight: 700; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.mini-web-link {
-    font-size: 11px;
-    color: var(--primary);
-    text-decoration: none;
-    font-weight: 700;
-    background: #eff6ff;
-    padding: 3px 8px;
-    border-radius: 5px;
-    display: inline-block;
-}
+.mini-web-link { font-size: 11px; color: var(--primary); text-decoration: none; font-weight: 700; background: #eff6ff; padding: 3px 8px; border-radius: 5px; white-space: nowrap; }
+
+.mini-actions { display: flex; justify-content: space-between; align-items: center; }
+.phone-group { display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 3px 10px; border-radius: 6px; border: 1px solid #f1f5f9; }
+.phone-txt { font-size: 12px; font-weight: 600; }
+.copy-btn { background: none; border: none; cursor: pointer; color: #94a3b8; font-size: 12px; }
+
+.btn-icon { width: 30px; height: 30px; background: var(--pill); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--muted); text-decoration: none; font-size: 13px; }
+
+@media (max-width: 850px) { .business-grid { grid-template-columns: 1fr; } }
 
 .mini-actions {
     display: flex;
@@ -94,74 +47,450 @@ html, body {
     align-items: center;
 }
 
-.phone-group { display: flex; align-items: center; gap: 5px; }
-.phone-txt { font-size: 12px; font-weight: 600; color: var(--muted); }
-.copy-btn { background: none; border: none; cursor: pointer; color: #94a3b8; }
+.action-right {
+    display: flex;
+    gap: 8px; /* Ruimte tussen ster-icoon en locatie-icoon */
+}
 
-.action-right { display: flex; gap: 8px; }
-.btn-icon {
-    width: 32px;
-    height: 32px;
-    background: #f1f5f9;
-    border-radius: 50%;
+.review-btn {
+    color: #f1c40f; /* Goudkleur voor het sterretje */
+    background: #fef9e7; /* Zachte gele achtergrond */
+}
+
+.review-btn:hover {
+    background: #f1c40f !important;
+    color: white !important;
+}
+
+.add-business-container {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.add-biz-btn {
+    display: inline-block;
+    /* De exacte kleur van je 'Alles' button */
+    background-color: #4a6c4a !important; 
+    color: #ffffff !important;
+    
+    /* Styling gebaseerd op je filters */
+    padding: 10px 22px;
+    border-radius: 8px; /* Filters in je screenshot zijn licht afgerond, niet 100% rond */
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.2s ease;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.add-biz-btn:hover {
+    /* Een fractie lichter of donkerder voor de interactie */
+    background-color: #3e5a3e !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.site-footer {
+    background-color: #2c3e50; /* Een chique donkergrijze/blauwe kleur */
+    color: #ffffff;
+    padding: 40px 20px;
+    text-align: center;
+    margin-top: 50px; /* Zorgt voor ruimte tussen je content en de footer */
+    font-family: sans-serif;
+}
+
+.footer-content p {
+    margin-bottom: 15px;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.footer-links a {
+    color: #ffffff;
+    text-decoration: none;
+    margin: 0 15px;
+    font-size: 14px;
+    transition: color 0.3s;
+    opacity: 0.6;
+}
+
+.footer-links a:hover {
+    color: #4a6c4a; /* Hier gebruiken we weer je 'Alles' button-groen voor de hover! */
+    opacity: 1;
+}
+
+.site-footer {
+    background-color: #2c3e50;
+    color: #ffffff;
+    padding: 60px 20px 20px;
+    margin-top: 50px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.footer-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+}
+
+.footer-column h3 {
+    color: #ffffff;
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.footer-column p {
+    font-size: 14px;
+    line-height: 1.6;
+    opacity: 0.8;
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-column ul li {
+    margin-bottom: 10px;
+}
+
+.footer-column ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    opacity: 0.7;
+    transition: 0.3s;
+}
+
+.footer-column ul li a:hover {
+    color: #4a6c4a; /* Jouw 'Alles' button groen */
+    opacity: 1;
+}
+
+/* Social Media Styling */
+.social-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.social-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--muted);
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border-radius: 50%;
     text-decoration: none;
+    transition: 0.3s;
 }
-.review-btn { color: #f1c40f; background: #fef9e7; }
 
-/* 5. HEADER & FOOTER HERSTEL */
-.main-nav { background: white; padding: 15px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
-.nav-container { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
-.logo { font-size: 24px; font-weight: 800; text-decoration: none; color: #2c3e50; }
-.logo span { color: var(--green); }
-.nav-links { display: flex; gap: 20px; list-style: none; }
-.nav-links a { text-decoration: none; color: #333; font-weight: 600; }
+.social-icon:hover {
+    background: #4a6c4a; /* Jouw groene accentkleur */
+    transform: translateY(-3px);
+}
 
-.hero-section { height: 350px; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; width: 100%; }
-.hero-overlay { text-align: center; color: white; background: rgba(0,0,0,0.3); width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+.footer-bottom {
+    text-align: center;
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 13px;
+    opacity: 0.5;
+}
 
-.site-footer { background: var(--dark-blue); color: white; padding: 50px 20px; margin-top: 50px; width: 100%; }
-.footer-container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
-.footer-column h3 { color: white; margin-bottom: 15px; }
-.footer-column ul { list-style: none; }
-.footer-column a { color: #ced4da; text-decoration: none; font-size: 14px; line-height: 2; }
-
-/* 6. DE MOBIELE FIX (HET BELANGRIJKSTE) */
+/* Mobiel: kolommen onder elkaar */
 @media (max-width: 768px) {
-    .nav-links { display: none; }
-
-    .business-grid {
-        grid-template-columns: 1fr; /* 1 kaartje per rij */
-        gap: 15px;
+    .footer-container {
+        text-align: center;
     }
-
-    .biz-card-mini {
-        flex-direction: column; /* Foto boven, tekst onder */
-        height: auto; /* Laat het kaartje groeien zodat info zichtbaar is */
-        min-height: 280px; 
+    .social-icons {
+        justify-content: center;
     }
+}
 
-    .mini-preview {
-        width: 100%;
-        height: 160px; /* Vaste hoogte voor de foto */
-    }
+/* Navigatiebalk */
+.main-nav {
+    background-color: #ffffff;
+    padding: 15px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
 
-    .mini-content {
-        width: 100%;
-        height: auto;
-        padding: 15px;
-        gap: 10px;
-    }
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
 
-    .mini-row-top {
-        margin-bottom: 5px;
-    }
+.logo {
+    font-size: 24px;
+    font-weight: 800;
+    color: #2c3e50;
+    text-transform: uppercase;
+}
 
-    .biz-name {
-        white-space: normal; /* Naam mag op mobiel op 2 regels */
-        font-size: 18px;
-    }
+.logo span {
+    color: #4a6c4a; /* Jouw kenmerkende groen */
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: #4a6c4a;
+}
+
+/* Hero Sectie met Foto */
+.hero-section {
+    width: 100%;
+    height: 60vh; /* 60% van de schermhoogte */
+    min-height: 400px;
+    /* VERVANG DE LINK HIERONDER DOOR JE EIGEN FOTO URL */
+    background-image: url('villageoverview.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: scroll; /* Kan op 'fixed' voor een parallax effect */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Donker laagje over de foto zodat tekst leesbaar is */
+.hero-overlay {
+    background: rgba(0, 0, 0, 0.3); 
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    padding: 0 20px;
+}
+
+.hero-overlay h1 {
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+}
+
+.hero-overlay p {
+    font-size: 20px;
+    font-weight: 400;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+}
+
+/* Mobiele aanpassing */
+@media (max-width: 768px) {
+    .nav-links { display: none; } /* Simpele oplossing voor nu, of gebruik een menu icoon */
+    .hero-overlay h1 { font-size: 32px; }
+}
+
+/* =========================================
+   NIEUWE ONDERDELEN (HEADER, BUTTON, FOOTER)
+   ========================================= */
+
+/* De navigatiebalk */
+.main-nav {
+    background-color: #ffffff !important;
+    padding: 15px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+
+/* De groene aanmeldknop */
+.add-biz-btn {
+    display: inline-block !important;
+    background-color: #4a6c4a !important; 
+    color: white !important;
+    padding: 12px 25px !important;
+    border-radius: 8px !important;
+    text-decoration: none !important;
+    font-weight: 700 !important;
+    transition: 0.3s;
+}
+
+.add-biz-btn:hover {
+    background-color: #3e5a3e !important;
+    transform: translateY(-2px);
+}
+/* =========================================
+   VOLLEDIGE HEADER & FOOTER FIX
+   ========================================= */
+
+/* De navigatiebalk bovenaan */
+.main-nav {
+    background-color: #ffffff !important;
+    padding: 15px 0 !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+    position: sticky !important;
+    top: 0;
+    z-index: 9999;
+}
+
+/* DE FOTO SECTIE - LET OP DE LINK HIERONDER */
+.hero-section {
+    width: 100% !important;
+    height: 65vh !important; /* Iets hoger voor meer impact */
+    min-height: 450px !important;
+    /* VERVANG DE LINK HIERONDER DOOR JOUW FOTO URL */
+    background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('villageoverview.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    /* Extra scherpte-boost */
+    image-rendering: -webkit-optimize-contrast;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #ffffff !important;
+}
+
+.hero-overlay h1 {
+    font-size: 48px !important;
+    font-weight: 800 !important;
+    text-shadow: 2px 2px 15px rgba(0,0,0,0.6) !important;
+    margin: 0 !important;
+}
+
+/* =========================================
+   DEFINITIEVE FOOTER FIX
+   ========================================= */
+.site-footer {
+    background-color: #232f3e !important; /* Diep donkerblauw */
+    color: #ffffff !important;
+    padding: 60px 0 30px 0 !important;
+    margin-top: 80px !important;
+    width: 100% !important;
+    font-family: sans-serif !important;
+}
+
+.footer-container {
+    max-width: 1100px !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+    padding: 0 20px !important;
+}
+
+.footer-column {
+    flex: 1 !important;
+    min-width: 250px !important; /* Voorkomt dat ze te dicht op elkaar kruipen */
+    margin-bottom: 30px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important; /* Alles strak naar links */
+    text-align: left !important;
+}
+
+.footer-column h3 {
+    margin-bottom: 20px !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+}
+
+.footer-column p {
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    color: #ced4da !important;
+    margin: 0 !important;
+}
+
+.footer-column ul {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.footer-column ul li {
+    margin-bottom: 10px !important;
+}
+
+.footer-column ul li a {
+    color: #ced4da !important;
+    text-decoration: none !important;
+    transition: 0.3s !important;
+}
+
+.footer-column ul li a:hover {
+    color: #4a6c4a !important; /* Jouw groen */
+}
+
+/* Facebook Icoon Fix */
+.social-icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 40px !important;
+    height: 40px !important;
+    background-color: #4a6c4a !important; /* Direct jouw groen */
+    color: #ffffff !important;
+    border-radius: 50% !important;
+    text-decoration: none !important;
+    margin-top: 5px !important;
+}
+
+.footer-bottom {
+    width: 100% !important;
+    text-align: center !important;
+    border-top: 1px solid rgba(255,255,255,0.1) !important;
+    margin-top: 40px !important;
+    padding-top: 20px !important;
+    color: #868e96 !important;
+    font-size: 12px !important;
+}
+
+/* Styling voor het Tally formulier */
+.form-section {
+    display: flex;
+    justify-content: center;
+    padding: 60px 20px; /* Ruimte boven en onder het formulier */
+    background-color: #f9f9f9; /* Optioneel: een lichte achtergrondkleur om het formulier heen */
+}
+
+.form-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto; /* Extra zekerheid voor centreren */
+    background: #ffffff;
+    padding: 20px; /* Iets meer ademruimte voor de velden */
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    
+    /* Zorg dat de inhoud van de container zelf ook gecentreerd wordt */
+    text-align: center; 
+}
+
+/* Zorg dat de iframe netjes binnen de container blijft */
+.form-container iframe {
+    border-radius: 8px;
 }
