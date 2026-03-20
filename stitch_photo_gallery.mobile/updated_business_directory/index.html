@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="600">
+    <title>Premium Business Directory - Reviews Edit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<header class="site-header">
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="logo">Kala Nera<span>.gr</span></div>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="t-form.html" class="nav-button">Register</a></li>
+                <li><a href="#">Discover</a></li>
+                <li><a href="#">Accommodations</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="hero-section">
+        <div class="hero-overlay">
+            <h1>Discover the Magic of Pilion</h1>
+            <p>Seen from the sky, the village is even more beautiful....</p>
+        </div>
+    </div>
+</header>
+
+    <div class="main-container">
+        <h1>Business Directory</h1>
+
+        <div class="add-business-container">
+            <a href="t-form.html" target="_blank" class="add-biz-btn">
+                <i class="fa fa-plus-circle"></i> Register Company
+            </a>
+        </div>
+
+        <div class="search-container">
+            <i class="fa fa-search search-icon"></i>
+            <input type="text" class="search-input" id="search-input" placeholder="Search by name or category...">
+        </div>
+
+        <div class="filter-container" id="filter-buttons"></div>
+
+        <div id="business-list">
+            <p class="status-msg">Data is loading...</p>
+        </div>
+    </div>
+
+    <script>
+        const N8N_WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/local-businesses';
+        let allBusinesses = []; 
+        let activeCategory = 'all';
+
+        // Icon Map
+        const iconMap = {
+            'Bakery': 'fa-bread-slice', 'Bakker': 'fa-bread-slice', 'Cafe': 'fa-coffee', 'Koffie': 'fa-coffee',
+            'Restaurant': 'fa-utensils', 'Eten': 'fa-utensils', 'Bar': 'fa-glass-cheers', 'Pub': 'fa-beer',
+            'Shop': 'fa-shopping-cart', 'Winkel': 'fa-shopping-bag', 'Supermarket': 'fa-shopping-basket',
+            'Hotel': 'fa-bed', 'B&B': 'fa-hotel', 'Camping': 'fa-campground', 'Beauty': 'fa-spa',
+            'Kapper': 'fa-cut', 'Sport': 'fa-running', 'Pharmacy': 'fa-pills', 'Garage': 'fa-car'
+        };
+
+        function getIcon(cat) {
+            const key = Object.keys(iconMap).find(k => cat.toLowerCase().includes(k.toLowerCase()));
+            return `<i class="fa ${key ? iconMap[key] : 'fa-tag'}"></i>`;
+        }
+
+        function getColor(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            return `hsl(${Math.abs(hash) % 360}, 60%, 45%)`;
+        }
+
+        async function init() {
+            try {
+                const response = await fetch(N8N_WEBHOOK_URL);
+                const rawData = await response.json();
+                allBusinesses = rawData.filter(biz => biz.Status === 'Active');
+                generateCategoryButtons(allBusinesses);
+                renderBusinesses(allBusinesses);
+            } catch (error) {
+                document.getElementById('business-list').innerHTML = '<p class="status-msg">Fout bij laden.</p>';
+            }
+        }
+
+        function generateCategoryButtons(data) {
+            const container = document.getElementById('filter-buttons');
+            const categories = [...new Set(data.map(biz => biz.Category).filter(cat => cat))].sort();
+            let html = `<button class="filter-btn active" data-category="all">Alles</button>`;
+            categories.forEach(cat => {
+                html += `<button class="filter-btn" data-category="${cat}">${cat}</button>`;
+            });
+            container.innerHTML = html;
+            container.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    activeCategory = e.target.getAttribute('data-category');
+                    applyFilters();
+                });
+            });
+        }
+
+        function renderBusinesses(data) {
+            const container = document.getElementById('business-list');
+            container.innerHTML = '';
+
+            const grouped = data.reduce((acc, biz) => {
+                const cat = biz.Category || 'Overig';
+                if (!acc[cat]) acc[cat] = [];
+                acc[cat].push(biz);
+                return acc;
+            }, {});
+
+            Object.keys(grouped).sort().forEach(category => {
+                const header = document.createElement('div');
+                header.className = 'category-section-header';
+                header.innerHTML = `<span>${getIcon(category)} ${category} <small>(${grouped[category].length})</small></span>`;
+                container.appendChild(header);
+
+                const grid = document.createElement('div');
+                grid.className = 'business-grid';
+                
+                grouped[category].sort((a, b) => a.Name.localeCompare(b.Name)).forEach(biz => {
+                    const rawUrl = biz.Website || '';
+                    const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
+                    const displayUrl = rawUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
+                    const catColor = getColor(category);
+                    
+                    // DE NIEUWE REVIEW LINK:
+                    // We zoeken op Bedrijfsnaam + Locatie + "reviews"
+                    const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' ' + (biz.Location || '') + ' reviews')}`;
+                    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' ' + (biz.Location || ''))}`;
+
+                    grid.innerHTML += `
+                    <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
+                        <div class="mini-preview">
+                            <a href="${cleanUrl}" target="_blank">
+                                <img src="https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130" onerror="this.src='https://via.placeholder.com/180x130?text=No+Web'">
+                            </a>
+                        </div>
+                        <div class="mini-content">
+                            <div class="mini-row-top">
+                                <h2 class="biz-name">${biz.Name}</h2>
+                                <a href="${cleanUrl}" target="_blank" class="mini-web-link"><i class="fa fa-external-link"></i> ${displayUrl || 'Site'}</a>
+                            </div>
+                            <div class="mini-actions">
+                                <div class="phone-group">
+                                    <a href="tel:${biz.Phone}" class="btn-icon" title="Bellen"><i class="fa fa-phone"></i></a>
+                                    <span class="phone-txt">${biz.Phone || '-'}</span>
+                                    <button class="copy-btn" onclick="copyToClipboard('${biz.Phone}', this)"><i class="fa fa-copy"></i></button>
+                                </div>
+                                <div class="action-right">
+                                    <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn" title="Bekijk Reviews">
+                                        <i class="fa fa-star"></i>
+                                    </a>
+                                    <a href="${mapsUrl}" target="_blank" class="btn-icon" title="Navigeer">
+                                        <i class="fa fa-location-dot"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+                container.appendChild(grid);
+            });
+        }
+
+        function copyToClipboard(text, el) {
+            navigator.clipboard.writeText(text).then(() => {
+                const icon = el.querySelector('i');
+                icon.className = 'fa fa-check';
+                setTimeout(() => { icon.className = 'fa fa-copy'; }, 2000);
+            });
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const filtered = allBusinesses.filter(biz => {
+                const nameMatch = (biz.Name || "").toLowerCase().includes(searchTerm);
+                const categoryMatch = activeCategory === 'all' || biz.Category === activeCategory;
+                return nameMatch && categoryMatch;
+            });
+            renderBusinesses(filtered);
+        }
+
+        document.getElementById('search-input').addEventListener('input', applyFilters);
+        init();
+    </script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<footer class="site-footer">
+    <div class="footer-container">
+        <div class="footer-column">
+            <h3>About us</h3>
+            <p>We help travelers discover the best places in Pilion. From authentic taverns to the finest accommodations in Kala Nera and the surrounding area.</p>
+        </div>
+
+        <div class="footer-column">
+            <h3>Navigation</h3>
+            <ul>
+                <li><a href="#">Privacypolicy</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">About us</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-column">
+            <h3>Follow Us</h3>
+            <div class="social-icons">
+                <a href="https://www.facebook.com/kalanera.info" target="_blank" class="social-icon">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 10px; opacity: 0.6; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">
+        <a href="https://evertvanlaar.goatcounter.com" target="_blank" rel="noopener" title="Bezoekersstatistieken (Inloggen vereist)" style="text-decoration: none; color: inherit; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <img src="https://static.zgo.at/favicon/favicon-32x32.png" alt="GoatCounter" style="width: 16px; height: 16px;">
+            <span style="font-size: 12px; font-family: sans-serif;">Statistics</span>
+        </a>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2026 Kala Nera Business Directory (E-Project). All rights reserved.</p>
+    </div>
+</footer>
+
+<script data-goatcounter="https://evertvanlaar.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+
+</body>
+</html>

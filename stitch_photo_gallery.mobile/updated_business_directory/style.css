@@ -494,38 +494,3 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 .form-container iframe {
     border-radius: 8px;
 }
-
-/* --- Verbetering 1: Mobiele weergave van de kaartjes --- */
-@media (max-width: 768px) {
-    /* De lijst met bedrijven onder elkaar in 1 kolom */
-    #business-list {
-        display: grid !important;
-        grid-template-columns: 1fr !important;
-        gap: 15px !important;
-    }
-
-    /* Het kaartje zelf: foto boven, tekst onder */
-    .biz-card-mini {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        height: auto !important;
-        padding: 15px !important;
-    }
-
-    /* De foto over de volledige breedte van het kaartje */
-    .mini-preview {
-        width: 100% !important;
-        height: 180px !important; /* Iets hoger voor een mooie foto */
-        margin-bottom: 10px;
-    }
-
-    .mini-preview img {
-        width: 100% !important;
-        height: 100% !important;
-    }
-
-    /* De inhoud van het kaartje krijgt alle ruimte */
-    .mini-content {
-        width: 100% !important;
-    }
-}
