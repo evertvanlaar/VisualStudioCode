@@ -495,37 +495,91 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     border-radius: 8px;
 }
 
-/* --- Verbetering 1: Mobiele weergave van de kaartjes --- */
-@media (max-width: 768px) {
-    /* De lijst met bedrijven onder elkaar in 1 kolom */
-    #business-list {
+/* -- Verbetering 1: FORCEER mobiele weergave --- */
+@media screen and (max-width: 768px) {
+    /* We gebruiken 'body' ervoor om de prioriteit te verhogen */
+    body #business-list {
         display: grid !important;
         grid-template-columns: 1fr !important;
-        gap: 15px !important;
+        gap: 20px !important;
+        padding: 10px !important;
     }
 
-    /* Het kaartje zelf: foto boven, tekst onder */
-    .biz-card-mini {
+    body .biz-card-mini {
+        display: flex !important;
         flex-direction: column !important;
-        align-items: flex-start !important;
         height: auto !important;
-        padding: 15px !important;
-    }
-
-    /* De foto over de volledige breedte van het kaartje */
-    .mini-preview {
         width: 100% !important;
-        height: 180px !important; /* Iets hoger voor een mooie foto */
-        margin-bottom: 10px;
+        max-width: 100% !important;
+        margin-bottom: 15px !important;
     }
 
-    .mini-preview img {
+    body .mini-preview {
+        width: 100% !important;
+        height: 200px !important;
+        margin: 0 0 15px 0 !important;
+    }
+
+    body .mini-preview img {
         width: 100% !important;
         height: 100% !important;
+        object-fit: cover !important;
     }
 
-    /* De inhoud van het kaartje krijgt alle ruimte */
-    .mini-content {
+    body .mini-content {
         width: 100% !important;
+        padding: 0 10px 10px 10px !important;
     }
+}
+
+/* --- Stap 2: Fix voor schermbreedte en gelijke kaartjes --- */
+
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden; /* Voorkomt horizontaal scrollen/witte rand rechts */
+    width: 100%;
+}
+
+.main-container {
+    width: 100% !important;
+    max-width: 1100px !important;
+    margin: 0 auto !important;
+    padding: 0 15px !important; /* Geeft ademruimte aan de zijkant zonder te breed te worden */
+    box-sizing: border-box !important;
+}
+
+/* Forceer de grid naar gelijke kolommen */
+#business-list {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important; 
+    gap: 20px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Maak alle kaartjes identiek qua breedte en hoogte */
+.biz-card-mini {
+    display: flex !important;
+    width: 100% !important;
+    height: 140px !important; /* Vaste hoogte voor een strakke look op PC */
+    margin: 0 !important; /* Verwijder marges die de breedte verpesten */
+    box-sizing: border-box !important;
+    background: white !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+}
+
+/* Foto's in de kaartjes ook overal gelijk */
+.mini-preview {
+    width: 120px !important;
+    height: 100% !important;
+    flex-shrink: 0 !important;
+}
+
+.mini-preview img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
 }
