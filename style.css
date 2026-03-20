@@ -519,3 +519,35 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     width: 100% !important;
     box-sizing: border-box !important; /* Padding telt nu niet mee bij de breedte */
 }
+
+/* --- Header & Footer Breedbeeld Fix --- */
+
+/* 1. Maak de balken zelf 100% breed over het hele scherm */
+.main-nav, .site-header, .site-footer {
+    width: 100% !important;
+    max-width: none !important; /* Verwijder eventuele begrenzingen */
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* 2. Beperk alleen de INHOUD van de navigatiebalk */
+.nav-container {
+    max-width: 1100px !important; /* Zelfde breedte als je kaartjes-container */
+    margin: 0 auto !important;    /* Centreer de inhoud */
+    padding: 0 20px !important;   /* Beetje ademruimte aan de zijkant */
+    display: flex;
+    justify-content: space-between;
+}
+
+/* 3. Beperk de INHOUD van de footer */
+.footer-container {
+    max-width: 1100px !important; /* Zelfde breedte als je kaartjes-container */
+    margin: 0 auto !important;    /* Centreer de inhoud */
+    padding: 0 20px !important;
+}
+
+/* 4. De Hero (foto) sectie ook over de volle breedte */
+.hero-section {
+    width: 100% !important;
+    max-width: none !important;
+}
