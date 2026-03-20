@@ -1,138 +1,118 @@
-/* 1. BASIS RESET - STRIKT TEGEN OVERFLOW */
+/* 1. RESET & BASIS (Anti-Overflow) */
 :root {
     --primary: #0077cc;
     --green: #4a6c4a;
+    --dark-blue: #232f3e;
     --bg: #f8fafc;
     --card: #ffffff;
     --text: #1e293b;
     --muted: #64748b;
     --border: #e2e8f0;
-    --shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
 }
 
-* { 
-    box-sizing: border-box; 
-    margin: 0; 
-    padding: 0; 
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
-    overflow-x: hidden; /* Voorkomt zijwaarts scrollen */
+    overflow-x: hidden;
     width: 100%;
     background: var(--bg);
     font-family: 'Inter', sans-serif;
-    color: var(--text);
 }
 
 /* 2. CONTAINERS */
-.main-nav, .site-footer, .hero-section {
+.main-container {
     width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-.main-container { 
-    width: 100%; 
-    max-width: 1100px; 
-    margin: 0 auto; 
-    padding: 20px; 
-}
-
-/* 3. DE GRID - FORCEER DE BREEDTE */
-.business-grid { 
-    display: grid; 
-    grid-template-columns: repeat(2, 1fr); /* Precies 2 gelijke kolommen */
-    gap: 20px; 
+/* 3. DE GRID (Vastgezet op 2 kolommen voor PC) */
+.business-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
     margin-bottom: 40px;
-    width: 100%;
-    table-layout: fixed; /* Forceert dat kolommen niet groeien door tekst */
 }
 
-/* 4. HET KAARTJE - FORCEER GELIJKE HOOGTE EN BREEDTE */
+/* 4. HET KAARTJE (PC-STYLING) */
 .biz-card-mini {
     background: var(--card);
     border-radius: 12px;
-    display: flex;
-    height: 160px; /* Vaste hoogte voor uniformiteit op PC */
+    display: flex; /* Foto links, tekst rechts op PC */
+    height: 160px;
     overflow: hidden;
     border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    width: 100%; /* Blijf binnen de grid-kolom */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    width: 100%;
 }
 
-.mini-preview { 
-    width: 150px; 
-    height: 100%; 
-    flex-shrink: 0; 
+.mini-preview {
+    width: 150px;
+    height: 100%;
+    flex-shrink: 0;
 }
-.mini-preview img { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: cover; 
-}
-
-.mini-content { 
-    flex: 1; 
-    padding: 15px; 
-    display: flex; 
-    flex-direction: column; 
-    justify-content: space-between; 
-    min-width: 0; /* CRUCIAAL: laat flex-items kleiner worden dan hun tekstinhoud */
+.mini-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.mini-row-top {
-    display: block; /* Voorkom dat naam en link elkaar wegdrukken */
-    overflow: hidden;
+.mini-content {
+    flex: 1;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0; /* Laat tekst afkappen ipv kaartje breder maken */
 }
 
-.biz-name { 
-    font-size: 16px; 
-    font-weight: 700; 
-    margin: 0 0 5px 0;
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis; /* Plakt puntjes (...) achter te lange namen */
-    display: block;
-}
-
-.mini-web-link { 
-    font-size: 11px; 
-    color: var(--primary); 
-    text-decoration: none; 
-    font-weight: 700; 
-    background: #eff6ff; 
-    padding: 3px 8px; 
-    border-radius: 5px; 
-    display: inline-block;
-    max-width: 100%;
+.biz-name {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* 5. ACTIONS */
-.mini-actions { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-top: 10px;
+.mini-web-link {
+    font-size: 11px;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 700;
+    background: #eff6ff;
+    padding: 3px 8px;
+    border-radius: 5px;
+    display: inline-block;
 }
-.phone-group { display: flex; align-items: center; gap: 6px; }
+
+.mini-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.phone-group { display: flex; align-items: center; gap: 5px; }
 .phone-txt { font-size: 12px; font-weight: 600; color: var(--muted); }
 .copy-btn { background: none; border: none; cursor: pointer; color: #94a3b8; }
 
 .action-right { display: flex; gap: 8px; }
-.btn-icon { 
-    width: 32px; 
-    height: 32px; 
-    background: #f1f5f9; 
-    border-radius: 50%; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    color: var(--muted); 
-    text-decoration: none; 
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    background: #f1f5f9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    text-decoration: none;
 }
 .review-btn { color: #f1c40f; background: #fef9e7; }
 
-/* 6. HEADER & FOOTER (Kopieer dit exact) */
+/* 5. HEADER & FOOTER HERSTEL */
 .main-nav { background: white; padding: 15px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
 .nav-container { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
 .logo { font-size: 24px; font-weight: 800; text-decoration: none; color: #2c3e50; }
@@ -140,33 +120,48 @@ html, body {
 .nav-links { display: flex; gap: 20px; list-style: none; }
 .nav-links a { text-decoration: none; color: #333; font-weight: 600; }
 
-.hero-section { height: 350px; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; }
+.hero-section { height: 350px; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; width: 100%; }
 .hero-overlay { text-align: center; color: white; background: rgba(0,0,0,0.3); width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; }
 
-.site-footer { background: #232f3e; color: white; padding: 40px 20px; margin-top: 40px; }
+.site-footer { background: var(--dark-blue); color: white; padding: 50px 20px; margin-top: 50px; width: 100%; }
 .footer-container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+.footer-column h3 { color: white; margin-bottom: 15px; }
+.footer-column ul { list-style: none; }
+.footer-column a { color: #ced4da; text-decoration: none; font-size: 14px; line-height: 2; }
 
-/* 7. MOBIEL (De ultieme fix) */
+/* 6. DE MOBIELE FIX (HET BELANGRIJKSTE) */
 @media (max-width: 768px) {
     .nav-links { display: none; }
-    
-    .business-grid { 
-        grid-template-columns: 1fr; /* Altijd 1 kolom op mobiel */
+
+    .business-grid {
+        grid-template-columns: 1fr; /* 1 kaartje per rij */
+        gap: 15px;
+    }
+
+    .biz-card-mini {
+        flex-direction: column; /* Foto boven, tekst onder */
+        height: auto; /* Laat het kaartje groeien zodat info zichtbaar is */
+        min-height: 280px; 
+    }
+
+    .mini-preview {
         width: 100%;
+        height: 160px; /* Vaste hoogte voor de foto */
     }
-    
-    .biz-card-mini { 
-        flex-direction: column; 
-        height: auto; /* Laat hoogte vieren op mobiel */
-    }
-    
-    .mini-preview { 
-        width: 100%; 
-        height: 150px; 
-    }
-    
-    .mini-content { 
+
+    .mini-content {
         width: 100%;
+        height: auto;
         padding: 15px;
+        gap: 10px;
+    }
+
+    .mini-row-top {
+        margin-bottom: 5px;
+    }
+
+    .biz-name {
+        white-space: normal; /* Naam mag op mobiel op 2 regels */
+        font-size: 18px;
     }
 }
