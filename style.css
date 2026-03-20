@@ -494,3 +494,28 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 .form-container iframe {
     border-radius: 8px;
 }
+
+/* --- Strakke uitlijning Fix --- */
+
+/* 1. Zet de hoofdcontainer op dezelfde breedte als de footer/header */
+.main-container {
+    max-width: 1100px !important; /* Gelijk aan je footer */
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 0 20px !important; /* Veiligheidsmarge voor mobiel */
+    width: 100% !important;
+}
+
+/* 2. Zorg dat de grid nooit buiten die container kan groeien */
+#business-list, .business-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    display: grid !important;
+}
+
+/* 3. Voorkom dat een kaartje breder wordt dan zijn helft van de grid */
+.biz-card-mini {
+    width: 100% !important;
+    box-sizing: border-box !important; /* Padding telt nu niet mee bij de breedte */
+}
