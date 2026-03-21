@@ -346,27 +346,44 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     }
 
     /* 4. BUSINESS CARDS FIX: Dwing naar 1 kolom */
+/* 1. Dwing de grid naar één kolom door de grid-functie uit te zetten */
     .business-grid {
-        display: block !important; /* Forceert alles onder elkaar */
+        display: flex !important; /* Verander grid naar flex */
+        flex-direction: column !important; /* Stapel alles verticaal */
         width: 100% !important;
+        gap: 20px !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
     }
 
+/* 2. Zorg dat het kaartje de volledige breedte pakt */
     .biz-card-mini {
         display: flex !important;
         flex-direction: column !important; /* Foto boven, tekst onder */
         width: 100% !important;
         max-width: 100% !important;
-        margin-bottom: 20px !important;
+        min-width: 0 !important;
+        margin-bottom: 10px !important;
         padding: 0 !important;
         box-sizing: border-box !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
     }
 
+/* 3. De foto moet nu breed zijn, niet meer dat kleine vierkantje */
     .mini-preview {
         width: 100% !important;
-        height: 180px !important; /* Foto over de hele breedte */
-        border-radius: 10px 10px 0 0 !important;
+        height: 180px !important; /* Mooie hoogte voor op mobiel */
+        border-radius: 0 !important; /* Geen ronde hoeken aan de onderkant van de foto */
     }
 
+    .mini-preview img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+    }
+
+/* 4. De tekstinhoud van het kaartje */
     .mini-content {
         padding: 15px !important;
         width: 100% !important;
