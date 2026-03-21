@@ -220,9 +220,12 @@ function renderBusinesses(data) {
                     </div>
                     <div class="mini-actions">
                         <div class="phone-group">
-                            <a href="tel:${biz.Phone}" class="btn-icon"><i class="fa fa-phone"></i></a>
-                            <span class="phone-txt">${biz.Phone || '-'}</span>
-                            <button class="copy-btn" onclick="copyToClipboard('${biz.Phone}', this)"><i class="fa fa-copy"></i></button>
+                            <a href="tel:${biz.Phone}" class="btn-icon" title="Bel dit bedrijf">
+                                <i class="fa fa-phone"></i>
+                            </a>
+                            <button class="copy-btn" onclick="copyToClipboard('${biz.Phone}', this)" title="Kopieer nummer">
+                                <i class="fa fa-copy"></i>
+                            </button>
                         </div>
                         <div class="action-right">
                             ${emailHtml}
