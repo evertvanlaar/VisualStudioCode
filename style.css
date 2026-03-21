@@ -153,10 +153,10 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 }
 
 /* De knop die geselecteerd is */
-.filter-btn.active {
-    background-color: #28a745 !important; /* De groene kleur */
+.filter-btn.active, .add-biz-btn {
+    background-color: #2d5a27 !important; /* Donker olijfgroen */
+    border-color: #24481f !important;
     color: white !important;
-    border-color: #218838 !important;
 }
 
 /* De standaard knoppen (niet geselecteerd) bij een hover effect */
