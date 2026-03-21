@@ -13,16 +13,21 @@
 
 <header class="site-header">
     <nav class="main-nav">
-        <div class="nav-container">
-            <div class="logo">Kala Nera<span>.gr</span></div>
-            <ul class="nav-links">
-                <li><a href="#">Home</a></li>
-                <li><a href="t-form.html" class="nav-button">Register</a></li>
-                <li><a href="#">Discover</a></li>
-                <li><a href="#">Accommodations</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </div>
+    <div class="nav-container">
+        <a href="index.html" class="logo">Kala<span>Nera</span></a>
+        
+        <button class="menu-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+
+        <ul class="nav-links" id="nav-list">
+            <li><a href="#">Home</a></li>
+            <li><a href="t-form.html">Register Business</a></li>
+            <li><a href="#footer">Contact</a></li>
+        </ul>
+    </div>
     </nav>
 
     <div class="hero-section">
@@ -239,5 +244,24 @@
 <script data-goatcounter="https://evertvanlaar.goatcounter.com/count"
             async src="//gc.zgo.at/count.js"></script>
 
+<script>
+    // Wacht tot de pagina geladen is
+    document.addEventListener('DOMContentLoaded', function() {
+        const menu = document.querySelector('#mobile-menu');
+        const menuLinks = document.querySelector('#nav-list');
+
+        // Check of de elementen wel bestaan (voorkomt foutmeldingen)
+        if (menu && menuLinks) {
+            menu.addEventListener('click', function() {
+                // Toggle de 'active' class op de UL (nav-links)
+                menuLinks.classList.toggle('active');
+                
+                // Optioneel: animatie van de hamburger naar een X
+                menu.classList.toggle('is-active');
+            });
+        }
+    });
+</script>
+            
 </body>
 </html>

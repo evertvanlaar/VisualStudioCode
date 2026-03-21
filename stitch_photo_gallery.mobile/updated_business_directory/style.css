@@ -494,3 +494,176 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 .form-container iframe {
     border-radius: 8px;
 }
+
+/* --- Strakke uitlijning Fix --- */
+
+/* 1. Zet de hoofdcontainer op dezelfde breedte als de footer/header */
+.main-container {
+    max-width: 1100px !important; /* Gelijk aan je footer */
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 0 20px !important; /* Veiligheidsmarge voor mobiel */
+    width: 100% !important;
+}
+
+/* 2. Zorg dat de grid nooit buiten die container kan groeien */
+#business-list, .business-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    display: grid !important;
+}
+
+/* 3. Voorkom dat een kaartje breder wordt dan zijn helft van de grid */
+.biz-card-mini {
+    width: 100% !important;
+    box-sizing: border-box !important; /* Padding telt nu niet mee bij de breedte */
+}
+
+/* --- DE DEFINITIEVE FIX VOOR DE 'Opgesloten' HEADER/FOOTER --- */
+@media screen and (max-width: 768px) {
+    
+    /* 1. Zorg dat de basis geen zijwaartse scroll veroorzaakt */
+    html, body {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        position: relative;
+    }
+
+    /* 2. Breek de header en footer uit de main-container */
+    .main-nav, .site-footer, .hero-section {
+        width: 100vw !important; /* Volledige schermbreedte */
+        position: relative !important;
+        left: 50% !important;
+        right: 50% !important;
+        margin-left: -50vw !important;
+        margin-right: -50vw !important;
+    }
+
+    /* 3. Herstel de inhoud binnen de balken zodat ze niet tegen de rand plakken */
+    .nav-container, .footer-container {
+        width: 100% !important;
+        padding: 0 20px !important;
+        box-sizing: border-box !important;
+        margin: 0 !important;
+        display: flex !important;
+    }
+
+    /* 4. Zorg dat de kaartjes-lijst zelf wel netjes binnen de marges blijft */
+    .business-grid {
+        width: 100% !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+    }
+    
+    .main-container {
+        /* Verwijder de padding die de header naar binnen duwt op mobiel */
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    
+    /* Geef de tekst/titels die NIET in de header/footer zitten weer wel marge */
+    .main-container > h1, 
+    .search-container, 
+    .filter-container,
+    .add-business-container {
+        padding: 0 20px !important;
+    }
+}
+
+/* --- HAMBURGER MENU STYLING --- */
+@media screen and (max-width: 768px) {
+/* De knop zelf */
+    .menu-toggle {
+        display: flex !important; /* Forceer zichtbaarheid */
+        flex-direction: column;
+        justify-content: space-between;
+        width: 30px;
+        height: 21px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        position: relative;
+        z-index: 10001 !important; /* Altijd bovenop */
+        padding: 0;
+        margin-right: 15px;
+    }
+
+/* De drie streepjes */
+    .bar {
+        display: block !important;
+        height: 3px;
+        width: 100%;
+        background-color: #333333 !important; /* Donkergrijs/Zwart */
+        border-radius: 10px;
+        transition: 0.3s;
+    }
+
+    .nav-links {
+        display: none !important; /* Standaard dicht op mobiel */
+        flex-direction: column;
+        position: absolute;
+        top: 60px; /* Precies onder de header */
+        left: 0;
+        width: 100%;
+        background: white;
+        padding: 20px;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        z-index: 9998;
+    }
+
+    /* Als het menu de class 'active' krijgt (via JS), toon het dan */
+    .nav-links.active {
+        display: flex !important;
+    }
+
+    .nav-links li {
+        margin: 15px 0;
+        text-align: center;
+    }
+}
+
+/* Verberg de hamburger op PC */
+@media screen and (min-width: 769px) {
+    .menu-toggle { display: none; }
+    /* Animatie naar een X */
+.menu-toggle.is-active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.is-active .bar:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.menu-toggle.is-active .bar:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+}
+
+/* --- CATEGORIE BUTTONS MOBIEL FIX --- */
+@media (max-width: 768px) {
+    .filter-container {
+        display: flex !important;
+        overflow-x: auto !important; /* Maakt horizontaal scrollen mogelijk */
+        white-space: nowrap !important; /* Voorkomt dat knoppen onder elkaar springen */
+        padding: 10px 20px !important; /* Geeft links en rechts ruimte (lost wegvallen op) */
+        gap: 10px !important;
+        justify-content: flex-start !important; /* Start altijd links */
+        -webkit-overflow-scrolling: touch; /* Zorgt voor soepel scrollen op iPhone */
+        
+        /* Verberg de scrollbar voor een strakker uiterlijk */
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
+    }
+
+    /* Verberg scrollbar voor Chrome, Safari en Opera */
+    .filter-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .filter-btn {
+        flex-shrink: 0 !important; /* Voorkomt dat knoppen worden platgedrukt */
+        padding: 8px 16px !important;
+        font-size: 14px !important;
+    }
+}
