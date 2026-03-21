@@ -503,3 +503,22 @@ form label {
     font-weight: 600;
     color: var(--text);
 }
+
+/* Standaard: toon het nummer (Desktop) */
+.phone-txt {
+    display: inline;
+    margin-right: 10px;
+    font-size: 0.9rem;
+    color: var(--text-main);
+}
+
+/* Mobiel: verberg het nummer (Schermen kleiner dan 768px) */
+@media screen and (max-width: 768px) {
+    .phone-txt {
+        display: none !important; /* Verbergt de tekst volledig op mobiel */
+    }
+    
+    .phone-group {
+        gap: 5px; /* Houdt de icoontjes dicht bij elkaar op mobiel */
+    }
+}
