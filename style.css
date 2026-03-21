@@ -109,35 +109,47 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 .search-input:focus { border-color: var(--primary-olive); box-shadow: 0 0 0 3px rgba(74, 108, 74, 0.1); }
 .search-icon { position: absolute; left: 18px; top: 15px; color: #94a3b8; }
 
-/* --- HORIZONTAAL SCROLLEN VOOR CATEGORIEËN (MOBIEL) --- */
+/* --- BASIS STYLING (DESKTOP) --- */
 .filter-container {
     display: flex;
-    overflow-x: auto;          /* Maakt horizontaal scrollen mogelijk */
-    flex-wrap: nowrap;         /* VERPLICHT: dwingt alles op één regel */
+    flex-wrap: wrap;           /* Op desktop mogen ze naar de volgende regel als het moet */
+    justify-content: center;    /* Netjes in het midden op desktop */
     gap: 10px;
-    padding: 15px 10px;        /* Wat extra ruimte boven/onder voor de vingers */
-    margin-bottom: 20px;
-    
-    /* Verbergt de scrollbalk voor een clean uiterlijk */
-    -ms-overflow-style: none;  /* IE en Edge */
-    scrollbar-width: none;     /* Firefox */
-    -webkit-overflow-scrolling: touch; /* Zorgt voor vloeiend scrollen op iPhone/iPad */
+    margin: 20px auto;
+    padding: 10px;
+    max-width: 1200px;         /* Zorg dat het niet breder wordt dan je content */
 }
 
-/* Verbergt de scrollbalk voor Chrome, Safari en Opera */
-.filter-container::-webkit-scrollbar {
-    display: none;
+/* --- SPECIFIEKE MOBIELE STYLING (Schermen kleiner dan 768px) --- */
+@media screen and (max-width: 768px) {
+    .filter-container {
+        display: flex;
+        flex-wrap: nowrap;     /* Dwing alles op één regel voor de scroll */
+        overflow-x: auto;      /* Activeer het vegen/scrollen */
+        justify-content: flex-start; /* Begin links, zodat je naar rechts kunt vegen */
+        padding: 15px 20px;    /* Extra padding zodat de laatste knop niet plakt */
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Verberg scrollbalk Firefox */
+    }
+
+    .filter-container::-webkit-scrollbar {
+        display: none;         /* Verberg scrollbalk Chrome/Safari */
+    }
+
+    .filter-btn {
+        flex: 0 0 auto;        /* Voorkom dat knoppen vervormen op mobiel */
+    }
 }
 
+/* Algemene knop styling */
 .filter-btn {
-    flex: 0 0 auto;            /* Zorgt dat de knoppen niet inklappen/versmallen */
-    white-space: nowrap;       /* Voorkomt dat tekst in de knop op twee regels komt */
+    white-space: nowrap;
     padding: 8px 18px;
     border-radius: 25px;
     background: #f1f5f9;
     border: 1px solid #e2e8f0;
-    font-size: 14px;
     cursor: pointer;
+    transition: all 0.2s;
 }
 
 .filter-btn.active {
