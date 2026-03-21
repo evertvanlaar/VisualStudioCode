@@ -109,8 +109,18 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 .search-input:focus { border-color: var(--primary-olive); box-shadow: 0 0 0 3px rgba(74, 108, 74, 0.1); }
 .search-icon { position: absolute; left: 18px; top: 15px; color: #94a3b8; }
 
-.filter-container { display: flex; gap: 8px; margin-bottom: 30px; overflow-x: auto; justify-content: center; padding-bottom: 10px; scrollbar-width: none; }
-.filter-container::-webkit-scrollbar { display: none; }
+.filter-container {
+    display: flex;
+    overflow-x: auto;          /* Maakt horizontaal scrollen mogelijk */
+    white-space: nowrap;       /* Houdt alles op één lijn */
+    gap: 10px;
+    padding: 10px;
+    -webkit-overflow-scrolling: touch; /* Zorgt voor soepel scrollen op iPhone */
+}
+
+.filter-container::-webkit-scrollbar {
+    display: none;             /* Verbergt de (vaak lelijke) scrollbalk */
+}
 
 .filter-btn {
     background-color: var(--pill);
