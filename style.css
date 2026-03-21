@@ -120,36 +120,44 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     max-width: 1200px;         /* Zorg dat het niet breder wordt dan je content */
 }
 
-/* --- SPECIFIEKE MOBIELE STYLING (Schermen kleiner dan 768px) --- */
-@media screen and (max-width: 768px) {
-    .filter-container {
-        display: flex;
-        flex-wrap: nowrap;     /* Dwing alles op één regel voor de scroll */
-        overflow-x: auto;      /* Activeer het vegen/scrollen */
-        justify-content: flex-start; /* Begin links, zodat je naar rechts kunt vegen */
-        padding: 15px 20px;    /* Extra padding zodat de laatste knop niet plakt */
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none; /* Verberg scrollbalk Firefox */
-    }
-
-    .filter-container::-webkit-scrollbar {
-        display: none;         /* Verberg scrollbalk Chrome/Safari */
-    }
-
-    .filter-btn {
-        flex: 0 0 auto;        /* Voorkom dat knoppen vervormen op mobiel */
-    }
+/* --- UNIVERSELE HORIZONTALE SCROLL (Desktop & Mobiel) --- */
+.filter-container {
+    display: flex;
+    flex-wrap: nowrap;         /* Dwingt alles ALTIJD op één regel */
+    overflow-x: auto;          /* Maakt horizontaal scrollen mogelijk */
+    gap: 12px;
+    padding: 10px 5px;         /* Wat ademruimte boven/onder */
+    margin: 20px 0;
+    width: 100%;               /* Gebruikt de volledige breedte van de parent */
+    
+    /* Verberg de scrollbalk voor een strak uiterlijk */
+    -ms-overflow-style: none;  
+    scrollbar-width: none;     
+    -webkit-overflow-scrolling: touch;
 }
 
-/* Algemene knop styling */
+/* Verberg de scrollbalk voor Chrome/Safari */
+.filter-container::-webkit-scrollbar {
+    display: none;
+}
+
 .filter-btn {
-    white-space: nowrap;
-    padding: 8px 18px;
+    flex: 0 0 auto;            /* Zorgt dat knoppen hun eigen breedte behouden */
+    white-space: nowrap;       /* Voorkomt tekst-afbreking */
+    padding: 8px 20px;
     border-radius: 25px;
     background: #f1f5f9;
     border: 1px solid #e2e8f0;
     cursor: pointer;
     transition: all 0.2s;
+}
+
+/* Optioneel: Laat de container op desktop iets breder scrollen */
+@media screen and (min-width: 1024px) {
+    .filter-container {
+        justify-content: flex-start; /* Of 'center' als je weinig knoppen hebt */
+        padding: 10px 0;
+    }
 }
 
 .filter-btn.active {
