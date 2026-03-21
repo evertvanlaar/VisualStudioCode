@@ -154,7 +154,7 @@ function renderBusinesses(data) {
         "@graph": data.map(biz => ({
             "@type": biz.Category?.toLowerCase().includes('hotel') ? "Hotel" : "LocalBusiness",
             "name": biz.Name,
-            "telephone": biz.Phone || "",
+        //    "telephone": biz.Phone || "",
             "email": biz.Email || "", // Voegt e-mail toe aan AI-data
             "url": biz.Website || "",
             "address": {
