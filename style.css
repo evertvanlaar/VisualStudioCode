@@ -700,3 +700,81 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
         height: 300px; /* Iets minder hoog op telefoons */
     }
 }
+
+/* --- Verbeterde Categorie Koppen --- */
+.category-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8fafc; /* Zachte grijze achtergrond */
+    padding: 12px 18px;
+    margin: 30px 0 15px 0;
+    border-radius: 10px;
+    border-left: 5px solid var(--primary-color, #007bff); /* Accentkleur */
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.category-section-header span {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Ruimte tussen icoon en tekst */
+}
+
+.category-section-header i {
+    font-size: 1.2rem;
+    color: var(--primary-color, #007bff);
+}
+
+.category-section-header small {
+    background: #e2e8f0; /* Grijze bubbel voor de teller */
+    color: #475569;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-left: auto; /* Duwt de teller naar rechts */
+}
+
+/* Zorgt voor extra ruimte tussen grids */
+.business-grid {
+    margin-bottom: 40px;
+}
+
+/* Styling voor de e-mailknop */
+.email-btn {
+    color: #64748b; /* Nette grijstint */
+    margin-right: 4px; /* Ruimte tussen de icoontjes */
+    transition: color 0.2s ease;
+}
+
+.email-btn:hover {
+    color: #3b82f6; /* Kleurt blauw bij aanwijzen */
+}
+
+/* Basis styling voor alle actie-iconen (Telefoon, Email, Star, Location) */
+.btn-icon {
+    color: #64748b; /* De nette staalblauwe/grijze kleur */
+    transition: all 0.2s ease;
+    padding: 5px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+/* Het hover effect voor ALLE iconen in de action-right sectie */
+.btn-icon:hover {
+    color: #3b82f6; /* De helderblauwe kleur */
+    background-color: #eff6ff; /* Een heel lichtblauw achtergrondje */
+    transform: translateY(-2px); /* Subtiel 'zweef' effect omhoog */
+}
+
+/* Specifieke kleur voor de review ster bij hover (optioneel, goud ipv blauw) */
+.review-btn:hover {
+    color: #f59e0b; /* Goudkleurig voor sterren */
+    background-color: #fffbeb;
+}
