@@ -1,13 +1,35 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+    <script type="application/ld+json">
+        {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Kala Nera Business Directory",
+        "url": "https://www.kalanera.gr",
+        "description": "The most comprehensive business directory for Kala Nera, Pelion, Greece.",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Kala Nera Local"
+        }
+        }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="refresh" content="6000">
-    <title>Premium Business Directory - Reviews Edit</title>
+    <title>Kala Nera Guide | Best Local Businesses, Restaurants & Hotels</title>
+    <meta name="description" content="Discover the best local businesses in Kala Nera. From authentic Greek restaurants to luxury hotels and charming shops. Your complete travel guide to Kala Nera, Pelion.">
+    <meta name="keywords" content="Kala Nera, Greece, travel guide, hotels, restaurants, Pelion, holiday, vacation, Volos">
+
+    <meta property="og:title" content="Kala Nera Local Business Directory">
+    <meta property="og:description" content="Everything you need to know about businesses and services in Kala Nera in one place.">
+    <meta property="og:image" content="link-to-your-best-photo.jpg">
+    <meta property="og:url" content="https://www.kalanera.gr">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
 <body>
 
@@ -65,147 +87,180 @@
         </div>
     </div>
 
-    <script>
-        const N8N_WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/local-businesses';
-        let allBusinesses = []; 
-        let activeCategory = 'all';
+<script>
+    const N8N_WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/local-businesses';
+    let allBusinesses = []; 
+    let activeCategory = 'all';
 
-        // Icon Map
-        const iconMap = {
-            'Bakery': 'fa-bread-slice', 'Bakker': 'fa-bread-slice', 'Cafe': 'fa-coffee', 'Koffie': 'fa-coffee',
-            'Restaurant': 'fa-utensils', 'Eten': 'fa-utensils', 'Bar': 'fa-glass-cheers', 'Pub': 'fa-beer',
-            'Shop': 'fa-shopping-cart', 'Winkel': 'fa-shopping-bag', 'Supermarket': 'fa-shopping-basket',
-            'Hotel': 'fa-bed', 'B&B': 'fa-hotel', 'Camping': 'fa-campground', 'Beauty': 'fa-spa',
-            'Kapper': 'fa-cut', 'Sport': 'fa-running', 'Pharmacy': 'fa-pills', 'Garage': 'fa-car'
-        };
+    // Icon Map
+    const iconMap = {
+        'Bakery': 'fa-bread-slice', 'Bakker': 'fa-bread-slice', 'Cafe': 'fa-coffee', 'Koffie': 'fa-coffee',
+        'Restaurant': 'fa-utensils', 'Eten': 'fa-utensils', 'Bar': 'fa-glass-cheers', 'Pub': 'fa-beer',
+        'Shop': 'fa-shopping-cart', 'Winkel': 'fa-shopping-bag', 'Supermarket': 'fa-shopping-basket',
+        'Hotel': 'fa-bed', 'B&B': 'fa-hotel', 'Camping': 'fa-campground', 'Beauty': 'fa-spa',
+        'Kapper': 'fa-cut', 'Sport': 'fa-running', 'Pharmacy': 'fa-pills', 'Garage': 'fa-car'
+    };
 
-        function getIcon(cat) {
-            const key = Object.keys(iconMap).find(k => cat.toLowerCase().includes(k.toLowerCase()));
-            return `<i class="fa ${key ? iconMap[key] : 'fa-tag'}"></i>`;
-        }
+    function getIcon(cat) {
+        const key = Object.keys(iconMap).find(k => cat.toLowerCase().includes(k.toLowerCase()));
+        return `<i class="fa ${key ? iconMap[key] : 'fa-tag'}"></i>`;
+    }
 
-        function getColor(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-            return `hsl(${Math.abs(hash) % 360}, 60%, 45%)`;
-        }
+    function getColor(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        return `hsl(${Math.abs(hash) % 360}, 60%, 45%)`;
+    }
 
-        async function init() {
-            try {
-                const response = await fetch(N8N_WEBHOOK_URL);
-                const rawData = await response.json();
-                allBusinesses = rawData.filter(biz => biz.Status === 'Active');
-                generateCategoryButtons(allBusinesses);
-                renderBusinesses(allBusinesses);
-            } catch (error) {
-                document.getElementById('business-list').innerHTML = '<p class="status-msg">Fout bij laden.</p>';
+    // --- NIEUW: Functie voor AI & Zoekmachines (Schema.org) ---
+    function generateSchemaMarkup(data) {
+        const schemaList = data.map(biz => ({
+            "@type": biz.Category?.toLowerCase().includes('hotel') ? "Hotel" : "LocalBusiness",
+            "name": biz.Name,
+            "telephone": biz.Phone || "",
+            "url": biz.Website || "",
+            "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Kala Nera",
+                "addressRegion": "Pelion",
+                "addressCountry": "GR"
             }
+        }));
+
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.text = JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": schemaList
+        });
+        document.head.appendChild(script);
+    }
+
+    async function init() {
+        try {
+            const response = await fetch(N8N_WEBHOOK_URL);
+            const rawData = await response.json();
+            allBusinesses = rawData.filter(biz => biz.Status === 'Active');
+            
+            // Activeer de AI-data eenmalig bij het laden
+            generateSchemaMarkup(allBusinesses);
+            
+            generateCategoryButtons(allBusinesses);
+            renderBusinesses(allBusinesses);
+        } catch (error) {
+            console.error("Fout bij laden:", error);
+            document.getElementById('business-list').innerHTML = '<p class="status-msg">Fout bij laden van gegevens.</p>';
         }
+    }
 
-        function generateCategoryButtons(data) {
-            const container = document.getElementById('filter-buttons');
-            const categories = [...new Set(data.map(biz => biz.Category).filter(cat => cat))].sort();
-            let html = `<button class="filter-btn active" data-category="all">Alles</button>`;
-            categories.forEach(cat => {
-                html += `<button class="filter-btn" data-category="${cat}">${cat}</button>`;
+    function generateCategoryButtons(data) {
+        const container = document.getElementById('filter-buttons');
+        const categories = [...new Set(data.map(biz => biz.Category).filter(cat => cat))].sort();
+        let html = `<button class="filter-btn active" data-category="all">Alles</button>`;
+        categories.forEach(cat => {
+            html += `<button class="filter-btn" data-category="${cat}">${cat}</button>`;
+        });
+        container.innerHTML = html;
+        container.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                activeCategory = e.target.getAttribute('data-category');
+                applyFilters();
             });
-            container.innerHTML = html;
-            container.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    e.target.classList.add('active');
-                    activeCategory = e.target.getAttribute('data-category');
-                    applyFilters();
-                });
-            });
-        }
+        });
+    }
 
-        function renderBusinesses(data) {
-            const container = document.getElementById('business-list');
-            container.innerHTML = '';
+    function renderBusinesses(data) {
+        const container = document.getElementById('business-list');
+        container.innerHTML = '';
 
-            const grouped = data.reduce((acc, biz) => {
-                const cat = biz.Category || 'Overig';
-                if (!acc[cat]) acc[cat] = [];
-                acc[cat].push(biz);
-                return acc;
-            }, {});
+        const grouped = data.reduce((acc, biz) => {
+            const cat = biz.Category || 'Overig';
+            if (!acc[cat]) acc[cat] = [];
+            acc[cat].push(biz);
+            return acc;
+        }, {});
 
-            Object.keys(grouped).sort().forEach(category => {
-                const header = document.createElement('div');
-                header.className = 'category-section-header';
-                header.innerHTML = `<span>${getIcon(category)} ${category} <small>(${grouped[category].length})</small></span>`;
-                container.appendChild(header);
+        Object.keys(grouped).sort().forEach(category => {
+            const header = document.createElement('div');
+            header.className = 'category-section-header';
+            header.innerHTML = `<span>${getIcon(category)} ${category} <small>(${grouped[category].length})</small></span>`;
+            container.appendChild(header);
 
-                const grid = document.createElement('div');
-                grid.className = 'business-grid';
+            const grid = document.createElement('div');
+            grid.className = 'business-grid';
+            
+            grouped[category].sort((a, b) => a.Name.localeCompare(b.Name)).forEach(biz => {
+                const rawUrl = biz.Website || '';
+                const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
+                const displayUrl = rawUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
+                const catColor = getColor(category);
                 
-                grouped[category].sort((a, b) => a.Name.localeCompare(b.Name)).forEach(biz => {
-                    const rawUrl = biz.Website || '';
-                    const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
-                    const displayUrl = rawUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
-                    const catColor = getColor(category);
-                    
-                    // DE NIEUWE REVIEW LINK:
-                    // We zoeken op Bedrijfsnaam + Locatie + "reviews"
-                    const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' ' + (biz.Location || '') + ' reviews')}`;
-                    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' ' + (biz.Location || ''))}`;
+                const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' Kala Nera reviews')}`;
+                // Gecorrigeerde Maps URL
+                const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' Kala Nera')}`;
 
-                    grid.innerHTML += `
-                    <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
-                        <div class="mini-preview">
-                            <a href="${cleanUrl}" target="_blank">
-                                <img src="https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130" onerror="this.src='https://via.placeholder.com/180x130?text=No+Web'">
-                            </a>
+                grid.innerHTML += `
+                <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
+                    <div class="mini-preview">
+                        <a href="${cleanUrl}" target="_blank">
+                            <img src="https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130" onerror="this.src='https://via.placeholder.com/180x130?text=No+Web'">
+                        </a>
+                    </div>
+                    <div class="mini-content">
+                        <div class="mini-row-top">
+                            <h2 class="biz-name">${biz.Name}</h2>
+                            <a href="${cleanUrl}" target="_blank" class="mini-web-link"><i class="fa fa-external-link"></i> ${displayUrl || 'Site'}</a>
                         </div>
-                        <div class="mini-content">
-                            <div class="mini-row-top">
-                                <h2 class="biz-name">${biz.Name}</h2>
-                                <a href="${cleanUrl}" target="_blank" class="mini-web-link"><i class="fa fa-external-link"></i> ${displayUrl || 'Site'}</a>
+                        <div class="mini-actions">
+                            <div class="phone-group">
+                                <a href="tel:${biz.Phone}" class="btn-icon" title="Bellen"><i class="fa fa-phone"></i></a>
+                                <span class="phone-txt">${biz.Phone || '-'}</span>
+                                <button class="copy-btn" onclick="copyToClipboard('${biz.Phone}', this)"><i class="fa fa-copy"></i></button>
                             </div>
-                            <div class="mini-actions">
-                                <div class="phone-group">
-                                    <a href="tel:${biz.Phone}" class="btn-icon" title="Bellen"><i class="fa fa-phone"></i></a>
-                                    <span class="phone-txt">${biz.Phone || '-'}</span>
-                                    <button class="copy-btn" onclick="copyToClipboard('${biz.Phone}', this)"><i class="fa fa-copy"></i></button>
-                                </div>
-                                <div class="action-right">
-                                    <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn" title="Bekijk Reviews">
-                                        <i class="fa fa-star"></i>
-                                    </a>
-                                    <a href="${mapsUrl}" target="_blank" class="btn-icon" title="Navigeer">
-                                        <i class="fa fa-location-dot"></i>
-                                    </a>
-                                </div>
+                            <div class="action-right">
+                                <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn" title="Bekijk Reviews">
+                                    <i class="fa fa-star"></i>
+                                </a>
+                                <a href="${mapsUrl}" target="_blank" class="btn-icon" title="Navigeer">
+                                    <i class="fa fa-location-dot"></i>
+                                </a>
                             </div>
                         </div>
-                    </div>`;
-                });
-                container.appendChild(grid);
+                    </div>
+                </div>`;
             });
-        }
+            container.appendChild(grid);
+        });
+    }
 
-        function copyToClipboard(text, el) {
-            navigator.clipboard.writeText(text).then(() => {
-                const icon = el.querySelector('i');
-                icon.className = 'fa fa-check';
-                setTimeout(() => { icon.className = 'fa fa-copy'; }, 2000);
-            });
-        }
+    function copyToClipboard(text, el) {
+        if(!text || text === '-') return;
+        navigator.clipboard.writeText(text).then(() => {
+            const icon = el.querySelector('i');
+            icon.className = 'fa fa-check';
+            setTimeout(() => { icon.className = 'fa fa-copy'; }, 2000);
+        });
+    }
 
-        function applyFilters() {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            const filtered = allBusinesses.filter(biz => {
-                const nameMatch = (biz.Name || "").toLowerCase().includes(searchTerm);
-                const categoryMatch = activeCategory === 'all' || biz.Category === activeCategory;
-                return nameMatch && categoryMatch;
-            });
-            renderBusinesses(filtered);
-        }
+    function applyFilters() {
+        const searchInput = document.getElementById('search-input');
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
+        const filtered = allBusinesses.filter(biz => {
+            const nameMatch = (biz.Name || "").toLowerCase().includes(searchTerm);
+            const categoryMatch = activeCategory === 'all' || biz.Category === activeCategory;
+            return nameMatch && categoryMatch;
+        });
+        renderBusinesses(filtered);
+    }
 
+    if(document.getElementById('search-input')) {
         document.getElementById('search-input').addEventListener('input', applyFilters);
-        init();
-    </script>
+    }
+
+    init();
+</script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
