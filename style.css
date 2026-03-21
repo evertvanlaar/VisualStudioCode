@@ -109,44 +109,41 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 .search-input:focus { border-color: var(--primary-olive); box-shadow: 0 0 0 3px rgba(74, 108, 74, 0.1); }
 .search-icon { position: absolute; left: 18px; top: 15px; color: #94a3b8; }
 
+/* --- HORIZONTAAL SCROLLEN VOOR CATEGORIEËN (MOBIEL) --- */
 .filter-container {
     display: flex;
     overflow-x: auto;          /* Maakt horizontaal scrollen mogelijk */
-    white-space: nowrap;       /* Houdt alles op één lijn */
+    flex-wrap: nowrap;         /* VERPLICHT: dwingt alles op één regel */
     gap: 10px;
-    padding: 10px;
-    -webkit-overflow-scrolling: touch; /* Zorgt voor soepel scrollen op iPhone */
+    padding: 15px 10px;        /* Wat extra ruimte boven/onder voor de vingers */
+    margin-bottom: 20px;
+    
+    /* Verbergt de scrollbalk voor een clean uiterlijk */
+    -ms-overflow-style: none;  /* IE en Edge */
+    scrollbar-width: none;     /* Firefox */
+    -webkit-overflow-scrolling: touch; /* Zorgt voor vloeiend scrollen op iPhone/iPad */
 }
 
+/* Verbergt de scrollbalk voor Chrome, Safari en Opera */
 .filter-container::-webkit-scrollbar {
-    display: none;             /* Verbergt de (vaak lelijke) scrollbalk */
+    display: none;
 }
 
 .filter-btn {
-    background-color: var(--pill);
-    color: #475569;
-    border: 1px solid var(--border);
+    flex: 0 0 auto;            /* Zorgt dat de knoppen niet inklappen/versmallen */
+    white-space: nowrap;       /* Voorkomt dat tekst in de knop op twee regels komt */
     padding: 8px 18px;
     border-radius: 25px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    font-size: 14px;
     cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    white-space: nowrap;
-}
-
-.filter-btn:hover {
-    background-color: var(--soft-olive);
-    color: var(--primary-olive);
-    border-color: var(--primary-olive);
-    transform: translateY(-2px);
 }
 
 .filter-btn.active {
-    background-color: var(--primary-olive);
+    background: #2563eb;
     color: white;
-    border-color: var(--primary-olive-dark);
-    box-shadow: 0 4px 12px rgba(74, 108, 74, 0.3);
-    transform: scale(1.05);
+    border-color: #2563eb;
 }
 
 /* --- CATEGORIE KOPPEN --- */
