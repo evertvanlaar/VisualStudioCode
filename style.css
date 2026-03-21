@@ -77,6 +77,32 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     text-shadow: 2px 2px 15px rgba(0,0,0,0.6);
 }
 
+/* --- HERO SUBTEKST FIX --- */
+.hero-overlay {
+    text-align: center; /* Zorgt dat alles in de overlay (H1 + P) gecentreerd is */
+    padding: 0 20px;
+}
+
+.hero-overlay p {
+    font-size: 18px;
+    color: white; /* Maakt de tekst wit */
+    font-weight: 400;
+    text-shadow: 1px 1px 8px rgba(0,0,0,0.6); /* Iets schaduw voor leesbaarheid op lichte foto's */
+    margin-top: 10px;
+    max-width: 600px; /* Voorkomt dat de tekst op hele brede schermen te ver uitrekt */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media screen and (max-width: 768px) {
+    .hero-overlay h1 {
+        font-size: 32px; /* Iets kleiner op mobiel zodat het past */
+    }
+    .hero-overlay p {
+        font-size: 15px; /* Iets compacter op mobiel */
+    }
+}
+
 /* --- ZOEKBALK & FILTERS --- */
 .search-container { position: relative; margin-bottom: 25px; max-width: 500px; margin-inline: auto; }
 .search-input { width: 100%; padding: 12px 45px; border-radius: 50px; border: 1px solid var(--border); outline: none; transition: border-color 0.3s; }
