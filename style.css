@@ -152,10 +152,17 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     transition: all 0.2s;
 }
 
+/* De knop die geselecteerd is */
 .filter-btn.active {
-    background: #2563eb;
-    color: white;
-    border-color: #2563eb;
+    background-color: #28a745 !important; /* De groene kleur */
+    color: white !important;
+    border-color: #218838 !important;
+}
+
+/* De standaard knoppen (niet geselecteerd) bij een hover effect */
+.filter-btn:hover {
+    background-color: #e2e8f0;
+    border-color: #cbd5e1;
 }
 
 /* --- CATEGORIE KOPPEN --- */
