@@ -298,135 +298,95 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 /* --- RESPONSIVE & HAMBURGER --- */
 /* --- DE DEFINITIEVE MOBIELE REPARATIE --- *//* --- DE RESET VOOR MOBIEL (GEEN WITTE BALK MEER) --- */
 @media screen and (max-width: 768px) {
-    /* 1. Reset de basis */
-    html, body { overflow-x: hidden !important; width: 100% !important; margin: 0; padding: 0; }
+    /* 1. Reset de basis en voorkom de witte balk rechts */
+    html, body { 
+        overflow-x: hidden !important; 
+        width: 100% !important; 
+        position: relative;
+        margin: 0; padding: 0;
+    }
 
-    /* 2. De container */
-    .main-container { padding: 0 15px !important; width: 100% !important; box-sizing: border-box !important; }
-
-    /* 3. TRANSFORMATIE: Kaartje van horizontaal naar verticaal */
-    .biz-card-mini {
-        flex-direction: column !important; /* Foto boven, tekst onder */
-        align-items: flex-start !important;
-        padding: 0 !important; /* We regelen de padding per onderdeel */
+    /* 2. De container waarin alles staat */
+    .main-container { 
+        width: 100% !important; 
+        padding: 0 15px !important; 
+        box-sizing: border-box !important;
         overflow: hidden;
+    }
+
+    /* 3. MENU REPARATIE: Verberg de tekst-links, toon de hamburger */
+    .nav-links {
+        display: none !important; /* Verbergt de horizontale lijst */
+        flex-direction: column !important;
+        position: absolute !important;
+        top: 60px; left: 0; width: 100% !important;
+        background: white !important;
+        z-index: 10000 !important;
+        padding: 20px 0 !important;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    }
+
+    .nav-links.active {
+        display: flex !important; /* Toont de lijst als je klikt */
+    }
+
+    .menu-toggle {
+        display: flex !important; /* Toont de 3 streepjes */
+        flex-direction: column;
+        justify-content: space-between;
+        width: 25px; height: 18px;
+        background: transparent; border: none; cursor: pointer;
+    }
+
+    .bar {
+        width: 100%; height: 3px;
+        background-color: #333 !important;
+        border-radius: 5px;
+        display: block !important;
+    }
+
+    /* 4. BUSINESS CARDS FIX: Dwing naar 1 kolom */
+    .business-grid {
+        display: block !important; /* Forceert alles onder elkaar */
         width: 100% !important;
+    }
+
+    .biz-card-mini {
+        display: flex !important;
+        flex-direction: column !important; /* Foto boven, tekst onder */
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-bottom: 20px !important;
+        padding: 0 !important;
         box-sizing: border-box !important;
     }
 
-    /* 4. De foto over de hele breedte van het kaartje */
     .mini-preview {
         width: 100% !important;
-        height: 150px !important; /* Maak de foto groter op mobiel */
-        border-radius: 10px 10px 0 0 !important; /* Alleen bovenhoeken rond */
-        border: none !important;
+        height: 180px !important; /* Foto over de hele breedte */
+        border-radius: 10px 10px 0 0 !important;
     }
 
-    /* 5. De tekst en knoppen ruimte geven */
     .mini-content {
+        padding: 15px !important;
         width: 100% !important;
-        padding: 15px !important; /* Hier de padding toevoegen */
         box-sizing: border-box !important;
-        gap: 12px !important;
     }
 
-    /* 6. Naam en link onder elkaar */
-    .mini-row-top {
+    .mini-actions {
         flex-direction: column !important;
         align-items: flex-start !important;
-        gap: 5px !important;
-    }
-
-    .biz-name { 
-        white-space: normal !important; /* Mag nu over 2 regels */
-        font-size: 18px !important; 
-    }
-
-    /* 7. Knoppen groot en makkelijk klikbaar maken voor duimen */
-    .mini-actions {
-        flex-direction: column !important; /* Telefoon boven, iconen onder */
         gap: 15px !important;
-        align-items: flex-start !important;
-        width: 100% !important;
-    }
-
-    .phone-group {
-        width: 100% !important; /* Telefoonbalk over volle breedte */
-        justify-content: space-between !important;
-        padding: 8px 12px !important;
     }
 
     .action-right {
         width: 100% !important;
-        justify-content: flex-end !important; /* Iconen rechts uitlijnen */
-        gap: 20px !important; /* Meer ruimte voor dikke vingers */
+        justify-content: flex-end !important;
     }
 
-    .btn-icon {
-        width: 40px !important; /* Grotere knoppen voor mobiel */
-        height: 40px !important;
-        font-size: 18px !important;
-    }
-
-    /* --- NAVIGATIE & HAMBURGER VOOR MOBIEL --- */
-    
-    /* 1. Verberg de standaard tekst-links */
-    .nav-links {
-        display: none; /* Wordt pas flex als .active wordt toegevoegd via JS */
-        flex-direction: column;
-        position: absolute;
-        top: 60px; /* Hoogte van je navbar */
-        left: 0;
-        width: 100%;
-        background-color: #ffffff;
-        padding: 20px 0;
-        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-        z-index: 1000;
-        margin: 0;
-        list-style: none;
-    }
-
-    /* 2. Toon de links onder elkaar als het menu open is */
-    .nav-links.active {
-        display: flex !important;
-    }
-
-    .nav-links li {
-        text-align: center;
-        margin: 15px 0;
-    }
-
-    .nav-links li a {
-        font-size: 18px;
-        font-weight: 600;
-        color: #2c3e50;
-        text-decoration: none;
-    }
-
-    /* 3. De Hamburger Knop (de drie streepjes) */
-    .menu-toggle {
-        display: flex !important; /* Maak de knop zichtbaar op mobiel */
-        flex-direction: column;
-        justify-content: space-between;
-        width: 30px;
-        height: 21px;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        padding: 0;
-        z-index: 1001;
-    }
-
-    /* 4. De streepjes zelf */
-    .bar {
-        width: 100%;
-        height: 3px;
-        background-color: #333;
-        border-radius: 10px;
-        transition: 0.3s;
-    }
+    /* 5. Verberg desktop-only elementen */
+    .nav-links li { margin: 10px 0; width: 100%; text-align: center; }
 }
-
 /* --- GLOBALE FIX VOOR IFRAMES (MAP) --- */
 iframe {
     max-width: 100% !important;
