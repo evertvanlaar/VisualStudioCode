@@ -52,12 +52,14 @@
     </div>
     </nav>
 
-    <div class="hero-section">
-        <div class="hero-overlay">
-            <h1>Discover the Magic of Pilion</h1>
-            <p>Seen from the sky, the village is even more beautiful....</p>
-        </div>
+<div class="hero-section" style="display: flex; align-items: center; justify-content: center; text-align: center; flex-direction: column;">
+    <div class="hero-overlay" style="padding: 0 20px;">
+        <h1 style="color: white; margin-bottom: 10px;">Discover the Magic of Pilion</h1>
+        <p style="color: white !important; font-size: 1.1rem; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); margin: 0 auto; max-width: 80% !important; display: block;">
+            Seen from the sky, the village is even more beautiful....
+        </p>
     </div>
+</div>
 </header>
 
 <section class="map-section">
@@ -142,70 +144,105 @@
             });
         }
 
-        function renderBusinesses(data) {
-            const container = document.getElementById('business-list');
-            container.innerHTML = '';
+function renderBusinesses(data) {
+    const container = document.getElementById('business-list');
+    container.innerHTML = '';
 
-            const grouped = data.reduce((acc, biz) => {
-                const cat = biz.Category || 'Overig';
-                if (!acc[cat]) acc[cat] = [];
-                acc[cat].push(biz);
-                return acc;
-            }, {});
+    // 1. Genereer de AI-data (Schema.org) voor de huidige lijst
+    const schemaData = {
+        "@context": "https://schema.org",
+        "@graph": data.map(biz => ({
+            "@type": biz.Category?.toLowerCase().includes('hotel') ? "Hotel" : "LocalBusiness",
+            "name": biz.Name,
+            "telephone": biz.Phone || "",
+            "email": biz.Email || "", // Voegt e-mail toe aan AI-data
+            "url": biz.Website || "",
+            "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Kala Nera",
+                "addressCountry": "GR"
+            }
+        }))
+    };
+    
+    // Verwijder oude schema indien aanwezig en voeg nieuwe toe
+    const oldSchema = document.getElementById('dynamic-schema');
+    if (oldSchema) oldSchema.remove();
+    const script = document.createElement('script');
+    script.id = 'dynamic-schema';
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(schemaData);
+    document.head.appendChild(script);
 
-            Object.keys(grouped).sort().forEach(category => {
-                const header = document.createElement('div');
-                header.className = 'category-section-header';
-                header.innerHTML = `<span>${getIcon(category)} ${category} <small>(${grouped[category].length})</small></span>`;
-                container.appendChild(header);
+    // 2. Groepeer en toon de bedrijven
+    const grouped = data.reduce((acc, biz) => {
+        const cat = biz.Category || 'Overig';
+        if (!acc[cat]) acc[cat] = [];
+        acc[cat].push(biz);
+        return acc;
+    }, {});
 
-                const grid = document.createElement('div');
-                grid.className = 'business-grid';
-                
-                grouped[category].sort((a, b) => a.Name.localeCompare(b.Name)).forEach(biz => {
-                    const rawUrl = biz.Website || '';
-                    const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
-                    const displayUrl = rawUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
-                    const catColor = getColor(category);
-                    
-                    // DE NIEUWE REVIEW LINK:
-                    // We zoeken op Bedrijfsnaam + Locatie + "reviews"
-                    const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' ' + (biz.Location || '') + ' reviews')}`;
-                    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' ' + (biz.Location || ''))}`;
+    Object.keys(grouped).sort().forEach(category => {
+        const header = document.createElement('div');
+        header.className = 'category-section-header';
+        header.innerHTML = `<span>${getIcon(category)} ${category} <small>(${grouped[category].length})</small></span>`;
+        container.appendChild(header);
 
-                    grid.innerHTML += `
-                    <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
-                        <div class="mini-preview">
-                            <a href="${cleanUrl}" target="_blank">
-                                <img src="https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130" onerror="this.src='https://via.placeholder.com/180x130?text=No+Web'">
-                            </a>
+        const grid = document.createElement('div');
+        grid.className = 'business-grid';
+        
+        grouped[category].sort((a, b) => a.Name.localeCompare(b.Name)).forEach(biz => {
+            const rawUrl = biz.Website || '';
+            const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
+            const displayUrl = rawUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
+            const catColor = getColor(category);
+            
+            const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' Kala Nera reviews')}`;
+            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' Kala Nera')}`;
+
+            // E-mail check: Alleen icoon tonen als biz.Email bestaat in je sheet
+            const emailHtml = biz.Email ? `
+                <a href="mailto:${biz.Email}" class="btn-icon email-btn" title="E-mail sturen">
+                    <i class="fa fa-envelope"></i>
+                </a>` : '';
+
+            grid.innerHTML += `
+            <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
+                <div class="mini-preview">
+                    <a href="${cleanUrl}" target="_blank">
+                        <img src="https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130" onerror="this.src='https://via.placeholder.com/180x130?text=No+Web'">
+                    </a>
+                </div>
+                <div class="mini-content">
+                    <div class="mini-row-top">
+                        <h2 class="biz-name">${biz.Name}</h2>
+                        <a href="${cleanUrl}" target="_blank" class="mini-web-link"><i class="fa fa-external-link"></i> ${displayUrl || 'Site'}</a>
+                    </div>
+                    <div class="mini-actions">
+                       <div class="phone-group">
+                            <a href="tel:${biz.Phone}" class="btn-icon"><i class="fa fa-phone"></i></a>
+                            <span class="phone-txt">${biz.Phone || '-'}</span>
+                            <button class="copy-btn" onclick="copyToClipboard('${biz.Phone}', this)"><i class="fa fa-copy"></i></button>
                         </div>
-                        <div class="mini-content">
-                            <div class="mini-row-top">
-                                <h2 class="biz-name">${biz.Name}</h2>
-                                <a href="${cleanUrl}" target="_blank" class="mini-web-link"><i class="fa fa-external-link"></i> ${displayUrl || 'Site'}</a>
-                            </div>
-                            <div class="mini-actions">
-                                <div class="phone-group">
-                                    <a href="tel:${biz.Phone}" class="btn-icon" title="Bellen"><i class="fa fa-phone"></i></a>
-                                    <span class="phone-txt">${biz.Phone || '-'}</span>
-                                    <button class="copy-btn" onclick="copyToClipboard('${biz.Phone}', this)"><i class="fa fa-copy"></i></button>
-                                </div>
-                                <div class="action-right">
-                                    <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn" title="Bekijk Reviews">
-                                        <i class="fa fa-star"></i>
-                                    </a>
-                                    <a href="${mapsUrl}" target="_blank" class="btn-icon" title="Navigeer">
-                                        <i class="fa fa-location-dot"></i>
-                                    </a>
-                                </div>
-                            </div>
+                        <div class="action-right">
+                            ${emailHtml}
+                            <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn"><i class="fa fa-star"></i></a>
+                            <a href="${mapsUrl}" target="_blank" class="btn-icon"><i class="fa fa-location-dot"></i></a>
                         </div>
-                    </div>`;
-                });
-                container.appendChild(grid);
-            });
-        }
+                    </div>
+                </div>
+            </div>`;
+        });
+        container.appendChild(grid);
+    });
+
+    // 3. Fade-in effect
+    setTimeout(() => {
+        document.querySelectorAll('.biz-card-mini').forEach((card, index) => {
+            setTimeout(() => { card.classList.add('show'); }, index * 30);
+        });
+    }, 50);
+}
 
         function copyToClipboard(text, el) {
             navigator.clipboard.writeText(text).then(() => {

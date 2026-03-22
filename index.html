@@ -206,11 +206,24 @@ function renderBusinesses(data) {
                     <i class="fa fa-envelope"></i>
                 </a>` : '';
 
+// 1. Bepaal welke afbeelding we laten zien (Prioriteit: PhotoURL > Website Preview > Placeholder)
+            let finalImageUrl;
+            if (biz.PhotoURL && biz.PhotoURL.trim() !== "") {
+                finalImageUrl = biz.PhotoURL;
+            } else if (cleanUrl) {
+                finalImageUrl = `https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130`;
+            } else {
+                finalImageUrl = `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`;
+            }
+
+            // 2. Bouw het kaartje op met de gekozen afbeelding
             grid.innerHTML += `
             <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
                 <div class="mini-preview">
                     <a href="${cleanUrl}" target="_blank">
-                        <img src="https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130" onerror="this.src='https://via.placeholder.com/180x130?text=No+Web'">
+                        <img src="${finalImageUrl}" 
+                             style="object-fit: cover; width: 100%; height: 100%;"
+                             onerror="this.src='https://via.placeholder.com/180x130?text=No+Photo'">
                     </a>
                 </div>
                 <div class="mini-content">
@@ -231,8 +244,7 @@ function renderBusinesses(data) {
                         </div>
                     </div>
                 </div>
-            </div>`;
-        });
+            </div>`;        });
         container.appendChild(grid);
     });
 
