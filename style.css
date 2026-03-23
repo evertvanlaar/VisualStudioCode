@@ -556,47 +556,39 @@ form label {
     text-decoration: none;
 }
 
-/* 1. Zorg dat de container de 'ankerplaats' wordt */
+/* 1. De container moet de 'ankerplaats' worden voor de badge */
 .mini-row-top {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    position: relative; /* DIT IS DE SLEUTEL: dit houdt de badge binnen het kaartje */
-    gap: 10px;
-    margin-bottom: 5px;
+    position: relative; /* DIT IS VERPLICHT: het label blijft nu binnen dit blokje */
+    padding-top: 5px;   /* Wat ademruimte aan de bovenkant */
 }
 
-/* 2. Zorg dat de naam niet onder het label doorloopt */
+/* 2. De Bedrijfsnaam: geef hem ruimte aan de rechterkant zodat hij niet onder de badge doorloopt */
 .biz-name {
-    padding-right: 95px; /* Creëert een 'no-go zone' voor de tekst aan de rechterkant */
+    margin: 0;
+    font-size: 15px;
     flex: 1;
-    min-width: 0;
+    padding-right: 95px; /* De 'no-go zone' voor de tekst */
 }
 
-/* 3. Het zwevende label */
+/* 3. De Locatie: nu dwingen we hem naar de hoek */
 .biz-location {
-    position: absolute;  /* Haalt het uit de tekstregel en laat het zweven */
-    right: 0;           /* Plakt het tegen de rechterkant */
-    top: 0;             /* Plakt het tegen de bovenkant */
+    position: absolute;  /* DIT IS DE TRUC: hij zweeft nu vrij */
+    right: 0;            /* Plak hem tegen de rechterrand */
+    top: 0;              /* Plak hem tegen de bovenrand */
     
-    white-space: nowrap;
-    font-size: 8px;      /* Iets kleiner voor de verhouding */
-    color: #444;
-    text-transform: uppercase;
-    font-weight: 800;
-    background: #f0f0f0; 
-    padding: 3px 10px;   /* Iets bredere padding voor een echte 'pill' look */
+    /* Jouw huidige styling aangevuld: */
+    background: #f0f0f0;
+    padding: 2px 10px;
     border-radius: 20px;
+    font-size: 8px;
+    font-weight: 800;
     border: 1px solid #ddd;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* Sterkere schaduw voor het 'zweven' */
-    
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    white-space: nowrap;
     display: flex;
     align-items: center;
     gap: 4px;
-    z-index: 5;         /* Zorgt dat het altijd bovenop ligt */
-}
-
-.biz-location i {
-    font-size: 9px;
-    color: #666;
 }
