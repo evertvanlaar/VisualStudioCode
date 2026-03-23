@@ -126,23 +126,43 @@
             }
         }
 
-        function generateCategoryButtons(data) {
-            const container = document.getElementById('filter-buttons');
-            const categories = [...new Set(data.map(biz => biz.Category).filter(cat => cat))].sort();
-            let html = `<button class="filter-btn active" data-category="all">All</button>`;
-            categories.forEach(cat => {
-                html += `<button class="filter-btn" data-category="${cat}">${cat}</button>`;
-            });
-            container.innerHTML = html;
-            container.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    e.target.classList.add('active');
-                    activeCategory = e.target.getAttribute('data-category');
-                    applyFilters();
-                });
-            });
-        }
+function generateCategoryButtons(data) {
+    const container = document.getElementById('filter-buttons');
+    // Haal unieke categorieën op, filter lege waarden en sorteer
+    const categories = [...new Set(data.map(biz => biz.Category).filter(cat => cat))].sort();
+    
+    // Begin met de 'All' knop (met een blok-icoon)
+    let html = `
+        <button class="filter-btn active" data-category="all">
+            <i class="fa fa-th-large"></i>
+            <span>All</span>
+        </button>`;
+
+    categories.forEach(cat => {
+        // We gebruiken jouw bestaande getIcon() functie voor de icoontjes
+        html += `
+            <button class="filter-btn" data-category="${cat}">
+                ${getIcon(cat)}
+                <span>${cat}</span>
+            </button>`;
+    });
+
+    container.innerHTML = html;
+
+    // Event listeners toevoegen
+    container.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            // Zorg dat we de button pakken, ook als er op het icoontje geklikt wordt
+            const targetBtn = e.target.closest('.filter-btn');
+            
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            targetBtn.classList.add('active');
+            
+            activeCategory = targetBtn.getAttribute('data-category');
+            applyFilters();
+        });
+    });
+}
 
 function renderBusinesses(data) {
     const container = document.getElementById('business-list');
