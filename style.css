@@ -556,47 +556,47 @@ form label {
     text-decoration: none;
 }
 
+/* 1. Zorg dat de container de 'ankerplaats' wordt */
 .mini-row-top {
     display: flex;
-    justify-content: space-between; /* Houdt ze uit elkaar */
+    justify-content: space-between;
     align-items: flex-start;
-    width: 100%; /* Zorg dat hij de volle breedte benut */
+    position: relative; /* DIT IS DE SLEUTEL: dit houdt de badge binnen het kaartje */
+    gap: 10px;
+    margin-bottom: 5px;
 }
 
+/* 2. Zorg dat de naam niet onder het label doorloopt */
 .biz-name {
-    flex: 1;            /* Pak de beschikbare ruimte... */
-    min-width: 0;       /* ...maar sta toe dat de tekst afbreekt */
-    word-wrap: break-word;
-    margin-right: 10px; /* Geef de locatie een beetje ademruimte */
+    padding-right: 95px; /* Creëert een 'no-go zone' voor de tekst aan de rechterkant */
+    flex: 1;
+    min-width: 0;
 }
 
+/* 3. Het zwevende label */
 .biz-location {
-    flex-shrink: 0;     /* DIT IS DE FIX: De locatie mag NOOIT krimpen */
-    white-space: nowrap;/* Zorg dat de plaatsnaam op 1 regel blijft */
-    text-align: right;
-}
-
-/* Het locatie-label dat 'uit de rand springt' */
-.biz-location {
-    flex-shrink: 0;
+    position: absolute;  /* Haalt het uit de tekstregel en laat het zweven */
+    right: 0;           /* Plakt het tegen de rechterkant */
+    top: 0;             /* Plakt het tegen de bovenkant */
+    
     white-space: nowrap;
-    font-size: 9px;              /* Iets kleiner voor het label-effect */
-    color: #444;                 /* Iets donkerder voor contrast op de lichte achtergrond */
+    font-size: 8px;      /* Iets kleiner voor de verhouding */
+    color: #444;
     text-transform: uppercase;
-    font-weight: 800;            /* Extra dikke letters */
-    background: #f0f0f0;         /* Lichtgrijze achtergrond */
-    padding: 3px 8px;            /* Ruimte rondom de tekst */
-    border-radius: 20px;         /* Mooie ronde 'pill' vorm */
-    border: 1px solid #ddd;      /* Subtiel randje */
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Laat het 'zweven' */
+    font-weight: 800;
+    background: #f0f0f0; 
+    padding: 3px 10px;   /* Iets bredere padding voor een echte 'pill' look */
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* Sterkere schaduw voor het 'zweven' */
+    
     display: flex;
     align-items: center;
     gap: 4px;
-    margin-top: -2px;            /* Lijn het verticaal uit met de naam */
+    z-index: 5;         /* Zorgt dat het altijd bovenop ligt */
 }
 
-/* Het icoontje in het label iets kleiner maken */
 .biz-location i {
-    font-size: 10px;
+    font-size: 9px;
     color: #666;
 }
