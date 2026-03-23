@@ -523,28 +523,7 @@ form label {
     }
 }
 
-/* Zorg dat de bovenste rij de ruimte verdeelt */
-.mini-row-top {
-    display: flex;
-    justify-content: space-between; /* Naam links, Locatie rechts */
-    align-items: flex-start;
-    margin-bottom: 2px;
-}
 
-.biz-name {
-    margin: 0;
-    font-size: 16px; /* Pas aan naar wens */
-    flex: 1; /* Laat de naam groeien zodat de locatie naar rechts wordt geduwd */
-}
-
-.biz-location {
-    font-size: 11px;
-    color: #888;
-    white-space: nowrap; /* Voorkomt dat de locatie naar een nieuwe regel springt */
-    font-weight: 600;
-    text-transform: uppercase;
-    padding-top: 3px;
-}
 
 .mini-row-sub {
     margin-bottom: 8px;
