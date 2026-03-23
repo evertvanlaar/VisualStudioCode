@@ -522,3 +522,56 @@ form label {
         gap: 5px; /* Houdt de icoontjes dicht bij elkaar op mobiel */
     }
 }
+
+/* Zorg dat de bovenste rij de ruimte verdeelt */
+.mini-row-top {
+    display: flex;
+    justify-content: space-between; /* Naam links, Locatie rechts */
+    align-items: flex-start;
+    margin-bottom: 2px;
+}
+
+.biz-name {
+    margin: 0;
+    font-size: 16px; /* Pas aan naar wens */
+    flex: 1; /* Laat de naam groeien zodat de locatie naar rechts wordt geduwd */
+}
+
+.biz-location {
+    font-size: 11px;
+    color: #888;
+    white-space: nowrap; /* Voorkomt dat de locatie naar een nieuwe regel springt */
+    font-weight: 600;
+    text-transform: uppercase;
+    padding-top: 3px;
+}
+
+.mini-row-sub {
+    margin-bottom: 8px;
+}
+
+.mini-web-link {
+    font-size: 12px;
+    color: #007bff; /* Of je eigen accentkleur */
+    text-decoration: none;
+}
+
+.mini-row-top {
+    display: flex;
+    justify-content: space-between; /* Houdt ze uit elkaar */
+    align-items: flex-start;
+    width: 100%; /* Zorg dat hij de volle breedte benut */
+}
+
+.biz-name {
+    flex: 1;            /* Pak de beschikbare ruimte... */
+    min-width: 0;       /* ...maar sta toe dat de tekst afbreekt */
+    word-wrap: break-word;
+    margin-right: 10px; /* Geef de locatie een beetje ademruimte */
+}
+
+.biz-location {
+    flex-shrink: 0;     /* DIT IS DE FIX: De locatie mag NOOIT krimpen */
+    white-space: nowrap;/* Zorg dat de plaatsnaam op 1 regel blijft */
+    text-align: right;
+}

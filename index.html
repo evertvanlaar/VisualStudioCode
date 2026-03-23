@@ -96,10 +96,10 @@
 
         // Icon Map
         const iconMap = {
-            'Bakery': 'fa-bread-slice', 'Bakker': 'fa-bread-slice', 'Cafe': 'fa-coffee', 'Koffie': 'fa-coffee',
-            'Restaurant': 'fa-utensils', 'Eten': 'fa-utensils', 'Bar': 'fa-glass-cheers', 'Pub': 'fa-beer',
-            'Shop': 'fa-shopping-cart', 'Winkel': 'fa-shopping-bag', 'Supermarket': 'fa-shopping-basket',
-            'Hotel': 'fa-bed', 'B&B': 'fa-hotel', 'Camping': 'fa-campground', 'Beauty': 'fa-spa',
+            'Bakery': 'fa-bread-slice', 'Bakker': 'fa-bread-slice', 'Coffee': 'fa-coffee', 'Koffie': 'fa-coffee',
+            'Eat': 'fa-utensils', 'Eten': 'fa-utensils', 'Drink': 'fa-glass-cheers', 'Pub': 'fa-beer',
+            'Shop': 'fa-shopping-cart', 'Other': 'fa-shopping-bag', 'Supermarket': 'fa-shopping-basket',
+            'Sleep': 'fa-bed', 'B&B': 'fa-hotel', 'Camp': 'fa-campground', 'Beauty': 'fa-spa',
             'Kapper': 'fa-cut', 'Sport': 'fa-running', 'Pharmacy': 'fa-pills', 'Garage': 'fa-car'
         };
 
@@ -229,10 +229,18 @@ function renderBusinesses(data) {
                 <div class="mini-content">
                     <div class="mini-row-top">
                         <h2 class="biz-name">${biz.Name}</h2>
-                        <a href="${cleanUrl}" target="_blank" class="mini-web-link"><i class="fa fa-external-link"></i> ${displayUrl || 'Site'}</a>
+                        
+                        <span class="biz-location"><i class="fa fa-map-marker-alt"></i> ${biz.Location || 'Kala Nera'}</span>
                     </div>
+                    
+                    <div class="mini-row-sub">
+                        <a href="${cleanUrl}" target="_blank" class="mini-web-link">
+                            <i class="fa fa-external-link"></i> ${displayUrl || 'Site'}
+                        </a>
+                    </div>
+
                     <div class="mini-actions">
-                       <div class="phone-group">
+                        <div class="phone-group">
                             <a href="tel:${biz.Phone}" class="btn-icon"><i class="fa fa-phone"></i></a>
                             <span class="phone-txt">${biz.Phone || '-'}</span>
                             <button class="copy-btn" onclick="copyToClipboard('${biz.Phone}', this)"><i class="fa fa-copy"></i></button>
