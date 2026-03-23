@@ -421,17 +421,19 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 
     .mini-content {
         flex: 1 !important;
-        min-width: 0 !important;
+        position: relative !important; /* Voeg dit toe als extra ankerpunt */
         display: flex !important;
         flex-direction: column !important;
-        gap: 4px !important;
+        min-width: 0 !important;
     }
 
     .biz-name {
         font-size: 15px !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
+        white-space: normal !important; /* Verander dit van nowrap naar normal */
+        overflow: visible !important;
+        text-overflow: clip !important;
+        line-height: 1.2;
+        padding-right: 85px !important; /* Zorg dat de ruimte voor de badge ook hier geldt */
     }
 
     .mini-actions {
@@ -554,9 +556,9 @@ form label {
 
 /* 3. De Locatie: nu dwingen we hem naar de hoek */
 .biz-location {
-    position: absolute;  /* DIT IS DE TRUC: hij zweeft nu vrij */
-    right: 0;            /* Plak hem tegen de rechterrand */
-    top: 0;              /* Plak hem tegen de bovenrand */
+    position: absolute !important;  /* DIT IS DE TRUC: hij zweeft nu vrij */
+    right: 0 !important;            /* Plak hem tegen de rechterrand */
+    top: 0 !important;              /* Plak hem tegen de bovenrand */
     
     /* Jouw huidige styling aangevuld: */
     background: #f0f0f0;
