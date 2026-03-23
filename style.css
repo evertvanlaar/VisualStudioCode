@@ -575,3 +575,28 @@ form label {
     white-space: nowrap;/* Zorg dat de plaatsnaam op 1 regel blijft */
     text-align: right;
 }
+
+/* Het locatie-label dat 'uit de rand springt' */
+.biz-location {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 9px;              /* Iets kleiner voor het label-effect */
+    color: #444;                 /* Iets donkerder voor contrast op de lichte achtergrond */
+    text-transform: uppercase;
+    font-weight: 800;            /* Extra dikke letters */
+    background: #f0f0f0;         /* Lichtgrijze achtergrond */
+    padding: 3px 8px;            /* Ruimte rondom de tekst */
+    border-radius: 20px;         /* Mooie ronde 'pill' vorm */
+    border: 1px solid #ddd;      /* Subtiel randje */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Laat het 'zweven' */
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: -2px;            /* Lijn het verticaal uit met de naam */
+}
+
+/* Het icoontje in het label iets kleiner maken */
+.biz-location i {
+    font-size: 10px;
+    color: #666;
+}
