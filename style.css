@@ -578,3 +578,52 @@ form label {
     white-space: nowrap !important;
     z-index: 10 !important;
 }
+
+
+
+
+/* We maken het hele kaartje de 'ankerplaats' in plaats van alleen de bovenste rij */
+.biz-card-mini {
+    position: relative !important;
+}
+
+/* 1. Zorg dat de tekstkolom het ankerpunt is */
+.mini-content {
+    position: relative !important; /* DIT IS HET ANKER */
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important; /* Dwingt alles naar boven */
+    padding-top: 2px !important; /* Een klein beetje ademruimte bovenin */
+}
+
+/* 2. De Naam: geef hem ruimte aan de rechterkant */
+.biz-name {
+    display: block !important;
+    padding-right: 85px !important; /* De 'verboden zone' voor tekst */
+    margin: 0 !important;
+    line-height: 1.2 !important;
+    white-space: normal !important; /* Mag over 2 regels */
+}
+
+/* 3. De Badge: we pinnen hem nu strak in de hoek van .mini-content */
+.biz-location {
+    position: absolute !important;
+    right: 0 !important;  /* Strak tegen de rechterkant van de tekstkolom */
+    top: 0 !important;    /* Strak tegen de bovenkant van de tekstkolom */
+    
+    /* Jouw styling voor de 'pill' look */
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    padding: 1px 8px !important;
+    border-radius: 20px !important;
+    font-size: 8px !important;
+    font-weight: 800 !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+    
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    white-space: nowrap !important;
+    z-index: 99 !important;
+}
