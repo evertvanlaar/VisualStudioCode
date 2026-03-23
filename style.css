@@ -224,7 +224,7 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 .mini-preview img { width: 100%; height: 100%; object-fit: cover; }
 
 .mini-content { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
-.biz-name { margin: 0; font-size: 16px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
 
 .mini-web-link { 
     font-size: 11px; 
@@ -427,14 +427,7 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
         min-width: 0 !important;
     }
 
-    .biz-name {
-        font-size: 15px !important;
-        white-space: normal !important; /* Verander dit van nowrap naar normal */
-        overflow: visible !important;
-        text-overflow: clip !important;
-        line-height: 1.2;
-        padding-right: 85px !important; /* Zorg dat de ruimte voor de badge ook hier geldt */
-    }
+
 
     .mini-actions {
         display: flex !important;
@@ -537,39 +530,51 @@ form label {
     text-decoration: none;
 }
 
-/* 1. De container moet de 'ankerplaats' worden voor de badge */
+
+/* --- DE DEFINITIEVE BADGE FIX --- */
+
+/* 1. De Container */
 .mini-row-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    position: relative; /* DIT IS VERPLICHT: het label blijft nu binnen dit blokje */
-    padding-top: 5px;   /* Wat ademruimte aan de bovenkant */
+    display: block !important;    /* Forceer uit flex-modus */
+    position: relative !important; /* Het onzichtbare anker voor de badge */
+    width: 100% !important;
+    min-height: 22px !important;  /* Zorgt dat er ruimte is voor de badge */
+    margin-bottom: 5px !important;
 }
 
-/* 2. De Bedrijfsnaam: geef hem ruimte aan de rechterkant zodat hij niet onder de badge doorloopt */
+/* 2. De Bedrijfsnaam */
 .biz-name {
-    margin: 0;
-    font-size: 15px;
-    flex: 1;
-    padding-right: 95px; /* De 'no-go zone' voor de tekst */
+    display: block !important;
+    margin: 0 !important;
+    padding-right: 90px !important; /* DIT MAAKT RUIMTE VOOR DE BADGE */
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    white-space: normal !important;  /* Naam mag over 2 regels gaan */
+    overflow: visible !important;
+    text-align: left !important;
+    color: var(--text) !important;
 }
 
-/* 3. De Locatie: nu dwingen we hem naar de hoek */
+/* 3. De Zwevende Badge (Locatie) */
 .biz-location {
-    position: absolute !important;  /* DIT IS DE TRUC: hij zweeft nu vrij */
-    right: 0 !important;            /* Plak hem tegen de rechterrand */
-    top: 0 !important;              /* Plak hem tegen de bovenrand */
+    position: absolute !important;   /* DIT LAAT HEM ZWEVEN */
+    right: 0 !important;             /* Plak rechtsboven in de container */
+    top: 0 !important;
     
-    /* Jouw huidige styling aangevuld: */
-    background: #f0f0f0;
-    padding: 2px 10px;
-    border-radius: 20px;
-    font-size: 8px;
-    font-weight: 800;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    background: #f1f5f9 !important;  /* Lichtgrijs */
+    color: #475569 !important;       /* Donkergrijs */
+    padding: 2px 10px !important;
+    border-radius: 20px !important;  /* Pill vorm */
+    font-size: 8px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+    
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    white-space: nowrap !important;
+    z-index: 10 !important;
 }
