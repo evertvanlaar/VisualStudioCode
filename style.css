@@ -379,9 +379,9 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     .nav-links.active { display: flex !important; }
     .nav-links li { margin: 10px 0; width: 100%; text-align: center; }
 
-/* Standaard is de knop onzichtbaar (Desktop) */
+/* Verberg de knop volledig op desktop */
     .menu-toggle {
-        display: none; 
+        display: none !important; /* Forceer verbergen op desktop */
         flex-direction: column;
         justify-content: space-between;
         width: 25px; 
@@ -389,12 +389,13 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
         background: transparent; 
         border: none; 
         cursor: pointer;
+        padding: 0;
     }
 
-/* Alleen op kleine schermen (Mobiel/Tablet) wordt de knop zichtbaar */
+/* Alleen tonen op schermen kleiner dan 768px (mobiel) */
     @media screen and (max-width: 768px) {
         .menu-toggle {
-            display: flex !important;
+            display: flex !important; /* Toon alleen op mobiel */
         }
     }
 
