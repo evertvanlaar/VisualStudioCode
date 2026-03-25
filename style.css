@@ -640,3 +640,19 @@ form label {
     z-index: 99 !important;
 }
 
+#location-buttons .filter-btn {
+    font-size: 13px;
+    padding: 6px 14px;
+    opacity: 0.8;
+}
+
+#location-buttons .filter-btn.active {
+    opacity: 1;
+    background-color: var(--primary-olive-dark) !important;
+}
+
+#location-buttons {
+    margin-top: 5px;
+    border-top: 1px solid var(--border);
+    padding-top: 15px;
+}

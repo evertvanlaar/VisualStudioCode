@@ -83,6 +83,7 @@
         </div>
 
         <div class="filter-container" id="filter-buttons"></div>
+        <div class="filter-container" id="location-buttons"></div>
 
         <div id="business-list">
             <p class="status-msg">Data is loading...</p>
@@ -90,111 +91,123 @@
     </div>
 
     <script>
-        const N8N_WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/local-businesses';
-        let allBusinesses = []; 
-        let activeCategory = 'all';
+const N8N_WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/local-businesses';
+let allBusinesses = []; 
+let activeCategory = 'all';
+let activeLocation = 'all'; // Staat nu globaal, zoals het hoort
 
-        // Icon Map
-        const iconMap = {
-            'Bakery': 'fa-bread-slice', 'Bakker': 'fa-bread-slice', 'Coffee': 'fa-coffee', 'Koffie': 'fa-coffee',
-            'Eat': 'fa-utensils', 'Eten': 'fa-utensils', 'Drink': 'fa-glass-cheers', 'Pub': 'fa-beer',
-            'Shop': 'fa-shopping-cart', 'Other': 'fa-shopping-bag', 'Supermarket': 'fa-shopping-basket',
-            'Sleep': 'fa-bed', 'B&B': 'fa-hotel', 'Camp': 'fa-campground', 'Beauty': 'fa-spa',
-            'Kapper': 'fa-cut', 'Sport': 'fa-running', 'Pharmacy': 'fa-pills', 'Garage': 'fa-car'
-        };
+// Icon Map
+const iconMap = {
+    'Bakery': 'fa-bread-slice', 'Bakker': 'fa-bread-slice', 'Coffee': 'fa-coffee', 'Koffie': 'fa-coffee',
+    'Eat': 'fa-utensils', 'Eten': 'fa-utensils', 'Drink': 'fa-glass-cheers', 'Pub': 'fa-beer',
+    'Shop': 'fa-shopping-cart', 'Other': 'fa-shopping-bag', 'Supermarket': 'fa-shopping-basket',
+    'Sleep': 'fa-bed', 'B&B': 'fa-hotel', 'Camp': 'fa-campground', 'Beauty': 'fa-spa',
+    'Kapper': 'fa-cut', 'Sport': 'fa-running', 'Pharmacy': 'fa-pills', 'Garage': 'fa-car'
+};
 
-        function getIcon(cat) {
-            const key = Object.keys(iconMap).find(k => cat.toLowerCase().includes(k.toLowerCase()));
-            return `<i class="fa ${key ? iconMap[key] : 'fa-tag'}"></i>`;
-        }
+function getIcon(cat) {
+    const key = Object.keys(iconMap).find(k => cat.toLowerCase().includes(k.toLowerCase()));
+    return `<i class="fa ${key ? iconMap[key] : 'fa-tag'}"></i>`;
+}
 
-        function getColor(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-            return `hsl(${Math.abs(hash) % 360}, 60%, 45%)`;
-        }
+function getColor(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    return `hsl(${Math.abs(hash) % 360}, 60%, 45%)`;
+}
 
-        async function init() {
-            try {
-                const response = await fetch(N8N_WEBHOOK_URL);
-                const rawData = await response.json();
-                allBusinesses = rawData.filter(biz => biz.Status === 'Active');
-                generateCategoryButtons(allBusinesses);
-                renderBusinesses(allBusinesses);
-            } catch (error) {
-                document.getElementById('business-list').innerHTML = '<p class="status-msg">Fout bij laden.</p>';
-            }
-        }
+// --- INITIALISATIE ---
+async function init() {
+    try {
+        const response = await fetch(N8N_WEBHOOK_URL);
+        const rawData = await response.json();
+        allBusinesses = rawData.filter(biz => biz.Status === 'Active');
+        
+        generateCategoryButtons(allBusinesses);
+        generateLocationButtons(allBusinesses); // Nu vindbaar
+        renderBusinesses(allBusinesses);
+    } catch (error) {
+        console.error("Fetch error:", error);
+        document.getElementById('business-list').innerHTML = '<p class="status-msg">Error loading data.</p>';
+    }
+}
 
+// --- CATEGORIE KNOPPEN ---
 function generateCategoryButtons(data) {
     const container = document.getElementById('filter-buttons');
-    // Haal unieke categorieën op, filter lege waarden en sorteer
     const categories = [...new Set(data.map(biz => biz.Category).filter(cat => cat))].sort();
     
-    // Begin met de 'All' knop (met een blok-icoon)
-    let html = `
-        <button class="filter-btn active" data-category="all">
-            <i class="fa fa-th-large"></i>
-            <span>All</span>
-        </button>`;
+    let html = `<button class="filter-btn active" data-category="all"><i class="fa fa-th-large"></i> <span>All</span></button>`;
 
     categories.forEach(cat => {
-        // We gebruiken jouw bestaande getIcon() functie voor de icoontjes
-        html += `
-            <button class="filter-btn" data-category="${cat}">
-                ${getIcon(cat)}
-                <span>${cat}</span>
-            </button>`;
+        html += `<button class="filter-btn" data-category="${cat}">${getIcon(cat)} <span>${cat}</span></button>`;
     });
 
     container.innerHTML = html;
 
-    // Event listeners toevoegen
     container.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            // Zorg dat we de button pakken, ook als er op het icoontje geklikt wordt
             const targetBtn = e.target.closest('.filter-btn');
-            
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             targetBtn.classList.add('active');
-            
             activeCategory = targetBtn.getAttribute('data-category');
             applyFilters();
         });
     });
 }
 
+// --- LOCATIE KNOPPEN ---
+function generateLocationButtons(data) {
+    const container = document.getElementById('location-buttons');
+    const locations = [...new Set(data.map(biz => biz.Location).filter(loc => loc))].sort();
+    
+    let html = `<button class="filter-btn active" data-location="all"><i class="fa fa-map-marker-alt"></i> <span>All Locations</span></button>`;
+    
+    locations.forEach(loc => {
+        html += `<button class="filter-btn" data-location="${loc}"><span>${loc}</span></button>`;
+    });
+
+    container.innerHTML = html;
+
+    container.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const targetBtn = e.target.closest('.filter-btn');
+            container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            targetBtn.classList.add('active');
+            activeLocation = targetBtn.getAttribute('data-location');
+            applyFilters();
+        });
+    });
+}
+
+// --- FILTER LOGICA ---
+function applyFilters() {
+    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    
+    const filtered = allBusinesses.filter(biz => {
+        // Zoek in naam, categorie en locatie
+        const matchesSearch = (biz.Name || "").toLowerCase().includes(searchTerm) || 
+                              (biz.Category || "").toLowerCase().includes(searchTerm) ||
+                              (biz.Location || "").toLowerCase().includes(searchTerm);
+        
+        const matchesCategory = activeCategory === 'all' || biz.Category === activeCategory;
+        const matchesLocation = activeLocation === 'all' || biz.Location === activeLocation;
+        
+        return matchesSearch && matchesCategory && matchesLocation;
+    });
+    renderBusinesses(filtered);
+}
+
+// --- RENDEREN ---
 function renderBusinesses(data) {
     const container = document.getElementById('business-list');
     container.innerHTML = '';
 
-    // 1. Genereer de AI-data (Schema.org) voor de huidige lijst
-    const schemaData = {
-        "@context": "https://schema.org",
-        "@graph": data.map(biz => ({
-            "@type": biz.Category?.toLowerCase().includes('hotel') ? "Hotel" : "LocalBusiness",
-            "name": biz.Name,
-            "telephone": biz.Phone || "",
-            "email": biz.Email || "", // Voegt e-mail toe aan AI-data
-            "url": biz.Website || "",
-            "address": {
-                "@type": "PostalAddress",
-                "addressLocality": "Kala Nera",
-                "addressCountry": "GR"
-            }
-        }))
-    };
-    
-    // Verwijder oude schema indien aanwezig en voeg nieuwe toe
-    const oldSchema = document.getElementById('dynamic-schema');
-    if (oldSchema) oldSchema.remove();
-    const script = document.createElement('script');
-    script.id = 'dynamic-schema';
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(schemaData);
-    document.head.appendChild(script);
+    if (data.length === 0) {
+        container.innerHTML = '<p class="status-msg">No businesses found.</p>';
+        return;
+    }
 
-    // 2. Groepeer en toon de bedrijven
     const grouped = data.reduce((acc, biz) => {
         const cat = biz.Category || 'Overig';
         if (!acc[cat]) acc[cat] = [];
@@ -216,49 +229,29 @@ function renderBusinesses(data) {
             const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
             const displayUrl = rawUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
             const catColor = getColor(category);
-            
             const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' Kala Nera reviews')}`;
             const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' Kala Nera')}`;
+            const emailHtml = biz.Email ? `<a href="mailto:${biz.Email}" class="btn-icon email-btn" title="E-mail"><i class="fa fa-envelope"></i></a>` : '';
 
-            // E-mail check: Alleen icoon tonen als biz.Email bestaat in je sheet
-            const emailHtml = biz.Email ? `
-                <a href="mailto:${biz.Email}" class="btn-icon email-btn" title="E-mail sturen">
-                    <i class="fa fa-envelope"></i>
-                </a>` : '';
+            let finalImageUrl = biz.PhotoURL || (cleanUrl ? `https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130` : `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`);
 
-// 1. Bepaal welke afbeelding we laten zien (Prioriteit: PhotoURL > Website Preview > Placeholder)
-            let finalImageUrl;
-            if (biz.PhotoURL && biz.PhotoURL.trim() !== "") {
-                finalImageUrl = biz.PhotoURL;
-            } else if (cleanUrl) {
-                finalImageUrl = `https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130`;
-            } else {
-                finalImageUrl = `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`;
-            }
-
-            // 2. Bouw het kaartje op met de gekozen afbeelding
             grid.innerHTML += `
             <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
                 <div class="mini-preview">
                     <a href="${cleanUrl}" target="_blank">
-                        <img src="${finalImageUrl}" 
-                             style="object-fit: cover; width: 100%; height: 100%;"
-                             onerror="this.src='https://via.placeholder.com/180x130?text=No+Photo'">
+                        <img src="${finalImageUrl}" onerror="this.src='https://via.placeholder.com/180x130?text=No+Photo'">
                     </a>
                 </div>
                 <div class="mini-content">
                     <div class="mini-row-top">
                         <h2 class="biz-name">${biz.Name}</h2>
-                        
                         <span class="biz-location"><i class="fa fa-map-marker-alt"></i> ${biz.Location || 'Kala Nera'}</span>
                     </div>
-                    
                     <div class="mini-row-sub">
                         <a href="${cleanUrl}" target="_blank" class="mini-web-link">
                             <i class="fa fa-external-link"></i> ${displayUrl || 'Site'}
                         </a>
                     </div>
-
                     <div class="mini-actions">
                         <div class="phone-group">
                             <a href="tel:${biz.Phone}" class="btn-icon"><i class="fa fa-phone"></i></a>
@@ -272,11 +265,11 @@ function renderBusinesses(data) {
                         </div>
                     </div>
                 </div>
-            </div>`;        });
+            </div>`;
+        });
         container.appendChild(grid);
     });
 
-    // 3. Fade-in effect
     setTimeout(() => {
         document.querySelectorAll('.biz-card-mini').forEach((card, index) => {
             setTimeout(() => { card.classList.add('show'); }, index * 30);
@@ -284,26 +277,16 @@ function renderBusinesses(data) {
     }, 50);
 }
 
-        function copyToClipboard(text, el) {
-            navigator.clipboard.writeText(text).then(() => {
-                const icon = el.querySelector('i');
-                icon.className = 'fa fa-check';
-                setTimeout(() => { icon.className = 'fa fa-copy'; }, 2000);
-            });
-        }
+function copyToClipboard(text, el) {
+    navigator.clipboard.writeText(text).then(() => {
+        const icon = el.querySelector('i');
+        icon.className = 'fa fa-check';
+        setTimeout(() => { icon.className = 'fa fa-copy'; }, 2000);
+    });
+}
 
-        function applyFilters() {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            const filtered = allBusinesses.filter(biz => {
-                const nameMatch = (biz.Name || "").toLowerCase().includes(searchTerm);
-                const categoryMatch = activeCategory === 'all' || biz.Category === activeCategory;
-                return nameMatch && categoryMatch;
-            });
-            renderBusinesses(filtered);
-        }
-
-        document.getElementById('search-input').addEventListener('input', applyFilters);
-        init();
+document.getElementById('search-input').addEventListener('input', applyFilters);
+init();
     </script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
