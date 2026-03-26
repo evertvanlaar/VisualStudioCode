@@ -83,23 +83,20 @@ function updateOnlineStatus() {
     const offlineIndicator = document.getElementById('offline-indicator');
     const mapSection = document.querySelector('.map-section');
 
+    console.log("Internet status check: ", navigator.onLine ? "ONLINE" : "OFFLINE");
+
     if (navigator.onLine) {
-        // --- ONLINE ---
         if (offlineIndicator) {
-            offlineIndicator.classList.remove('show');
+            offlineIndicator.classList.remove('is-visible');
         }
         if (mapSection) mapSection.style.display = 'block';
     } else {
-        // --- OFFLINE ---
         if (offlineIndicator) {
-            // Forceer display op flex voor het geval er nog ergens 'none' vandaan komt
-            offlineIndicator.style.display = 'flex'; 
-            // Geef de browser een fractie de tijd om de display te registreren voor de animatie
-            setTimeout(() => {
-                offlineIndicator.classList.add('show');
-            }, 10);
+            offlineIndicator.classList.add('is-visible');
         }
-        if (mapSection) mapSection.style.display = 'none';
+        if (mapSection) {
+            mapSection.style.display = 'none';
+        }
     }
 }
 

@@ -1056,27 +1056,30 @@ body.is-offline .map-section {
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-/* De basis van de toast */
-#offline-indicator {
+.offline-notification {
     position: fixed;
-    bottom: 30px; /* Iets hoger voor mobiele duimen */
+    bottom: 25px;
     left: 50%;
-    transform: translateX(-50%) translateY(150px); /* Start ver onder het scherm */
-    background: #e74c3c; 
+    transform: translateX(-50%) translateY(20px);
+    background-color: #e74c3c;
     color: white;
     padding: 12px 25px;
     border-radius: 50px;
-    display: flex; /* Altijd flex, niet display: none */
+    z-index: 10000; /* Zorg dat hij overal bovenop ligt */
+    display: flex;
     align-items: center;
     gap: 10px;
-    z-index: 9999;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    width: max-content;
-    max-width: 90%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    
+    /* De "onzichtbaar" status */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease-in-out;
 }
 
-/* De 'Show' class die JS toevoegt */
-#offline-indicator.show {
-    transform: translateX(-50%) translateY(0); /* Schuif hem in beeld */
+/* De "Zichtbaar" status */
+.offline-notification.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
 }
