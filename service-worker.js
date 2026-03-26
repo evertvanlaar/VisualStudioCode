@@ -7,6 +7,7 @@ const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/style.css',
+  '/app.js',  // <--- Zorg dat deze hierbij staat!
   '/script.js',
   '/manifest.json',
   '/icon-512.png'
