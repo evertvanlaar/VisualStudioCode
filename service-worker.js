@@ -1,5 +1,5 @@
 // service-worker.js
-const CACHE_NAME = 'kalanera-v3'; // Versienummer verhoogd
+const CACHE_NAME = 'kalanera-force-update-v10'; // Een heel hoog nummer/nieuwe naam
 const IMAGE_CACHE = 'kalanera-images-v1';
 
 // Bestanden die ALTIJD offline beschikbaar moeten zijn (de basis)
@@ -8,7 +8,6 @@ const STATIC_ASSETS = [
   '/index.html',
   '/style.css',
   '/app.js',  // <--- Zorg dat deze hierbij staat!
-  '/script.js',
   '/manifest.json',
   '/icon-512.png'
 ];

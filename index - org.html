@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <script type="application/ld+json">
+        {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Kala Nera Business Directory",
+        "url": "https://www.kalanera.gr",
+        "description": "The most comprehensive business directory for Kala Nera, Pelion, Greece.",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Kala Nera Local"
+        }
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="6000">
+    <title>Kala Nera Guide | Best Local Businesses, Restaurants & Hotels</title>
+    <meta name="description" content="Discover the best local businesses in Kala Nera. From authentic Greek restaurants to luxury hotels and charming shops. Your complete travel guide to Kala Nera, Pelion.">
+    <meta name="keywords" content="Kala Nera, Greece, travel guide, hotels, restaurants, Pelion, holiday, vacation, Volos">
+
+    <meta property="og:title" content="Kala Nera Local Business Directory">
+    <meta property="og:description" content="Everything you need to know about businesses and services in Kala Nera in one place.">
+    <meta property="og:image" content="link-to-your-best-photo.jpg">
+    <meta property="og:url" content="https://www.kalanera.gr">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+   
+<!--     <link rel="manifest" href="/manifest.json">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4a6c4a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="/icon-512.png">
+
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(reg => console.log('PWA Service Worker registered.'))
+            .catch(err => console.log('Service Worker registration failed: ', err));
+        });
+    }
+    </script> -->
+   
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+</head>
+<body>
+
+<header class="site-header">
+    <nav class="main-nav">
+    <div class="nav-container">
+        <a href="index.html" class="logo">Kala <span>Nera</span></a>
+        
+        <button class="menu-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+
+        <ul class="nav-links" id="nav-list">
+            <li><a href="#">Home</a></li>
+            <li><a href="t-form.html">Add your Business</a></li>
+            <li><a href="c-form.html">Contact</a></li>
+        </ul>
+    </div>
+    </nav>
+
+<div class="hero-section" style="display: flex; align-items: center; justify-content: center; text-align: center; flex-direction: column;">
+    <div class="hero-overlay" style="padding: 0 20px;">
+        <h1 style="color: white; margin-bottom: 10px;">Discover the Magic of Pelion</h1>
+        <p style="color: white !important; font-size: 1.1rem; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); margin: 0 auto; max-width: 80% !important; display: block;"> 
+            
+        </p>
+    </div>
+</div>
+</header>
+
+<section class="map-section">
+    <div class="map-wrapper">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7412.806073165634!2d23.119063947502177!3d39.3034605365609!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14a713c4f058eac1%3A0x3a09ddb26352b65b!2sKala%20Nera%20370%2010%2C%20Greece!5e1!3m2!1sen!2snl!4v1774108262549!5m2!1sen!2snl" width="800" height="600" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+</section>
+
+    <div class="main-container">
+        <h1>Business Directory</h1>
+
+        <div class="add-business-container">
+            <a href="t-form.html" target="_blank" class="add-biz-btn">
+                <i class="fa fa-plus-circle"></i> Add your business
+            </a>
+        </div>
+
+        <div class="search-container">
+            <i class="fa fa-search search-icon"></i>
+            <input type="text" class="search-input" id="search-input" placeholder="Search by name or category...">
+        </div>
+
+        <div class="filter-container" id="filter-buttons"></div>
+        <div class="filter-container" id="location-buttons"></div>
+
+        <div id="business-list">
+            <p class="status-msg">Data is loading...</p>
+        </div>
+    </div>
+
+    <script>
+const N8N_WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/local-businesses';
+let allBusinesses = []; 
+let activeCategory = 'all';
+let activeLocation = 'all'; // Staat nu globaal, zoals het hoort
+
+// Icon Map
+const iconMap = {
+    'Bakery': 'fa-bread-slice', 'Bakker': 'fa-bread-slice', 'Coffee': 'fa-coffee', 'Koffie': 'fa-coffee',
+    'Eat': 'fa-utensils', 'Eten': 'fa-utensils', 'Drink': 'fa-glass-cheers', 'Pub': 'fa-beer',
+    'Shop': 'fa-shopping-cart', 'Other': 'fa-shopping-bag', 'Supermarket': 'fa-shopping-basket',
+    'Sleep': 'fa-bed', 'B&B': 'fa-hotel', 'Camp': 'fa-campground', 'Beauty': 'fa-spa',
+    'Kapper': 'fa-cut', 'Sport': 'fa-running', 'Pharmacy': 'fa-pills', 'Garage': 'fa-car'
+};
+
+function getIcon(cat) {
+    const key = Object.keys(iconMap).find(k => cat.toLowerCase().includes(k.toLowerCase()));
+    return `<i class="fa ${key ? iconMap[key] : 'fa-tag'}"></i>`;
+}
+
+function getColor(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    return `hsl(${Math.abs(hash) % 360}, 60%, 45%)`;
+}
+
+// --- INITIALISATIE ---
+async function init() {
+    try {
+        const response = await fetch(N8N_WEBHOOK_URL);
+        const rawData = await response.json();
+        allBusinesses = rawData.filter(biz => biz.Status === 'Active');
+        
+        generateCategoryButtons(allBusinesses);
+        generateLocationButtons(allBusinesses); // Nu vindbaar
+        renderBusinesses(allBusinesses);
+    } catch (error) {
+        console.error("Fetch error:", error);
+        document.getElementById('business-list').innerHTML = '<p class="status-msg">Error loading data.</p>';
+    }
+}
+
+// --- CATEGORIE KNOPPEN ---
+function generateCategoryButtons(data) {
+    const container = document.getElementById('filter-buttons');
+    const categories = [...new Set(data.map(biz => biz.Category).filter(cat => cat))].sort();
+    
+    let html = `<button class="filter-btn active" data-category="all"><i class="fa fa-th-large"></i> <span>All</span></button>`;
+
+    categories.forEach(cat => {
+        html += `<button class="filter-btn" data-category="${cat}">${getIcon(cat)} <span>${cat}</span></button>`;
+    });
+
+    container.innerHTML = html;
+
+    container.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const targetBtn = e.target.closest('.filter-btn');
+            container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            targetBtn.classList.add('active');
+            activeCategory = targetBtn.getAttribute('data-category');
+            applyFilters();
+        });
+    });
+}
+
+// --- LOCATIE KNOPPEN ---
+function generateLocationButtons(data) {
+    const container = document.getElementById('location-buttons');
+    const locations = [...new Set(data.map(biz => biz.Location).filter(loc => loc))].sort();
+    
+    let html = `<button class="filter-btn active" data-location="all"><i class="fa fa-map-marker-alt"></i> <span>All Locations</span></button>`;
+    
+    locations.forEach(loc => {
+        html += `<button class="filter-btn" data-location="${loc}"><span>${loc}</span></button>`;
+    });
+
+    container.innerHTML = html;
+
+    container.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const targetBtn = e.target.closest('.filter-btn');
+            container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            targetBtn.classList.add('active');
+            activeLocation = targetBtn.getAttribute('data-location');
+            applyFilters();
+        });
+    });
+}
+
+// --- FILTER LOGICA ---
+function applyFilters() {
+    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    
+    const filtered = allBusinesses.filter(biz => {
+        // Zoek in naam, categorie en locatie
+        const matchesSearch = (biz.Name || "").toLowerCase().includes(searchTerm) || 
+                              (biz.Category || "").toLowerCase().includes(searchTerm) ||
+                              (biz.Location || "").toLowerCase().includes(searchTerm);
+        
+        const matchesCategory = activeCategory === 'all' || biz.Category === activeCategory;
+        const matchesLocation = activeLocation === 'all' || biz.Location === activeLocation;
+        
+        return matchesSearch && matchesCategory && matchesLocation;
+    });
+    renderBusinesses(filtered);
+}
+
+// --- RENDEREN ---
+function renderBusinesses(data) {
+    const container = document.getElementById('business-list');
+    container.innerHTML = '';
+
+    if (data.length === 0) {
+        container.innerHTML = '<p class="status-msg">No businesses found.</p>';
+        return;
+    }
+
+    const grouped = data.reduce((acc, biz) => {
+        const cat = biz.Category || 'Overig';
+        if (!acc[cat]) acc[cat] = [];
+        acc[cat].push(biz);
+        return acc;
+    }, {});
+
+    Object.keys(grouped).sort().forEach(category => {
+        const header = document.createElement('div');
+        header.className = 'category-section-header';
+        header.innerHTML = `<span>${getIcon(category)} ${category} <small>(${grouped[category].length})</small></span>`;
+        container.appendChild(header);
+
+        const grid = document.createElement('div');
+        grid.className = 'business-grid';
+        
+        grouped[category].sort((a, b) => a.Name.localeCompare(b.Name)).forEach(biz => {
+            const rawUrl = biz.Website || '';
+            const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
+            const displayUrl = rawUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
+            const catColor = getColor(category);
+            const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' Kala Nera reviews')}`;
+            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' Kala Nera')}`;
+            const emailHtml = biz.Email ? `<a href="mailto:${biz.Email}" class="btn-icon email-btn" title="E-mail"><i class="fa fa-envelope"></i></a>` : '';
+
+            let finalImageUrl = biz.PhotoURL || (cleanUrl ? `https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130` : `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`);
+
+            grid.innerHTML += `
+            <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
+                <div class="mini-preview">
+                    <a href="${cleanUrl}" target="_blank">
+                        <img src="${finalImageUrl}" onerror="this.src='https://via.placeholder.com/180x130?text=No+Photo'">
+                    </a>
+                </div>
+                <div class="mini-content">
+                    <div class="mini-row-top">
+                        <h2 class="biz-name">${biz.Name}</h2>
+                        <span class="biz-location"><i class="fa fa-map-marker-alt"></i> ${biz.Location || 'Kala Nera'}</span>
+                    </div>
+                    <div class="mini-row-sub">
+                        <a href="${cleanUrl}" target="_blank" class="mini-web-link">
+                            <i class="fa fa-external-link"></i> ${displayUrl || 'Site'}
+                        </a>
+                    </div>
+                    <div class="mini-actions">
+                        <div class="phone-group">
+                            <a href="tel:${biz.Phone}" class="btn-icon"><i class="fa fa-phone"></i></a>
+                            <span class="phone-txt">${biz.Phone || '-'}</span>
+                            <button class="copy-btn" onclick="copyToClipboard('${biz.Phone}', this)"><i class="fa fa-copy"></i></button>
+                        </div>
+                        <div class="action-right">
+                            ${emailHtml}
+                            <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn"><i class="fa fa-star"></i></a>
+                            <a href="${mapsUrl}" target="_blank" class="btn-icon"><i class="fa fa-location-dot"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        });
+        container.appendChild(grid);
+    });
+
+    setTimeout(() => {
+        document.querySelectorAll('.biz-card-mini').forEach((card, index) => {
+            setTimeout(() => { card.classList.add('show'); }, index * 30);
+        });
+    }, 50);
+}
+
+function copyToClipboard(text, el) {
+    navigator.clipboard.writeText(text).then(() => {
+        const icon = el.querySelector('i');
+        icon.className = 'fa fa-check';
+        setTimeout(() => { icon.className = 'fa fa-copy'; }, 2000);
+    });
+}
+
+document.getElementById('search-input').addEventListener('input', applyFilters);
+init();
+    </script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<footer class="site-footer">
+    <div class="footer-container">
+        <div class="footer-column">
+            <h3>About us</h3>
+            <p>We help travelers discover the best places from authentic taverns to the finest accommodations in Kala Nera and the surrounding area.</p>
+        </div>
+
+        <div class="footer-column">
+            <h3></h3>
+            <ul>
+                <li></li>
+            </ul>
+        </div>
+
+        <div class="footer-column">
+            <h3>Follow Us</h3>
+            <div class="social-icons">
+                <a href="https://www.facebook.com/kalanera.info" target="_blank" class="social-icon">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 10px; opacity: 0.6; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">
+        <a href="http://www.goatcounter.com" target="_blank" rel="noopener" title="Bezoekersstatistieken (Inloggen vereist)" style="text-decoration: none; color: inherit; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <img src="https://static.zgo.at/favicon/favicon-32x32.png" alt="GoatCounter" style="width: 16px; height: 16px;">
+            <span style="font-size: 12px; font-family: sans-serif;">Statistics</span>
+        </a>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2026 Kala Nera Business Directory. E-Project all rights reserved.</p>
+    </div>
+</footer>
+
+<script data-goatcounter="https://evertvanlaar.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+
+<script>
+    // Wacht tot de pagina geladen is
+    document.addEventListener('DOMContentLoaded', function() {
+        const menu = document.querySelector('#mobile-menu');
+        const menuLinks = document.querySelector('#nav-list');
+
+        // Check of de elementen wel bestaan (voorkomt foutmeldingen)
+        if (menu && menuLinks) {
+            menu.addEventListener('click', function() {
+                // Toggle de 'active' class op de UL (nav-links)
+                menuLinks.classList.toggle('active');
+                
+                // Optioneel: animatie van de hamburger naar een X
+                menu.classList.toggle('is-active');
+            });
+        }
+    });
+</script>
+            
+</body>
+</html>
