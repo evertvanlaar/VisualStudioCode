@@ -785,20 +785,42 @@ body.is-offline .map-section {
     line-height: 1;
 }
 
-// Banner mobiele app melding onderaan voor extra zichtbaarheid
+/* De basis voor beide banners (Android & iOS) */
 #install-banner, #ios-install-instructions {
     position: fixed;
-    bottom: 20px;
-    left: 5%;
-    width: 90%;
+    top: 10px; /* Klein beetje ruimte van de bovenkant */
+    left: 50%;
+    transform: translateX(-50%); /* Netjes in het midden */
+    width: 95%; /* Op mobiel bijna de volle breedte */
+    max-width: 500px; /* Op desktop wordt hij niet breder dan dit */
+    z-index: 10000;
+    background: white;
+    padding: 15px;
     border-radius: 12px;
-    z-index: 9999;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
-    border: 1px solid var(--primary-olive);
-    animation: slideUp 0.5s ease;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    border: 2px solid var(--primary-olive);
+    animation: slideDown 0.5s ease;
+    display: none; /* Wordt door JS op 'block' gezet */
 }
 
-@keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
+/* Specifieke styling voor de tekst binnen de banner */
+#install-banner p, #ios-install-instructions p {
+    margin: 0 0 12px 0;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--text);
+}
+
+/* De knoppen in de banner naast elkaar */
+.banner-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Animatie voor het binnenkomen */
+@keyframes slideDown {
+    from { transform: translate(-50%, -100%); opacity: 0; }
+    to { transform: translate(-50%, 0); opacity: 1; }
 }
