@@ -719,9 +719,12 @@ form label {
     -webkit-appearance: none;
 }
 
-/* Verberg de iframe als we offline zijn */
+/* --- GLOBALE FIXES --- */
+iframe { max-width: 100% !important; }
+
+/* DE FIX: Voeg !important toe om de blokkade hierboven te verbreken */
 body.is-offline .map-wrapper iframe {
-    display: none;
+    display: none !important;
 }
 
 /* Toon een offline melding in het kaartvak */
@@ -730,4 +733,9 @@ body.is-offline .map-wrapper::before {
     font-weight: 600;
     color: #666;
     text-align: center;
+}
+
+/* OPTIONEEL: Verberg de hele sectie voor de zekerheid ook */
+body.is-offline .map-section {
+    display: none !important;
 }
