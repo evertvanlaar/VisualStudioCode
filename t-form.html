@@ -27,17 +27,12 @@
     <meta property="og:url" content="https://www.kalanera.gr">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="style.css?v=1.0.8">
+    <link rel="stylesheet" href="style.css?v=1.0.7">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
 <body>
-
-<div id="offline-indicator" class="offline-notification">
-    <i class="fa-solid fa-wifi-slash"></i>
-    <span>Offline Mode - Data from cache</span>
-</div>
 
 <header class="site-header">
     <nav class="main-nav">
@@ -53,12 +48,7 @@
 
         <ul class="nav-links" id="nav-list">
             <li><a href="index.html">Home</a></li>
-            <li>
-                <a href="wishlist.html">
-                    <i class="fa-solid fa-heart menu-heart"></i> Favorites
-                    <span id="wishlist-count" class="wishlist-badge" style="display:none;">0</span>
-                </a>
-            </li>
+            <li><a href="wishlist.html" class="active"><i class="fa-solid fa-heart menu-heart"></i> Favorites</a></li>
             <li><a href="#">Add your business</a></li>
             <li><a href="c-form.html">Contact</a></li>
         </ul>
@@ -149,7 +139,6 @@
     });
 </script>
 
-<script src="js/app.js?v=127"></script>
-
+<script src="app.js?v=1.0.7"></script>
 </body>
 </html>
