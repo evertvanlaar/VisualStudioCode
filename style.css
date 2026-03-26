@@ -1,6 +1,6 @@
 html, body {
     /* Verander 'contain' naar 'none' of 'auto' als het blokkeert */
-    overscroll-behavior-y: none; 
+    overscroll-behavior-y: auto; 
     
     /* Zorg dat de body minimaal de volledige hoogte heeft */
     min-height: 100%;
