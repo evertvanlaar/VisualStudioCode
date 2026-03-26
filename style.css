@@ -718,3 +718,16 @@ form label {
 .search-input::-webkit-search-cancel-button {
     -webkit-appearance: none;
 }
+
+/* Verberg de iframe als we offline zijn */
+body.is-offline .map-wrapper iframe {
+    display: none;
+}
+
+/* Toon een offline melding in het kaartvak */
+body.is-offline .map-wrapper::before {
+    content: "📍 Map is unavailable while offline";
+    font-weight: 600;
+    color: #666;
+    text-align: center;
+}
