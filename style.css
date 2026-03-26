@@ -829,7 +829,6 @@ body.is-offline .map-section {
     display: inline-block;
     margin-top: 12px;
     padding: 5px 15px;
-    background: rgba(74, 108, 74, 0.08); /* Heel subtiel groen */
     border: 1px solid var(--primary-olive);
     border-radius: 25px;
     font-size: 11px;
@@ -837,6 +836,8 @@ body.is-offline .map-section {
     font-weight: 600;
     letter-spacing: 0.8px;
     text-transform: uppercase; /* Geeft een officiële 'badge' look */
+    background: rgba(74, 108, 74, 0.15); /* Iets meer contrast */
+    color: #a3b8a3; /* Of een iets lichtere variant van je groen */
 }
 
 /* Een kleine hover-effect voor op desktop */
