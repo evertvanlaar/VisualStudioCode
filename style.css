@@ -883,3 +883,26 @@ body.is-offline .map-section {
         display: inline-block !important;
     }
 }
+
+/* De Navigatieknop in de actiebalk */
+.nav-btn-action {
+    background-color: #4285F4 !important; /* Google Maps Blauw */
+    color: white !important;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, background-color 0.2s;
+    box-shadow: 0 2px 4px rgba(66, 133, 244, 0.3);
+}
+
+.nav-btn-action:active {
+    transform: scale(0.9);
+    background-color: #3367D6 !important;
+}
+
+.nav-btn-action i {
+    font-size: 14px;
+}

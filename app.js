@@ -169,6 +169,8 @@ function applyFilters() {
 
 // --- DE HOOFDLIJST RENDEREN ---
 
+// --- DE HOOFDLIJST RENDEREN ---
+
 function renderBusinesses(data) {
     const container = document.getElementById('business-list');
     if (!container) return;
@@ -178,6 +180,9 @@ function renderBusinesses(data) {
         container.innerHTML = '<p class="status-msg">No businesses found matching your criteria.</p>';
         return;
     }
+
+    // Haal de wishlist op voor de hartjes-status
+    const wishlist = (typeof getWishlist === 'function') ? getWishlist() : [];
 
     const grouped = data.reduce((acc, biz) => {
         const cat = biz.Category || 'Other';
@@ -200,9 +205,16 @@ function renderBusinesses(data) {
             const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
             const displayUrl = rawUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
             const catColor = getColor(category);
+            
+            // URLs
             const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' Kala Nera reviews')}`;
-            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' Kala Nera')}`;
+            // Correcte Maps URL voor navigatie
+            const mapsUrl = biz.GoogleMapsLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' Kala Nera')}`;
+            
             const emailHtml = biz.Email ? `<a href="mailto:${biz.Email}" class="btn-icon email-btn" title="E-mail"><i class="fa fa-envelope"></i></a>` : '';
+
+            // Wishlist status check
+            const isFavorite = wishlist.includes(biz.Name);
 
             let finalImageUrl = biz.PhotoURL || (rawUrl ? `https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130` : `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`);
 
@@ -212,6 +224,9 @@ function renderBusinesses(data) {
                     <a href="${cleanUrl}" target="_blank">
                         <img src="${finalImageUrl}" onerror="this.src='https://via.placeholder.com/180x130?text=No+Photo'">
                     </a>
+                    <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${biz.Name.replace(/'/g, "\\'")}', this)">
+                        <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                    </button>
                 </div>
                 <div class="mini-content">
                     <div class="mini-row-top">
@@ -232,7 +247,7 @@ function renderBusinesses(data) {
                         <div class="action-right">
                             ${emailHtml}
                             <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn"><i class="fa fa-star"></i></a>
-                            <a href="${mapsUrl}" target="_blank" class="btn-icon"><i class="fa fa-location-dot"></i></a>
+                            <a href="${mapsUrl}" target="_blank" class="btn-icon nav-btn-action"><i class="fa fa-location-dot"></i></a>
                         </div>
                     </div>
                 </div>
