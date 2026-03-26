@@ -25,47 +25,71 @@ async function init() {
 
     // 1. Direct de offline cache laden (indien aanwezig)
     const cachedData = localStorage.getItem(STORAGE_KEY);
+    
     if (cachedData) {
         try {
             allBusinesses = JSON.parse(cachedData);
-            console.log("Offline cache gevonden en geladen.");
-            renderEverything(); 
+            console.log("Offline cache found and loaded.");
+            renderEverything(); // Toont direct de oude data (snel!)
         } catch (e) {
-            console.error("Cache was corrupt, wordt overgeslagen.");
+            console.error("Cache was corrupt, will be skipped.");
+            showSkeletons(); // Cache kapot? Toon skeletons terwijl we nieuwe data halen
         }
     } else {
-        businessList.innerHTML = '<p class="status-msg">Downloading business data for first use...</p>';
+        // GEEN CACHE? Toon dan de Skeletons voor de "first-load" ervaring
+        showSkeletons(); 
     }
 
-    // 2. Proberen de nieuwste data van internet te halen
+    // 2. Proberen de nieuwste data van internet te halen (n8n)
     try {
         const response = await fetch(N8N_WEBHOOK_URL);
         if (response.ok) {
             const rawData = await response.json();
+            // Filter alleen actieve bedrijven
             const freshData = rawData.filter(biz => biz.Status === 'Active');
 
-            // --- NIEUW: Tijdstip vastleggen ---
+            // --- Tijdstip vastleggen ---
             const now = new Date();
             const timeString = now.toLocaleDateString('nl-NL') + ' ' + now.toLocaleTimeString('nl-NL', {hour: '2-digit', minute:'2-digit'});
             localStorage.setItem('kalanera_last_sync', timeString);
-            // ---------------------------------
 
             // Opslaan voor offline gebruik
             localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
             allBusinesses = freshData;
             
-            console.log("Data succesfully synchronised.");
+            console.log("Data successfully synchronised.");
+            
+            // We overschrijven de skeletons (of de oude cache) met de allernieuwste data
             renderEverything();
         }
     } catch (error) {
         console.warn("Verbindingsfout: App draait nu volledig op lokale cache.");
-        if (!cachedData) {
+        // Als er echt HELEMAAL geen data is (geen cache en geen internet)
+        if (!allBusinesses || allBusinesses.length === 0) {
             businessList.innerHTML = '<p class="status-msg">Offline: Please connect to the internet once to load the directory.</p>';
         }
     }
     
     // Altijd de online/offline status controleren
     updateOnlineStatus();
+}
+
+// Vergeet niet de showSkeletons functie ergens in app.js te plaatsen:
+function showSkeletons() {
+    const container = document.getElementById('business-list');
+    if (!container) return;
+    
+    let skeletonHTML = '';
+    for (let i = 0; i < 4; i++) { // We tonen 4 nep-kaartjes
+        skeletonHTML += `
+            <div class="skeleton-card">
+                <div class="skeleton-img"></div>
+                <div class="skeleton-text"></div>
+                <div class="skeleton-text short"></div>
+            </div>
+        `;
+    }
+    container.innerHTML = skeletonHTML;
 }
 
 // --- UI RENDERING ---
@@ -154,16 +178,30 @@ function applyFilters() {
     const searchInput = document.getElementById('search-input');
     const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
     
+    // Haal de huidige wishlist op uit localStorage
+    const wishlist = getWishlist(); 
+
     const filtered = allBusinesses.filter(biz => {
+        // 1. Check op zoekterm
         const matchesSearch = (biz.Name || "").toLowerCase().includes(searchTerm) || 
                               (biz.Category || "").toLowerCase().includes(searchTerm) ||
                               (biz.Location || "").toLowerCase().includes(searchTerm);
         
+        // 2. Check op geselecteerde categorie
         const matchesCategory = activeCategory === 'all' || biz.Category === activeCategory;
-        const matchesLocation = activeLocation === 'all' || biz.Location === activeLocation;
         
-        return matchesSearch && matchesCategory && matchesLocation;
+        // 3. Check op geselecteerde locatie
+        const matchesLocation = activeLocation === 'all' || biz.Location === activeLocation;
+
+        // 4. NIEUW: Check op favorieten (alleen als het filter aan staat)
+        // Als showOnlyFavorites 'true' is, moet de naam in de wishlist staan.
+        // Als showOnlyFavorites 'false' is, laten we alles door (return true).
+        const matchesFavorites = showOnlyFavorites ? wishlist.includes(biz.Name) : true;
+        
+        // Combineer alle filters
+        return matchesSearch && matchesCategory && matchesLocation && matchesFavorites;
     });
+
     renderBusinesses(filtered);
 }
 
@@ -200,9 +238,15 @@ function renderBusinesses(data) {
             const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
             const displayUrl = rawUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
             const catColor = getColor(category);
+            
+            // FIX: Review URL en Maps URL (nu met de juiste $ teken)
             const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' Kala Nera reviews')}`;
-            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' Kala Nera')}`;
+            const mapsUrl = biz.GoogleMapsLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' Kala Nera')}`;
+            
             const emailHtml = biz.Email ? `<a href="mailto:${biz.Email}" class="btn-icon email-btn" title="E-mail"><i class="fa fa-envelope"></i></a>` : '';
+
+            // Wishlist check (komt in de volgende stap, maar we bereiden de class voor)
+            const isFavorite = isBizFavorite(biz.Name); // Deze functie maken we zo
 
             let finalImageUrl = biz.PhotoURL || (rawUrl ? `https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130` : `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`);
 
@@ -212,6 +256,9 @@ function renderBusinesses(data) {
                     <a href="${cleanUrl}" target="_blank">
                         <img src="${finalImageUrl}" onerror="this.src='https://via.placeholder.com/180x130?text=No+Photo'">
                     </a>
+                    <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${biz.Name}', this)">
+                        <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                    </button>
                 </div>
                 <div class="mini-content">
                     <div class="mini-row-top">
@@ -231,8 +278,8 @@ function renderBusinesses(data) {
                         </div>
                         <div class="action-right">
                             ${emailHtml}
-                            <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn"><i class="fa fa-star"></i></a>
-                            <a href="${mapsUrl}" target="_blank" class="btn-icon"><i class="fa fa-location-dot"></i></a>
+                            <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn" title="Reviews"><i class="fa fa-star"></i></a>
+                            <a href="${mapsUrl}" target="_blank" class="btn-icon nav-btn-action" title="Navigate"><i class="fa fa-location-dot"></i></a>
                         </div>
                     </div>
                 </div>
@@ -340,3 +387,43 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 4. Start de app ---
     init();
 });
+
+// --- WISHLIST LOGICA ---
+
+const WISHLIST_KEY = 'kalanera_wishlist';
+
+// Haal de lijst met favoriete namen op uit localStorage
+function getWishlist() {
+    const list = localStorage.getItem(WISHLIST_KEY);
+    return list ? JSON.parse(list) : [];
+}
+
+// Controleer of een specifiek bedrijf in de wishlist staat
+function isBizFavorite(name) {
+    const wishlist = getWishlist();
+    return wishlist.includes(name);
+}
+
+// Voeg toe of verwijder uit wishlist
+function toggleWishlist(name, btnElement) {
+    let wishlist = getWishlist();
+    const icon = btnElement.querySelector('i');
+
+    if (wishlist.includes(name)) {
+        // Verwijderen
+        wishlist = wishlist.filter(item => item !== name);
+        btnElement.classList.remove('active');
+        icon.className = 'fa-regular fa-heart';
+    } else {
+        // Toevoegen
+        wishlist.push(name);
+        btnElement.classList.add('active');
+        icon.className = 'fa-solid fa-heart';
+        
+        // Kleine animatie bij toevoegen
+        btnElement.style.transform = 'scale(1.3)';
+        setTimeout(() => btnElement.style.transform = 'scale(1)', 200);
+    }
+
+    localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlist));
+}
