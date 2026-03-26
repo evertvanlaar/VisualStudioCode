@@ -759,3 +759,28 @@ body.is-offline .map-section {
         opacity: 0.7;
     }
 }
+
+.ios-banner {
+    position: sticky;
+    top: 0;
+    z-index: 1001; /* Zorgt dat hij boven de header blijft */
+    background: #ffffff;
+    border-bottom: 1px solid #d1d1d6;
+    padding: 15px;
+    font-size: 14px;
+    color: #1c1c1e;
+    text-align: left;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.ios-banner i.fa-share-square {
+    color: #007aff;
+    font-size: 1.2rem;
+    margin: 0 3px;
+}
+
+/* Zorg dat de sluitknop goed gepositioneerd is */
+#close-ios-banner {
+    padding: 5px 10px;
+    line-height: 1;
+}

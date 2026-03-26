@@ -274,13 +274,10 @@ window.addEventListener('online', updateOnlineStatus);
 window.addEventListener('offline', updateOnlineStatus);
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Zoekbalk koppelen
+    // --- 1. Zoekbalk & Menu ---
     const searchInput = document.getElementById('search-input');
-    if (searchInput) {
-        searchInput.addEventListener('input', applyFilters);
-    }
-    
-    // Mobiel menu
+    if (searchInput) searchInput.addEventListener('input', applyFilters);
+
     const menu = document.querySelector('#mobile-menu');
     const menuLinks = document.querySelector('#nav-list');
     if (menu && menuLinks) {
@@ -290,6 +287,56 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Start de app
+    // --- 2. PWA Installatie Logica (Android/Chrome) ---
+    let deferredPrompt;
+    const installBanner = document.getElementById('install-banner');
+    const installButton = document.getElementById('custom-install-button');
+    const closeBanner = document.getElementById('close-banner');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const bannerClosedAt = localStorage.getItem('install_banner_closed');
+        const past24h = !bannerClosedAt || (Date.now() - bannerClosedAt > 24*60*60*1000);
+        if (installBanner && past24h) installBanner.style.display = 'block';
+    });
+
+    if (installButton) {
+        installButton.onclick = async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            deferredPrompt = null;
+            installBanner.style.display = 'none';
+        };
+    }
+
+    if (closeBanner) {
+        closeBanner.onclick = () => {
+            installBanner.style.display = 'none';
+            localStorage.setItem('install_banner_closed', Date.now());
+        };
+    }
+
+    // --- 3. iOS Specifieke Logica (iPhone/iPad) ---
+    const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+    const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
+
+    if (isIos && !isInStandaloneMode()) {
+        const iosBanner = document.getElementById('ios-install-instructions');
+        const closeIos = document.getElementById('close-ios-banner');
+        const iosClosedAt = localStorage.getItem('ios_banner_closed');
+        const past24h = !iosClosedAt || (Date.now() - iosClosedAt > 24*60*60*1000);
+
+        if (iosBanner && past24h) iosBanner.style.display = 'block';
+
+        if (closeIos) {
+            closeIos.onclick = () => {
+                iosBanner.style.display = 'none';
+                localStorage.setItem('ios_banner_closed', Date.now());
+            };
+        }
+    }
+
+    // --- 4. Start de app ---
     init();
 });
