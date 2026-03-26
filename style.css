@@ -1014,3 +1014,16 @@ body.is-offline .map-section {
 .wishlist-btn:active {
     transform: scale(0.9);
 }
+
+/* Het hartje in het navigatiemenu */
+.menu-heart {
+    color: #e74c3c; /* Dezelfde kleur rood als de hartjes op de kaarten */
+    margin-right: 5px; /* Extra witruimte aan de rechterkant van het hartje */
+    filter: drop-shadow(0 0 2px rgba(231, 76, 60, 0.2)); /* Optioneel: een heel zachte gloed */
+}
+
+/* Zorg dat het hartje rood blijft, ook als de tekst eromheen wit of zwart is */
+.nav-links a:hover .menu-heart {
+    transform: scale(1.2);
+    transition: transform 0.2s ease;
+}
