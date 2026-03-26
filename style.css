@@ -1027,3 +1027,16 @@ body.is-offline .map-section {
     transform: scale(1.2);
     transition: transform 0.2s ease;
 }
+
+/* We spreken hier specifiek het hartje aan met de nieuwe naam */
+.menu-heart {
+    color: #e74c3c !important; /* Dwingt de kleur naar rood */
+    margin-right: 10px !important; /* Maakt de spatie tussen hartje en tekst */
+    display: inline-block;
+}
+
+/* Optioneel: een klein effectje als je eroverheen muist */
+.nav-links a:hover .menu-heart {
+    transform: scale(1.2);
+    transition: 0.2s;
+}
