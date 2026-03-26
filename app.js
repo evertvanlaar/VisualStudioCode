@@ -84,17 +84,23 @@ function updateOnlineStatus() {
     const mapSection = document.querySelector('.map-section');
 
     if (navigator.onLine) {
+        // ONLINE MODUS
         if (offlineIndicator) {
             offlineIndicator.classList.remove('is-visible');
+            // Na de animatie (0.4s) op display none zetten voor de zekerheid
+            setTimeout(() => {
+                if (navigator.onLine) offlineIndicator.style.display = 'none';
+            }, 400);
         }
         if (mapSection) mapSection.style.display = 'block';
     } else {
+        // OFFLINE MODUS
         if (offlineIndicator) {
-            // We zorgen dat hij eerst 'bestaat' en dan de class krijgt voor de animatie
             offlineIndicator.style.display = 'flex'; 
+            // Klein tikje wachten zodat de browser de display:flex snapt vóór de animatie
             setTimeout(() => {
                 offlineIndicator.classList.add('is-visible');
-            }, 50);
+            }, 10);
         }
         if (mapSection) {
             mapSection.style.display = 'none';
