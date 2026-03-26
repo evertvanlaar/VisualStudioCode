@@ -118,21 +118,22 @@ function updateOnlineStatus() {
     const offlineIndicator = document.getElementById('offline-indicator');
     
     if (navigator.onLine) {
-        // We zijn weer online
-        offlineIndicator.style.display = 'none';
-        console.log("Back online! Refreshing data...");
-        // Optioneel: trek direct de nieuwste data binnen
-        if (typeof init === "function") init(); 
+        console.log("Status: Online");
+        document.body.classList.remove('is-offline');
+        if (offlineIndicator) offlineIndicator.style.display = 'none';
+        
+        // Alleen syncen als we daadwerkelijk van offline naar online gaan
+        // om oneindige loops te voorkomen
     } else {
-        // We zijn de verbinding verloren
-        offlineIndicator.style.display = 'block';
-        console.log("Connection lost. Switching to offline mode.");
+        console.log("Status: Offline");
+        document.body.classList.add('is-offline');
+        if (offlineIndicator) offlineIndicator.style.display = 'block';
     }
 }
 
-// Luister naar de browser events
+// Luister naar veranderingen
 window.addEventListener('online', updateOnlineStatus);
 window.addEventListener('offline', updateOnlineStatus);
 
-// Controleer de status direct bij het opstarten
-document.addEventListener('DOMContentLoaded', updateOnlineStatus);
+// CRUCIAAL: Voer de check direct uit zodra het script laadt
+updateOnlineStatus();

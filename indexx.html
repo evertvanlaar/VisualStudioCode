@@ -157,43 +157,49 @@ function getColor(str) {
 
 async function init() {
     const STORAGE_KEY = 'kalanera_offline_data';
+    const businessList = document.getElementById('business-list');
     
-    // 1. Check eerst of we data in het geheugen van de telefoon hebben staan
+    // A. Probeer ALTIJD eerst de cache te laden
     const cachedData = localStorage.getItem(STORAGE_KEY);
     if (cachedData) {
-        allBusinesses = JSON.parse(cachedData);
-        console.log("Offline mode: Data geladen uit cache.");
-        
-        // Toon direct de opgeslagen data zodat de gebruiker niet hoeft te wachten
-        generateCategoryButtons(allBusinesses);
-        generateLocationButtons(allBusinesses);
-        renderBusinesses(allBusinesses);
+        try {
+            allBusinesses = JSON.parse(cachedData);
+            console.log("Succes: Cache found and loaded.");
+            
+            // Toon de cache direct
+            generateCategoryButtons(allBusinesses);
+            generateLocationButtons(allBusinesses);
+            renderBusinesses(allBusinesses);
+        } catch (e) {
+            console.error("Error parsing cache:", e);
+        }
     }
 
-    // 2. Probeer nu op de achtergrond de nieuwste data van n8n te halen
+    // B. Probeer NU pas het internet (n8n)
     try {
         const response = await fetch(N8N_WEBHOOK_URL);
         const rawData = await response.json();
         
-        // Filter alleen de actieve ondernemers
+        // Filter de actieve bedrijven
         const freshData = rawData.filter(biz => biz.Status === 'Active');
 
-        // 3. Update het geheugen met de verse data
+        // Sla direct op in de cache voor de volgende keer
         localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
+        
+        // Update de globale variabele en de UI
         allBusinesses = freshData;
-        console.log("Sync voltooid: Nieuwste data opgehaald.");
+        console.log("Sync completed: New data saved.");
 
-        // Update de knoppen en lijst (zonder dat de gebruiker het merkt)
         generateCategoryButtons(allBusinesses);
         generateLocationButtons(allBusinesses);
         renderBusinesses(allBusinesses);
 
     } catch (error) {
-        console.warn("Sync mislukt: Gebruiker is offline of server is down. We blijven de cache tonen.");
+        console.warn("No internet connection. Using cached data.");
         
-        // Alleen als er ÉCHT niks in de cache stond én de fetch faalt, tonen we de error
-        if (!cachedData) {
-            document.getElementById('business-list').innerHTML = '<p class="status-msg">No internet connection and no offline data available.</p>';
+        // Alleen als er ÉCHT geen cache was én geen internet, toon error
+        if (!cachedData || allBusinesses.length === 0) {
+            businessList.innerHTML = '<p class="status-msg">You are offline and no data was saved yet. Please connect to the internet once.</p>';
         }
     }
 }
