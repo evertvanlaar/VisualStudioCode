@@ -69,3 +69,30 @@ document.getElementById('search-input').addEventListener('input', applyFilters);
 // 5. De data ophalen (wanneer de pagina laadt)
 // allBusinesses = fetchDataFromGoogleSheets(); // Hier moet jouw ophaal-functie komen
 // setupFilterButtons(allBusinesses);
+
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Voorkom dat de standaard banner direct verschijnt
+  e.preventDefault();
+  // Sla het event op zodat we het later kunnen triggeren
+  deferredPrompt = e;
+  
+  // Toon hier je eigen installatie-knop (bijv. een verborgen div in je menu)
+  const installBtn = document.getElementById('custom-install-button');
+  if (installBtn) {
+    installBtn.style.display = 'block';
+    
+    installBtn.addEventListener('click', () => {
+      // Toon de echte Chrome installatie-prompt
+      deferredPrompt.prompt();
+      // Wacht op de keuze van de gebruiker
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the install prompt');
+        }
+        deferredPrompt = null;
+      });
+    });
+  }
+});
