@@ -1,8 +1,18 @@
 html, body {
-    /* Voorkomt het 'stuiteren' en onbedoeld verversen van de hele app */
-    overscroll-behavior-y: contain;
-    /* Zorgt voor soepel scrollen op iPhones */
+    /* Verander 'contain' naar 'none' of 'auto' als het blokkeert */
+    overscroll-behavior-y: none; 
+    
+    /* Zorg dat de body minimaal de volledige hoogte heeft */
+    min-height: 100%;
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+}
+
+/* De container waar je kaarten in staan moet scrollen toestaan */
+#business-list {
+    display: block;
+    width: 100%;
+    overflow: visible;
 }
 
 /* Tip: Zorg dat de zoekbalk eruitziet als een echte app-input */
