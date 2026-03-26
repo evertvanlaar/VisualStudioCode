@@ -131,18 +131,28 @@ function applyFilters() {
     renderBusinesses(filtered);
 }
 
+// --- DE HOOFDLIJST RENDEREN ---
+
 function renderBusinesses(data) {
     const container = document.getElementById('business-list');
     if (!container) return;
     container.innerHTML = '';
 
-    if (data.length === 0) {
+    if (!data || data.length === 0) {
         container.innerHTML = '<p class="status-msg">No businesses found matching your criteria.</p>';
         return;
     }
 
-    // Haal de wishlist op
-    const wishlist = (typeof getWishlist === 'function') ? getWishlist() : [];
+    // Veilig de wishlist ophalen
+    let wishlist = [];
+    try {
+        if (typeof getWishlist === 'function') {
+            wishlist = getWishlist();
+        } else {
+            const saved = localStorage.getItem('kalanera_wishlist');
+            wishlist = saved ? JSON.parse(saved) : [];
+        }
+    } catch (e) { wishlist = []; }
 
     const grouped = data.reduce((acc, biz) => {
         const cat = biz.Category || 'Other';
@@ -166,14 +176,11 @@ function renderBusinesses(data) {
             const displayUrl = rawUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
             const catColor = getColor(category);
             
-            // URLs
             const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' Kala Nera reviews')}`;
             const mapsUrl = biz.GoogleMapsLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' Kala Nera')}`;
             const emailHtml = biz.Email ? `<a href="mailto:${biz.Email}" class="btn-icon email-btn" title="E-mail"><i class="fa fa-envelope"></i></a>` : '';
 
-            // Wishlist status
             const isFavorite = wishlist.includes(biz.Name);
-
             let finalImageUrl = biz.PhotoURL || (rawUrl ? `https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130` : `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`);
 
             grid.innerHTML += `
@@ -214,15 +221,14 @@ function renderBusinesses(data) {
         container.appendChild(grid);
     });
 
-    // Sync info onderaan
+    // Sync info
     const lastSync = localStorage.getItem('kalanera_last_sync') || 'Onbekend';
     const syncDiv = document.createElement('div');
     syncDiv.className = 'sync-info';
-    syncDiv.innerHTML = `<small style="display:block; text-align:center; margin-top:20px; color:var(--muted); font-size:11px;">
-        Last sync with Pelion database: ${lastSync}</small>`;
+    syncDiv.innerHTML = `<small style="display:block; text-align:center; margin-top:20px; color:var(--muted); font-size:11px;">Last sync: ${lastSync}</small>`;
     container.appendChild(syncDiv);
     
-    // Animatie effect
+    // Animatie
     setTimeout(() => {
         document.querySelectorAll('.biz-card-mini').forEach((card, index) => {
             setTimeout(() => { card.classList.add('show'); }, index * 30);
@@ -230,12 +236,28 @@ function renderBusinesses(data) {
     }, 50);
 }
 
+// --- HULPFUNCTIES (Zorg dat deze eronder staan!) ---
+
+function getIcon(cat) {
+    if (typeof iconMap === 'undefined') return '<i class="fa fa-tag"></i>';
+    const key = Object.keys(iconMap).find(k => (cat || "").toLowerCase().includes(k.toLowerCase()));
+    return `<i class="fa ${key ? iconMap[key] : 'fa-tag'}"></i>`;
+}
+
+function getColor(str) {
+    if (!str) return '#4A6C4A';
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    return `hsl(${Math.abs(hash) % 360}, 60%, 45%)`;
+}
+
 function copyToClipboard(text, el) {
     if (!text || text === '-') return;
     navigator.clipboard.writeText(text).then(() => {
         const icon = el.querySelector('i');
+        const oldClass = icon.className;
         icon.className = 'fa fa-check';
-        setTimeout(() => { icon.className = 'fa fa-copy'; }, 2000);
+        setTimeout(() => { icon.className = oldClass; }, 2000);
     });
 }
 
