@@ -978,27 +978,31 @@ body.is-offline .map-section {
 /* De knop zelf */
 .wishlist-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 35px;
-    height: 35px;
-    background: white; /* Altijd witte achtergrond zodat hij opvalt */
+    /* --- STAPPEN NAAR HOEK --- */
+    top: 2px;       /* Heel dicht bij de bovenrand */
+    right: 2px;     /* Heel dicht bij de rechterrand */
+    
+    /* --- KLEIN FORMAAT --- */
+    width: 20px;    /* Nog iets kleiner (ongeveer 50% van 35px) */
+    height: 20px;   /* Nog iets kleiner */
+    
+    /* --- STYLING --- */
+    background: rgba(255, 255, 255, 0.95); /* Bijna vol wit */
     border: none;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    z-index: 100; /* Zorg dat hij bovenop alles ligt */
-    transition: transform 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    z-index: 100;
+    transition: all 0.2s ease;
 }
 
 /* Het icoontje binnen de knop */
 .wishlist-btn i {
-    font-size: 18px;
-    color: #ccc; /* Grijs als het geen favoriet is */
-    pointer-events: none; /* Voorkomt dat het icoon de klik blokkeert */
+    font-size: 10px; /* Klein icoon */
+    color: #888;     /* Grijs als het geen favoriet is */
 }
 
 /* Styling als hij 'active' is (rood hartje) */
@@ -1006,6 +1010,7 @@ body.is-offline .map-section {
     color: #e74c3c !important; /* Felrood */
 }
 
+/* Kleine feedback bij klikken */
 .wishlist-btn:active {
     transform: scale(0.9);
 }
