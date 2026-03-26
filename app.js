@@ -44,11 +44,17 @@ async function init() {
             const rawData = await response.json();
             const freshData = rawData.filter(biz => biz.Status === 'Active');
 
+            // --- NIEUW: Tijdstip vastleggen ---
+            const now = new Date();
+            const timeString = now.toLocaleDateString('nl-NL') + ' ' + now.toLocaleTimeString('nl-NL', {hour: '2-digit', minute:'2-digit'});
+            localStorage.setItem('kalanera_last_sync', timeString);
+            // ---------------------------------
+
             // Opslaan voor offline gebruik
             localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
             allBusinesses = freshData;
             
-            console.log("Data succesvol gesynchroniseerd met n8n.");
+            console.log("Data succesfully synchronised.");
             renderEverything();
         }
     } catch (error) {
@@ -235,6 +241,14 @@ function renderBusinesses(data) {
         container.appendChild(grid);
     });
 
+    // Voeg sync-tijd toe onderaan de lijst
+    const lastSync = localStorage.getItem('kalanera_last_sync') || 'Onbekend';
+    const syncDiv = document.createElement('div');
+    syncDiv.className = 'sync-info';
+    syncDiv.innerHTML = `<small style="display:block; text-align:center; margin-top:20px; color:var(--muted); font-size:11px;">
+        Last sync with Pelion database: ${lastSync}</small>`;
+    container.appendChild(syncDiv);
+    
     // Animatie effect
     setTimeout(() => {
         document.querySelectorAll('.biz-card-mini').forEach((card, index) => {

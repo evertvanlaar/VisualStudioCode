@@ -739,3 +739,23 @@ body.is-offline .map-wrapper::before {
 body.is-offline .map-section {
     display: none !important;
 }
+
+.app-version-tag {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 12px;
+    background: rgba(74, 108, 74, 0.1); /* Subtiel groen van je thema */
+    border: 1px solid var(--primary-olive);
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--primary-olive);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Verberg deze tag op desktop als je wilt dat het echt een 'app' ding is */
+@media (min-width: 768px) {
+    .app-version-tag {
+        opacity: 0.7;
+    }
+}
