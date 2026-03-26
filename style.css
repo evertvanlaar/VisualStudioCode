@@ -394,22 +394,36 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
         box-sizing: border-box !important;
     }
 
-    /* 2. Menu reparatie */
-    .nav-links {
-        display: none !important; 
-        flex-direction: column !important;
-        position: absolute !important;
-        top: 60px; left: 0; width: 100% !important;
-        background: white !important;
-        z-index: 10000 !important;
-        padding: 20px 0 !important;
-        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-        margin: 0 !important;
-        list-style: none;
-    }
+/* 2. Menu reparatie met luxe matglas effect */
+.nav-links {
+    display: none !important; 
+    flex-direction: column !important;
+    position: absolute !important;
+    top: 60px; 
+    left: 0; 
+    width: 100% !important;
+    /* Verander white naar een semi-transparante variant */
+    background: rgba(255, 255, 255, 0.95) !important; 
+    /* Voeg dit toe voor het vage effect over de foto */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Voor Safari support */
+    
+    z-index: 10000 !important;
+    padding: 20px 0 !important;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    margin: 0 !important;
+    list-style: none;
+}
 
-    .nav-links.active { display: flex !important; }
-    .nav-links li { margin: 10px 0; width: 100%; text-align: center; }
+.nav-links.active { 
+    display: flex !important; 
+}
+
+.nav-links li { 
+    margin: 15px 0; /* Iets meer ademruimte tussen de items */
+    width: 100%; 
+    text-align: center; 
+}
 
 /* Verberg de knop volledig op desktop */
     .menu-toggle {
@@ -921,16 +935,19 @@ body.is-offline .map-section {
 @media (max-width: 767px) {
     #menu-install-item.show-install {
         display: block !important;
-        margin: 10px 15px;
         border-top: 1px solid rgba(0,0,0,0.1);
-        padding-top: 10px;
+        margin: 15px 0; /* Iets meer ruimte */
+        padding-top: 15px;
+        text-align: center; /* Zorg dat de tekst in het midden staat */
     }
     
     #menu-install-item a {
-        color: var(--primary-olive);
+        color: var(--primary-olive) !important;
         font-weight: 600;
-        display: flex;
+        display: inline-flex; /* Belangrijk om het icoontje en tekst samen te centreren */
         align-items: center;
         gap: 10px;
+        justify-content: center;
+        width: 100%;
     }
 }
