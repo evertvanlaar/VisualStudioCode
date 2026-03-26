@@ -267,19 +267,30 @@ window.addEventListener('online', updateOnlineStatus);
 window.addEventListener('offline', updateOnlineStatus);
 
 // PWA Install Event
-window.addEventListener('beforeinstallprompt', (e) => {
+window.addEventListener('beforeinstallprompt', async (e) => {
+    // 1. Altijd blokkeren op desktop
     if (window.innerWidth > 767) return; 
 
-    // Check 1: Staat hij al in standalone mode?
+    // 2. Check of we al in "App-modus" (standalone) zitten
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
     
-    // Check 2: Hebben we hem al eens succesvol geïnstalleerd via deze browser?
-    const isAlreadyFlagged = localStorage.getItem('kalanera_app_installed') === 'true';
+    // 3. Check ons eigen vlaggetje in de opslag
+    const isFlagged = localStorage.getItem('kalanera_app_installed') === 'true';
 
-    if (isStandalone || isAlreadyFlagged) {
-        return; // Toon de knop niet
+    // 4. NIEUW: De officiële browser-check voor verwante apps
+    let isAlreadyInstalled = false;
+    if ('getInstalledRelatedApps' in navigator) {
+        const relatedApps = await navigator.getInstalledRelatedApps();
+        isAlreadyInstalled = relatedApps.length > 0;
     }
 
+    // Als een van deze waar is: Toon de knop NIET
+    if (isStandalone || isFlagged || isAlreadyInstalled) {
+        console.log("App installatie optie verborgen: reeds geïnstalleerd.");
+        return;
+    }
+
+    // 5. Alles ok? Toon dan de optie in het menu
     e.preventDefault();
     deferredPrompt = e;
     const installItem = document.getElementById('menu-install-item');
