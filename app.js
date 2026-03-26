@@ -84,16 +84,22 @@ function updateOnlineStatus() {
     const mapSection = document.querySelector('.map-section');
 
     if (navigator.onLine) {
-        // ONLINE
-        if (offlineIndicator) offlineIndicator.classList.remove('show');
+        // --- ONLINE ---
+        if (offlineIndicator) {
+            offlineIndicator.classList.remove('show');
+        }
         if (mapSection) mapSection.style.display = 'block';
     } else {
-        // OFFLINE
-        if (offlineIndicator) offlineIndicator.classList.add('show');
-        if (mapSection) {
-            mapSection.style.display = 'none'; // Verberg de kaart (wereldbol)
+        // --- OFFLINE ---
+        if (offlineIndicator) {
+            // Forceer display op flex voor het geval er nog ergens 'none' vandaan komt
+            offlineIndicator.style.display = 'flex'; 
+            // Geef de browser een fractie de tijd om de display te registreren voor de animatie
+            setTimeout(() => {
+                offlineIndicator.classList.add('show');
+            }, 10);
         }
-        console.log("App is offline mode");
+        if (mapSection) mapSection.style.display = 'none';
     }
 }
 

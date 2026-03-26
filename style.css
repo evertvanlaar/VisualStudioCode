@@ -1056,32 +1056,27 @@ body.is-offline .map-section {
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-/* Moderne Offline Toast */
-.offline-toast {
+/* De basis van de toast */
+#offline-indicator {
     position: fixed;
-    bottom: 20px;
+    bottom: 30px; /* Iets hoger voor mobiele duimen */
     left: 50%;
-    transform: translateX(-50%) translateY(100px); /* Start buiten beeld */
-    background: rgba(231, 76, 60, 0.95); /* Mooi rood, passend bij de hartjes */
+    transform: translateX(-50%) translateY(150px); /* Start ver onder het scherm */
+    background: #e74c3c; 
     color: white;
-    padding: 12px 20px;
+    padding: 12px 25px;
     border-radius: 50px;
-    display: flex;
+    display: flex; /* Altijd flex, niet display: none */
     align-items: center;
     gap: 10px;
     z-index: 9999;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    font-size: 14px;
-    white-space: nowrap;
-    pointer-events: none; /* Zorgt dat hij niet in de weg zit voor klikken */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    width: max-content;
+    max-width: 90%;
 }
 
-/* Als hij actief is, schuif hem omhoog */
-.offline-toast.show {
-    transform: translateX(-50%) translateY(0);
-}
-
-.offline-toast i {
-    font-size: 16px;
+/* De 'Show' class die JS toevoegt */
+#offline-indicator.show {
+    transform: translateX(-50%) translateY(0); /* Schuif hem in beeld */
 }
