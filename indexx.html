@@ -159,36 +159,37 @@ async function init() {
     const STORAGE_KEY = 'kalanera_offline_data';
     const businessList = document.getElementById('business-list');
 
-    // STAP 1: Probeer DIRECT de cache te tonen
+    // --- STAP 1: LAAD ONMIDDELLIJK DE CACHE (indien aanwezig) ---
     const cachedData = localStorage.getItem(STORAGE_KEY);
     if (cachedData) {
         try {
             allBusinesses = JSON.parse(cachedData);
-            console.log("Data geladen uit lokaal geheugen.");
-            renderEverything(); // Roep je functies aan om knoppen/lijst te tekenen
+            console.log("Cache succesvol geladen.");
+            renderEverything(); // De lijst verschijnt direct!
         } catch (e) {
-            console.error("Cache corrupt, wordt genegeerd.");
+            console.error("Fout bij laden cache:", e);
         }
     }
 
-    // STAP 2: Probeer internet op de achtergrond
+    // --- STAP 2: PROBEER INTERNET OP DE ACHTERGROND ---
     try {
         const response = await fetch(N8N_WEBHOOK_URL);
-        if (!response.ok) throw new Error("Offline");
+        if (response.ok) {
+            const rawData = await response.json();
+            const freshData = rawData.filter(biz => biz.Status === 'Active');
 
-        const rawData = await response.json();
-        const freshData = rawData.filter(biz => biz.Status === 'Active');
-
-        // Update de cache voor de volgende keer
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
-        allBusinesses = freshData;
-        
-        console.log("Data ververst via n8n.");
-        renderEverything(); // Update de lijst met de nieuwste info
+            // Sla de nieuwe data op
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
+            allBusinesses = freshData;
+            
+            console.log("Data ververst via n8n.");
+            renderEverything(); // Update de lijst geruisloos
+        }
     } catch (error) {
-        console.warn("Geen internet. Gebruiker ziet de gecachte versie.");
-        if (!cachedData) {
-            businessList.innerHTML = '<p class="status-msg">No internet and no offline data saved yet.</p>';
+        console.warn("Kon geen verbinding maken met n8n. We blijven in offline modus.");
+        // Alleen als er echt NIETS is om te laten zien:
+        if (!allBusinesses || allBusinesses.length === 0) {
+            businessList.innerHTML = '<p class="status-msg">You are currently offline and no data has been saved yet.</p>';
         }
     }
 }
