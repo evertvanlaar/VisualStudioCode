@@ -116,24 +116,20 @@ window.addEventListener('appinstalled', () => {
 
 function updateOnlineStatus() {
     const offlineIndicator = document.getElementById('offline-indicator');
-    
+    if (!offlineIndicator) return;
+
     if (navigator.onLine) {
-        console.log("Status: Online");
         document.body.classList.remove('is-offline');
-        if (offlineIndicator) offlineIndicator.style.display = 'none';
-        
-        // Alleen syncen als we daadwerkelijk van offline naar online gaan
-        // om oneindige loops te voorkomen
+        offlineIndicator.style.display = 'none';
     } else {
-        console.log("Status: Offline");
         document.body.classList.add('is-offline');
-        if (offlineIndicator) offlineIndicator.style.display = 'block';
+        offlineIndicator.style.display = 'block';
     }
 }
 
-// Luister naar veranderingen
+// Luister naar live veranderingen
 window.addEventListener('online', updateOnlineStatus);
 window.addEventListener('offline', updateOnlineStatus);
 
-// CRUCIAAL: Voer de check direct uit zodra het script laadt
+// Voer de check direct uit bij het laden van de pagina
 updateOnlineStatus();

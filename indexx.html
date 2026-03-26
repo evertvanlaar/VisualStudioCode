@@ -159,49 +159,45 @@ async function init() {
     const STORAGE_KEY = 'kalanera_offline_data';
     const businessList = document.getElementById('business-list');
     
-    // A. Probeer ALTIJD eerst de cache te laden
+    // STAP 1: Laad direct wat we in het geheugen hebben
     const cachedData = localStorage.getItem(STORAGE_KEY);
     if (cachedData) {
-        try {
-            allBusinesses = JSON.parse(cachedData);
-            console.log("Succes: Cache found and loaded.");
-            
-            // Toon de cache direct
-            generateCategoryButtons(allBusinesses);
-            generateLocationButtons(allBusinesses);
-            renderBusinesses(allBusinesses);
-        } catch (e) {
-            console.error("Error parsing cache:", e);
-        }
-    }
-
-    // B. Probeer NU pas het internet (n8n)
-    try {
-        const response = await fetch(N8N_WEBHOOK_URL);
-        const rawData = await response.json();
-        
-        // Filter de actieve bedrijven
-        const freshData = rawData.filter(biz => biz.Status === 'Active');
-
-        // Sla direct op in de cache voor de volgende keer
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
-        
-        // Update de globale variabele en de UI
-        allBusinesses = freshData;
-        console.log("Sync completed: New data saved.");
-
+        allBusinesses = JSON.parse(cachedData);
+        console.log("Offline cache geladen");
+        // Toon de data direct aan de gebruiker
         generateCategoryButtons(allBusinesses);
         generateLocationButtons(allBusinesses);
         renderBusinesses(allBusinesses);
+    }
+
+    // STAP 2: Probeer nu pas de nieuwste data op te halen
+    try {
+        const response = await fetch(N8N_WEBHOOK_URL);
+        if (!response.ok) throw new Error('Netwerk niet bereikbaar');
+        
+        const rawData = await response.json();
+        const freshData = rawData.filter(biz => biz.Status === 'Active');
+
+        // Update de cache met de nieuwe data
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
+        allBusinesses = freshData;
+        
+        // Ververs de lijst met de nieuwste info (voor het geval er wijzigingen waren)
+        generateCategoryButtons(allBusinesses);
+        generateLocationButtons(allBusinesses);
+        renderBusinesses(allBusinesses);
+        console.log("Sync met n8n geslaagd");
 
     } catch (error) {
-        console.warn("No internet connection. Using cached data.");
-        
-        // Alleen als er ÉCHT geen cache was én geen internet, toon error
-        if (!cachedData || allBusinesses.length === 0) {
-            businessList.innerHTML = '<p class="status-msg">You are offline and no data was saved yet. Please connect to the internet once.</p>';
+        console.warn("Sync mislukt, we blijven de cache tonen.");
+        // Alleen als er echt helemaal NIETS is (geen cache én geen internet):
+        if (!cachedData) {
+            businessList.innerHTML = '<p class="status-msg">Offline. No data available yet. Please connect to the internet.</p>';
         }
     }
+    
+    // STAP 3: Update de offline banner direct
+    updateOnlineStatus();
 }
 
 // --- CATEGORIE KNOPPEN ---
