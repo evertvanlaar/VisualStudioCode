@@ -911,3 +911,26 @@ body.is-offline .map-section {
 #install-banner {
     display: none;
 }
+
+/* Standaard volledig verbergen op desktop */
+.mobile-only-item {
+    display: none !important;
+}
+
+/* Alleen activeren op schermen kleiner dan 768px */
+@media (max-width: 767px) {
+    #menu-install-item.show-install {
+        display: block !important;
+        margin: 10px 15px;
+        border-top: 1px solid rgba(0,0,0,0.1);
+        padding-top: 10px;
+    }
+    
+    #menu-install-item a {
+        color: var(--primary-olive);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+}
