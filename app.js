@@ -319,3 +319,35 @@ async function triggerManualInstall(event) {
     }
     deferredPrompt = null;
 }
+
+async function updateWeather() {
+    const tempEl = document.getElementById('weather-temp');
+    const iconEl = document.getElementById('weather-icon');
+    if (!tempEl) return;
+
+    try {
+        // Coördinaten van Kala Nera
+        const lat = 39.30;
+        const lon = 23.12;
+        const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+        const data = await response.json();
+        
+        const temp = Math.round(data.current_weather.temperature);
+        const code = data.current_weather.weathercode;
+
+        // Simpele icoon mapping
+        let icon = '☀️';
+        if (code > 0) icon = '🌤️';
+        if (code > 3) icon = '☁️';
+        if (code > 60) icon = '🌧️';
+
+        tempEl.innerText = `${temp}°C`;
+        iconEl.innerText = icon;
+    } catch (e) {
+        console.warn("Weer kon niet worden geladen");
+        tempEl.style.display = 'none';
+    }
+}
+
+// Roep de functie aan in je init() of onderaan DOMContentLoaded
+updateWeather();

@@ -951,3 +951,20 @@ body.is-offline .map-section {
         width: 100%;
     }
 }
+
+.weather-mini {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary-olive);
+    background: rgba(255, 255, 255, 0.5);
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: 10px;
+}
+
+@media (max-width: 400px) {
+    .weather-mini span { font-size: 0.8rem; }
+}
