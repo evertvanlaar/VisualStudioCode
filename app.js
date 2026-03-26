@@ -84,15 +84,16 @@ function updateOnlineStatus() {
     const mapSection = document.querySelector('.map-section');
 
     if (navigator.onLine) {
-        // We zijn ONLINE
-        if (offlineIndicator) offlineIndicator.style.display = 'none';
-        if (mapSection) mapSection.style.display = 'block'; 
+        // ONLINE
+        if (offlineIndicator) offlineIndicator.classList.remove('show');
+        if (mapSection) mapSection.style.display = 'block';
     } else {
-        // We zijn OFFLINE
-        if (offlineIndicator) offlineIndicator.style.display = 'block';
+        // OFFLINE
+        if (offlineIndicator) offlineIndicator.classList.add('show');
         if (mapSection) {
-            mapSection.style.display = 'none'; // Dit haalt de witte wereldbol weg
+            mapSection.style.display = 'none'; // Verberg de kaart (wereldbol)
         }
+        console.log("App is offline mode");
     }
 }
 
