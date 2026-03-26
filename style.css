@@ -865,3 +865,21 @@ body.is-offline .map-section {
         text-transform: uppercase;
     }
 }
+
+/* Zet de banner standaard op 'none'. 
+   Alleen de mobiele JS mag hem op 'block' zetten. */
+#install-banner {
+    display: none !important;
+}
+
+/* Verberg ook de footer label op desktop (zoals je vroeg) */
+.app-version-tag {
+    display: none !important;
+}
+
+/* Alleen op mobiel mag de footer label weer terugkomen */
+@media (max-width: 767px) {
+    .app-version-tag {
+        display: inline-block !important;
+    }
+}
