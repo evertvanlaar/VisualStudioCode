@@ -309,20 +309,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeBanner = document.getElementById('close-banner');
 
     window.addEventListener('beforeinstallprompt', (e) => {
-        // BLOKKEER OP DESKTOP: Alleen uitvoeren als het scherm smal is (mobiel)
-        if (window.innerWidth > 767) {
-            return; 
-        }
+    // 1. BLOKKEER OP DESKTOP
+    if (window.innerWidth > 767) return; 
 
-        e.preventDefault();
-        deferredPrompt = e;
-        const bannerClosedAt = localStorage.getItem('install_banner_closed');
-        const past24h = !bannerClosedAt || (Date.now() - bannerClosedAt > 24*60*60*1000);
-        
-        if (installBanner && past24h) {
-            installBanner.style.display = 'block';
-        }
-    });
+    // 2. NIEUW: Check of de app al is geïnstalleerd/geopend in standalone modus
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
+                         || window.navigator.standalone 
+                         || document.referrer.includes('android-app://');
+
+    if (isStandalone) {
+        console.log("App draait al als geïnstalleerde app. Banner blokkeren.");
+        return; 
+    }
+
+    // 3. De rest van je logica
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    const bannerClosedAt = localStorage.getItem('install_banner_closed');
+    const past24h = !bannerClosedAt || (Date.now() - bannerClosedAt > 24*60*60*1000);
+    
+    if (installBanner && past24h) {
+        installBanner.style.display = 'block';
+    }
+});
 
     if (installButton) {
         installButton.onclick = async () => {

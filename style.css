@@ -906,3 +906,8 @@ body.is-offline .map-section {
 .nav-btn-action i {
     font-size: 14px;
 }
+
+/* Verberg de banner standaard altijd */
+#install-banner {
+    display: none;
+}
