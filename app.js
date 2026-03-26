@@ -200,8 +200,16 @@ window.addEventListener('offline', updateOnlineStatus);
 // PWA Install Event
 window.addEventListener('beforeinstallprompt', (e) => {
     if (window.innerWidth > 767) return; 
+
+    // Check 1: Staat hij al in standalone mode?
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    if (isStandalone) return; 
+    
+    // Check 2: Hebben we hem al eens succesvol geïnstalleerd via deze browser?
+    const isAlreadyFlagged = localStorage.getItem('kalanera_app_installed') === 'true';
+
+    if (isStandalone || isAlreadyFlagged) {
+        return; // Toon de knop niet
+    }
 
     e.preventDefault();
     deferredPrompt = e;
@@ -229,9 +237,14 @@ document.addEventListener('DOMContentLoaded', () => {
 async function triggerManualInstall(event) {
     if (event) event.preventDefault();
     if (!deferredPrompt) return;
+    
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
+    
     if (outcome === 'accepted') {
+        // --- NIEUW: Sla op dat de app geïnstalleerd is ---
+        localStorage.setItem('kalanera_app_installed', 'true');
+        
         const installItem = document.getElementById('menu-install-item');
         if (installItem) installItem.classList.remove('show-install');
     }
