@@ -1,24 +1,26 @@
-/* VERVANG DIT BLOK IN JE style.css */
 html, body {
-    /* We halen 'contain' weg en zetten het op 'auto' (veilig) */
-    overscroll-behavior-y: auto; 
-    
-    /* Zorg dat de pagina altijd kan scrollen, ook als de content kort is */
+    /* Dit is de veilige manier: */
     height: auto;
     min-height: 100vh;
-    overflow-x: hidden; /* Voorkom horizontaal wiebelen */
-    overflow-y: auto;   /* Forceer verticale scrollmogelijkheid */
+    margin: 0;
+    padding: 0;
     
-    /* Voor soepel scrollen op iOS */
-    -webkit-overflow-scrolling: touch;
+    /* Alleen 'contain' op de html-tag blokkeert pull-to-refresh 
+       zonder het verticaal scrollen van de content te hinderen */
+    overscroll-behavior-y: none; 
+    
+    /* Zorg dat de browser weet dat er content buiten het beeld kan vallen */
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
-/* Zorg dat je hoofdcontainer geen vaste hoogte heeft die scrollen blokkeert */
 .container {
-    display: block;
+    /* Zorg dat de container waarin je business-list staat 
+       nooit een vaste hoogte heeft */
     height: auto;
-    overflow: visible;
+    min-height: 100%;
 }
+
 /* De container waar je kaarten in staan moet scrollen toestaan */
 #business-list {
     display: block;
