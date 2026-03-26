@@ -80,8 +80,18 @@ function renderEverything() {
 
 function updateOnlineStatus() {
     const offlineIndicator = document.getElementById('offline-indicator');
-    if (offlineIndicator) {
-        offlineIndicator.style.display = navigator.onLine ? 'none' : 'block';
+    const mapSection = document.querySelector('.map-section');
+
+    if (navigator.onLine) {
+        // We zijn ONLINE
+        if (offlineIndicator) offlineIndicator.style.display = 'none';
+        if (mapSection) mapSection.style.display = 'block'; 
+    } else {
+        // We zijn OFFLINE
+        if (offlineIndicator) offlineIndicator.style.display = 'block';
+        if (mapSection) {
+            mapSection.style.display = 'none'; // Dit haalt de witte wereldbol weg
+        }
     }
 }
 
