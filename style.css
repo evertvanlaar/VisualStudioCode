@@ -1,13 +1,24 @@
+/* VERVANG DIT BLOK IN JE style.css */
 html, body {
-    /* Verander 'contain' naar 'none' of 'auto' als het blokkeert */
+    /* We halen 'contain' weg en zetten het op 'auto' (veilig) */
     overscroll-behavior-y: auto; 
     
-    /* Zorg dat de body minimaal de volledige hoogte heeft */
-    min-height: 100%;
-    overflow-y: auto;
+    /* Zorg dat de pagina altijd kan scrollen, ook als de content kort is */
+    height: auto;
+    min-height: 100vh;
+    overflow-x: hidden; /* Voorkom horizontaal wiebelen */
+    overflow-y: auto;   /* Forceer verticale scrollmogelijkheid */
+    
+    /* Voor soepel scrollen op iOS */
     -webkit-overflow-scrolling: touch;
 }
 
+/* Zorg dat je hoofdcontainer geen vaste hoogte heeft die scrollen blokkeert */
+.container {
+    display: block;
+    height: auto;
+    overflow: visible;
+}
 /* De container waar je kaarten in staan moet scrollen toestaan */
 #business-list {
     display: block;
