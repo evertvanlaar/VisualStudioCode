@@ -287,18 +287,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 2. PWA Installatie Logica (Android/Chrome) ---
+// --- 2. PWA Installatie Logica (Alleen Mobiel Android/Chrome) ---
     let deferredPrompt;
     const installBanner = document.getElementById('install-banner');
     const installButton = document.getElementById('custom-install-button');
     const closeBanner = document.getElementById('close-banner');
 
     window.addEventListener('beforeinstallprompt', (e) => {
+        // BLOKKEER OP DESKTOP: Alleen uitvoeren als het scherm smal is (mobiel)
+        if (window.innerWidth > 767) {
+            return; 
+        }
+
         e.preventDefault();
         deferredPrompt = e;
         const bannerClosedAt = localStorage.getItem('install_banner_closed');
         const past24h = !bannerClosedAt || (Date.now() - bannerClosedAt > 24*60*60*1000);
-        if (installBanner && past24h) installBanner.style.display = 'block';
+        
+        if (installBanner && past24h) {
+            installBanner.style.display = 'block';
+        }
     });
 
     if (installButton) {
@@ -306,13 +314,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!deferredPrompt) return;
             deferredPrompt.prompt();
             deferredPrompt = null;
-            installBanner.style.display = 'none';
+            if (installBanner) installBanner.style.display = 'none';
         };
     }
 
     if (closeBanner) {
         closeBanner.onclick = () => {
-            installBanner.style.display = 'none';
+            if (installBanner) installBanner.style.display = 'none';
             localStorage.setItem('install_banner_closed', Date.now());
         };
     }
