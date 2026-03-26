@@ -1,3 +1,17 @@
+html, body {
+    /* Voorkomt het 'stuiteren' en onbedoeld verversen van de hele app */
+    overscroll-behavior-y: contain;
+    /* Zorgt voor soepel scrollen op iPhones */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Tip: Zorg dat de zoekbalk eruitziet als een echte app-input */
+.search-input {
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+}
+
 /* --- GLOBALE VARIABELEN (OLIJF EDITIE) --- */
 :root {
     --primary-olive: #4a6c4a;       /* Jouw kenmerkende olijfgroen */
@@ -655,4 +669,34 @@ form label {
     margin-top: 5px;
     border-top: 1px solid var(--border);
     padding-top: 15px;
+}
+
+.offline-banner {
+    background-color: #fff3e0; /* Zacht oranje/amber */
+    color: #e65100;           /* Donker oranje tekst */
+    text-align: center;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    border-bottom: 1px solid #ffe0b2;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+}
+
+.search-input {
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+/* Verwijder het standaard kruisje in Chrome/Safari als je dat mooier vindt */
+.search-input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
 }

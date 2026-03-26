@@ -52,6 +52,10 @@
 </head>
 <body>
 
+<div id="offline-indicator" class="offline-banner" style="display: none;">
+    <i class="fa fa-plane"></i> You are currently browsing offline. Data is loaded from cache.
+</div>
+
 <header class="site-header">
     <nav class="main-nav">
     <div class="nav-container">
@@ -106,7 +110,15 @@
 
         <div class="search-container">
             <i class="fa fa-search search-icon"></i>
-            <input type="text" class="search-input" id="search-input" placeholder="Search by name or category...">
+            <input 
+                type="search" 
+                class="search-input" 
+                id="search-input" 
+                placeholder="Search by name or category..."
+                inputmode="search"
+                enterkeyhint="search"
+                autocomplete="off"
+            >
         </div>
 
         <div class="filter-container" id="filter-buttons"></div>
@@ -143,19 +155,46 @@ function getColor(str) {
     return `hsl(${Math.abs(hash) % 360}, 60%, 45%)`;
 }
 
-// --- INITIALISATIE ---
 async function init() {
+    const STORAGE_KEY = 'kalanera_offline_data';
+    
+    // 1. Check eerst of we data in het geheugen van de telefoon hebben staan
+    const cachedData = localStorage.getItem(STORAGE_KEY);
+    if (cachedData) {
+        allBusinesses = JSON.parse(cachedData);
+        console.log("Offline mode: Data geladen uit cache.");
+        
+        // Toon direct de opgeslagen data zodat de gebruiker niet hoeft te wachten
+        generateCategoryButtons(allBusinesses);
+        generateLocationButtons(allBusinesses);
+        renderBusinesses(allBusinesses);
+    }
+
+    // 2. Probeer nu op de achtergrond de nieuwste data van n8n te halen
     try {
         const response = await fetch(N8N_WEBHOOK_URL);
         const rawData = await response.json();
-        allBusinesses = rawData.filter(biz => biz.Status === 'Active');
         
+        // Filter alleen de actieve ondernemers
+        const freshData = rawData.filter(biz => biz.Status === 'Active');
+
+        // 3. Update het geheugen met de verse data
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
+        allBusinesses = freshData;
+        console.log("Sync voltooid: Nieuwste data opgehaald.");
+
+        // Update de knoppen en lijst (zonder dat de gebruiker het merkt)
         generateCategoryButtons(allBusinesses);
-        generateLocationButtons(allBusinesses); // Nu vindbaar
+        generateLocationButtons(allBusinesses);
         renderBusinesses(allBusinesses);
+
     } catch (error) {
-        console.error("Fetch error:", error);
-        document.getElementById('business-list').innerHTML = '<p class="status-msg">Error loading data.</p>';
+        console.warn("Sync mislukt: Gebruiker is offline of server is down. We blijven de cache tonen.");
+        
+        // Alleen als er ÉCHT niks in de cache stond én de fetch faalt, tonen we de error
+        if (!cachedData) {
+            document.getElementById('business-list').innerHTML = '<p class="status-msg">No internet connection and no offline data available.</p>';
+        }
     }
 }
 

@@ -111,3 +111,28 @@ window.addEventListener('appinstalled', () => {
     installBanner.style.display = 'none';
     deferredPrompt = null;
 });
+
+// --- OFFLINE DETECTION ---
+
+function updateOnlineStatus() {
+    const offlineIndicator = document.getElementById('offline-indicator');
+    
+    if (navigator.onLine) {
+        // We zijn weer online
+        offlineIndicator.style.display = 'none';
+        console.log("Back online! Refreshing data...");
+        // Optioneel: trek direct de nieuwste data binnen
+        if (typeof init === "function") init(); 
+    } else {
+        // We zijn de verbinding verloren
+        offlineIndicator.style.display = 'block';
+        console.log("Connection lost. Switching to offline mode.");
+    }
+}
+
+// Luister naar de browser events
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+
+// Controleer de status direct bij het opstarten
+document.addEventListener('DOMContentLoaded', updateOnlineStatus);
