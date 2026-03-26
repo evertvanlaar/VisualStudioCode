@@ -83,29 +83,21 @@ function updateOnlineStatus() {
     const offlineIndicator = document.getElementById('offline-indicator');
     const mapSection = document.querySelector('.map-section');
 
-    console.log("Status check uitgevoerd. Online:", navigator.onLine);
-
     if (navigator.onLine) {
-        // ONLINE: Verberg de rode balk
         if (offlineIndicator) {
-            offlineIndicator.style.setProperty('display', 'none', 'important');
+            offlineIndicator.classList.remove('is-visible');
         }
-        if (mapSection) {
-            mapSection.style.setProperty('display', 'block', 'important');
-        }
+        if (mapSection) mapSection.style.display = 'block';
     } else {
-        // OFFLINE: Toon de rode balk
         if (offlineIndicator) {
-            console.log("Indicator gevonden, nu tonen...");
-            offlineIndicator.style.setProperty('display', 'block', 'important');
-            offlineIndicator.style.setProperty('visibility', 'visible', 'important');
-            offlineIndicator.style.setProperty('opacity', '1', 'important');
-        } else {
-            console.error("FOUT: Element #offline-indicator niet gevonden in de HTML!");
+            // We zorgen dat hij eerst 'bestaat' en dan de class krijgt voor de animatie
+            offlineIndicator.style.display = 'flex'; 
+            setTimeout(() => {
+                offlineIndicator.classList.add('is-visible');
+            }, 50);
         }
-
         if (mapSection) {
-            mapSection.style.setProperty('display', 'none', 'important');
+            mapSection.style.display = 'none';
         }
     }
 }

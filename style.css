@@ -1058,28 +1058,26 @@ body.is-offline .map-section {
 
 .offline-notification {
     position: fixed;
-    bottom: 25px;
+    bottom: 30px; /* Zweeft onderin */
     left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background-color: #e74c3c;
+    transform: translateX(-50%) translateY(100px); /* Start buiten beeld */
+    background: rgba(231, 76, 60, 0.95); /* Mooi rood */
     color: white;
     padding: 12px 25px;
     border-radius: 50px;
-    z-index: 10000; /* Zorg dat hij overal bovenop ligt */
-    display: flex;
+    display: flex; 
     align-items: center;
     gap: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-    
-    /* De "onzichtbaar" status */
+    z-index: 999999; /* Super hoog! */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
     opacity: 0;
-    visibility: hidden;
-    transition: all 0.4s ease-in-out;
+    pointer-events: none; /* Je kunt er "doorheen" klikken */
+    width: max-content;
 }
 
-/* De "Zichtbaar" status */
+/* De 'Show' status */
 .offline-notification.is-visible {
-    opacity: 1;
-    visibility: visible;
     transform: translateX(-50%) translateY(0);
+    opacity: 1;
 }
