@@ -71,28 +71,43 @@ document.getElementById('search-input').addEventListener('input', applyFilters);
 // setupFilterButtons(allBusinesses);
 
 let deferredPrompt;
+const installBanner = document.getElementById('install-banner');
+const installBtn = document.getElementById('custom-install-button');
+const closeBtn = document.getElementById('close-banner');
 
 window.addEventListener('beforeinstallprompt', (e) => {
-  // Voorkom dat de standaard banner direct verschijnt
-  e.preventDefault();
-  // Sla het event op zodat we het later kunnen triggeren
-  deferredPrompt = e;
-  
-  // Toon hier je eigen installatie-knop (bijv. een verborgen div in je menu)
-  const installBtn = document.getElementById('custom-install-button');
-  if (installBtn) {
-    installBtn.style.display = 'block';
+    // Voorkom dat Chrome de standaard banner toont
+    e.preventDefault();
+    // Sla het event op
+    deferredPrompt = e;
     
-    installBtn.addEventListener('click', () => {
-      // Toon de echte Chrome installatie-prompt
-      deferredPrompt.prompt();
-      // Wacht op de keuze van de gebruiker
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('User accepted the install prompt');
-        }
-        deferredPrompt = null;
-      });
-    });
-  }
+    // Toon onze eigen banner
+    installBanner.style.display = 'block';
+});
+
+// Als er op de 'Install App' knop wordt geklikt
+installBtn.addEventListener('click', () => {
+    if (deferredPrompt) {
+        // Toon de echte installatie-prompt
+        deferredPrompt.prompt();
+        
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('Gebruiker heeft de app geïnstalleerd');
+                installBanner.style.display = 'none';
+            }
+            deferredPrompt = null;
+        });
+    }
+});
+
+// Gebruiker kan de banner wegklikken
+closeBtn.addEventListener('click', () => {
+    installBanner.style.display = 'none';
+});
+
+// Verberg banner als de app al geïnstalleerd is
+window.addEventListener('appinstalled', () => {
+    installBanner.style.display = 'none';
+    deferredPrompt = null;
 });
