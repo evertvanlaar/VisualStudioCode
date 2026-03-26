@@ -1,24 +1,19 @@
 html, body {
-    /* Dit is de veilige manier: */
-    height: auto;
-    min-height: 100vh;
     margin: 0;
     padding: 0;
-    
-    /* Alleen 'contain' op de html-tag blokkeert pull-to-refresh 
-       zonder het verticaal scrollen van de content te hinderen */
-    overscroll-behavior-y: none; 
-    
-    /* Zorg dat de browser weet dat er content buiten het beeld kan vallen */
-    overflow-y: auto;
+    height: auto !important; /* Forceer natuurlijke hoogte */
+    min-height: 100vh;
     overflow-x: hidden;
+    overflow-y: auto !important; /* Forceer verticaal scrollen */
+    -webkit-overflow-scrolling: touch; /* Zorgt voor 'smooth' scrollen op iPhone */
 }
 
 .container {
-    /* Zorg dat de container waarin je business-list staat 
-       nooit een vaste hoogte heeft */
-    height: auto;
-    min-height: 100%;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    display: block; /* Geen flexbox op de hoofdcontainer die hoogte kan beperken */
 }
 
 /* De container waar je kaarten in staan moet scrollen toestaan */
