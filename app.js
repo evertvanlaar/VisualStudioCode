@@ -69,6 +69,7 @@ async function init() {
     // --- STAP 4: Overige extra's ---
     updateOnlineStatus();
     updateWeather(); // Zorg dat het weer ook geladen wordt
+    updateWishlistCount(); // Voeg dit toe onderaan in init()
 }
 
 // --- UI RENDERING & FILTERS ---
@@ -432,7 +433,6 @@ function toggleWishlist(name, btn) {
         const icon = btn.querySelector('i');
         if (icon) icon.className = 'fa-regular fa-heart';
         
-        // Als we op de wishlist pagina zijn: haal het kaartje direct weg
         if (document.getElementById('empty-wishlist')) {
             renderWishlist(); 
         }
@@ -445,6 +445,9 @@ function toggleWishlist(name, btn) {
     }
 
     localStorage.setItem('kalanera_wishlist', JSON.stringify(wishlist));
+
+    // --- DIT IS DE NIEUWE REGEL ---
+    updateWishlistCount(); 
 }
 
 /**
@@ -456,5 +459,22 @@ function getWishlist() {
         return saved ? JSON.parse(saved) : [];
     } catch (e) {
         return [];
+    }
+}
+
+function updateWishlistCount() {
+    const badge = document.getElementById('wishlist-count');
+    if (!badge) return;
+
+    // Haal de lijst op uit de opslag
+    const saved = localStorage.getItem('kalanera_wishlist');
+    const wishlist = saved ? JSON.parse(saved) : [];
+    
+    // Update het getal
+    if (wishlist.length > 0) {
+        badge.innerText = wishlist.length;
+        badge.style.display = 'inline-block'; // Toon bolletje als er items zijn
+    } else {
+        badge.style.display = 'none'; // Verberg bolletje als lijst leeg is
     }
 }
