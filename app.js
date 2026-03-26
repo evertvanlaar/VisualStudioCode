@@ -297,36 +297,41 @@ window.addEventListener('offline', updateOnlineStatus);
 
 // PWA Install Event
 window.addEventListener('beforeinstallprompt', async (e) => {
-    // 1. Altijd blokkeren op desktop
-    if (window.innerWidth > 767) return; 
+    // VOORKOM ALTIJD de standaard browser banner (zeer belangrijk!)
+    e.preventDefault();
 
-    // 2. Check of we al in "App-modus" (standalone) zitten
+    // 1. Check alle condities om de knop te verbergen
+    const isDesktop = window.innerWidth > 767;
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    
-    // 3. Check ons eigen vlaggetje in de opslag
     const isFlagged = localStorage.getItem('kalanera_app_installed') === 'true';
-
-    // 4. NIEUW: De officiële browser-check voor verwante apps
+    
     let isAlreadyInstalled = false;
     if ('getInstalledRelatedApps' in navigator) {
         const relatedApps = await navigator.getInstalledRelatedApps();
         isAlreadyInstalled = relatedApps.length > 0;
     }
 
-    // Als een van deze waar is: Toon de knop NIET
-    if (isStandalone || isFlagged || isAlreadyInstalled) {
-        console.log("App installatie optie verborgen: reeds geïnstalleerd.");
-        return;
+    const installItem = document.getElementById('menu-install-item');
+
+    // 2. Als we op desktop zitten, al geïnstalleerd zijn of het vlaggetje hebben:
+    if (isDesktop || isStandalone || isFlagged || isAlreadyInstalled) {
+        if (installItem) installItem.classList.remove('show-install');
+        return; // We stoppen hier, deferredPrompt blijft leeg
     }
 
-    // 5. Alles ok? Toon dan de optie in het menu
-    e.preventDefault();
+    // 3. Alleen als we écht mobiel zijn en nog niet geïnstalleerd hebben:
     deferredPrompt = e;
-    const installItem = document.getElementById('menu-install-item');
     if (installItem) installItem.classList.add('show-install');
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+// EXTRA: Forceer verbergen als we al in app-modus zitten
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    if (isStandalone || localStorage.getItem('kalanera_app_installed') === 'true') {
+        const installItem = document.getElementById('menu-install-item');
+        if (installItem) installItem.style.display = 'none';
+    }
+
     const searchInput = document.getElementById('search-input');
     if (searchInput) searchInput.addEventListener('input', applyFilters);
 
