@@ -407,3 +407,44 @@ function renderWishlist() {
     // We hergebruiken hier je bestaande renderBusinesses functie!
     renderBusinesses(favoriteBusinesses);
 }
+
+/**
+ * Beheert het aan/uitzetten van favorieten
+ */
+function toggleWishlist(name, btn) {
+    let saved = localStorage.getItem('kalanera_wishlist');
+    let wishlist = saved ? JSON.parse(saved) : [];
+
+    if (wishlist.includes(name)) {
+        // Verwijderen uit lijst
+        wishlist = wishlist.filter(n => n !== name);
+        btn.classList.remove('active');
+        const icon = btn.querySelector('i');
+        if (icon) icon.className = 'fa-regular fa-heart';
+        
+        // Als we op de wishlist pagina zijn: haal het kaartje direct weg
+        if (document.getElementById('empty-wishlist')) {
+            renderWishlist(); 
+        }
+    } else {
+        // Toevoegen aan lijst
+        wishlist.push(name);
+        btn.classList.add('active');
+        const icon = btn.querySelector('i');
+        if (icon) icon.className = 'fa-solid fa-heart';
+    }
+
+    localStorage.setItem('kalanera_wishlist', JSON.stringify(wishlist));
+}
+
+/**
+ * Hulpfunctie om de huidige wishlist op te halen
+ */
+function getWishlist() {
+    try {
+        const saved = localStorage.getItem('kalanera_wishlist');
+        return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+        return [];
+    }
+}
