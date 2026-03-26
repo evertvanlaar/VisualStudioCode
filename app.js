@@ -23,16 +23,30 @@ const iconMap = {
 async function init() {
     const businessList = document.getElementById('business-list');
     const cachedData = localStorage.getItem(STORAGE_KEY);
+    
+    // --- STAP 1: Check op welke pagina we zijn ---
+    const isWishlistPage = document.getElementById('empty-wishlist') !== null;
 
+    // Functie om de juiste weergave te kiezen
+    const showData = () => {
+        if (isWishlistPage) {
+            renderWishlist(); // Toon alleen hartjes
+        } else {
+            renderEverything(); // Toon alles + filters (Home)
+        }
+    };
+
+    // --- STAP 2: Laad data uit Cache ---
     if (cachedData) {
         try {
             allBusinesses = JSON.parse(cachedData);
-            renderEverything(); 
+            showData(); 
         } catch (e) {
             console.error("Cache corrupt.");
         }
     }
 
+    // --- STAP 3: Haal verse data op via n8n ---
     try {
         const response = await fetch(N8N_WEBHOOK_URL);
         if (response.ok) {
@@ -45,12 +59,16 @@ async function init() {
 
             localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
             allBusinesses = freshData;
-            renderEverything();
+            
+            showData(); // Update de pagina met verse data
         }
     } catch (error) {
         console.warn("Offline mode.");
     }
+
+    // --- STAP 4: Overige extra's ---
     updateOnlineStatus();
+    updateWeather(); // Zorg dat het weer ook geladen wordt
 }
 
 // --- UI RENDERING & FILTERS ---
@@ -362,3 +380,30 @@ async function updateWeather() {
 
 // Roep de functie aan in je init() of onderaan DOMContentLoaded
 updateWeather();
+
+// --- WISHLIST LOGICA ---
+
+function renderWishlist() {
+    const container = document.getElementById('business-list');
+    const emptyMsg = document.getElementById('empty-wishlist');
+    
+    // 1. Haal de namen van je favorieten op uit de browser-opslag
+    const saved = localStorage.getItem('kalanera_wishlist');
+    const wishlistNames = saved ? JSON.parse(saved) : [];
+
+    // 2. Filter de grote lijst (allBusinesses) op alleen deze namen
+    const favoriteBusinesses = allBusinesses.filter(biz => wishlistNames.includes(biz.Name));
+
+    // 3. Als de lijst leeg is, toon de "Nog geen favorieten" melding
+    if (favoriteBusinesses.length === 0) {
+        if (emptyMsg) emptyMsg.style.display = 'block';
+        if (container) container.innerHTML = '';
+        return;
+    }
+
+    // 4. Als er wel favorieten zijn, verberg de melding en render de kaartjes
+    if (emptyMsg) emptyMsg.style.display = 'none';
+    
+    // We hergebruiken hier je bestaande renderBusinesses functie!
+    renderBusinesses(favoriteBusinesses);
+}

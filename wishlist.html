@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Favorites | Kala Nera Guide</title>
+    <link rel="stylesheet" href="style.css?v=1.0.5">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body>
+
+<header class="site-header" style="height: 40vh; min-height: 300px;">
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Kala <span>Nera</span></a>
+            
+            <div id="weather-widget" class="weather-mini">
+                <span id="weather-icon"></span>
+                <span id="weather-temp">--°C</span>
+            </div>
+
+            <button class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+            </button>
+
+            <ul class="nav-links" id="nav-list">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="wishlist.html" class="active"><i class="fa-solid fa-heart"></i> Favorites</a></li>
+                <li><a href="t-form.html">Add Business</a></li>
+                <li><a href="c-form.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="hero-section" style="height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
+        <div class="hero-overlay">
+            <h1 style="color: white;">Your Favorites</h1>
+            <p style="color: white !important;">All your favorite places in Kala Nera in one place.</p>
+        </div>
+    </div>
+</header>
+
+<div class="main-container">
+    <h1 style="text-align: center; margin-bottom: 30px;">Saved Businesses</h1>
+
+    <div id="empty-wishlist" style="display:none; text-align:center; padding:60px 20px;">
+        <i class="fa-regular fa-heart" style="font-size: 4rem; color: #ccc; margin-bottom: 20px; display: block;"></i>
+        <p style="font-size: 1.2rem; color: var(--muted);">You haven't saved any favorites yet.</p>
+        <br>
+        <a href="index.html" class="add-biz-btn" style="display: inline-block; text-decoration: none;">
+            Explore Businesses
+        </a>
+    </div>
+
+    <div id="business-list">
+        <p class="status-msg">Loading your favorites...</p>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="footer-bottom">
+        <p>© 2026 Kala Nera Business Directory.</p>
+    </div>
+</footer>
+
+<script src="app.js?v=1.0.5"></script>
+
+<script>
+    // Service worker registratie (kopieer van index.html)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js');
+        });
+    }
+</script>
+
+</body>
+</html>
