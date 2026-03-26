@@ -1,5 +1,5 @@
 // service-worker.js
-const CACHE_NAME = 'kalanera-force-update-v13'; // Een heel hoog nummer/nieuwe naam
+const CACHE_NAME = 'kalanera-v1.0.2'; // Verander v1.0.1 naar v1.0.2
 const IMAGE_CACHE = 'kalanera-images-v1';
 
 // Bestanden die ALTIJD offline beschikbaar moeten zijn (de basis)

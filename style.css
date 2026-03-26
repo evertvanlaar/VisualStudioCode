@@ -844,3 +844,24 @@ body.is-offline .map-section {
 .app-version-tag:hover {
     background: rgba(74, 108, 74, 0.15);
 }
+
+/* Standaard: Verberg de app-label (voor Desktop) */
+.app-version-tag {
+    display: none !important;
+}
+
+/* Alleen tonen op schermen kleiner dan 768px (Mobiel/Tablet) */
+@media (max-width: 767px) {
+    .app-version-tag {
+        display: inline-block !important;
+        margin-top: 12px;
+        padding: 5px 15px;
+        background: rgba(74, 108, 74, 0.08);
+        border: 1px solid var(--primary-olive);
+        border-radius: 25px;
+        font-size: 11px;
+        color: var(--primary-olive);
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+}
