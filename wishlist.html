@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Favorites | Kala Nera Guide</title>
 
-    <link rel="stylesheet" href="style.css?v=1.0.20">
+    <link rel="stylesheet" href="style.css?v=1.0.16">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body>
 
-<header class="site-header" style="height: 40vh; min-height: 300px; position: relative;">
+<header class="site-header" style="height: 40vh; min-height: 300px;">
     <nav class="main-nav">
         <div class="nav-container">
             <a href="index.html" class="logo">Kala <span>Nera</span></a>
@@ -22,41 +22,35 @@
                 <span id="weather-temp">--°C</span>
             </div>
 
-            <button class="menu-toggle" id="mobile-menu">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </button>
+        <button class="menu-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
 
             <ul class="nav-links" id="nav-list">
                 <li><a href="index.html">Home</a></li>
-                <li>
                     <a href="wishlist.html" class="nav-wishlist">
-                        <i class="fa-solid fa-heart menu-heart"></i> Favorites <span id="wishlist-count" class="count-badge">0</span>
+                        <i class="fa-solid fa-heart menu-heart"></i> 
+                        Favorites <span id="wishlist-count" class="count-badge">0</span>
                     </a>
-                </li>
                 <li><a href="t-form.html">Add Business</a></li>
                 <li><a href="c-form.html">Contact</a></li>
             </ul>
         </div>
     </nav>
 
-    <div class="hero-section" style="height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; background-size: cover; background-position: center;">
+    <div class="hero-section" style="height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
         <div class="hero-overlay">
-            <h1 style="color: white; margin: 0;">Your Favorites</h1>
-            <p style="color: white !important; margin-top: 10px;">All your favorite places in Kala Nera in one place.</p>
+            <h1 style="color: white;">Your Favorites</h1>
+            <p style="color: white !important;">All your favorite places in Kala Nera in one place.</p>
         </div>
     </div>
 </header>
 
-<div class="main-container" style="padding-top: 40px; position: relative; z-index: 1;">
-    <h1 style="text-align: center; margin-bottom: 20px;">Saved Businesses</h1>
-
-    <div id="wishlist-actions" style="text-align: center; margin-bottom: 30px; display: none; justify-content: center;">
-        <button onclick="clearAllFavorites()" class="clear-all-btn">
-            <i class="fa-solid fa-trash-can"></i> Clear All Favorites
-        </button>
-    </div>
+<div class="main-container">
+    <h1 style="text-align: center; margin-bottom: 30px;">Saved Businesses</h1>
 
     <div id="empty-wishlist" style="display:none; text-align:center; padding:60px 20px;">
         <i class="fa-regular fa-heart" style="font-size: 4rem; color: #ccc; margin-bottom: 20px; display: block;"></i>
@@ -125,6 +119,6 @@
     }
 </script>
 
-<script src="app.js?v=1.0.20"></script>
+<script src="app.js?v=1.0.16"></script>
 </body>
 </html>

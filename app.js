@@ -384,43 +384,13 @@ updateWeather();
 
 // --- WISHLIST LOGICA ---
 
-/**
- * Toont/verbergt de 'Clear All' knop op basis van aantal favorieten
- */
-function updateWishlistVisibility(count) {
-    const actionDiv = document.getElementById('wishlist-actions');
-    if (actionDiv) {
-        actionDiv.style.display = count > 0 ? 'block' : 'none';
-    }
-}
-
-/**
- * Verwijdert alle favorieten na bevestiging
- */
-function clearAllFavorites() {
-    if (confirm("Are you sure you want to remove all your favorites?")) {
-        localStorage.removeItem('kalanera_wishlist');
-        
-        // Update de teller in het menu (functie die we eerder maakten)
-        if (typeof updateWishlistCount === "function") {
-            updateWishlistCount();
-        }
-        
-        // Ververs de pagina direct
-        renderWishlist();
-    }
-}
-
 function renderWishlist() {
     const container = document.getElementById('business-list');
     const emptyMsg = document.getElementById('empty-wishlist');
     
-    // 1. Haal de namen van je favorieten op
+    // 1. Haal de namen van je favorieten op uit de browser-opslag
     const saved = localStorage.getItem('kalanera_wishlist');
     const wishlistNames = saved ? JSON.parse(saved) : [];
-
-    // NIEUW: Update de zichtbaarheid van de Clear All knop
-    updateWishlistVisibility(wishlistNames.length);
 
     // 2. Filter de grote lijst (allBusinesses) op alleen deze namen
     const favoriteBusinesses = allBusinesses.filter(biz => wishlistNames.includes(biz.Name));
@@ -432,10 +402,10 @@ function renderWishlist() {
         return;
     }
 
-    // 4. Als er wel favorieten zijn, verberg de melding
+    // 4. Als er wel favorieten zijn, verberg de melding en render de kaartjes
     if (emptyMsg) emptyMsg.style.display = 'none';
     
-    // Render de kaartjes
+    // We hergebruiken hier je bestaande renderBusinesses functie!
     renderBusinesses(favoriteBusinesses);
 }
 
@@ -492,37 +462,4 @@ function updateWishlistCount() {
 
     badge.textContent = count;
     badge.setAttribute('data-count', count); // Voor de CSS-regels
-}
-
-/**
- * Verwijdert alle favorieten in één keer
- */
-function clearAllFavorites() {
-    // Vraag om bevestiging zodat mensen niet per ongeluk alles wissen
-    if (confirm("Are you sure you want to remove all your favorites?")) {
-        // 1. Maak de specifieke wishlist leeg in localStorage
-        localStorage.removeItem('kalanera_wishlist');
-        
-        // 2. Update de counter in de navigatie (die we eerder hebben gemaakt)
-        if (typeof updateWishlistCount === "function") {
-            updateWishlistCount();
-        }
-        
-        // 3. Ververs de weergave op de wishlist pagina
-        // Omdat we op de wishlist pagina zijn, roepen we renderWishlist aan
-        if (document.getElementById('empty-wishlist')) {
-            renderWishlist();
-        }
-    }
-}
-
-/**
- * Update de bestaande renderWishlist functie om de 'Clear All' knop 
- * te tonen of te verbergen op basis van de inhoud.
- */
-function updateWishlistVisibility(count) {
-    const actionDiv = document.getElementById('wishlist-actions');
-    if (actionDiv) {
-        actionDiv.style.display = count > 0 ? 'block' : 'none';
-    }
 }
