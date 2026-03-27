@@ -204,7 +204,7 @@ function renderBusinesses(data) {
             grid.innerHTML += `
             <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
                 <div class="mini-preview">
-                    <a href="${cleanUrl}" target="_blank">
+                    <a href="${cleanUrl}" target="_blank" rel="noopener noreferrer">
                         <img src="${finalImageUrl}" onerror="this.src='https://via.placeholder.com/180x130?text=No+Photo'">
                     </a>
                     <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${biz.Name.replace(/'/g, "\\'")}', this)">
@@ -217,7 +217,7 @@ function renderBusinesses(data) {
                         <span class="biz-location"><i class="fa fa-map-marker-alt"></i> ${biz.Location || 'Kala Nera'}</span>
                     </div>
                     <div class="mini-row-sub">
-                        <a href="${cleanUrl}" target="_blank" class="mini-web-link">
+                        <a href="${cleanUrl}" target="_blank" rel="noopener noreferrer" class="mini-web-link">
                             <i class="fa fa-external-link"></i> ${displayUrl || 'Visit Website'}
                         </a>
                     </div>
@@ -229,8 +229,8 @@ function renderBusinesses(data) {
                         </div>
                         <div class="action-right">
                             ${emailHtml}
-                            <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn"><i class="fa fa-star"></i></a>
-                            <a href="${mapsUrl}" target="_blank" class="btn-icon nav-btn-action"><i class="fa fa-location-dot"></i></a>
+                            <a href="${reviewUrl}" target="_blank" rel="noopener noreferrer" class="btn-icon review-btn"><i class="fa fa-star"></i></a>
+                            <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" class="btn-icon nav-btn-action"><i class="fa fa-location-dot"></i></a>
                         </div>
                     </div>
                 </div>
