@@ -1325,3 +1325,23 @@ body[data-theme="dark"] .biz-card-mini a[target="_blank"] {
     color: #e2b04a !important;
     text-decoration: underline;
 }
+
+/* --- DE ULTIEME FIX VOOR ALLE KNOPPEN (STRIKT & GELIJK) --- */
+body[data-theme="dark"] .filter-btn, 
+body[data-theme="dark"] .location-btn,
+body[data-theme="dark"] [data-category],
+body[data-theme="dark"] [data-location] {
+    background-color: #354a42 !important; /* Olijf achtergrond */
+    border: 2px solid #e2b04a !important;   /* Gouden rand */
+    color: #fdf5e6 !important;             /* Vanille tekst */
+    box-shadow: none !important;           /* Verwijder vreemde schaduwen */
+}
+
+/* De 'Aan'-stand voor alle knoppen */
+body[data-theme="dark"] .filter-btn.active, 
+body[data-theme="dark"] .location-btn.active,
+body[data-theme="dark"] .active {
+    background-color: #e2b04a !important; /* Volledig goud */
+    color: #1e2b26 !important;             /* Donkere tekst */
+    border: 2px solid #e2b04a !important;
+}
