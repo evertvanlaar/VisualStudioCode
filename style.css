@@ -1101,3 +1101,19 @@ body.is-offline .map-section {
 .clear-all-btn i {
     margin-right: 5px;
 }
+
+#wishlist-actions {
+    width: 100%;
+    clear: both;
+    position: relative;
+    /* Zorgt dat de knop niet 'flex' wordt tenzij de JS dat zegt */
+}
+
+.clear-all-btn {
+    /* Je bestaande styling, maar zorg voor een duidelijke border zodat hij opvalt */
+    border: 2px solid #e74c3c;
+    background: white;
+    padding: 10px 25px;
+    border-radius: 50px;
+    z-index: 2;
+}
