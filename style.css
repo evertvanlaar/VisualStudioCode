@@ -1144,74 +1144,95 @@ body {
     border-color: var(--border-color, #eee);
 }
 
-/* --- PREMIUM DARK MODE OPTIMALISATIE --- */
+/* --- ESTHETISCHE OLIVE & VANILLA DARK MODE --- */
 [data-theme="dark"] {
-    --bg: #121212;            /* Iets zachter dan puur zwart */
-    --card: #1e1e1e;          /* Donkergrijze kaarten */
-    --text: #e0e0e0;          /* Gebroken wit voor minder fel licht */
-    --border: #333333;        /* Subtiele randen */
-    --pill: #2a2a2a;          /* Donkere knoppen */
+    /* Basis kleuren */
+    --bg-color: #1b241b;           /* Zeer donker olijfgroen (bijna zwart, maar warmer) */
+    --card-bg: #242d24;            /* Iets lichtere olijfkleur voor de kaarten */
+    --text-main: #f3e5ab;          /* Zacht vanillegeel voor de koppen */
+    --text-muted: #d1d5db;         /* Lichtgrijs voor de gewone tekst */
+    --border-color: #3a453a;       /* Subtiele groene randen */
+    
+    /* Accent kleuren */
+    --accent-gold: #d4af37;        /* Goud voor iconen en highlights */
+    --primary-olive: #6a8e6a;      /* Iets lichtere olijf voor knoppen zodat ze poppen */
+    --header-bg: #151c15;          /* Diepste kleur voor de navigatie */
 }
 
-/* 1. De Categorie Koppen (nu nog te wit op je foto) */
-[data-theme="dark"] .category-section-header {
-    background: #1e1e1e !important; 
-    color: #ffffff !important;
-    border-left: 5px solid var(--primary-olive);
-    box-shadow: none;
+/* 1. Body & Achtergrond */
+body[data-theme="dark"] {
+    background-color: var(--bg-color);
+    color: var(--text-muted);
 }
 
-[data-theme="dark"] .category-section-header small {
-    background: #333 !important;
-    color: var(--primary-olive);
+/* 2. De Header (Navigatiebalk) */
+[data-theme="dark"] .main-nav {
+    background-color: var(--header-bg) !important;
+    border-bottom: 1px solid var(--border-color);
 }
 
-/* 2. De Filter Buttons (die nu nog grijs/wit zijn) */
-[data-theme="dark"] .filter-btn {
-    background: #2a2a2a !important;
-    border-color: #444 !important;
-    color: #bbb !important;
+[data-theme="dark"] .logo span {
+    color: var(--accent-gold); /* 'Nera' in goud */
 }
 
-[data-theme="dark"] .filter-btn.active {
-    background-color: var(--primary-olive) !important;
-    color: white !important;
-    border-color: var(--primary-olive) !important;
+[data-theme="dark"] .nav-links a {
+    color: var(--text-main) !important;
 }
 
-/* 3. De Zoekbalk */
-[data-theme="dark"] .search-input {
-    background-color: #1e1e1e !important;
-    color: white !important;
-    border-color: #444 !important;
-}
-
-/* 4. De Kaarten (Business Cards) */
+/* 3. Business Cards (De kaarten waar het om gaat) */
 [data-theme="dark"] .biz-card-mini {
-    background: #1e1e1e !important;
-    border-color: #333 !important;
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
 }
 
 [data-theme="dark"] .biz-name {
-    color: #ffffff !important;
+    color: var(--text-main) !important; /* Bedrijfsnaam in vanillegeel */
+}
+
+/* 4. Contactknoppen en icoontjes */
+[data-theme="dark"] .btn-icon {
+    background: #2d382d !important;
+    color: var(--accent-gold) !important; /* Gouden icoontjes */
+    border: 1px solid var(--border-color);
 }
 
 [data-theme="dark"] .phone-group {
-    background: #2a2a2a !important;
-    border-color: #444 !important;
+    background: #2d382d !important;
+    border-left: 3px solid var(--accent-gold) !important;
 }
 
-/* 5. De Google Maps kaart verzachten */
+[data-theme="dark"] .phone-txt {
+    color: var(--text-main) !important;
+}
+
+/* 5. Categorie Headers */
+[data-theme="dark"] .category-section-header {
+    background: transparent !important;
+    color: var(--text-main) !important;
+    border-bottom: 2px solid var(--primary-olive);
+    padding-left: 0;
+}
+
+/* 6. Zoekbalk & Filters */
+[data-theme="dark"] .search-input {
+    background-color: var(--card-bg) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--primary-olive) !important;
+}
+
+[data-theme="dark"] .filter-btn {
+    background: var(--card-bg) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .filter-btn.active {
+    background: var(--primary-olive) !important;
+    color: #fff !important;
+}
+
+/* 7. Kaart (Google Maps) subtieler maken */
 [data-theme="dark"] .map-wrapper {
-    filter: invert(90%) hue-rotate(180deg) brightness(1.1) contrast(0.9);
-    border-color: var(--primary-olive);
-}
-
-[data-theme="dark"] .main-nav {
-    background-color: #1a1a1a !important;
-    border-bottom: 1px solid #333;
-}
-
-[data-theme="dark"] .logo, [data-theme="dark"] .nav-links a {
-    color: white !important;
+    filter: sepia(30%) grayscale(20%) contrast(90%) invert(90%) hue-rotate(140deg);
 }
