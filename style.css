@@ -1066,3 +1066,80 @@ body.is-offline .map-wrapper::after {
     padding: 20px;
     color: #666;
 }
+
+/* --- DARK MODE KLEUREN --- */
+[data-theme="dark"] {
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --text-main: #e0e0e0;
+    --text-muted: #b0b0b0;
+    --border-color: #333;
+    --soft-olive: #2a3a2a; /* Donkerdere olijftint voor dark mode */
+}
+
+/* --- STANDAARD (LIGHT) KLEUREN --- */
+:root {
+    --bg-color: #f4f7ed; /* Je huidige soft-olive */
+    --card-bg: #ffffff;
+    --text-main: #333333;
+    --text-muted: #666666;
+    --border-color: #eeeeee;
+}
+
+/* Update je bestaande elementen om deze variabelen te gebruiken */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.business-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+.business-card h3 {
+    color: var(--text-main);
+}
+
+/* De CSS voor de knop (`style.css`)
+/* Voeg dit toe aan je CSS om de knop er goed uit te laten zien en de kleuren variabel te maken:
+
+/* Styling voor de knop zelf */
+.dark-mode-btn {
+    background: none;
+    border: none;
+    color: var(--primary-olive); /* Of wit als dat beter past in je header */
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 10px;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
+
+.dark-mode-btn:active {
+    transform: scale(0.9);
+}
+
+/* --- DARK MODE VARIABELEN --- */
+[data-theme="dark"] {
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --text-main: #f0f0f0;
+    --text-muted: #a0a0a0;
+    --border-color: #333;
+    --header-bg: #1a1a1a;
+}
+
+/* Zorg dat je bestaande classes deze variabelen gebruiken */
+body {
+    background-color: var(--bg-color, #f4f7ed);
+    color: var(--text-main, #333);
+}
+
+.business-card {
+    background-color: var(--card-bg, #fff);
+    border-color: var(--border-color, #eee);
+}

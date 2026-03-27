@@ -507,3 +507,25 @@ function getWishlist() {
         return [];
     }
 }
+
+const darkModeToggle = document.getElementById('dark-mode-toggle');
+const body = document.body;
+const icon = darkModeToggle.querySelector('i');
+
+// Bij laden: check of de gebruiker al eerder dark mode koos
+if (localStorage.getItem('theme') === 'dark') {
+    body.setAttribute('data-theme', 'dark');
+    icon.classList.replace('fa-moon', 'fa-sun');
+}
+
+darkModeToggle.addEventListener('click', () => {
+    if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
+        icon.classList.replace('fa-sun', 'fa-moon');
+    } else {
+        body.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        icon.classList.replace('fa-moon', 'fa-sun');
+    }
+});
