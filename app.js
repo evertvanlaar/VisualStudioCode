@@ -80,10 +80,24 @@ function renderEverything() {
 
 function updateOnlineStatus() {
     const offlineIndicator = document.getElementById('offline-indicator');
-    if (offlineIndicator) {
-        offlineIndicator.style.display = navigator.onLine ? 'none' : 'block';
+    
+    if (navigator.onLine) {
+        // We zijn ONLINE
+        document.body.classList.remove('is-offline');
+        if (offlineIndicator) offlineIndicator.style.display = 'none';
+    } else {
+        // We zijn OFFLINE
+        document.body.classList.add('is-offline');
+        if (offlineIndicator) offlineIndicator.style.display = 'block';
     }
 }
+
+// Zorg dat de browser luistert naar veranderingen in de verbinding
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+
+// Voer het ook direct uit als de pagina laadt
+document.addEventListener('DOMContentLoaded', updateOnlineStatus);
 
 function getIcon(cat) {
     const key = Object.keys(iconMap).find(k => (cat || "").toLowerCase().includes(k.toLowerCase()));

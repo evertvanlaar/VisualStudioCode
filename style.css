@@ -1049,3 +1049,20 @@ body.is-offline .map-section {
     padding: 20px;
     box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
 }
+
+/* Verberg de kaart sectie op mobiel als we offline zijn */
+@media screen and (max-width: 768px) {
+    body.is-offline .map-section, 
+    body.is-offline iframe[src*="google.com/maps"] {
+        display: none !important;
+    }
+}
+
+/* Optioneel: toon een tekstje op de plek van de kaart op desktop */
+body.is-offline .map-wrapper::after {
+    content: "📍 Kaart niet beschikbaar in offline modus";
+    display: block;
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
