@@ -1345,3 +1345,19 @@ body[data-theme="dark"] .active {
     color: #1e2b26 !important;             /* Donkere tekst */
     border: 2px solid #e2b04a !important;
 }
+
+/* --- DE DEFINITIEVE FIX VOOR DE LOCATIE BUTTONS --- */
+body[data-theme="dark"] .filter-btn[onclick*="filterByLocation"],
+body[data-theme="dark"] .filter-btn[data-location],
+body[data-theme="dark"] #all-locations-btn {
+    background-color: #354a42 !important; /* Olijf achtergrond */
+    color: #fdf5e6 !important;             /* Vanille tekst */
+    border: 2px solid #e2b04a !important;   /* Gouden rand */
+}
+
+/* De 'Aan'-stand (Active) voor de locatie buttons */
+body[data-theme="dark"] .filter-btn[onclick*="filterByLocation"].active,
+body[data-theme="dark"] .filter-btn[data-location].active {
+    background-color: #e2b04a !important; /* Volledig goud */
+    color: #1e2b26 !important;             /* Donkere tekst */
+}
