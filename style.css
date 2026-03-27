@@ -32,15 +32,15 @@ html, body {
 
 /* --- GLOBALE VARIABELEN (OLIJF EDITIE) --- */
 :root {
-    /* LIGHT MODE kleurenpalet */
-    --bg-main: #fcf9f2;          /* Warm zand / gebroken wit */
-    --bg-card: #ffffff;          /* Wit voor de kaartjes */
-    --text-primary: #2e3b23;     /* Diep olijfzwart voor tekst */
-    --text-muted: #6b705c;       /* Grijsgroen voor kleine tekst */
-    --accent-gold: #c5a059;      /* Warm goud voor accenten */
-    --primary-olive: #556b2f;    /* Klassiek olijfgroen */
-    --border-color: #e0dacc;     /* Zachte randkleur */
-    --card-shadow: 0 4px 12px rgba(46, 59, 35, 0.08);
+    --primary-olive: #4a6c4a;       /* Jouw kenmerkende olijfgroen */
+    --primary-olive-dark: #3e5a3e;  /* Donkerdere tint voor hovers */
+    --soft-olive: #f4f7ed;          /* Zeer zachte groene achtergrond */
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --pill: #f1f5f9;
 }
 
 /* --- BASIS STYLING --- */
@@ -1144,214 +1144,101 @@ body {
     border-color: var(--border-color, #eee);
 }
 
-/* ============================================================
-   DE DEFINITIEVE MEDITERRANEAN DARK MODE (HONEY & OLIVE)
-   ============================================================ */
-
-/* 1. DE BASIS: Achtergrond van de hele pagina */
-body[data-theme="dark"] {
-    background-color: #2a3b34 !important; /* Het warme bosgroen */
-    color: #fdf5e6 !important;           /* Vanille tekst */
+/* --- ESTHETISCHE OLIVE & VANILLA DARK MODE --- */
+[data-theme="dark"] {
+    --bg-color: #1a221a;           /* Diep mosgroen */
+    --card-bg: #242d24;            /* Iets lichtere olijf */
+    --text-main: #f3e5ab;          /* Zacht vanillegeel (Titels) */
+    --text-muted: #cbd5c1;         /* Gedempt saliegroen (Tekst) */
+    --accent-gold: #d4af37;        /* Luxe Goud (Iconen) */
+    --border-soft: #2d3a2d;        /* Subtiele groene lijnen */
 }
 
-/* 2. HET MENU: Geen wit meer, maar diep olijf */
-body[data-theme="dark"] .main-nav, 
-body[data-theme="dark"] header,
-body[data-theme="dark"] .nav-links {
-    background-color: #1e2b26 !important; 
-    border-bottom: 2px solid #e2b04a !important; /* Gouden lijn onder menu */
+/* De Business Card (Eindelijk in balans) */
+[data-theme="dark"] .biz-card-mini {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-soft) !important;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
 }
 
-body[data-theme="dark"] .nav-links a,
-body[data-theme="dark"] .logo {
-    color: #fdf5e6 !important;
+/* De Naam en gegevens */
+[data-theme="dark"] .biz-name {
+    color: var(--text-main) !important;
+    font-weight: 700;
 }
 
-/* 3. DE BUSINESS CARDS: Nu echt olijf in plaats van wit */
-body[data-theme="dark"] .biz-card-mini {
-    background-color: #354a42 !important; 
-    border: 2px solid #455d53 !important;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3) !important;
+[data-theme="dark"] .phone-group {
+    background: #2d382d !important;
+    border-left: 3px solid var(--accent-gold) !important; /* Gouden accent */
+    border-radius: 4px;
 }
 
-body[data-theme="dark"] .biz-name {
-    color: #e2b04a !important; /* De titel in Honing-Goud */
-    font-weight: 800;
+[data-theme="dark"] .phone-txt {
+    color: var(--text-main) !important;
 }
 
-/* 4. TELEFOON & CONTACT: Luxe donkere stijl */
-body[data-theme="dark"] .phone-group {
-    background-color: rgba(0, 0, 0, 0.25) !important;
-    border: 1px solid rgba(226, 176, 74, 0.3) !important;
-    border-left: 4px solid #e2b04a !important;
-    color: #fdf5e6 !important;
+/* De knoppen binnen de kaart */
+[data-theme="dark"] .btn-icon {
+    background: #2d382d !important;
+    color: var(--accent-gold) !important;
+    border: 1px solid var(--border-soft);
 }
 
-body[data-theme="dark"] .phone-txt {
-    color: #fdf5e6 !important;
-}
-
-body[data-theme="dark"] .mini-web-link {
-    color: #e2b04a !important;
-}
-
-/* 5. ALLE KNOPPEN: Zowel Categorie als Locatie in goud */
-body[data-theme="dark"] .filter-btn {
-    background-color: #354a42 !important;
-    border: 2.5px solid #e2b04a !important; /* Iets dikker voor 'Honing' effect */
-    color: #fdf5e6 !important;
-}
-
-body[data-theme="dark"] .filter-btn.active {
-    background-color: #e2b04a !important;
-    color: #1e2b26 !important;
-}
-
-/* 6. CATEGORIE TITEL: Steekt nu mooi af */
-body[data-theme="dark"] .category-section-header {
-    background-color: #1e2b26 !important; /* Donkerder vlak achter de titel */
-    color: #e2b04a !important;
-    border-bottom: 2px solid #e2b04a !important;
-    padding: 12px 20px !important;
-    margin-top: 40px !important;
-    border-radius: 8px 8px 0 0;
-}
-
-/* 7. GOOGLE MAPS: Scherp maar rustiger aan de ogen */
-body[data-theme="dark"] .map-section iframe,
-body[data-theme="dark"] .map-container iframe {
-    filter: brightness(0.7) contrast(1.1) !important; /* Geen vage invert meer */
-    border: 2px solid #e2b04a !important;
-}
-
-/* 8. ADD BUSINESS: De luxe gouden knop */
-body[data-theme="dark"] .add-biz-btn {
-    background: linear-gradient(135deg, #e2b04a, #c19035) !important;
-    color: #1e2b26 !important;
-    border: none !important;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.4) !important;
-    font-weight: bold;
-}
-
-/* --- MENU & NAVIGATIE FINETUNING --- */
-body[data-theme="dark"] .nav-links a:hover {
-    color: #e2b04a !important; /* Honing-goud bij hover */
-    text-shadow: 0 0 8px rgba(226, 176, 74, 0.4);
-}
-
-/* Favorites teller (2) subtieler en chiquer */
-body[data-theme="dark"] .favorites-count {
-    background: #e2b04a !important;
-    color: #1e2b26 !important;
-    border-radius: 50%;
-    padding: 2px 6px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin-left: 5px;
-}
-
-/* --- HET ZOEKVELD (MODERN & DONKER) --- */
-body[data-theme="dark"] .search-container {
-    background-color: #354a42 !important; /* Zelfde olijf als de kaarten */
-    border: 2px solid #e2b04a !important;   /* Gouden rand */
-    border-radius: 50px;
-    padding: 5px 20px;
-}
-
-body[data-theme="dark"] .search-input {
+/* Categorie Headers */
+[data-theme="dark"] .category-section-header {
     background: transparent !important;
-    color: #fdf5e6 !important; /* Vanille tekst */
-    border: none !important;
+    color: var(--text-main) !important;
+    border-bottom: 2px solid var(--primary-olive);
 }
 
-body[data-theme="dark"] .search-input::placeholder {
-    color: rgba(253, 245, 230, 0.5) !important; /* Gedimde vanille */
+/* --- LUXE DARK MODE BALANS --- */
+[data-theme="dark"] .biz-card-mini {
+    background: #242d24 !important; /* Rustgevend olijfgroen */
+    border: 1px solid rgba(243, 229, 171, 0.1) !important;
 }
 
-body[data-theme="dark"] .search-icon {
-    color: #e2b04a !important;
+[data-theme="dark"] .biz-name {
+    color: #f3e5ab !important; /* Zacht vanillegeel */
+    font-weight: 700;
 }
 
-/* --- MAPS & SECTIE OVERGANGEN --- */
-body[data-theme="dark"] .hero-section {
-    border-bottom: 5px solid #e2b04a !important;
-    position: relative;
+[data-theme="dark"] .phone-group {
+    background: rgba(0,0,0,0.2) !important;
+    border-left: 3px solid #d4af37 !important; /* Goud accent */
 }
 
-/* De 'Coastline' schaduw onder de foto */
-body[data-theme="dark"] .hero-section::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100px;
-    background: linear-gradient(transparent, rgba(42, 59, 52, 0.8));
-    pointer-events: none;
+[data-theme="dark"] .phone-txt {
+    color: #f3e5ab !important;
 }
 
-/* De Google Map: Scherpe 'Resort' look */
-body[data-theme="dark"] .map-section iframe {
-    filter: sepia(20%) brightness(0.85) contrast(1.1) !important;
-    border-radius: 15px; /* Rondere hoeken zijn moderner */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+/* --- LUXE DARK MODE BALANS VOOR DE KAARTJES --- */
+[data-theme="dark"] .biz-card-mini {
+    background: #242d24 !important; /* Olijfgroen */
+    border: 1px solid rgba(243, 229, 171, 0.1) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Alle filterknoppen (Locatie & Categorie) exact gelijk */
-body[data-theme="dark"] .filter-btn, 
-body[data-theme="dark"] .location-btn {
-    background-color: #354a42 !important;
-    border: 1.5px solid #e2b04a !important;
-    color: #fdf5e6 !important;
-    transition: all 0.3s ease;
+[data-theme="dark"] .biz-card-mini:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
 
-body[data-theme="dark"] .filter-btn.active,
-body[data-theme="dark"] .location-btn.active {
-    background-color: #e2b04a !important;
-    color: #1e2b26 !important;
-    box-shadow: 0 0 15px rgba(226, 176, 74, 0.3);
+/* De Placeholder afbeelding styling */
+[data-theme="dark"] .mini-preview img {
+    filter: sepia(20%) contrast(90%); /* Geeft placeholders een warmere 'vanille' tint */
+    border-bottom: 1px solid rgba(243, 229, 171, 0.05);
 }
 
-/* Business Card Hover Effect */
-body[data-theme="dark"] .biz-card-mini:hover {
-    border-color: #e2b04a !important;
-    transform: translateY(-4px);
-    transition: all 0.3s ease;
+/* Tekstkleuren in balans */
+[data-theme="dark"] .biz-name {
+    color: #f3e5ab !important; /* Vanillegeel */
 }
 
-/* De website-link goud maken */
-body[data-theme="dark"] .biz-card-mini a[target="_blank"] {
-    color: #e2b04a !important;
-    text-decoration: underline;
+[data-theme="dark"] .phone-txt {
+    color: #f3e5ab !important;
 }
 
-/* --- UNIFORME STYLING VOOR ALLE KNOPPEN (CATEGORIE & LOCATIE) --- */
-
-/* 1. De 'Rust' stand (Inactive) - Olijf met Vanille tekst */
-body[data-theme="dark"] .filter-btn, 
-body[data-theme="dark"] .location-btn,
-body[data-theme="dark"] [onclick*="filter"],
-body[data-theme="dark"] [data-location] {
-    background-color: #354a42 !important; /* Olijfgroen */
-    color: #fdf5e6 !important;             /* Vanille/Witte tekst */
-    border: 2px solid #e2b04a !important;   /* Gouden rand */
-    opacity: 1 !important;
+[data-theme="dark"] .biz-location {
+    color: #cbd5c1 !important; /* Saliegroen */
 }
-
-/* 2. De 'Aan' stand (Active) - Goudgeel met Donkere tekst */
-body[data-theme="dark"] .filter-btn.active, 
-body[data-theme="dark"] .location-btn.active,
-body[data-theme="dark"] [onclick*="filter"].active,
-body[data-theme="dark"] .active {
-    background-color: #e2b04a !important; /* Goudgeel */
-    color: #1e2b26 !important;             /* Donkere tekst (Olijf-zwart) */
-    font-weight: bold !important;
-}
-
-/* 3. Specifieke fix voor de icoontjes in de knoppen */
-body[data-theme="dark"] .filter-btn i, 
-body[data-theme="dark"] .location-btn i {
-    color: inherit !important; /* Icoontje krijgt dezelfde kleur als de tekst */
-}
-/* 
