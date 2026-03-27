@@ -69,6 +69,7 @@ async function init() {
     // --- STAP 4: Overige extra's ---
     updateOnlineStatus();
     updateWeather(); // Zorg dat het weer ook geladen wordt
+    updateWishlistCount();
 }
 
 // --- UI RENDERING & FILTERS ---
@@ -435,6 +436,8 @@ function toggleWishlist(name, btn) {
     }
 
     localStorage.setItem('kalanera_wishlist', JSON.stringify(wishlist));
+    // VOEG DIT TOE:
+    updateWishlistCount();
 }
 
 /**
@@ -447,4 +450,16 @@ function getWishlist() {
     } catch (e) {
         return [];
     }
+}
+
+function updateWishlistCount() {
+    const badge = document.getElementById('wishlist-count');
+    if (!badge) return;
+
+    const saved = localStorage.getItem('kalanera_wishlist');
+    const wishlist = saved ? JSON.parse(saved) : [];
+    const count = wishlist.length;
+
+    badge.textContent = count;
+    badge.setAttribute('data-count', count); // Voor de CSS-regels
 }
