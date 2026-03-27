@@ -1080,3 +1080,24 @@ body.is-offline .map-section {
     display: flex;
     justify-content: center;
 }
+
+.clear-all-btn {
+    background-color: transparent;
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.clear-all-btn:hover {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.clear-all-btn i {
+    margin-right: 5px;
+}
