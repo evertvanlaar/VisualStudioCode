@@ -16,30 +16,38 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta http-equiv="refresh" content="6000">
     <title>Contact Us | Kala Nera Guide</title>
     <meta name="description" content="Send us your suggestions or questions about Kala Nera, Pelion.">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="style.css?v=1.0.37">
+    <link rel="stylesheet" href="style.css?v=1.0.80">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body>
 
 <header class="site-header">
-<nav class="main-nav">
-    <div class="nav-container">
-        <a href="index.html" class="logo">Kala <span>Nera</span></a>
-        <ul class="nav-links" id="nav-list">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="wishlist.html"><i class="fa-solid fa-heart menu-heart"></i> Favorites</a></li>
-            <li><a href="t-form.html">Add your business</a></li>
-            <li><a href="c-form.html">Contact</a></li>
-        </ul>
-    </div>
-</nav>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Kala <span>Nera</span></a>
+            
+            <button class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>                
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <ul class="nav-links" id="nav-list">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="wishlist.html" class="active"><i class="fa-solid fa-heart menu-heart"></i> Favorites</a></li>
+                <li><a href="t-form.html">Add your business</a></li>
+                <li><a href="c-form.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
 
     <div class="hero-section" style="display: flex; align-items: center; justify-content: center; text-align: center; flex-direction: column;">
         <div class="hero-overlay" style="padding: 0 20px;">
@@ -97,7 +105,7 @@
     </div>
 
     <div style="margin-top: 10px; opacity: 0.6; transition: opacity 0.3s; text-align: center;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">
-        <a href="http://www.goatcounter.com" target="_blank" rel="noopener noreferrer" title="Bezoekersstatistieken" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 8px;">
+        <a href="http://www.goatcounter.com" target="_blank" rel="noopener" title="Bezoekersstatistieken" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 8px;">
             <img src="https://static.zgo.at/favicon/favicon-32x32.png" alt="GoatCounter" style="width: 16px; height: 16px;">
             <span style="font-size: 12px; font-family: sans-serif;">Statistics</span>
         </a>
@@ -110,6 +118,20 @@
 
 <script data-goatcounter="https://evertvanlaar.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 
-<script src="app.js?v=1.0.37"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const menu = document.querySelector('#mobile-menu');
+        const menuLinks = document.querySelector('#nav-list');
+
+        if (menu && menuLinks) {
+            menu.addEventListener('click', function() {
+                menuLinks.classList.toggle('active');
+                menu.classList.toggle('is-active');
+            });
+        }
+    });
+</script>
+
+<script src="app.js?v=1.0.80"></script>
 </body>
 </html>
