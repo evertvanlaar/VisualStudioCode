@@ -1144,101 +1144,45 @@ body {
     border-color: var(--border-color, #eee);
 }
 
-/* --- ESTHETISCHE OLIVE & VANILLA DARK MODE --- */
-[data-theme="dark"] {
-    --bg-color: #1a221a;           /* Diep mosgroen */
-    --card-bg: #242d24;            /* Iets lichtere olijf */
-    --text-main: #f3e5ab;          /* Zacht vanillegeel (Titels) */
-    --text-muted: #cbd5c1;         /* Gedempt saliegroen (Tekst) */
-    --accent-gold: #d4af37;        /* Luxe Goud (Iconen) */
-    --border-soft: #2d3a2d;        /* Subtiele groene lijnen */
-}
-
-/* De Business Card (Eindelijk in balans) */
-[data-theme="dark"] .biz-card-mini {
-    background: var(--card-bg) !important;
-    border: 1px solid var(--border-soft) !important;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-}
-
-/* De Naam en gegevens */
-[data-theme="dark"] .biz-name {
-    color: var(--text-main) !important;
-    font-weight: 700;
-}
-
-[data-theme="dark"] .phone-group {
-    background: #2d382d !important;
-    border-left: 3px solid var(--accent-gold) !important; /* Gouden accent */
-    border-radius: 4px;
-}
-
-[data-theme="dark"] .phone-txt {
-    color: var(--text-main) !important;
-}
-
-/* De knoppen binnen de kaart */
-[data-theme="dark"] .btn-icon {
-    background: #2d382d !important;
-    color: var(--accent-gold) !important;
-    border: 1px solid var(--border-soft);
-}
-
-/* Categorie Headers */
-[data-theme="dark"] .category-section-header {
-    background: transparent !important;
-    color: var(--text-main) !important;
-    border-bottom: 2px solid var(--primary-olive);
-}
-
-/* --- LUXE DARK MODE BALANS --- */
+/* --- DE FINITIEVE OLIVE & VANILLA BALANS --- */
 [data-theme="dark"] .biz-card-mini {
     background: #242d24 !important; /* Rustgevend olijfgroen */
     border: 1px solid rgba(243, 229, 171, 0.1) !important;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4) !important;
 }
 
 [data-theme="dark"] .biz-name {
     color: #f3e5ab !important; /* Zacht vanillegeel */
     font-weight: 700;
+    letter-spacing: 0.3px;
 }
 
+/* Het telefoon- en contactblokje */
 [data-theme="dark"] .phone-group {
     background: rgba(0,0,0,0.2) !important;
-    border-left: 3px solid #d4af37 !important; /* Goud accent */
+    border-left: 3px solid #d4af37 !important; /* Chique goud accent */
 }
 
 [data-theme="dark"] .phone-txt {
     color: #f3e5ab !important;
 }
 
-/* --- LUXE DARK MODE BALANS VOOR DE KAARTJES --- */
-[data-theme="dark"] .biz-card-mini {
-    background: #242d24 !important; /* Olijfgroen */
-    border: 1px solid rgba(243, 229, 171, 0.1) !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-[data-theme="dark"] .biz-card-mini:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-}
-
-/* De Placeholder afbeelding styling */
-[data-theme="dark"] .mini-preview img {
-    filter: sepia(20%) contrast(90%); /* Geeft placeholders een warmere 'vanille' tint */
-    border-bottom: 1px solid rgba(243, 229, 171, 0.05);
-}
-
-/* Tekstkleuren in balans */
-[data-theme="dark"] .biz-name {
-    color: #f3e5ab !important; /* Vanillegeel */
-}
-
-[data-theme="dark"] .phone-txt {
+/* De knoppen onderin de kaart */
+[data-theme="dark"] .btn-icon {
+    background: #2d3a2d !important;
     color: #f3e5ab !important;
+    border: 1px solid rgba(243, 229, 171, 0.1);
 }
 
-[data-theme="dark"] .biz-location {
-    color: #cbd5c1 !important; /* Saliegroen */
+[data-theme="dark"] .btn-icon:hover {
+    color: #d4af37 !important;
+    border-color: #d4af37;
+}
+
+/* De website link */
+[data-theme="dark"] .mini-web-link {
+    color: #d4af37 !important;
+    font-size: 0.9rem;
+    opacity: 0.9;
 }
