@@ -448,3 +448,17 @@ function getWishlist() {
         return [];
     }
 }
+
+// In app.js
+document.addEventListener('DOMContentLoaded', function() {
+    const menu = document.querySelector('#mobile-menu');
+    const menuLinks = document.querySelector('#nav-list');
+
+    if (menu && menuLinks) {
+        // We verwijderen eerst eventuele oude listeners om dubbele kliks te voorkomen
+        menu.onclick = function() {
+            menuLinks.classList.toggle('active');
+            menu.classList.toggle('is-active');
+        };
+    }
+});

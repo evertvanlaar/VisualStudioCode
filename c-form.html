@@ -22,7 +22,7 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="style.css?v=1.0.35">
+    <link rel="stylesheet" href="style.css?v=1.0.36">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
@@ -42,7 +42,7 @@
 
             <ul class="nav-links" id="nav-list">
                 <li><a href="index.html">Home</a></li>
-                <li><a href="wishlist.html" class="active"><i class="fa-solid fa-heart menu-heart"></i> Favorites</a></li>
+                <li><a href="wishlist.html"><i class="fa-solid fa-heart menu-heart"></i> Favorites</a></li>
                 <li><a href="t-form.html">Add your business</a></li>
                 <li><a href="c-form.html">Contact</a></li>
             </ul>
@@ -118,20 +118,6 @@
 
 <script data-goatcounter="https://evertvanlaar.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const menu = document.querySelector('#mobile-menu');
-        const menuLinks = document.querySelector('#nav-list');
-
-        if (menu && menuLinks) {
-            menu.addEventListener('click', function() {
-                menuLinks.classList.toggle('active');
-                menu.classList.toggle('is-active');
-            });
-        }
-    });
-</script>
-
-<script src="app.js?v=1.0.35"></script>
+<script src="app.js?v=1.0.36"></script>
 </body>
 </html>
