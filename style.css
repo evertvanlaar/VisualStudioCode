@@ -1040,3 +1040,37 @@ body.is-offline .map-section {
     transform: scale(1.2);
     transition: 0.2s;
 }
+
+/* Basis styling voor beide (Desktop & Mobiel) */
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+}
+
+/* Mobiele aanpassing: onder elkaar in plaats van verbergen */
+@media screen and (max-width: 768px) {
+    .nav-container {
+        flex-direction: column; /* Logo boven, menu eronder */
+    }
+
+    .nav-links {
+        flex-direction: column; /* Items onder elkaar */
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+        gap: 10px;
+    }
+
+    /* Verberg de hamburger knop als je die nog in je HTML had laten staan */
+    .menu-toggle {
+        display: none !important;
+    }
+}
