@@ -126,14 +126,19 @@
 <script data-goatcounter="https://evertvanlaar.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 
 <script>
+    // Wacht tot de pagina geladen is
     document.addEventListener('DOMContentLoaded', function() {
         const menu = document.querySelector('#mobile-menu');
         const menuLinks = document.querySelector('#nav-list');
 
         if (menu && menuLinks) {
             menu.addEventListener('click', function() {
+                // Toggle de 'active' class op de lijst en de knop zelf
                 menuLinks.classList.toggle('active');
                 menu.classList.toggle('is-active');
+                
+                // Voorkom dat de pagina verspringt
+                event.preventDefault();
             });
         }
     });

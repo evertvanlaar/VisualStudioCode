@@ -134,14 +134,14 @@
         const menu = document.querySelector('#mobile-menu');
         const menuLinks = document.querySelector('#nav-list');
 
-        // Check of de elementen wel bestaan (voorkomt foutmeldingen)
         if (menu && menuLinks) {
             menu.addEventListener('click', function() {
-                // Toggle de 'active' class op de UL (nav-links)
+                // Toggle de 'active' class op de lijst en de knop zelf
                 menuLinks.classList.toggle('active');
-                
-                // Optioneel: animatie van de hamburger naar een X
                 menu.classList.toggle('is-active');
+                
+                // Voorkom dat de pagina verspringt
+                event.preventDefault();
             });
         }
     });
