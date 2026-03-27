@@ -1232,3 +1232,96 @@ body[data-theme="dark"] .add-biz-btn {
     box-shadow: 0 5px 15px rgba(0,0,0,0.4) !important;
     font-weight: bold;
 }
+
+/* --- MENU & NAVIGATIE FINETUNING --- */
+body[data-theme="dark"] .nav-links a:hover {
+    color: #e2b04a !important; /* Honing-goud bij hover */
+    text-shadow: 0 0 8px rgba(226, 176, 74, 0.4);
+}
+
+/* Favorites teller (2) subtieler en chiquer */
+body[data-theme="dark"] .favorites-count {
+    background: #e2b04a !important;
+    color: #1e2b26 !important;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+/* --- HET ZOEKVELD (MODERN & DONKER) --- */
+body[data-theme="dark"] .search-container {
+    background-color: #354a42 !important; /* Zelfde olijf als de kaarten */
+    border: 2px solid #e2b04a !important;   /* Gouden rand */
+    border-radius: 50px;
+    padding: 5px 20px;
+}
+
+body[data-theme="dark"] .search-input {
+    background: transparent !important;
+    color: #fdf5e6 !important; /* Vanille tekst */
+    border: none !important;
+}
+
+body[data-theme="dark"] .search-input::placeholder {
+    color: rgba(253, 245, 230, 0.5) !important; /* Gedimde vanille */
+}
+
+body[data-theme="dark"] .search-icon {
+    color: #e2b04a !important;
+}
+
+/* --- MAPS & SECTIE OVERGANGEN --- */
+body[data-theme="dark"] .hero-section {
+    border-bottom: 5px solid #e2b04a !important;
+    position: relative;
+}
+
+/* De 'Coastline' schaduw onder de foto */
+body[data-theme="dark"] .hero-section::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(transparent, rgba(42, 59, 52, 0.8));
+    pointer-events: none;
+}
+
+/* De Google Map: Scherpe 'Resort' look */
+body[data-theme="dark"] .map-section iframe {
+    filter: sepia(20%) brightness(0.85) contrast(1.1) !important;
+    border-radius: 15px; /* Rondere hoeken zijn moderner */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* Alle filterknoppen (Locatie & Categorie) exact gelijk */
+body[data-theme="dark"] .filter-btn, 
+body[data-theme="dark"] .location-btn {
+    background-color: #354a42 !important;
+    border: 1.5px solid #e2b04a !important;
+    color: #fdf5e6 !important;
+    transition: all 0.3s ease;
+}
+
+body[data-theme="dark"] .filter-btn.active,
+body[data-theme="dark"] .location-btn.active {
+    background-color: #e2b04a !important;
+    color: #1e2b26 !important;
+    box-shadow: 0 0 15px rgba(226, 176, 74, 0.3);
+}
+
+/* Business Card Hover Effect */
+body[data-theme="dark"] .biz-card-mini:hover {
+    border-color: #e2b04a !important;
+    transform: translateY(-4px);
+    transition: all 0.3s ease;
+}
+
+/* De website-link goud maken */
+body[data-theme="dark"] .biz-card-mini a[target="_blank"] {
+    color: #e2b04a !important;
+    text-decoration: underline;
+}
