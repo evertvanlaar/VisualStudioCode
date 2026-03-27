@@ -22,7 +22,7 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="style.css?v=1.0.19">
+    <link rel="stylesheet" href="style.css?v=1.0.20">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
@@ -126,24 +126,31 @@
 <script data-goatcounter="https://evertvanlaar.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 
 <script>
-    // Wacht tot de pagina geladen is
     document.addEventListener('DOMContentLoaded', function() {
-        const menu = document.querySelector('#mobile-menu');
-        const menuLinks = document.querySelector('#nav-list');
+        const menu = document.getElementById('mobile-menu');
+        const menuLinks = document.getElementById('nav-list');
 
         if (menu && menuLinks) {
-            menu.addEventListener('click', function() {
-                // Toggle de 'active' class op de lijst en de knop zelf
+            menu.onclick = function(e) {
+                // Voorkom dat de pagina naar boven springt
+                e.preventDefault();
+                
+                // Toggle de classes
                 menuLinks.classList.toggle('active');
                 menu.classList.toggle('is-active');
                 
-                // Voorkom dat de pagina verspringt
-                event.preventDefault();
-            });
+                // Log voor debuggen (kun je later weghalen)
+                console.log("Menu klik!"); 
+            };
+        }
+
+        // Vergeet niet de hartjes-teller ook hier te updaten!
+        if (typeof updateWishlistCount === 'function') {
+            updateWishlistCount();
         }
     });
 </script>
 
-<script src="app.js?v=1.0.19"></script>
+<script src="app.js?v=1.0.20"></script>
 </body>
 </html>
