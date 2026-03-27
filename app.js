@@ -330,9 +330,16 @@ window.addEventListener('beforeinstallprompt', async (e) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Eerst de Dark Mode initialiseren (deze functie hebben we net veilig gemaakt)
+    if (typeof initDarkMode === 'function') {
+        initDarkMode();
+    }
+
+    // 2. Zoekbalk listener
     const searchInput = document.getElementById('search-input');
     if (searchInput) searchInput.addEventListener('input', applyFilters);
 
+    // 3. Mobiel menu
     const menu = document.querySelector('#mobile-menu');
     const menuLinks = document.querySelector('#nav-list');
     if (menu && menuLinks) {
@@ -342,9 +349,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // VOEG DEZE REGEL TOE:
+    // 4. Wishlist teller bijwerken
     updateWishlistCount();
 
+    // 5. De data-fetching en rest van de site starten
     init();
 });
 
@@ -508,24 +516,41 @@ function getWishlist() {
     }
 }
 
-const darkModeToggle = document.getElementById('dark-mode-toggle');
-const body = document.body;
-const icon = darkModeToggle.querySelector('i');
+// --- VEILIGE DARK MODE INITIALISATIE ---
+function initDarkMode() {
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const body = document.body;
+    
+    // Als de knop niet op deze pagina staat, stop dan rustig zonder te crashen
+    if (!darkModeToggle) {
+        // Wel even het thema toepassen als dat al in localStorage staat
+        if (localStorage.getItem('theme') === 'dark') {
+            body.setAttribute('data-theme', 'dark');
+        }
+        return;
+    }
 
-// Bij laden: check of de gebruiker al eerder dark mode koos
-if (localStorage.getItem('theme') === 'dark') {
-    body.setAttribute('data-theme', 'dark');
-    icon.classList.replace('fa-moon', 'fa-sun');
+    const icon = darkModeToggle.querySelector('i');
+
+    // Check opgeslagen thema bij het laden
+    if (localStorage.getItem('theme') === 'dark') {
+        body.setAttribute('data-theme', 'dark');
+        if (icon) icon.classList.replace('fa-moon', 'fa-sun');
+    }
+
+    darkModeToggle.addEventListener('click', () => {
+        const isDark = body.getAttribute('data-theme') === 'dark';
+        
+        if (isDark) {
+            body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+            if (icon) icon.classList.replace('fa-sun', 'fa-moon');
+        } else {
+            body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+            if (icon) icon.classList.replace('fa-moon', 'fa-sun');
+        }
+    });
 }
 
-darkModeToggle.addEventListener('click', () => {
-    if (body.getAttribute('data-theme') === 'dark') {
-        body.removeAttribute('data-theme');
-        localStorage.setItem('theme', 'light');
-        icon.classList.replace('fa-sun', 'fa-moon');
-    } else {
-        body.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
-        icon.classList.replace('fa-moon', 'fa-sun');
-    }
-});
+// Zorg dat deze functie wordt aangeroepen in je DOMContentLoaded event listener (die heb je al staan!)

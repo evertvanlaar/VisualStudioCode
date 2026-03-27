@@ -1146,93 +1146,48 @@ body {
 
 /* --- ESTHETISCHE OLIVE & VANILLA DARK MODE --- */
 [data-theme="dark"] {
-    /* Basis kleuren */
-    --bg-color: #1b241b;           /* Zeer donker olijfgroen (bijna zwart, maar warmer) */
-    --card-bg: #242d24;            /* Iets lichtere olijfkleur voor de kaarten */
-    --text-main: #f3e5ab;          /* Zacht vanillegeel voor de koppen */
-    --text-muted: #d1d5db;         /* Lichtgrijs voor de gewone tekst */
-    --border-color: #3a453a;       /* Subtiele groene randen */
-    
-    /* Accent kleuren */
-    --accent-gold: #d4af37;        /* Goud voor iconen en highlights */
-    --primary-olive: #6a8e6a;      /* Iets lichtere olijf voor knoppen zodat ze poppen */
-    --header-bg: #151c15;          /* Diepste kleur voor de navigatie */
+    --bg-color: #1a221a;           /* Diep mosgroen */
+    --card-bg: #242d24;            /* Iets lichtere olijf */
+    --text-main: #f3e5ab;          /* Zacht vanillegeel (Titels) */
+    --text-muted: #cbd5c1;         /* Gedempt saliegroen (Tekst) */
+    --accent-gold: #d4af37;        /* Luxe Goud (Iconen) */
+    --border-soft: #2d3a2d;        /* Subtiele groene lijnen */
 }
 
-/* 1. Body & Achtergrond */
-body[data-theme="dark"] {
-    background-color: var(--bg-color);
-    color: var(--text-muted);
-}
-
-/* 2. De Header (Navigatiebalk) */
-[data-theme="dark"] .main-nav {
-    background-color: var(--header-bg) !important;
-    border-bottom: 1px solid var(--border-color);
-}
-
-[data-theme="dark"] .logo span {
-    color: var(--accent-gold); /* 'Nera' in goud */
-}
-
-[data-theme="dark"] .nav-links a {
-    color: var(--text-main) !important;
-}
-
-/* 3. Business Cards (De kaarten waar het om gaat) */
+/* De Business Card (Eindelijk in balans) */
 [data-theme="dark"] .biz-card-mini {
     background: var(--card-bg) !important;
-    border: 1px solid var(--border-color) !important;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    border: 1px solid var(--border-soft) !important;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
 }
 
+/* De Naam en gegevens */
 [data-theme="dark"] .biz-name {
-    color: var(--text-main) !important; /* Bedrijfsnaam in vanillegeel */
-}
-
-/* 4. Contactknoppen en icoontjes */
-[data-theme="dark"] .btn-icon {
-    background: #2d382d !important;
-    color: var(--accent-gold) !important; /* Gouden icoontjes */
-    border: 1px solid var(--border-color);
+    color: var(--text-main) !important;
+    font-weight: 700;
 }
 
 [data-theme="dark"] .phone-group {
     background: #2d382d !important;
-    border-left: 3px solid var(--accent-gold) !important;
+    border-left: 3px solid var(--accent-gold) !important; /* Gouden accent */
+    border-radius: 4px;
 }
 
 [data-theme="dark"] .phone-txt {
     color: var(--text-main) !important;
 }
 
-/* 5. Categorie Headers */
+/* De knoppen binnen de kaart */
+[data-theme="dark"] .btn-icon {
+    background: #2d382d !important;
+    color: var(--accent-gold) !important;
+    border: 1px solid var(--border-soft);
+}
+
+/* Categorie Headers */
 [data-theme="dark"] .category-section-header {
     background: transparent !important;
     color: var(--text-main) !important;
     border-bottom: 2px solid var(--primary-olive);
-    padding-left: 0;
-}
-
-/* 6. Zoekbalk & Filters */
-[data-theme="dark"] .search-input {
-    background-color: var(--card-bg) !important;
-    color: var(--text-main) !important;
-    border: 1px solid var(--primary-olive) !important;
-}
-
-[data-theme="dark"] .filter-btn {
-    background: var(--card-bg) !important;
-    color: var(--text-main) !important;
-    border-color: var(--border-color) !important;
-}
-
-[data-theme="dark"] .filter-btn.active {
-    background: var(--primary-olive) !important;
-    color: #fff !important;
-}
-
-/* 7. Kaart (Google Maps) subtieler maken */
-[data-theme="dark"] .map-wrapper {
-    filter: sepia(30%) grayscale(20%) contrast(90%) invert(90%) hue-rotate(140deg);
 }
