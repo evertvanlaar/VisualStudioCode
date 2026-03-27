@@ -1211,3 +1211,34 @@ body {
 [data-theme="dark"] .phone-txt {
     color: #f3e5ab !important;
 }
+
+/* --- LUXE DARK MODE BALANS VOOR DE KAARTJES --- */
+[data-theme="dark"] .biz-card-mini {
+    background: #242d24 !important; /* Olijfgroen */
+    border: 1px solid rgba(243, 229, 171, 0.1) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-theme="dark"] .biz-card-mini:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+/* De Placeholder afbeelding styling */
+[data-theme="dark"] .mini-preview img {
+    filter: sepia(20%) contrast(90%); /* Geeft placeholders een warmere 'vanille' tint */
+    border-bottom: 1px solid rgba(243, 229, 171, 0.05);
+}
+
+/* Tekstkleuren in balans */
+[data-theme="dark"] .biz-name {
+    color: #f3e5ab !important; /* Vanillegeel */
+}
+
+[data-theme="dark"] .phone-txt {
+    color: #f3e5ab !important;
+}
+
+[data-theme="dark"] .biz-location {
+    color: #cbd5c1 !important; /* Saliegroen */
+}
