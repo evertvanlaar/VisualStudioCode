@@ -1191,3 +1191,23 @@ body {
     color: var(--text-main) !important;
     border-bottom: 2px solid var(--primary-olive);
 }
+
+/* --- LUXE DARK MODE BALANS --- */
+[data-theme="dark"] .biz-card-mini {
+    background: #242d24 !important; /* Rustgevend olijfgroen */
+    border: 1px solid rgba(243, 229, 171, 0.1) !important;
+}
+
+[data-theme="dark"] .biz-name {
+    color: #f3e5ab !important; /* Zacht vanillegeel */
+    font-weight: 700;
+}
+
+[data-theme="dark"] .phone-group {
+    background: rgba(0,0,0,0.2) !important;
+    border-left: 3px solid #d4af37 !important; /* Goud accent */
+}
+
+[data-theme="dark"] .phone-txt {
+    color: #f3e5ab !important;
+}

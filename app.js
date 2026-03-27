@@ -298,35 +298,27 @@ function copyToClipboard(text, el) {
 window.addEventListener('online', updateOnlineStatus);
 window.addEventListener('offline', updateOnlineStatus);
 
-// PWA Install Event
-window.addEventListener('beforeinstallprompt', async (e) => {
+// --- GEOPTIMALISEERD PWA INSTALL EVENT ---
+window.addEventListener('beforeinstallprompt', (e) => {
     // 1. Altijd blokkeren op desktop
     if (window.innerWidth > 767) return; 
 
-    // 2. Check of we al in "App-modus" (standalone) zitten
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    
-    // 3. Check ons eigen vlaggetje in de opslag
-    const isFlagged = localStorage.getItem('kalanera_app_installed') === 'true';
-
-    // 4. NIEUW: De officiële browser-check voor verwante apps
-    let isAlreadyInstalled = false;
-    if ('getInstalledRelatedApps' in navigator) {
-        const relatedApps = await navigator.getInstalledRelatedApps();
-        isAlreadyInstalled = relatedApps.length > 0;
-    }
-
-    // Als een van deze waar is: Toon de knop NIET
-    if (isStandalone || isFlagged || isAlreadyInstalled) {
-        console.log("App installatie optie verborgen: reeds geïnstalleerd.");
-        return;
-    }
-
-    // 5. Alles ok? Toon dan de optie in het menu
+    // 2. Stop het standaard gedrag en sla het event op
     e.preventDefault();
     deferredPrompt = e;
+
+    // 3. Voer de checks uit zonder de pagina te blokkeren
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    const isFlagged = localStorage.getItem('kalanera_app_installed') === 'true';
+
+    if (isStandalone || isFlagged) return;
+
+    // 4. Toon de optie in het menu
     const installItem = document.getElementById('menu-install-item');
-    if (installItem) installItem.classList.add('show-install');
+    if (installItem) {
+        installItem.style.display = 'block';
+        installItem.classList.add('show-install');
+    }
 });
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -403,8 +395,6 @@ async function updateWeather() {
     }
 }
 
-// Roep de functie aan in je init() of onderaan DOMContentLoaded
-updateWeather();
 
 // --- WISHLIST LOGICA ---
 
