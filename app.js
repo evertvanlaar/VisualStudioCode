@@ -328,6 +328,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // VOEG DEZE REGEL TOE:
+    updateWishlistCount();
+
     init();
 });
 
@@ -408,6 +411,23 @@ function renderWishlist() {
     renderBusinesses(favoriteBusinesses);
 }
 
+function updateWishlistCount() {
+    const wishlist = getWishlist();
+    const count = wishlist.length;
+    
+    // Zoek het link-element in het menu. 
+    // We zoeken specifiek naar de link die naar wishlist.html gaat.
+    const wishlistLink = document.querySelector('a[href="wishlist.html"]');
+    
+    if (wishlistLink) {
+        if (count > 0) {
+            wishlistLink.innerHTML = `<i class="fa-solid fa-heart menu-heart"></i> Favorites (${count})`;
+        } else {
+            wishlistLink.innerHTML = `<i class="fa-solid fa-heart menu-heart"></i> Favorites`;
+        }
+    }
+}
+
 /**
  * Beheert het aan/uitzetten van favorieten
  */
@@ -435,6 +455,11 @@ function toggleWishlist(name, btn) {
     }
 
     localStorage.setItem('kalanera_wishlist', JSON.stringify(wishlist));
+
+    // VOEG DEZE REGEL TOE:
+    updateWishlistCount();
+
+    if (document.getElementById('empty-wishlist')) renderWishlist();
 }
 
 /**
