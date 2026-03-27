@@ -1326,38 +1326,31 @@ body[data-theme="dark"] .biz-card-mini a[target="_blank"] {
     text-decoration: underline;
 }
 
-/* --- DE ULTIEME FIX VOOR ALLE KNOPPEN (STRIKT & GELIJK) --- */
+/* --- UNIFORME STYLING VOOR ALLE KNOPPEN (CATEGORIE & LOCATIE) --- */
+
+/* 1. De 'Rust' stand (Inactive) - Olijf met Vanille tekst */
 body[data-theme="dark"] .filter-btn, 
 body[data-theme="dark"] .location-btn,
-body[data-theme="dark"] [data-category],
+body[data-theme="dark"] [onclick*="filter"],
 body[data-theme="dark"] [data-location] {
-    background-color: #354a42 !important; /* Olijf achtergrond */
+    background-color: #354a42 !important; /* Olijfgroen */
+    color: #fdf5e6 !important;             /* Vanille/Witte tekst */
     border: 2px solid #e2b04a !important;   /* Gouden rand */
-    color: #fdf5e6 !important;             /* Vanille tekst */
-    box-shadow: none !important;           /* Verwijder vreemde schaduwen */
+    opacity: 1 !important;
 }
 
-/* De 'Aan'-stand voor alle knoppen */
+/* 2. De 'Aan' stand (Active) - Goudgeel met Donkere tekst */
 body[data-theme="dark"] .filter-btn.active, 
 body[data-theme="dark"] .location-btn.active,
+body[data-theme="dark"] [onclick*="filter"].active,
 body[data-theme="dark"] .active {
-    background-color: #e2b04a !important; /* Volledig goud */
-    color: #1e2b26 !important;             /* Donkere tekst */
-    border: 2px solid #e2b04a !important;
+    background-color: #e2b04a !important; /* Goudgeel */
+    color: #1e2b26 !important;             /* Donkere tekst (Olijf-zwart) */
+    font-weight: bold !important;
 }
 
-/* --- DE DEFINITIEVE FIX VOOR DE LOCATIE BUTTONS --- */
-body[data-theme="dark"] .filter-btn[onclick*="filterByLocation"],
-body[data-theme="dark"] .filter-btn[data-location],
-body[data-theme="dark"] #all-locations-btn {
-    background-color: #354a42 !important; /* Olijf achtergrond */
-    color: #fdf5e6 !important;             /* Vanille tekst */
-    border: 2px solid #e2b04a !important;   /* Gouden rand */
-}
-
-/* De 'Aan'-stand (Active) voor de locatie buttons */
-body[data-theme="dark"] .filter-btn[onclick*="filterByLocation"].active,
-body[data-theme="dark"] .filter-btn[data-location].active {
-    background-color: #e2b04a !important; /* Volledig goud */
-    color: #1e2b26 !important;             /* Donkere tekst */
+/* 3. Specifieke fix voor de icoontjes in de knoppen */
+body[data-theme="dark"] .filter-btn i, 
+body[data-theme="dark"] .location-btn i {
+    color: inherit !important; /* Icoontje krijgt dezelfde kleur als de tekst */
 }
