@@ -1,6 +1,6 @@
 // service-worker.js
-const CACHE_NAME = 'kalanera-cache-v1.0.81';
-const IMAGE_CACHE = 'kalanera-images-v81';
+const CACHE_NAME = 'kalanera-cache-v1.0.82';
+const IMAGE_CACHE = 'kalanera-images-v82';
 
 // Bestanden die ALTIJD offline beschikbaar moeten zijn (de basis)
 const STATIC_ASSETS = [

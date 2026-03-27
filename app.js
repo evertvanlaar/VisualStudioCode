@@ -389,13 +389,33 @@ updateWeather();
 function renderWishlist() {
     const container = document.getElementById('business-list');
     const emptyMsg = document.getElementById('empty-wishlist');
-    
+    const clearBtn = document.getElementById('clear-wishlist'); // Pak de knop uit de hero op
+
     // 1. Haal de namen van je favorieten op uit de browser-opslag
     const saved = localStorage.getItem('kalanera_wishlist');
     const wishlistNames = saved ? JSON.parse(saved) : [];
 
     // 2. Filter de grote lijst (allBusinesses) op alleen deze namen
     const favoriteBusinesses = allBusinesses.filter(biz => wishlistNames.includes(biz.Name));
+
+    // --- NIEUW: Beheer de "Clear Wishlist" knop ---
+    if (clearBtn) {
+        // Toon de knop alleen als er echt favorieten zijn
+        clearBtn.style.display = favoriteBusinesses.length > 0 ? 'inline-block' : 'none';
+
+        // Voeg de klik-actie toe
+        clearBtn.onclick = (e) => {
+            e.preventDefault();
+            if (confirm("Are you sure you want to clear your entire wishlist?")) {
+                localStorage.setItem('kalanera_wishlist', JSON.stringify([]));
+                // We roepen de functie opnieuw aan om de UI direct te updaten
+                renderWishlist();
+                // Vergeet niet het hartje in de menubalk ook te updaten
+                if (typeof updateWishlistCount === "function") updateWishlistCount();
+            }
+        };
+    }
+    // ----------------------------------------------
 
     // 3. Als de lijst leeg is, toon de "Nog geen favorieten" melding
     if (favoriteBusinesses.length === 0) {
