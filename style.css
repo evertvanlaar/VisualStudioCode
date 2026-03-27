@@ -1059,3 +1059,24 @@ body.is-offline .map-section {
 .count-badge:empty, .count-badge[data-count="0"] {
     display: none;
 }
+
+/* Zorg dat de wishlist link in het menu netjes uitlijnt */
+.nav-wishlist {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 5px; /* Ruimte tussen icoon, tekst en badge */
+}
+
+/* Specifieke correctie voor de badge positie */
+#wishlist-count {
+    margin-left: 2px;
+    position: relative;
+    top: -1px; /* Fijnafstelling voor verticale uitlijning */
+}
+
+/* Zorg dat de navigatie items (li) hun breedte behouden */
+.nav-list li {
+    display: flex;
+    justify-content: center;
+}
