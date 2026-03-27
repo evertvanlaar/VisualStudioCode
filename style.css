@@ -1242,3 +1242,80 @@ body {
 [data-theme="dark"] .biz-location {
     color: #cbd5c1 !important; /* Saliegroen */
 }
+
+
+/* De container voor de hele sectie */
+.map-container {
+    max-width: 100%;
+    margin: 25px 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+/* De uitklapbare banner (Summary) */
+.map-details summary {
+    list-style: none;
+    /* Olijfgroene laag over een kaart-afbeelding */
+    background-image: 
+        linear-gradient(rgba(85, 107, 47, 0.85), rgba(85, 107, 47, 0.85)), 
+        url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1000&q=80');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 35px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.6);
+}
+
+/* Hover effect: Donkerder olijfgroen en lichte zoom */
+.map-details summary:hover {
+    background-image: 
+        linear-gradient(rgba(55, 70, 30, 0.9), rgba(55, 70, 30, 0.9)), 
+        url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1000&q=80');
+    transform: scale(1.01);
+}
+
+/* Verwijder standaard pijltje van de browser */
+.map-details summary::-webkit-details-marker {
+    display: none;
+}
+
+/* Custom icoon styling */
+.map-icon {
+    font-size: 1.8rem;
+    transition: transform 0.4s ease;
+}
+
+/* Draai het icoon als de kaart open is */
+.map-details[open] .map-icon {
+    transform: rotate(180deg);
+}
+
+/* De iframe container animatie */
+.map-wrapper {
+    border-top: 4px solid #556b2f;
+    animation: reveal 0.5s ease-out;
+}
+
+@keyframes reveal {
+    from { opacity: 0; max-height: 0; }
+    to { opacity: 1; max-height: 500px; }
+}
+
+.map-wrapper iframe {
+    display: block;
+    width: 100%;
+    height: 450px;
+    border: 0;
+}
