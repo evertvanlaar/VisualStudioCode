@@ -1144,70 +1144,99 @@ body {
     border-color: var(--border-color, #eee);
 }
 
-/* --- MEDITERRANEAN DARK MODE: OLIVE, SEA & SAND --- */
+/* --- LUXE MEDITERRANEAN: HONEY & OLIVE --- */
 [data-theme="dark"] {
-    --bg-color: #1a2521;          /* Diep olijfgroen/zwart */
-    --card-bg: #24342f;           /* Warme olijfkleur voor kaarten */
-    --text-main: #fdf5e6;         /* Warm vanille (Old Lace) */
-    --text-muted: #a7b8ad;        /* Zacht saliegroen */
+    /* De Kleuren */
+    --bg-color: #2a3b34;           /* Lichter, warmer bosgroen */
+    --card-bg: #354a42;            /* Zichtbaar lichtere olijfkaart */
+    --text-main: #fdf5e6;          /* Warm vanille (Old Lace) */
+    --text-muted: #cbd5c1;         /* Zacht saliegroen */
     --accent-gold: #e2b04a;       /* Griekse honing (Goud) */
-    --border-subtle: #2d413a;     /* Zachte overgangsrandjes */
+    --border-glow: #455d53;        /* Sterkere omranding voor verloop */
+    --nav-bg: #1e2b26;             /* Donkerder groen voor contrast in menu */
 }
 
-/* De Body - weg met dat harde zwart */
+/* De Body */
 body[data-theme="dark"] {
     background-color: var(--bg-color);
     color: var(--text-main);
 }
 
-/* De Business Card - Warmer en lichter */
+/* De Business Card - Sterker verloop en zichtbare rand */
 [data-theme="dark"] .biz-card-mini {
     background: var(--card-bg) !important;
-    border: 1px solid var(--border-subtle) !important;
-    border-radius: 16px; /* Iets ronder voor een vriendelijke look */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    border: 2px solid var(--border-glow) !important; /* Duidelijke omranding */
+    border-radius: 16px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+    transition: border-color 0.3s ease;
 }
 
-/* De Business Naam */
+[data-theme="dark"] .biz-card-mini:hover {
+    border-color: var(--accent-gold) !important; /* Rand wordt goud bij hover */
+}
+
+/* Titels in Honing-Goud */
 [data-theme="dark"] .biz-name {
-    color: var(--accent-gold) !important; /* De naam springt eruit in goud */
+    color: var(--accent-gold) !important;
     font-weight: 800;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
 }
 
-/* Contactblokje - De 'Honing' balans */
-[data-theme="dark"] .phone-group {
-    background: rgba(0, 0, 0, 0.2) !important;
-    border-left: 4px solid var(--accent-gold) !important;
-    border-radius: 6px;
+/* --- ZOEKBALK & FILTERS IN HONING-STIJL --- */
+[data-theme="dark"] .search-container {
+    background: var(--card-bg) !important;
+    border: 2px solid var(--accent-gold) !important;
+    border-radius: 50px;
 }
 
-[data-theme="dark"] .phone-txt {
+[data-theme="dark"] .search-input {
     color: var(--text-main) !important;
 }
 
-/* Knoppen - Subtieler */
-[data-theme="dark"] .btn-icon {
-    background: var(--border-subtle) !important;
-    color: var(--text-main) !important;
-    border: none;
+[data-theme="dark"] .search-input::placeholder {
+    color: var(--text-muted);
 }
 
-[data-theme="dark"] .btn-icon:hover {
+[data-theme="dark"] .filter-btn {
+    background: var(--card-bg) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-glow) !important;
+}
+
+[data-theme="dark"] .filter-btn.active {
     background: var(--accent-gold) !important;
-    color: #1a2521 !important; /* Tekst wordt donker op goud */
+    color: var(--bg-color) !important; /* Tekst donker op goud */
+    border-color: var(--accent-gold) !important;
+    font-weight: bold;
 }
 
-/* Categorie Headers */
-[data-theme="dark"] .category-section-header {
-    color: var(--text-muted) !important;
-    border-bottom: 2px solid var(--border-subtle);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* De navigatiebalk bovenin */
+/* --- MENU HERSTEL (Leesbaarheid) --- */
 [data-theme="dark"] .main-nav {
-    background: #141d1a !important; /* Net iets donkerder dan de body */
-    border-bottom: 1px solid var(--border-subtle);
+    background: var(--nav-bg) !important;
+    border-bottom: 2px solid var(--accent-gold);
+}
+
+[data-theme="dark"] .nav-links a {
+    color: var(--text-main) !important;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .logo {
+    color: var(--text-main) !important;
+}
+
+[data-theme="dark"] .logo span {
+    color: var(--accent-gold) !important;
+}
+
+/* Mobiel Menu herstel */
+[data-theme="dark"] .nav-links {
+    background: var(--nav-bg) !important;
+}
+
+/* De 'Honing' knoppen */
+[data-theme="dark"] .btn-icon {
+    background: rgba(226, 176, 74, 0.1) !important;
+    color: var(--accent-gold) !important;
+    border: 1px solid var(--accent-gold) !important;
 }
