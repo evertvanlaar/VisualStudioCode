@@ -206,19 +206,17 @@ function renderBusinesses(data) {
             const rawUrl = biz.Website || '';
             const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
             const displayUrl = rawUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
-            const catColor = getColor(category);
             
             const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' Kala Nera reviews')}`;
             const mapsUrl = biz.GoogleMapsLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' Kala Nera')}`;
             const emailHtml = biz.Email ? `<a href="mailto:${biz.Email}" class="btn-icon email-btn" title="E-mail"><i class="fa fa-envelope"></i></a>` : '';
 
             const isFavorite = wishlist.includes(biz.Name);
-            // let finalImageUrl = biz.PhotoURL || (rawUrl ? `https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130` : `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`);
-            // Gebruik de PhotoURL als die er is, anders een nette placeholder met de naam
             let finalImageUrl = biz.PhotoURL || `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`;
 
+            // Geen inline styles meer! We gebruiken een data-attribuut voor eventuele specifieke CSS styling.
             grid.innerHTML += `
-            <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
+            <div class="biz-card-mini" data-category="${category.toLowerCase()}">
                 <div class="mini-preview">
                     <a href="${cleanUrl}" target="_blank">
                         <img src="${finalImageUrl}" onerror="this.src='https://via.placeholder.com/180x130?text=No+Photo'">
@@ -259,7 +257,7 @@ function renderBusinesses(data) {
     const lastSync = localStorage.getItem('kalanera_last_sync') || 'Onbekend';
     const syncDiv = document.createElement('div');
     syncDiv.className = 'sync-info';
-    syncDiv.innerHTML = `<small style="display:block; text-align:center; margin-top:20px; color:var(--muted); font-size:11px;">Last sync: ${lastSync}</small>`;
+    syncDiv.innerHTML = `<small style="display:block; text-align:center; margin-top:20px; color:var(--text-muted); font-size:11px;">Last sync: ${lastSync}</small>`;
     container.appendChild(syncDiv);
     
     // Animatie
