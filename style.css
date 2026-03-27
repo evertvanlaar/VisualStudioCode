@@ -1144,99 +1144,173 @@ body {
     border-color: var(--border-color, #eee);
 }
 
-/* --- LUXE MEDITERRANEAN: HONEY & OLIVE --- */
+/* --- LUXE FINETUNING: HONEY & OLIVE --- */
 [data-theme="dark"] {
-    /* De Kleuren */
-    --bg-color: #2a3b34;           /* Lichter, warmer bosgroen */
-    --card-bg: #354a42;            /* Zichtbaar lichtere olijfkaart */
-    --text-main: #fdf5e6;          /* Warm vanille (Old Lace) */
-    --text-muted: #cbd5c1;         /* Zacht saliegroen */
-    --accent-gold: #e2b04a;       /* Griekse honing (Goud) */
-    --border-glow: #455d53;        /* Sterkere omranding voor verloop */
-    --nav-bg: #1e2b26;             /* Donkerder groen voor contrast in menu */
+    --accent-gold: #e2b04a;
+    --bg-color: #2a3b34;
+    --card-bg: #354a42;
+    --text-main: #fdf5e6;
+    --border-glow: #455d53;
 }
 
-/* De Body */
-body[data-theme="dark"] {
-    background-color: var(--bg-color);
-    color: var(--text-main);
+/* 1. Header & Body Scheiding (De 'Coastline' overgang) */
+[data-theme="dark"] .hero-section {
+    border-bottom: 4px solid var(--accent-gold);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-/* De Business Card - Sterker verloop en zichtbare rand */
-[data-theme="dark"] .biz-card-mini {
-    background: var(--card-bg) !important;
-    border: 2px solid var(--border-glow) !important; /* Duidelijke omranding */
-    border-radius: 16px;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
-    transition: border-color 0.3s ease;
-}
-
-[data-theme="dark"] .biz-card-mini:hover {
-    border-color: var(--accent-gold) !important; /* Rand wordt goud bij hover */
-}
-
-/* Titels in Honing-Goud */
-[data-theme="dark"] .biz-name {
+/* 2. Weer-widget (Honing-stijl) */
+[data-theme="dark"] #weather-widget {
+    background: rgba(226, 176, 174, 0.15) !important;
+    border: 1px solid var(--accent-gold) !important;
+    border-radius: 20px;
+    padding: 5px 12px;
     color: var(--accent-gold) !important;
+}
+
+/* 3. Google Maps Integratie (Minder 'goedkoop') */
+[data-theme="dark"] .map-section {
+    filter: sepia(40%) hue-rotate(110deg) brightness(0.7) contrast(1.1);
+    border-bottom: 2px solid var(--accent-gold);
+    opacity: 0.8;
+}
+
+/* 4. De 'Add Business' Button (Luxe 3D effect) */
+[data-theme="dark"] .add-biz-btn {
+    background: linear-gradient(135deg, #e2b04a 0%, #c19035 100%) !important;
+    color: #1a2521 !important;
     font-weight: 800;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    text-transform: uppercase;
+    border: none;
+    box-shadow: 0 4px 15px rgba(226, 176, 74, 0.4);
+    transition: all 0.3s ease;
 }
 
-/* --- ZOEKBALK & FILTERS IN HONING-STIJL --- */
-[data-theme="dark"] .search-container {
-    background: var(--card-bg) !important;
-    border: 2px solid var(--accent-gold) !important;
-    border-radius: 50px;
+[data-theme="dark"] .add-biz-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(226, 176, 74, 0.6);
 }
 
-[data-theme="dark"] .search-input {
-    color: var(--text-main) !important;
+/* 5. Website URL & Telefoon (Geen blauw/wit meer) */
+[data-theme="dark"] .mini-web-link {
+    color: var(--accent-gold) !important;
+    text-decoration: none;
+    font-weight: 600;
 }
 
-[data-theme="dark"] .search-input::placeholder {
-    color: var(--text-muted);
-}
-
-[data-theme="dark"] .filter-btn {
-    background: var(--card-bg) !important;
-    color: var(--text-main) !important;
+[data-theme="dark"] .phone-group {
+    background: #1e2b26 !important; /* Donker olijf ipv wit */
     border: 1px solid var(--border-glow) !important;
+    border-left: 4px solid var(--accent-gold) !important;
+    color: var(--text-main) !important;
+}
+
+[data-theme="dark"] .phone-txt {
+    color: var(--text-main) !important;
+}
+
+/* 6. Categorie Scheiding (Luxe Honing-lijn) */
+[data-theme="dark"] .category-section-header {
+    background: transparent !important;
+    border-bottom: 2px solid var(--accent-gold) !important;
+    color: var(--accent-gold) !important;
+    padding-bottom: 10px;
+    margin-top: 40px;
+    font-size: 1.4rem;
+}
+
+/* 7. Locatie & Categorie Buttons Gelijk Trekken */
+[data-theme="dark"] .filter-btn[data-location],
+[data-theme="dark"] .filter-btn[data-category] {
+    background: var(--card-bg) !important;
+    border-color: var(--accent-gold) !important;
+    color: var(--text-main) !important;
 }
 
 [data-theme="dark"] .filter-btn.active {
     background: var(--accent-gold) !important;
-    color: var(--bg-color) !important; /* Tekst donker op goud */
-    border-color: var(--accent-gold) !important;
-    font-weight: bold;
+    color: var(--bg-color) !important;
 }
 
-/* --- MENU HERSTEL (Leesbaarheid) --- */
-[data-theme="dark"] .main-nav {
-    background: var(--nav-bg) !important;
-    border-bottom: 2px solid var(--accent-gold);
+/* --- DE FINITIEVE MEDITERRANEAN FINISHING TOUCH --- */
+[data-theme="dark"] {
+    --accent-gold: #e2b04a;
+    --bg-light-olive: #2a3b34;
+    --card-olive: #354a42;
+    --vanilla: #fdf5e6;
 }
 
-[data-theme="dark"] .nav-links a {
-    color: var(--text-main) !important;
+/* 1. Telefoon Groep: Weg met het wit, welkom olijf & goud */
+[data-theme="dark"] .phone-group {
+    background: rgba(0, 0, 0, 0.25) !important; /* Donker en transparant */
+    border: 1px solid rgba(226, 176, 74, 0.3) !important; /* Subtiel goud randje */
+    border-left: 4px solid var(--accent-gold) !important; /* Dikke gouden accentlijn */
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+[data-theme="dark"] .phone-txt {
+    color: var(--vanilla) !important; /* Heerlijk leesbaar vanille */
     font-weight: 600;
 }
 
-[data-theme="dark"] .logo {
-    color: var(--text-main) !important;
-}
-
-[data-theme="dark"] .logo span {
+/* 2. Website URL: Geen goedkoop blauw meer */
+[data-theme="dark"] .mini-web-link {
     color: var(--accent-gold) !important;
+    font-weight: 700;
+    text-decoration: none;
+    transition: opacity 0.2s;
 }
 
-/* Mobiel Menu herstel */
-[data-theme="dark"] .nav-links {
-    background: var(--nav-bg) !important;
+[data-theme="dark"] .mini-web-link:hover {
+    opacity: 0.8;
+    text-decoration: underline;
 }
 
-/* De 'Honing' knoppen */
-[data-theme="dark"] .btn-icon {
-    background: rgba(226, 176, 74, 0.1) !important;
+/* 3. Add Business Button: Van plat naar 'Pop-out' Goud */
+[data-theme="dark"] .add-biz-btn {
+    background: linear-gradient(135deg, #e2b04a 0%, #c19035 100%) !important;
+    color: #1a2521 !important; /* Donkere tekst op goud */
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    font-weight: 800;
+    text-shadow: none;
+}
+
+/* 4. Categorie Headers: Chique scheiding */
+[data-theme="dark"] .category-section-header {
+    border-bottom: 2px solid var(--accent-gold) !important;
     color: var(--accent-gold) !important;
+    background: transparent !important;
+    padding-bottom: 8px;
+    margin-top: 45px;
+    font-weight: 700;
+}
+
+/* 5. Weerbericht: Minder 'raar', meer goud */
+[data-theme="dark"] .weather-info, [data-theme="dark"] #weather-temp {
+    color: var(--accent-gold) !important;
+    font-weight: bold;
+}
+
+/* 6. Google Maps: De 'Night Filter' */
+[data-theme="dark"] .map-container iframe, 
+[data-theme="dark"] .map-section img {
+    filter: invert(90%) hue-rotate(180deg) brightness(0.8) contrast(1.2);
+    border: 2px solid var(--accent-gold);
+}
+
+/* 7. Knoppen: All Categories & All Locations gelijk */
+[data-theme="dark"] .filter-btn {
+    background: var(--card-olive) !important;
     border: 1px solid var(--accent-gold) !important;
+    color: var(--vanilla) !important;
+}
+
+[data-theme="dark"] .filter-btn.active {
+    background: var(--accent-gold) !important;
+    color: var(--bg-light-olive) !important;
 }
