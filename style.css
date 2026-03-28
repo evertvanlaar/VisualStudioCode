@@ -200,7 +200,7 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 }
 
 /* De Actieve Filter OF de Add Business knop (Solid Soft Look) */
-.filter-btn.active, .add-biz-btn {
+.filter-btn.active {
     background-color: #2d5a27 !important; /* Jouw olijfgroen */
     border-color: #24481f !important;
     color: white !important;
@@ -403,47 +403,39 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     margin: 20px 0 40px 0; 
 }
 
+/* --- DE SOFT ADD BUSINESS BUTTON --- */
 .add-biz-btn {
     display: inline-flex;
     align-items: center;
     gap: 10px;
     
-    /* De "Soft" basis: heel lichtgroene waas */
+    /* De "Soft" basis */
     background: rgba(45, 90, 39, 0.08) !important; 
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     
-    color: #2d5a27 !important; /* De diepe olijfkleur voor de tekst */
+    color: #2d5a27 !important;
     border: 1px solid rgba(45, 90, 39, 0.15) !important;
     
     padding: 10px 24px !important;
-    border-radius: 14px !important; /* Matcht met de nieuwe filterknoppen */
+    border-radius: 14px !important;
     text-decoration: none;
     
     font-size: 14px !important;
-    font-weight: 800 !important; /* Lekker dik voor die app-vibe */
+    font-weight: 800 !important;
     
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
-.add-biz-btn i {
-    font-size: 18px; /* Plus-icoon iets prominenter */
-    opacity: 0.9;
-}
-
-/* De interactie: van soft naar solid op hover */
+/* Hover effect (buiten de media query plaatsen voor alle apparaten) */
 .add-biz-btn:hover {
-    background: #2d5a27 !important; /* Wordt massief groen bij aanwijzen */
+    background: #2d5a27 !important;
     color: white !important;
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 20px rgba(45, 90, 39, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(45, 90, 39, 0.2);
 }
 
-/* Subtiele klik-animatie */
-.add-biz-btn:active {
-    transform: translateY(-1px);
-}
 
 /* --- KAART --- */
 /* --- KAART FIX --- */
@@ -618,13 +610,6 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
         justify-content: space-between !important;
         width: 100% !important;
     }
-
-    .filter-btn.active, .add-biz-btn {
-    background-color: #2d5a27 !important; /* Donker olijfgroen */
-    border-color: #24481f !important;
-    color: white !important;
-}
-
 
     .phone-group { padding: 2px 6px !important; }
     .phone-txt { font-size: 11px !important; }
