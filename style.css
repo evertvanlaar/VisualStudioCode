@@ -220,50 +220,46 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 
 /* --- SPECIFIEKE MOBIELE STYLING (Schermen kleiner dan 768px) --- */
 @media screen and (max-width: 768px) {
+    /* We zorgen dat de container zelf geen fades heeft, maar de ruimte eromheen wel */
     .filter-container {
         display: flex;
         flex-wrap: nowrap;
         overflow-x: auto;
         justify-content: flex-start;
-        /* Padding aan beide kanten voor de fade-ruimte */
-        padding: 15px 40px 15px 40px !important; 
+        padding: 15px 40px !important; 
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
-        position: relative; /* Cruciaal voor de positionering van de fades */
+        /* Verwijder eventuele oude relative positionering die de fade liet meescrollen */
     }
 
-    .filter-container::-webkit-scrollbar {
-        display: none;
+    /* We maken de fades nu vast aan de container-ID's */
+    #filter-buttons, #location-buttons {
+        position: relative; /* De 'anker' voor de fades */
     }
 
-    .filter-btn {
-        flex: 0 0 auto;
-    }
-
-    /* FADE LINKS */
-    .filter-container::before {
+    /* DE FADES (Nu vastgepind op de uiterste randen) */
+    #filter-buttons::before, #location-buttons::before,
+    #filter-buttons::after, #location-buttons::after {
         content: "";
         position: absolute;
         top: 0;
+        height: 100%;
+        width: 50px;
+        z-index: 10;
+        pointer-events: none;
+        /* DIT IS DE KEY: 'fixed' achtig gedrag binnen de relatieve ouder */
+    }
+
+    /* Links vastzetten */
+    #filter-buttons::before, #location-buttons::before {
         left: 0;
-        height: 100%;
-        width: 50px;
         background: linear-gradient(to left, rgba(247, 249, 242, 0), rgba(247, 249, 242, 1));
-        z-index: 5;
-        pointer-events: none;
     }
 
-    /* FADE RECHTS */
-    .filter-container::after {
-        content: "";
-        position: absolute;
-        top: 0;
+    /* Rechts vastzetten */
+    #filter-buttons::after, #location-buttons::after {
         right: 0;
-        height: 100%;
-        width: 50px;
         background: linear-gradient(to right, rgba(247, 249, 242, 0), rgba(247, 249, 242, 1));
-        z-index: 5;
-        pointer-events: none;
     }
 }
 
