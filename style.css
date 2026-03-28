@@ -1242,3 +1242,32 @@ body {
 [data-theme="dark"] .biz-location {
     color: #cbd5c1 !important; /* Saliegroen */
 }
+
+.map-fab-fixed {
+    position: fixed !important; /* Forceer de positie */
+    bottom: 25px !important;
+    right: 25px !important;
+    width: 60px !important;
+    height: 60px !important;
+    background: rgba(255, 255, 255, 0.8) !important; /* Apple Glass */
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 99999 !important; /* Zorg dat hij echt bovenop ligt */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+    text-decoration: none !important;
+    transition: transform 0.2s ease;
+}
+
+.map-fab-fixed i {
+    color: #2d5a27 !important; /* Jouw olijfgroen */
+    font-size: 24px !important;
+}
+
+.map-fab-fixed:active {
+    transform: scale(0.9);
+}

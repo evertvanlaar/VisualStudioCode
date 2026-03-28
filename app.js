@@ -324,7 +324,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Eerst de Dark Mode initialiseren (deze functie hebben we net veilig gemaakt)
+    // 1. Dark Mode
     if (typeof initDarkMode === 'function') {
         initDarkMode();
     }
@@ -346,8 +346,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. Wishlist teller bijwerken
     updateWishlistCount();
 
-    // 5. De data-fetching en rest van de site starten
+    // 5. De data-fetching starten
     init();
+
+    // 6. EXTRA: Google Maps Button logica (optioneel, voor analytics of effect)
+    const mapFab = document.querySelector('.map-fab');
+    if (mapFab) {
+        console.log("Map button is ready");
+    }
 });
 
 // Handmatige Installatie Functie
