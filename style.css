@@ -932,14 +932,17 @@ form label {
     color: #94a3b8 !important;
 }
 
-/* --- 1. DE BASIS BUTTON (Echte Apple Glass Pil-vorm) --- */
+/* --- DE BASIS BUTTON (Symmetrisch & Sexy) --- */
 .filter-btn {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 22px;        /* Iets minder hoog, iets breder voor betere balans */
-    border-radius: 9999px;      /* DIT zorgt voor de perfecte ronde pil-vorm */
-    white-space: nowrap; 
+    justify-content: center;
+    /* De 'gap' tussen icoon, tekst en badge overal gelijk */
+    gap: 8px;               
+    /* Padding: boven/onder 10px, links/rechts 16px voor een strakke look */
+    padding: 10px 16px;      
+    border-radius: 9999px;
+    white-space: nowrap;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
     
@@ -947,22 +950,22 @@ form label {
     background: rgba(255, 255, 255, 0.7); 
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    
     border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     
     color: #333;
     font-weight: 600;
     font-size: 0.95rem;
 }
 
-/* 2. Fix voor de 'All' buttons */
+/* --- SPECIFIEKE FIX VOOR DE 'ALL' BUTTONS --- */
+/* Omdat 'All' zo kort is, geven we deze iets meer zij-padding om de vorm mooi te houden */
 button[data-category="all"], 
 button[data-location="all"] {
-    min-width: 95px !important;
-    justify-content: center;
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+    min-width: auto !important; /* Verwijder de vaste breedte die we eerder hadden */
 }
-
 /* 3. De Icoontjes */
 .filter-btn i {
     color: #2d5a27;
@@ -970,25 +973,24 @@ button[data-location="all"] {
     opacity: 0.9;
 }
 
-/* 4. De Badge (teller) - Ook pil-vorm */
+/* De Badge (het getalletje) */
 .count-badge {
-    background: rgba(0, 0, 0, 0.05);
+    background: rgba(0, 0, 0, 0.06);
     color: #2d5a27;
-    font-size: 0.75rem;
-    padding: 2px 10px;        /* Iets meer zijwaartse padding */
-    border-radius: 9999px;     /* Ook de badge wordt een pilletje */
+    font-size: 0.7rem;
+    /* Compacte badge padding zodat hij niet te dominant is */
+    padding: 2px 8px;
+    border-radius: 9999px;
     font-weight: 700;
-    margin-left: 4px;
     flex-shrink: 0;
 }
 
-/* 5. DE ACTIEVE STAAT (Groen) */
+/* --- ACTIEVE STAAT --- */
 .filter-btn.active {
     background: #2d5a27 !important;
     color: #ffffff !important;
     border-color: #24481f !important;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(45, 90, 39, 0.25) !important;
+    box-shadow: 0 8px 25px rgba(45, 90, 39, 0.3) !important;
 }
 
 .filter-btn.active i, 
@@ -997,7 +999,7 @@ button[data-location="all"] {
 }
 
 .filter-btn.active .count-badge {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.25);
 }
 
 /* 6. HOVER EFFECT (Desktop) */
