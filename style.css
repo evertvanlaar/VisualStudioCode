@@ -1244,78 +1244,84 @@ body {
 }
 
 
-/* De container voor de hele sectie */
-.map-container {
-    max-width: 100%;
-    margin: 25px 0;
-    font-family: 'Inter', sans-serif;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-}
+    /* De container die alles rechtsonder vastzet */
+    .fab-map-container {
+        position: fixed;
+        bottom: 30px; /* Afstand van de onderkant */
+        right: 30px;  /* Afstand van de rechterkant */
+        z-index: 9999; /* Zorgt dat het BOVENOP alles zweeft */
+        font-family: 'Segoe UI', Roboto, sans-serif;
+    }
 
-/* De uitklapbare banner (Summary) */
-.map-details summary {
-    list-style: none;
-    /* Olijfgroene laag over een kaart-afbeelding */
-    background-image: 
-        linear-gradient(rgba(85, 107, 47, 0.85), rgba(85, 107, 47, 0.85)), 
-        url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1000&q=80');
-    background-size: cover;
-    background-position: center;
-    color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1.2rem;
-    text-align: center;
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    text-shadow: 2px 2px 5px rgba(0,0,0,0.6);
-}
+    /* De styling van de ronde knop (Summary) */
+    .fab-map-details summary {
+        list-style: none;
+        background-color: #556b2f; /* Olijfgroen */
+        color: white;
+        width: 60px; /* Perfect ronde knop */
+        height: 60px;
+        border-radius: 50%; /* Maakt het rond */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem; /* Groot icoon */
+        cursor: pointer;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.3); /* Diepe schaduw voor zweef-effect */
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Elastisch effect */
+        border: 2px solid white; /* Subtiel randje voor contrast */
+    }
 
-/* Hover effect: Donkerder olijfgroen en lichte zoom */
-.map-details summary:hover {
-    background-image: 
-        linear-gradient(rgba(55, 70, 30, 0.9), rgba(55, 70, 30, 0.9)), 
-        url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1000&q=80');
-    transform: scale(1.01);
-}
+    /* Verwijder standaard pijltje van de browser */
+    .fab-map-details summary::-webkit-details-marker {
+        display: none;
+    }
 
-/* Verwijder standaard pijltje van de browser */
-.map-details summary::-webkit-details-marker {
-    display: none;
-}
+    /* Hover effect: Knop komt iets omhoog */
+    .fab-map-details summary:hover {
+        transform: scale(1.1) translateY(-5px);
+        background-color: #445624; /* Iets donkerder olijfgroen */
+    }
 
-/* Custom icoon styling */
-.map-icon {
-    font-size: 1.8rem;
-    transition: transform 0.4s ease;
-}
+    /* Styling voor als de kaart OPEN is */
+    .fab-map-details[open] summary {
+        background-color: #d32f2f; /* Verander kleur naar rood (voor sluiten) */
+        transform: rotate(45deg); /* Draai het icoon (bijv. van 📍 naar een X) */
+        color: white;
+    }
 
-/* Draai het icoon als de kaart open is */
-.map-details[open] .map-icon {
-    transform: rotate(180deg);
-}
+    /* De container voor de kaart die tevoorschijn komt */
+    .fab-map-content {
+        position: absolute;
+        bottom: 80px; /* Komt BOVEN de knop te staan */
+        right: 0;
+        width: 550px; /* Compacte breedte op desktop */
+        height: 600px;
+        height: 600px;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        animation: popIn 0.4s ease-out;
+        border: 2px solid #556b2f;
+    }
 
-/* De iframe container animatie */
-.map-wrapper {
-    border-top: 4px solid #556b2f;
-    animation: reveal 0.5s ease-out;
-}
+    /* Mobiele aanpassing: Maak de kaart breder op telefoons */
+    @media (max-width: 600px) {
+        .fab-map-content {
+            width: 300px;
+            right: -10px; /* Iets meer gecentreerd op klein scherm */
+        }
+    }
 
-@keyframes reveal {
-    from { opacity: 0; max-height: 0; }
-    to { opacity: 1; max-height: 500px; }
-}
+    /* Animatie wanneer de kaart opent */
+    @keyframes popIn {
+        0% { opacity: 0; transform: scale(0.5) translateY(20px); }
+        100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
 
-.map-wrapper iframe {
-    display: block;
-    width: 100%;
-    height: 450px;
-    border: 0;
-}
+    .fab-map-content iframe {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
