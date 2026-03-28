@@ -677,20 +677,6 @@ form label {
     width: 100%;
 }
 
-/* 2. De Bedrijfsnaam */
-.biz-name {
-    display: block !important;
-    margin: 0 !important;
-    padding-right: 90px !important; /* DIT MAAKT RUIMTE VOOR DE BADGE */
-    font-size: 15px !important;
-    font-weight: 700 !important;
-    line-height: 1.2 !important;
-    white-space: normal !important;  /* Naam mag over 2 regels gaan */
-    overflow: visible !important;
-    text-align: left !important;
-    color: var(--text) !important;
-}
-
 
 /* We maken het hele kaartje de 'ankerplaats' in plaats van alleen de bovenste rij */
 .biz-card-mini {
@@ -706,24 +692,25 @@ form label {
     padding-top: 2px !important; /* Een klein beetje ademruimte bovenin */
 }
 
-/* --- DE DEFINITIEVE BEDRIJFSNAAM (Regel 680) --- */
+/* --- DE DEFINITIEVE BEDRIJFSNAAM (SINGLE LINE) --- */
 .biz-name {
     display: block !important;
     margin: 0 !important;
-    padding-right: 0 !important; /* VERWIJDER DE 90PX: Flexbox regelt nu de ruimte */
+    padding-right: 0 !important; /* Ruimte wordt nu door Flexbox geregeld */
     
-    flex: 1;                     /* Pak alle beschikbare ruimte naast de badge */
-    min-width: 0;                /* Cruciaal om de tekst te laten afbreken/inkorten */
+    flex: 1;                     /* Pak alle ruimte naast de locatie-badge */
+    min-width: 0;                /* Cruciaal: dwingt de tekst om te krimpen binnen flex */
     
     font-size: 15px !important;
-    font-weight: 800 !important; /* Iets dikker voor die 'app' look */
+    font-weight: 800 !important; /* De dikke 'app' look */
     line-height: 1.2 !important;
-    
-    /* Keuze: Wil je 2 regels tekst of 1 regel met puntjes? */
-    white-space: normal !important;   /* Gebruik 'nowrap' voor 1 regel met puntjes */
-    overflow: hidden !important;
     text-align: left !important;
     color: var(--text) !important;
+
+    /* DE MAGIE VOOR MAXIMAAL ÉÉN REGEL MET PUNTJES (...) */
+    white-space: nowrap !important;    /* Verbiedt tekst om naar regel 2 te gaan */
+    overflow: hidden !important;       /* Verbergt wat er niet past */
+    text-overflow: ellipsis !important; /* Voegt de '...' toe */
 }
 
 /* 3. De Badge: we pinnen hem nu strak in de hoek van .mini-content */
