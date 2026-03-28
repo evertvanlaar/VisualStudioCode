@@ -626,7 +626,7 @@ form label {
 .phone-txt {
     display: inline;
     margin-right: 10px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: var(--text-main);
 }
 
