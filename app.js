@@ -199,7 +199,6 @@ function renderBusinesses(data) {
         grid.className = 'business-grid';
         
         grouped[category].sort((a, b) => (a.Name || "").localeCompare(b.Name || "")).forEach(biz => {
-            // URLs voorbereiden
             const rawUrl = biz.Website || '';
             const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
             const displayUrl = rawUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
@@ -212,14 +211,14 @@ function renderBusinesses(data) {
             const isFavorite = wishlist.includes(biz.Name);
             const safeName = biz.Name.replace(/'/g, "\\'");
 
-            // --- AFBEELDING LOGICA ---
-            // We tonen de preview ALLEEN als PhotoURL echt een waarde heeft
+            // --- DE IMAGE LOGICA ---
             let previewHtml = '';
-            if (biz.PhotoURL && biz.PhotoURL.trim() !== '') {
+            // Alleen als biz.PhotoURL bestaat EN een link is, maken we de preview aan
+            if (biz.PhotoURL && biz.PhotoURL.trim().startsWith('http')) {
                 previewHtml = `
                 <div class="mini-preview">
-                    <a href="${cleanUrl}" target="_blank">
-                        <img src="${biz.PhotoURL}" alt="${biz.Name}" onerror="this.src='https://via.placeholder.com/180x130?text=No+Image'">
+                    <a href="${cleanUrl}" target="_blank" title="Visit Website">
+                        <img src="${biz.PhotoURL}" alt="${biz.Name}" onerror="this.closest('.mini-preview').style.display='none'">
                     </a>
                     <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeName}', this)">
                         <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
@@ -234,7 +233,7 @@ function renderBusinesses(data) {
                     <div class="mini-row-top">
                         <h2 class="biz-name">
                             ${biz.Name}
-                            ${!previewHtml ? `<button class="wishlist-btn-inline ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeName}', this)" style="background:none; border:none; cursor:pointer; margin-left:8px; color:${isFavorite ? '#e74c3c' : 'inherit'};"><i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i></button>` : ''}
+                            ${!previewHtml ? `<button class="wishlist-btn-inline ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeName}', this)" style="background:none; border:none; cursor:pointer; margin-left:8px; color:${isFavorite ? '#e74c3c' : 'inherit'}; vertical-align:middle;"><i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i></button>` : ''}
                         </h2>
                         <span class="biz-location"><i class="fa fa-map-marker-alt"></i> ${biz.Location || 'Kala Nera'}</span>
                     </div>
@@ -261,14 +260,14 @@ function renderBusinesses(data) {
         container.appendChild(grid);
     });
 
-    // Laatste synchronisatie info
+    // Sync info
     const lastSync = localStorage.getItem('kalanera_last_sync') || 'Onbekend';
     const syncDiv = document.createElement('div');
     syncDiv.className = 'sync-info';
     syncDiv.innerHTML = `<small style="display:block; text-align:center; margin-top:20px; color:var(--muted); font-size:11px;">Last sync: ${lastSync}</small>`;
     container.appendChild(syncDiv);
     
-    // Kaarten laten inklappen/animeren
+    // Animatie
     setTimeout(() => {
         document.querySelectorAll('.biz-card-mini').forEach((card, index) => {
             setTimeout(() => { card.classList.add('show'); }, index * 30);
