@@ -114,7 +114,7 @@ function generateCategoryButtons(data) {
     const container = document.getElementById('filter-buttons');
     if (!container) return;
     const categories = [...new Set(data.map(biz => biz.Category).filter(cat => cat))].sort();
-    let html = `<button class="filter-btn ${activeCategory === 'all' ? 'active' : ''}" data-category="all"><i class="fas fa-th-large"></i> <span>All</span></button>`;
+    let html = `<button class="filter-btn ${activeCategory === 'all' ? 'active' : ''}" data-category="all"><i class="fa fa-th-large"></i> <span>All</span></button>`;
     categories.forEach(cat => {
         html += `<button class="filter-btn ${activeCategory === cat ? 'active' : ''}" data-category="${cat}">${getIcon(cat)} <span>${cat}</span></button>`;
     });
@@ -133,25 +133,12 @@ function generateCategoryButtons(data) {
 function generateLocationButtons(data) {
     const container = document.getElementById('location-buttons');
     if (!container) return;
-    
     const locations = [...new Set(data.map(biz => biz.Location).filter(loc => loc))].sort();
-    
-    // 1. Hier stond waarschijnlijk een andere class (zoals fa-th). 
-    // We maken hem nu EXACT gelijk aan de loop hieronder:
-    let html = `<button class="filter-btn ${activeLocation === 'all' ? 'active' : ''}" data-location="all">
-                    <i class="fas fa-th-large"></i> <span>All</span>
-                </button>`;
-    
-    // 2. De locaties uit de data krijgen nu ook exact dezelfde pin
+    let html = `<button class="filter-btn ${activeLocation === 'all' ? 'active' : ''}" data-location="all"><i class="fa fa-map-marker-alt"></i> <span>All Locations</span></button>`;
     locations.forEach(loc => {
-        html += `<button class="filter-btn ${activeLocation === loc ? 'active' : ''}" data-location="${loc}">
-                    <i class="fas fa-th-large"></i> <span>${loc}</span>
-                 </button>`;
+        html += `<button class="filter-btn ${activeLocation === loc ? 'active' : ''}" data-location="${loc}"><span>${loc}</span></button>`;
     });
-    
     container.innerHTML = html;
-    
-    // De click-handler blijft hetzelfde
     container.querySelectorAll('.filter-btn').forEach(btn => {
         btn.onclick = (e) => {
             const targetBtn = e.target.closest('.filter-btn');
@@ -176,25 +163,6 @@ function applyFilters() {
     renderBusinesses(filtered);
 }
 
-document.getElementById('search-input').addEventListener('input', function(e) {
-    // Als het veld leeg is (door het kruisje of handmatig wissen)
-    if (this.value === "") {
-        applyFilters(); // Zorg dat alle resultaten direct weer verschijnen
-    }
-});
-
-const searchInput = document.getElementById('search-input');
-
-searchInput.addEventListener('click', function(e) {
-    // We berekenen of de klik aan de rechterkant van het veld was (waar het kruisje staat)
-    // 40 pixels van de rechterkant is ongeveer de plek van het icoontje
-    if (e.offsetX > (this.offsetWidth - 40)) {
-        this.value = '';        // Maak het veld leeg
-        applyFilters();         // Ververs de lijst met bedrijven direct
-        this.focus();           // Houd de cursor in het veld
-    }
-});
-
 // --- DE HOOFDLIJST RENDEREN ---
 
 function renderBusinesses(data) {
@@ -207,11 +175,15 @@ function renderBusinesses(data) {
         return;
     }
 
-    // Wishlist ophalen
+    // Veilig de wishlist ophalen
     let wishlist = [];
     try {
-        const saved = localStorage.getItem('kalanera_wishlist');
-        wishlist = saved ? JSON.parse(saved) : [];
+        if (typeof getWishlist === 'function') {
+            wishlist = getWishlist();
+        } else {
+            const saved = localStorage.getItem('kalanera_wishlist');
+            wishlist = saved ? JSON.parse(saved) : [];
+        }
     } catch (e) { wishlist = []; }
 
     const grouped = data.reduce((acc, biz) => {
@@ -237,52 +209,44 @@ function renderBusinesses(data) {
             const catColor = getColor(category);
             
             const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' Kala Nera reviews')}`;
-            const mapsUrl = biz.GoogleMapsLink || `https://www.google.com/maps/search/${encodeURIComponent(biz.Name + ' Kala Nera')}`;
+            const mapsUrl = biz.GoogleMapsLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' Kala Nera')}`;
             const emailHtml = biz.Email ? `<a href="mailto:${biz.Email}" class="btn-icon email-btn" title="E-mail"><i class="fa fa-envelope"></i></a>` : '';
 
             const isFavorite = wishlist.includes(biz.Name);
-            const safeName = biz.Name.replace(/'/g, "\\'");
-
-            // --- DE IMAGE LOGICA ---
-            let previewHtml = '';
-            // Alleen als biz.PhotoURL bestaat EN een link is, maken we de preview aan
-            if (biz.PhotoURL && biz.PhotoURL.trim().startsWith('http')) {
-                previewHtml = `
-                <div class="mini-preview">
-                    <a href="${cleanUrl}" target="_blank" title="Visit Website">
-                        <img src="${biz.PhotoURL}" alt="${biz.Name}" onerror="this.closest('.mini-preview').style.display='none'">
-                    </a>
-                    <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeName}', this)">
-                        <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
-                    </button>
-                </div>`;
-            }
+            // let finalImageUrl = biz.PhotoURL || (rawUrl ? `https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130` : `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`);
+            // Gebruik de PhotoURL als die er is, anders een nette placeholder met de naam
+            let finalImageUrl = biz.PhotoURL || `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`;
 
             grid.innerHTML += `
             <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
-                ${previewHtml}
+                <div class="mini-preview">
+                    <a href="${cleanUrl}" target="_blank">
+                        <img src="${finalImageUrl}" onerror="this.src='https://via.placeholder.com/180x130?text=No+Photo'">
+                    </a>
+                    <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${biz.Name.replace(/'/g, "\\'")}', this)">
+                        <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                    </button>
+                </div>
                 <div class="mini-content">
                     <div class="mini-row-top">
-                        <h2 class="biz-name">
-                            ${biz.Name}
-                            ${!previewHtml ? `<button class="wishlist-btn-inline ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeName}', this)"><i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i></button>` : ''}
-                        </h2>
+                        <h2 class="biz-name">${biz.Name}</h2>
                         <span class="biz-location"><i class="fa fa-map-marker-alt"></i> ${biz.Location || 'Kala Nera'}</span>
                     </div>
-                    
+                    <div class="mini-row-sub">
+                        <a href="${cleanUrl}" target="_blank" class="mini-web-link">
+                            <i class="fa fa-external-link"></i> ${displayUrl || 'Visit Website'}
+                        </a>
+                    </div>
                     <div class="mini-actions">
                         <div class="phone-group">
-                            <a href="tel:${biz.Phone}" class="btn-icon call-btn"><i class="fa fa-phone"></i></a>
+                            <a href="tel:${biz.Phone}" class="btn-icon"><i class="fa fa-phone"></i></a>
                             <span class="phone-txt">${biz.Phone || '-'}</span>
-                            <button class="copy-btn-action" onclick="copyToClipboard('${biz.Phone}', this)" title="Copy phone"><i class="fa fa-copy"></i></button>
+                            <button class="copy-btn" onclick="copyToClipboard('${biz.Phone}', this)"><i class="fa fa-copy"></i></button>
                         </div>
-                        
                         <div class="action-right">
-                            <a href="${cleanUrl}" target="_blank" class="btn-icon web-btn" title="Visit Website"><i class="fa fa-globe"></i></a>
-                            
                             ${emailHtml}
-                            <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn" title="Reviews"><i class="fa fa-star"></i></a>
-                            <a href="${mapsUrl}" target="_blank" class="btn-icon nav-btn-action" title="Show on Map"><i class="fa fa-location-dot"></i></a>
+                            <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn"><i class="fa fa-star"></i></a>
+                            <a href="${mapsUrl}" target="_blank" class="btn-icon nav-btn-action"><i class="fa fa-location-dot"></i></a>
                         </div>
                     </div>
                 </div>
