@@ -220,47 +220,48 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 
 /* --- SPECIFIEKE MOBIELE STYLING (Schermen kleiner dan 768px) --- */
 @media screen and (max-width: 768px) {
-    /* We zorgen dat de container zelf geen fades heeft, maar de ruimte eromheen wel */
+    /* 1. De container zelf laten we alleen scrollen, geen fades hier */
     .filter-container {
         display: flex;
         flex-wrap: nowrap;
         overflow-x: auto;
         justify-content: flex-start;
-        padding: 15px 40px !important; 
+        padding: 15px 20px !important;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
-        /* Verwijder eventuele oude relative positionering die de fade liet meescrollen */
+        position: static; /* Haal relative weg zodat fades de main-container pakken */
     }
 
-    /* We maken de fades nu vast aan de container-ID's */
-    #filter-buttons, #location-buttons {
-        position: relative; /* De 'anker' voor de fades */
+    .filter-container::-webkit-scrollbar {
+        display: none;
     }
 
-    /* DE FADES (Nu vastgepind op de uiterste randen) */
+    /* 2. De Ouder-container wordt het ankerpunt voor de fades */
+    .main-container {
+        position: relative;
+    }
+
+    /* 3. We maken de fades vast aan de bovenliggende container */
+    /* Hierdoor blijven ze fysiek op hun plek staan terwijl de inhoud eronderdoor scrolt */
     #filter-buttons::before, #location-buttons::before,
     #filter-buttons::after, #location-buttons::after {
         content: "";
         position: absolute;
-        top: 0;
-        height: 100%;
+        /* We berekenen de hoogte en positie t.o.v. de main-container */
+        height: 60px; /* Match dit met de hoogte van je buttons rij */
         width: 50px;
-        z-index: 10;
-        pointer-events: none;
-        /* DIT IS DE KEY: 'fixed' achtig gedrag binnen de relatieve ouder */
+        z-index: 99;  /* Zorg dat dit BOVEN de knoppen ligt */
+        pointer-events: none; /* Klik door de fade heen */
     }
 
-    /* Links vastzetten */
-    #filter-buttons::before, #location-buttons::before {
-        left: 0;
-        background: linear-gradient(to left, rgba(247, 249, 242, 0), rgba(247, 249, 242, 1));
-    }
+    /* Positionering voor de Categorie-knoppen */
+    #filter-buttons::before { left: 0; top: 10px; background: linear-gradient(to right, rgba(247, 249, 242, 1), rgba(247, 249, 242, 0)); }
+    #filter-buttons::after { right: 0; top: 10px; background: linear-gradient(to left, rgba(247, 249, 242, 1), rgba(247, 249, 242, 0)); }
 
-    /* Rechts vastzetten */
-    #filter-buttons::after, #location-buttons::after {
-        right: 0;
-        background: linear-gradient(to right, rgba(247, 249, 242, 0), rgba(247, 249, 242, 1));
-    }
+    /* Positionering voor de Locatie-knoppen (indien deze direct eronder staan) */
+    /* Je moet de 'top' waarde eventueel aanpassen afhankelijk van de witruimte */
+    #location-buttons::before { left: 0; bottom: 10px; background: linear-gradient(to right, rgba(247, 249, 242, 1), rgba(247, 249, 242, 0)); }
+    #location-buttons::after { right: 0; bottom: 10px; background: linear-gradient(to left, rgba(247, 249, 242, 1), rgba(247, 249, 242, 0)); }
 }
 
 /* --- CATEGORIE KOPPEN --- */
