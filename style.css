@@ -205,63 +205,33 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 .search-input:not(:placeholder-shown):hover {
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232d5a27'%3E%3Cpath d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3E%3C/svg%3E") !important;
 }
-
-/* --- BASIS STYLING (DESKTOP) --- */
+/* --- 1. DE CONTAINER (Hoe de knoppen staan) --- */
 .filter-container {
     display: flex;
-    flex-wrap: wrap;           /* Op desktop mogen ze naar de volgende regel */
-    justify-content: center;   /* Netjes in het midden op desktop */
-    gap: 10px;
+    flex-wrap: wrap;           /* Desktop: knoppen lopen door naar volgende regel */
+    justify-content: center;   /* Desktop: netjes in het midden */
+    gap: 12px;
     margin: 20px auto;
     padding: 10px;
     max-width: 1200px;
-    position: relative;        /* Nodig voor de mobiele fade overlay */
 }
 
-/* --- SPECIFIEKE MOBIELE STYLING (Schermen kleiner dan 768px) --- */
+
+
+/* --- 4. MOBIEL (Schermen kleiner dan 768px) --- */
 @media screen and (max-width: 768px) {
-    /* 1. De container zelf laten we alleen scrollen, geen fades hier */
     .filter-container {
-        display: flex;
-        flex-wrap: nowrap;
-        overflow-x: auto;
+        flex-wrap: nowrap;     /* Mobiel: knoppen blijven op één lijn */
+        overflow-x: auto;      /* Mobiel: horizontaal scrollen */
         justify-content: flex-start;
         padding: 15px 20px !important;
+        scrollbar-width: none; /* Geen lelijke scrollbalken */
         -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        position: static; /* Haal relative weg zodat fades de main-container pakken */
     }
-
+    
     .filter-container::-webkit-scrollbar {
         display: none;
     }
-
-    /* 2. De Ouder-container wordt het ankerpunt voor de fades */
-    .main-container {
-        position: relative;
-    }
-
-    /* 3. We maken de fades vast aan de bovenliggende container */
-    /* Hierdoor blijven ze fysiek op hun plek staan terwijl de inhoud eronderdoor scrolt */
-    #filter-buttons::before, #location-buttons::before,
-    #filter-buttons::after, #location-buttons::after {
-        content: "";
-        position: absolute;
-        /* We berekenen de hoogte en positie t.o.v. de main-container */
-        height: 60px; /* Match dit met de hoogte van je buttons rij */
-        width: 50px;
-        z-index: 99;  /* Zorg dat dit BOVEN de knoppen ligt */
-        pointer-events: none; /* Klik door de fade heen */
-    }
-
-    /* Positionering voor de Categorie-knoppen */
-    #filter-buttons::before { left: 0; top: 10px; background: linear-gradient(to right, rgba(247, 249, 242, 1), rgba(247, 249, 242, 0)); }
-    #filter-buttons::after { right: 0; top: 10px; background: linear-gradient(to left, rgba(247, 249, 242, 1), rgba(247, 249, 242, 0)); }
-
-    /* Positionering voor de Locatie-knoppen (indien deze direct eronder staan) */
-    /* Je moet de 'top' waarde eventueel aanpassen afhankelijk van de witruimte */
-    #location-buttons::before { left: 0; bottom: 10px; background: linear-gradient(to right, rgba(247, 249, 242, 1), rgba(247, 249, 242, 0)); }
-    #location-buttons::after { right: 0; bottom: 10px; background: linear-gradient(to left, rgba(247, 249, 242, 1), rgba(247, 249, 242, 0)); }
 }
 
 /* --- CATEGORIE KOPPEN --- */
@@ -962,71 +932,82 @@ form label {
     color: #94a3b8 !important;
 }
 
-/* 1. Reset alle filter knoppen naar één standaard */
+/* --- 1. DE BASIS BUTTON (Echte Apple Glass Pil-vorm) --- */
 .filter-btn {
-    /* Dwing de vorm terug naar ovaal */
-    border-radius: 20px !important; 
-    height: 38px !important;
-    padding: 0 16px !important;
-    
-    /* Zorg voor gelijke breedte basis */
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    
-    /* Tekst styling */
-    font-size: 13px !important;
-    font-weight: 700 !important;
-    white-space: nowrap !important;
-    
-    /* Kleuren voor niet-actieve knoppen */
-    background-color: #f8fafc !important;
-    border: 1px solid #cbd5e1 !important;
-    color: #475569 !important;
-    opacity: 1 !important; /* Fix voor de fletse onderste knoppen */
-}
-
-/* 2. De 'All' buttons exact even breed maken */
-/* We selecteren de knoppen specifiek op hun data-attribuut */
-button[data-category="all"], 
-button[data-location="all"] {
-    min-width: 80px !important; /* Dit zorgt dat ze beide even breed zijn */
-}
-
-/* 3. De Icoontjes (De Pinnetjes) */
-.filter-btn i {
-    display: inline-block !important;
-    width: 16px !important;      /* Breedte van het onzichtbare vakje */
-    font-size: 14px !important;   /* De grootte van het pinnetje zelf */
-    text-align: center !important;
-    margin-right: 6px !important;
-    font-weight: 900 !important;  /* Dwingt 'Solid' gewicht voor beide */
-}
-
-/* 4. De Actieve (Groene) status */
-.filter-btn.active {
-    background-color: #2d5a27 !important; /* Jouw olijfgroen */
-    color: white !important;
-    border-color: #24481f !important;
-}
-
-.count-badge {
     display: inline-flex;
     align-items: center;
+    gap: 10px;
+    padding: 10px 22px;        /* Iets minder hoog, iets breder voor betere balans */
+    border-radius: 9999px;      /* DIT zorgt voor de perfecte ronde pil-vorm */
+    white-space: nowrap; 
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    
+    /* Apple Glass Effect */
+    background: rgba(255, 255, 255, 0.7); 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    
+    color: #333;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* 2. Fix voor de 'All' buttons */
+button[data-category="all"], 
+button[data-location="all"] {
+    min-width: 95px !important;
     justify-content: center;
-    background-color: rgba(0, 0, 0, 0.08); /* Subtiel grijs rondje */
-    color: #64748b;
-    font-size: 10px;
-    font-weight: 800;
-    padding: 2px 7px;
-    border-radius: 10px;
-    margin-left: 8px;
-    transition: all 0.2s ease;
+}
+
+/* 3. De Icoontjes */
+.filter-btn i {
+    color: #2d5a27;
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* 4. De Badge (teller) - Ook pil-vorm */
+.count-badge {
+    background: rgba(0, 0, 0, 0.05);
+    color: #2d5a27;
+    font-size: 0.75rem;
+    padding: 2px 10px;        /* Iets meer zijwaartse padding */
+    border-radius: 9999px;     /* Ook de badge wordt een pilletje */
+    font-weight: 700;
+    margin-left: 4px;
+    flex-shrink: 0;
+}
+
+/* 5. DE ACTIEVE STAAT (Groen) */
+.filter-btn.active {
+    background: #2d5a27 !important;
+    color: #ffffff !important;
+    border-color: #24481f !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(45, 90, 39, 0.25) !important;
+}
+
+.filter-btn.active i, 
+.filter-btn.active .count-badge {
+    color: #ffffff !important;
 }
 
 .filter-btn.active .count-badge {
-    background-color: rgba(255, 255, 255, 0.25); /* Wit op de groene achtergrond */
-    color: white;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* 6. HOVER EFFECT (Desktop) */
+@media (hover: hover) {
+    .filter-btn:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: #2d5a27;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+    }
 }
 
 
