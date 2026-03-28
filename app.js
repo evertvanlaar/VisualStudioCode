@@ -133,12 +133,19 @@ function generateCategoryButtons(data) {
 function generateLocationButtons(data) {
     const container = document.getElementById('location-buttons');
     if (!container) return;
+    
     const locations = [...new Set(data.map(biz => biz.Location).filter(loc => loc))].sort();
-    let html = `<button class="filter-btn ${activeLocation === 'all' ? 'active' : ''}" data-location="all"><i class="fa fa-map-marker-alt"></i> <span>All Locations</span></button>`;
+    
+    // De 'All' button heeft het icoontje al
+    let html = `<button class="filter-btn ${activeLocation === 'all' ? 'active' : ''}" data-location="all"><i class="fa fa-map-marker-alt"></i> <span>All</span></button>`;
+    
+    // We voegen nu bij elke locatie exact hetzelfde icoontje toe
     locations.forEach(loc => {
-        html += `<button class="filter-btn ${activeLocation === loc ? 'active' : ''}" data-location="${loc}"><span>${loc}</span></button>`;
+        html += `<button class="filter-btn ${activeLocation === loc ? 'active' : ''}" data-location="${loc}"><i class="fa fa-map-marker-alt"></i> <span>${loc}</span></button>`;
     });
+    
     container.innerHTML = html;
+    
     container.querySelectorAll('.filter-btn').forEach(btn => {
         btn.onclick = (e) => {
             const targetBtn = e.target.closest('.filter-btn');
