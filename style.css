@@ -209,12 +209,13 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 /* --- BASIS STYLING (DESKTOP) --- */
 .filter-container {
     display: flex;
-    flex-wrap: wrap;           /* Op desktop mogen ze naar de volgende regel als het moet */
-    justify-content: center;    /* Netjes in het midden op desktop */
+    flex-wrap: wrap;           /* Op desktop mogen ze naar de volgende regel */
+    justify-content: center;   /* Netjes in het midden op desktop */
     gap: 10px;
     margin: 20px auto;
     padding: 10px;
-    max-width: 1200px;         /* Zorg dat het niet breder wordt dan je content */
+    max-width: 1200px;
+    position: relative;        /* Nodig voor de mobiele fade overlay */
 }
 
 /* --- SPECIFIEKE MOBIELE STYLING (Schermen kleiner dan 768px) --- */
@@ -223,18 +224,32 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
         display: flex;
         flex-wrap: nowrap;     /* Dwing alles op één regel voor de scroll */
         overflow-x: auto;      /* Activeer het vegen/scrollen */
-        justify-content: flex-start; /* Begin links, zodat je naar rechts kunt vegen */
-        padding: 15px 20px;    /* Extra padding zodat de laatste knop niet plakt */
+        justify-content: flex-start; 
+        padding: 15px 50px 15px 20px; /* Meer padding rechts (50px) voor de fade-ruimte */
         -webkit-overflow-scrolling: touch;
-        scrollbar-width: none; /* Verberg scrollbalk Firefox */
+        scrollbar-width: none;
     }
 
     .filter-container::-webkit-scrollbar {
-        display: none;         /* Verberg scrollbalk Chrome/Safari */
+        display: none;
     }
 
     .filter-btn {
-        flex: 0 0 auto;        /* Voorkom dat knoppen vervormen op mobiel */
+        flex: 0 0 auto;        /* Voorkom vervorming van knoppen */
+    }
+
+    /* HET FADE-EFFECT: Alleen zichtbaar op mobiel */
+    .filter-container::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 60px; /* De breedte van het wegfaden */
+        /* Verloop van transparant naar de achtergrondkleur van je site */
+        background: linear-gradient(to right, rgba(247, 249, 242, 0), rgba(247, 249, 242, 1));
+        pointer-events: none;  /* Zorgt dat je door de fade heen kunt klikken */
+        z-index: 5;
     }
 }
 
@@ -528,24 +543,56 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 }
 
 /* --- BUTTONS & FORMS --- */
-.add-business-container { text-align: center; margin-bottom: 40px; }
-.add-biz-btn {
-    display: inline-block;
-    background-color: var(--primary-olive) !important; 
-    color: white !important;
-    padding: 12px 28px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 15px;
-    transition: all 0.3s;
-    box-shadow: 0 4px 10px rgba(74, 108, 74, 0.2);
+/* --- ADD BUSINESS BUTTON (GEOPTIMALISEERD) --- */
+/* --- ADD BUSINESS BUTTON (SLANKER & ROND) --- */
+.add-business-container { 
+    text-align: center; 
+    margin-bottom: 30px; /* Iets minder witruimte onder de container */
 }
 
+.add-biz-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: #2d5a27 !important; 
+    color: white !important;
+    
+    /* DIT MAAKT HEM MINDER HOOG: */
+    height: 40px !important;  /* Was 48px, nu een stuk slanker */
+    padding: 0 22px !important; /* Iets minder brede padding voor de balans */
+    
+    border-radius: 50px !important; 
+    border: 1px solid #24481f !important;
+    text-decoration: none !important;
+    font-weight: 700 !important;
+    font-size: 14px !important; /* Iets kleinere font-size voor de slankere knop */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 3px 8px rgba(45, 90, 39, 0.2) !important;
+}
+
+/* Hover-animatie */
 .add-biz-btn:hover {
-    background-color: var(--primary-olive-dark) !important;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(74, 108, 74, 0.3);
+    background-color: #386f31 !important;
+    transform: translateY(-2px) !important; /* Iets subtieler omhoog */
+    box-shadow: 0 6px 15px rgba(45, 90, 39, 0.25) !important;
+}
+
+/* Het plus-icoontje (+) in een cirkeltje (ook iets kleiner gemaakt) */
+.add-biz-btn i {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 20px !important; /* Iets kleiner cirkeltje */
+    height: 20px !important;
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 50% !important;
+    margin-right: 10px !important;
+    font-size: 10px !important; /* Iets kleinere plus */
+    transition: background-color 0.2s ease !important;
+}
+
+.add-biz-btn:hover i {
+    background-color: rgba(255, 255, 255, 0.35) !important;
 }
 
 /* --- KAART --- */
@@ -722,11 +769,7 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
         width: 100% !important;
     }
 
-    .filter-btn.active, .add-biz-btn {
-    background-color: #2d5a27 !important; /* Donker olijfgroen */
-    border-color: #24481f !important;
-    color: white !important;
-}
+
 
 
     .phone-group { padding: 2px 6px !important; }
@@ -955,6 +998,26 @@ button[data-location="all"] {
     color: white !important;
     border-color: #24481f !important;
 }
+
+.count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.08); /* Subtiel grijs rondje */
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-left: 8px;
+    transition: all 0.2s ease;
+}
+
+.filter-btn.active .count-badge {
+    background-color: rgba(255, 255, 255, 0.25); /* Wit op de groene achtergrond */
+    color: white;
+}
+
 
 .offline-banner {
     background-color: #fff3e0; /* Zacht oranje/amber */
