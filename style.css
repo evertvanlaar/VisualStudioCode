@@ -197,45 +197,56 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     border-color: #cbd5e1;
 }
 
-/* --- CATEGORIE KOPPEN --- */
-/* --- Verbeterde Categorie Koppen (Gelijk aan Buttons) --- */
-/* --- Verfijnde Categorie Koppen (Lichter & Rustiger) --- */
-/* --- Strakke Categorie Koppen (Grijs zoals de knoppen) --- */
+/* --- CATEGORIE KOPPEN (SOFT GLASSY EDITIE) --- */
 .category-section-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #f1f5f9; /* Exact hetzelfde grijs als je filter buttons */
-    padding: 12px 18px;
-    margin: 40px 0 15px 0;
-    border-radius: 10px;
-    /* Een olijfgroene lijn aan de linkerkant voor het subtiele kleuraccent */
-    border-left: 5px solid var(--primary-olive); 
-    font-weight: 700;
-    color: #1e293b; /* Donkere tekst voor leesbaarheid */
-    font-size: 1.05rem;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    
+    /* Soft effect: semi-transparant grijs met een blur op de achtergrond */
+    background: rgba(241, 245, 249, 0.7) !important; 
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px); /* Voor Safari support */
+    
+    padding: 10px 18px;
+    margin: 35px 0 15px 0;
+    border-radius: 15px; /* Iets ronder voor de moderne look */
+    
+    /* Subtieler kleuraccent: afgeronde olijfgroene lijn */
+    border-left: 6px solid var(--primary-olive); 
+    border: 1px solid rgba(255, 255, 255, 0.5); /* Glasrandje */
+    
+    font-weight: 800; /* Iets dikker voor een "app" gevoel */
+    color: #334155; 
+    font-size: 1.1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03); /* Hele lichte schaduw */
 }
 
 .category-section-header span {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .category-section-header i {
-    font-size: 1.2rem;
-    color: var(--primary-olive); /* Icoon in olijfgroen */
+    font-size: 1.3rem;
+    color: var(--primary-olive);
+    /* Optioneel: geef het icoon ook een heel zachte achtergrond */
+    background: rgba(255, 255, 255, 0.4);
+    padding: 6px;
+    border-radius: 10px;
 }
 
+/* De teller-bubbel (2) of (7) */
 .category-section-header small {
-    background: #e2e8f0; /* Iets donkerder grijs voor de teller-bubbel */
-    color: #475569;
-    padding: 2px 10px;
+    background: rgba(226, 232, 240, 0.6); 
+    color: #64748b;
+    padding: 2px 12px;
     border-radius: 20px;
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: 700;
     margin-left: auto;
+    border: 1px solid rgba(0,0,0,0.03);
 }
 
 /* --- BUSINESS CARDS --- */
@@ -656,13 +667,14 @@ form label {
 
 /* --- DE DEFINITIEVE BADGE FIX --- */
 
-/* 1. De Container */
+/* --- COMPACTE LOCATIE BADGE (NAAST DE TITEL) --- */
 .mini-row-top {
-    display: block !important;    /* Forceer uit flex-modus */
-    position: relative !important; /* Het onzichtbare anker voor de badge */
-    width: 100% !important;
-    min-height: 22px !important;  /* Zorgt dat er ruimte is voor de badge */
-    margin-bottom: 5px !important;
+    display: flex;
+    justify-content: space-between; /* Zet titel links, badge rechts */
+    align-items: center;            /* Lijn ze verticaal precies in het midden uit */
+    gap: 10px;
+    margin-bottom: 4px;
+    width: 100%;
 }
 
 /* 2. De Bedrijfsnaam */
@@ -679,31 +691,6 @@ form label {
     color: var(--text) !important;
 }
 
-/* 3. De Zwevende Badge (Locatie) */
-.biz-location {
-    position: absolute !important;   /* DIT LAAT HEM ZWEVEN */
-    right: 0 !important;             /* Plak rechtsboven in de container */
-    top: 0 !important;
-    
-    background: #f1f5f9 !important;  /* Lichtgrijs */
-    color: #475569 !important;       /* Donkergrijs */
-    padding: 2px 10px !important;
-    border-radius: 20px !important;  /* Pill vorm */
-    font-size: 8px !important;
-    font-weight: 800 !important;
-    text-transform: uppercase !important;
-    border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
-    
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    white-space: nowrap !important;
-    z-index: 10 !important;
-}
-
-
-
 
 /* We maken het hele kaartje de 'ankerplaats' in plaats van alleen de bovenste rij */
 .biz-card-mini {
@@ -719,36 +706,58 @@ form label {
     padding-top: 2px !important; /* Een klein beetje ademruimte bovenin */
 }
 
-/* 2. De Naam: geef hem ruimte aan de rechterkant */
+/* --- DE DEFINITIEVE BEDRIJFSNAAM (Regel 680) --- */
 .biz-name {
     display: block !important;
-    padding-right: 85px !important; /* De 'verboden zone' voor tekst */
     margin: 0 !important;
+    padding-right: 0 !important; /* VERWIJDER DE 90PX: Flexbox regelt nu de ruimte */
+    
+    flex: 1;                     /* Pak alle beschikbare ruimte naast de badge */
+    min-width: 0;                /* Cruciaal om de tekst te laten afbreken/inkorten */
+    
+    font-size: 15px !important;
+    font-weight: 800 !important; /* Iets dikker voor die 'app' look */
     line-height: 1.2 !important;
-    white-space: normal !important; /* Mag over 2 regels */
+    
+    /* Keuze: Wil je 2 regels tekst of 1 regel met puntjes? */
+    white-space: normal !important;   /* Gebruik 'nowrap' voor 1 regel met puntjes */
+    overflow: hidden !important;
+    text-align: left !important;
+    color: var(--text) !important;
 }
 
 /* 3. De Badge: we pinnen hem nu strak in de hoek van .mini-content */
+/* --- DE DEFINITIEVE SOFT LOCATIE BADGE (Regel 694) --- */
+/* --- ULTRA-COMPACTE LOCATIE BADGE --- */
 .biz-location {
-    position: absolute !important;
-    right: 0 !important;  /* Strak tegen de rechterkant van de tekstkolom */
-    top: 0 !important;    /* Strak tegen de bovenkant van de tekstkolom */
+    /* Geen absolute positie meer nodig! */
+    flex-shrink: 0;                 /* Badge mag niet versmallen */
     
-    /* Jouw styling voor de 'pill' look */
-    background: #f1f5f9 !important;
-    color: #475569 !important;
-    padding: 1px 8px !important;
-    border-radius: 20px !important;
+    background: rgba(241, 245, 249, 0.8) !important;
+    color: #64748b !important;
+    padding: 2px 8px !important;
+    border-radius: 6px !important;
+    border: 1px solid rgba(226, 232, 240, 0.8) !important;
+
     font-size: 8px !important;
-    font-weight: 800 !important;
-    border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
     
     display: flex !important;
     align-items: center !important;
-    gap: 4px !important;
-    white-space: nowrap !important;
-    z-index: 99 !important;
+    gap: 3px !important;
+}
+
+/* Verklein ook het icoontje */
+.biz-location i {
+    font-size: 7px !important;
+    color: var(--primary-olive) !important;
+}
+
+/* Kleuraccent voor het icoontje in de badge */
+.biz-location i {
+    font-size: 9px !important;
+    color: var(--primary-olive) !important; /* Het olijfgroene accent */
 }
 
 #location-buttons .filter-btn {
