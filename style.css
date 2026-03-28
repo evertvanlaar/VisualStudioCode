@@ -222,12 +222,14 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 @media screen and (max-width: 768px) {
     .filter-container {
         display: flex;
-        flex-wrap: nowrap;     /* Dwing alles op één regel voor de scroll */
-        overflow-x: auto;      /* Activeer het vegen/scrollen */
-        justify-content: flex-start; 
-        padding: 15px 50px 15px 20px; /* Meer padding rechts (50px) voor de fade-ruimte */
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+        /* Padding aan beide kanten voor de fade-ruimte */
+        padding: 15px 40px 15px 40px !important; 
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
+        position: relative; /* Cruciaal voor de positionering van de fades */
     }
 
     .filter-container::-webkit-scrollbar {
@@ -235,21 +237,33 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     }
 
     .filter-btn {
-        flex: 0 0 auto;        /* Voorkom vervorming van knoppen */
+        flex: 0 0 auto;
     }
 
-    /* HET FADE-EFFECT: Alleen zichtbaar op mobiel */
+    /* FADE LINKS */
+    .filter-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 50px;
+        background: linear-gradient(to left, rgba(247, 249, 242, 0), rgba(247, 249, 242, 1));
+        z-index: 5;
+        pointer-events: none;
+    }
+
+    /* FADE RECHTS */
     .filter-container::after {
         content: "";
         position: absolute;
         top: 0;
         right: 0;
         height: 100%;
-        width: 60px; /* De breedte van het wegfaden */
-        /* Verloop van transparant naar de achtergrondkleur van je site */
+        width: 50px;
         background: linear-gradient(to right, rgba(247, 249, 242, 0), rgba(247, 249, 242, 1));
-        pointer-events: none;  /* Zorgt dat je door de fade heen kunt klikken */
         z-index: 5;
+        pointer-events: none;
     }
 }
 
