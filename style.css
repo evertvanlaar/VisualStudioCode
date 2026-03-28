@@ -271,10 +271,76 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 
 /* --- ACTIONS & ICONS --- */
 .mini-actions { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
-.phone-group { display: flex; align-items: center; gap: 8px; background: var(--bg); padding: 4px 10px; border-radius: 8px; border: 1px solid #f1f5f9; }
-.phone-txt { font-size: 12px; font-weight: 600; }
 
-.action-right { display: flex; gap: 8px; }
+/* --- NIEUWE SCHONE LOOK VOOR PHONE GROUP (Desktop & Mobiel) --- */
+.phone-group { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    /* We halen de background, padding en border hier weg: */
+    background: transparent !important; 
+    padding: 0 !important; 
+    border: none !important; 
+}
+
+/* De tekst van het nummer op desktop */
+.phone-txt { 
+    font-size: 9px; 
+    font-weight: 600; 
+    color: #475569; /* Een mooie donkergrijze kleur */
+    margin-right: 4px;
+}
+
+/* De knoppen (bellen en copy) in de groep */
+.call-btn, .copy-btn-action {
+    background: #f8f9fa !important; 
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 50% !important; /* Maakt ze rond */
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+/* De icoontjes zelf */
+.call-btn i, .copy-btn-action i {
+    color: #888 !important;
+    font-size: 14px;
+}
+
+/* Hover effect voor de knopjes */
+.call-btn:hover, .copy-btn-action:hover {
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+}
+
+/* actieblok voor de buttons rechts onderin */
+.action-right {
+    display: flex !important;
+    align-items: center !important;    /* Alles kaarsrecht op de horizontale middellijn */
+    justify-content: flex-end !important; /* Netjes rechts uitlijnen */
+    gap: 6px !important;               /* Iets minder witruimte zodat het op mobiel past */
+    flex-wrap: nowrap !important;      /* VERBIEDT het verspringen naar een nieuwe regel */
+    flex-shrink: 0 !important;         /* Voorkomt dat de container zelf krimpt */
+}
+
+/* Voeg dit ook toe voor de knoppen zelf om 'geplette' eitjes te voorkomen */
+.action-right .btn-icon, 
+.action-right .nav-btn-action,
+.action-right .web-btn,
+.action-right .email-btn,
+.action-right .review-btn,
+.action-right .copy-btn-action {
+    flex-shrink: 0 !important;         /* Dwingt de knoppen om 100% rond te blijven */
+    width: 32px !important;            /* Ietsje smaller voor mobiele schermen */
+    height: 32px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
 
 .btn-icon { 
     width: 32px; height: 32px; 
@@ -293,11 +359,132 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     transform: translateY(-2px); 
 }
 
-.review-btn { color: #f59e0b; background: #fffbeb; }
-.review-btn:hover { background-color: #f59e0b !important; color: white !important; }
+/* --- TEST: SOFT TONE PHONE BUTTON --- */
+.call-btn {
+    background-color: #e8f5e9 !important; /* Heel zacht groen */
+    border: none !important;              /* Randje weg voor de moderne look */
+    width: 34px !important;               /* Iets forser staat vaak beter bij soft tones */
+    height: 34px !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
 
-.copy-btn { background: none; border: none; cursor: pointer; color: #94a3b8; font-size: 13px; transition: 0.2s; }
-.copy-btn:hover { color: var(--primary-olive); }
+/* Het icoontje in de zachte knop */
+.call-btn i.fa-phone {
+    color: #2e7d32 !important;            /* Donkerder groen voor leesbaarheid */
+    font-size: 15px !important;
+}
+
+/* Hover effect: iets dieper groen en een kleine 'lift' */
+.call-btn:hover {
+    background-color: #c8e6c9 !important;
+    transform: translateY(-1px);          /* Subtiel omhoog komen bij hover */
+}
+/* --- TEST: SOFT TONE WEBSITE BUTTON --- */
+.web-btn {
+    background-color: #e3f2fd !important; /* Heel zacht hemelblauw */
+    border: none !important;              /* Geen harde randjes meer */
+    width: 34px !important;               /* Gelijk aan de nieuwe groene knop */
+    height: 34px !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+/* Het icoontje in de zachte blauwe knop */
+.web-btn i.fa-globe {
+    color: #1976d2 !important;            /* Donkerder blauw voor mooi contrast */
+    font-size: 15px !important;
+}
+
+/* Hover effect: iets dieper blauw en een kleine 'lift' */
+.web-btn:hover {
+    background-color: #bbdefb !important;
+    transform: translateY(-1px);          /* Subtiel omhoog komen */
+}
+
+/* --- CSS VOOR DE EMAIL BUTTON --- */
+
+.email-btn {
+    background-color: #f3e5f5 !important; /* De zachte paarse achtergrond */
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    border: none !important;              /* Zorgt dat de grijze rand weggaat */
+    transition: all 0.2s ease;
+    text-decoration: none !important;      /* Verwijdert eventuele onderstreping */
+}
+
+/* Het envelop icoontje zelf */
+.email-btn i.fa-envelope {
+    color: #8e24aa !important;            /* De diepere paarse kleur */
+    font-size: 14px !important;
+}
+
+/* Hover effect */
+.email-btn:hover {
+    background-color: #e1beed !important;
+    transform: translateY(-1px);
+}
+
+/* --- TEST: SOFT TONE REVIEW BUTTON (Goud/Amber) --- */
+.review-btn {
+    background-color: #fff8e1 !important; /* Heel zacht warm geel/amber */
+    border: none !important;              /* Geen harde randjes */
+    width: 34px !important;               /* Gelijk aan bellen/web */
+    height: 34px !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+/* Het ster-icoontje in de zachte amberkleurige knop */
+.review-btn i.fa-star {
+    color: #ffb300 !important;            /* Diep goudgeel voor contrast */
+    font-size: 15px !important;
+}
+
+/* Hover effect: iets warmer en een kleine 'lift' */
+.review-btn:hover {
+    background-color: #ffecb3 !important;
+    transform: translateY(-1px);
+}
+/* We richten ons direct op het icoon (i) binnen de knop */
+.copy-btn i {
+    color: #888 !important; /* Forceert de grijstint */
+    font-size: 14px !important;
+    vertical-align: middle;
+    transition: color 0.2s ease;
+}
+
+/* De knop zelf moet geen extra padding of achtergrond hebben */
+.copy-btn {
+    background: none !important;
+    border: none !important;
+    padding: 0 4px !important;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    outline: none;
+}
+
+/* Alleen bij hover mag hij iets donkerder worden */
+.copy-btn:hover i {
+    color: #555 !important;
+}
 
 /* --- BUTTONS & FORMS --- */
 .add-business-container { text-align: center; margin-bottom: 40px; }
@@ -502,7 +689,7 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 
 
     .phone-group { padding: 2px 6px !important; }
-    .phone-txt { font-size: 11px !important; }
+    .phone-txt { font-size: 9px !important; }
     .btn-icon { width: 28px !important; height: 28px !important; font-size: 12px !important; }
 }
 
@@ -561,7 +748,7 @@ form label {
 .phone-txt {
     display: inline;
     margin-right: 10px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: var(--text-main);
 }
 
@@ -591,53 +778,20 @@ form label {
 
 /* --- DE DEFINITIEVE BADGE FIX --- */
 
-/* 1. De Container */
+/* De container bovenin het kaartje */
 .mini-row-top {
-    display: block !important;    /* Forceer uit flex-modus */
-    position: relative !important; /* Het onzichtbare anker voor de badge */
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important; /* Lijn ze direct achter elkaar uit */
+    gap: 8px !important;                     /* Kleine vaste ruimte tussen naam en badge */
     width: 100% !important;
-    min-height: 22px !important;  /* Zorgt dat er ruimte is voor de badge */
-    margin-bottom: 5px !important;
+    overflow: hidden !important;
 }
 
 /* 2. De Bedrijfsnaam */
-.biz-name {
-    display: block !important;
-    margin: 0 !important;
-    padding-right: 90px !important; /* DIT MAAKT RUIMTE VOOR DE BADGE */
-    font-size: 15px !important;
-    font-weight: 700 !important;
-    line-height: 1.2 !important;
-    white-space: normal !important;  /* Naam mag over 2 regels gaan */
-    overflow: visible !important;
-    text-align: left !important;
-    color: var(--text) !important;
-}
 
 /* 3. De Zwevende Badge (Locatie) */
-.biz-location {
-    position: absolute !important;   /* DIT LAAT HEM ZWEVEN */
-    right: 0 !important;             /* Plak rechtsboven in de container */
-    top: 0 !important;
-    
-    background: #f1f5f9 !important;  /* Lichtgrijs */
-    color: #475569 !important;       /* Donkergrijs */
-    padding: 2px 10px !important;
-    border-radius: 20px !important;  /* Pill vorm */
-    font-size: 8px !important;
-    font-weight: 800 !important;
-    text-transform: uppercase !important;
-    border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
-    
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    white-space: nowrap !important;
-    z-index: 10 !important;
-}
-
-
 
 
 /* We maken het hele kaartje de 'ankerplaats' in plaats van alleen de bovenste rij */
@@ -655,35 +809,62 @@ form label {
 }
 
 /* 2. De Naam: geef hem ruimte aan de rechterkant */
+/* --- DE NIEUWE BIZ-NAME (ZONDER 'VERBODEN ZONE') --- */
+/* --- GEOPTIMALISEERDE BIZ-NAME --- */
 .biz-name {
     display: block !important;
-    padding-right: 85px !important; /* De 'verboden zone' voor tekst */
+    flex: 1 !important;
     margin: 0 !important;
+    padding-right: 5px !important;   /* Minimale buffer voor de badge */
+    
+    /* Typografie */
+    font-size: 14px !important;      /* Perfecte maat voor mobiel */
+    font-weight: 700 !important;
     line-height: 1.2 !important;
-    white-space: normal !important; /* Mag over 2 regels */
+    color: var(--text) !important;
+    
+    /* De "één regel" garantie */
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    min-width: 0 !important;
+}
+
+/* Voor grotere schermen (desktop) mag hij weer naar 16px */
+@media (min-width: 768px) {
+    .biz-name {
+        font-size: 16px !important;
+    }
 }
 
 /* 3. De Badge: we pinnen hem nu strak in de hoek van .mini-content */
+/* --- DE NIEUWE BIZ-LOCATION CHIP (GEOPTIMALISEERD) --- */
 .biz-location {
-    position: absolute !important;
-    right: 0 !important;  /* Strak tegen de rechterkant van de tekstkolom */
-    top: 0 !important;    /* Strak tegen de bovenkant van de tekstkolom */
-    
-    /* Jouw styling voor de 'pill' look */
-    background: #f1f5f9 !important;
-    color: #475569 !important;
-    padding: 1px 8px !important;
-    border-radius: 20px !important;
-    font-size: 8px !important;
-    font-weight: 800 !important;
-    border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
-    
-    display: flex !important;
+    position: static !important;      /* Haalt hem uit de 'zweef' modus */
+    display: inline-flex !important;  /* Zorgt dat hij naast de titel kan staan */
     align-items: center !important;
-    gap: 4px !important;
+    
+    background-color: #f1f5f9 !important; 
+    color: #64748b !important;
+    padding: 2px 8px !important;
+    border-radius: 12px !important;   /* Iets ronder voor de moderne look */
+    
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    
+    margin-left: auto !important;     /* Dwingt de badge naar de rechterkant van de regel */
     white-space: nowrap !important;
-    z-index: 99 !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+/* Zorg dat het icoontje in de badge ook goed schaalt */
+/* Het icoontje in de badge */
+.biz-location i {
+    font-size: 10px !important;
+    margin-right: 4px !important;
+    color: #94a3b8 !important;
 }
 
 #location-buttons .filter-btn {
@@ -898,27 +1079,53 @@ body.is-offline .map-section {
     }
 }
 
-/* De Navigatieknop in de actiebalk */
+/* --- TEST: SOFT TONE NAVIGATIE BUTTON (Maps Rood) --- */
 .nav-btn-action {
-    background-color: #4285F4 !important; /* Google Maps Blauw */
-    color: white !important;
-    border-radius: 50%;
-    width: 35px;
-    height: 35px;
-    display: flex;
+    background-color: #ffebee !important; /* Heel zacht roze/rood */
+    border: none !important;              /* Geen harde randjes meer */
+    width: 28px !important;               /* Gelijk aan bellen/web/review */
+    height: 28px !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s, background-color 0.2s;
-    box-shadow: 0 2px 4px rgba(66, 133, 244, 0.3);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-shadow: none !important;          /* Zorg dat de oude blauwe schaduw weg is */
 }
 
-.nav-btn-action:active {
-    transform: scale(0.9);
-    background-color: #3367D6 !important;
-}
-
+/* Het locatie-icoontje in de zachte rode knop */
 .nav-btn-action i {
-    font-size: 14px;
+    color: #d32f2f !important;            /* Dieper rood voor contrast */
+    font-size: 15px !important;
+}
+
+/* Hover effect: iets dieper rood en een kleine 'lift' */
+.nav-btn-action:hover {
+    background-color: #ffcdd2 !important;
+    transform: translateY(-1px);
+}
+
+/* Specifieke correctie voor de Nav-button */
+.nav-btn-action {
+    width: 34px !important;            /* Exact gelijk aan de rest */
+    height: 34px !important;           /* Exact gelijk aan de rest */
+    min-width: 34px !important;        /* Voorkom vervorming */
+    display: inline-flex !important;   /* Gebruik flex voor perfecte centrering */
+    align-items: center !important;    /* Verticaal midden */
+    justify-content: center !important;/* Horizontaal midden */
+    padding: 0 !important;             /* Verwijder eventuele interne witruimte */
+    margin: 0 !important;              /* Geen onverwachte marges */
+    box-sizing: border-box !important;
+    vertical-align: middle !important;
+}
+
+/* Het icoontje zelf centreren */
+.nav-btn-action i {
+    font-size: 15px !important;        /* Maat van de pin */
+    line-height: 1 !important;         /* Voorkomt dat het icoon 'omhoog' geduwd wordt */
+    width: auto !important;            /* Laat Font Awesome zelf de breedte bepalen */
+    margin: 0 !important;              /* Geen extra marges op het icoon zelf */
 }
 
 /* Verberg de banner standaard altijd */
@@ -1324,3 +1531,31 @@ body {
         height: 100%;
         border: 0;
     }
+
+/* --- DE DEFINITIEVE CLEAN COPY BUTTON --- */
+
+/* --- FINISHING TOUCH: SOFT TONE COPY BUTTON --- */
+.copy-btn-action {
+    background-color: #f1f5f9 !important; /* Heel zacht koel grijs */
+    border: none !important;              /* Randjes weg voor de clean look */
+    width: 34px !important;               /* Gelijk aan de rest van de familie */
+    height: 34px !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+/* Het copy-icoontje in de zachte grijze knop */
+.copy-btn-action i.fa-copy {
+    color: #64748b !important;            /* Iets donkerder grijs voor contrast */
+    font-size: 14px !important;
+}
+
+/* Hover effect: iets dieper grijs en een kleine 'lift' */
+.copy-btn-action:hover {
+    background-color: #e2e8f0 !important;
+    transform: translateY(-1px);
+}

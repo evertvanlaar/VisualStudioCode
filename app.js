@@ -233,25 +233,24 @@ function renderBusinesses(data) {
                     <div class="mini-row-top">
                         <h2 class="biz-name">
                             ${biz.Name}
-                            ${!previewHtml ? `<button class="wishlist-btn-inline ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeName}', this)" style="background:none; border:none; cursor:pointer; margin-left:8px; color:${isFavorite ? '#e74c3c' : 'inherit'}; vertical-align:middle;"><i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i></button>` : ''}
+                            ${!previewHtml ? `<button class="wishlist-btn-inline ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeName}', this)"><i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i></button>` : ''}
                         </h2>
                         <span class="biz-location"><i class="fa fa-map-marker-alt"></i> ${biz.Location || 'Kala Nera'}</span>
                     </div>
-                    <div class="mini-row-sub">
-                        <a href="${cleanUrl}" target="_blank" class="mini-web-link">
-                            <i class="fa fa-external-link"></i> ${displayUrl || 'Visit Website'}
-                        </a>
-                    </div>
+                    
                     <div class="mini-actions">
                         <div class="phone-group">
-                            <a href="tel:${biz.Phone}" class="btn-icon"><i class="fa fa-phone"></i></a>
+                            <a href="tel:${biz.Phone}" class="btn-icon call-btn"><i class="fa fa-phone"></i></a>
                             <span class="phone-txt">${biz.Phone || '-'}</span>
-                            <button class="copy-btn" onclick="copyToClipboard('${biz.Phone}', this)"><i class="fa fa-copy"></i></button>
+                            <button class="copy-btn-action" onclick="copyToClipboard('${biz.Phone}', this)" title="Copy phone"><i class="fa fa-copy"></i></button>
                         </div>
+                        
                         <div class="action-right">
+                            <a href="${cleanUrl}" target="_blank" class="btn-icon web-btn" title="Visit Website"><i class="fa fa-globe"></i></a>
+                            
                             ${emailHtml}
-                            <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn"><i class="fa fa-star"></i></a>
-                            <a href="${mapsUrl}" target="_blank" class="btn-icon nav-btn-action"><i class="fa fa-location-dot"></i></a>
+                            <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn" title="Reviews"><i class="fa fa-star"></i></a>
+                            <a href="${mapsUrl}" target="_blank" class="btn-icon nav-btn-action" title="Show on Map"><i class="fa fa-location-dot"></i></a>
                         </div>
                     </div>
                 </div>
