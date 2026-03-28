@@ -114,7 +114,7 @@ function generateCategoryButtons(data) {
     const container = document.getElementById('filter-buttons');
     if (!container) return;
     const categories = [...new Set(data.map(biz => biz.Category).filter(cat => cat))].sort();
-    let html = `<button class="filter-btn ${activeCategory === 'all' ? 'active' : ''}" data-category="all"><i class="fa fa-th-large"></i> <span>All</span></button>`;
+    let html = `<button class="filter-btn ${activeCategory === 'all' ? 'active' : ''}" data-category="all"><i class="fas fa-map-marker-alt"></i> <span>All</span></button>`;
     categories.forEach(cat => {
         html += `<button class="filter-btn ${activeCategory === cat ? 'active' : ''}" data-category="${cat}">${getIcon(cat)} <span>${cat}</span></button>`;
     });
@@ -136,16 +136,22 @@ function generateLocationButtons(data) {
     
     const locations = [...new Set(data.map(biz => biz.Location).filter(loc => loc))].sort();
     
-    // De 'All' button heeft het icoontje al
-    let html = `<button class="filter-btn ${activeLocation === 'all' ? 'active' : ''}" data-location="all"><i class="fa fa-map-marker-alt"></i> <span>All</span></button>`;
+    // 1. Hier stond waarschijnlijk een andere class (zoals fa-th). 
+    // We maken hem nu EXACT gelijk aan de loop hieronder:
+    let html = `<button class="filter-btn ${activeLocation === 'all' ? 'active' : ''}" data-location="all">
+                    <i class="fas fa-map-marker-alt"></i> <span>All</span>
+                </button>`;
     
-    // We voegen nu bij elke locatie exact hetzelfde icoontje toe
+    // 2. De locaties uit de data krijgen nu ook exact dezelfde pin
     locations.forEach(loc => {
-        html += `<button class="filter-btn ${activeLocation === loc ? 'active' : ''}" data-location="${loc}"><i class="fa fa-map-marker-alt"></i> <span>${loc}</span></button>`;
+        html += `<button class="filter-btn ${activeLocation === loc ? 'active' : ''}" data-location="${loc}">
+                    <i class="fas fa-map-marker-alt"></i> <span>${loc}</span>
+                 </button>`;
     });
     
     container.innerHTML = html;
     
+    // De click-handler blijft hetzelfde
     container.querySelectorAll('.filter-btn').forEach(btn => {
         btn.onclick = (e) => {
             const targetBtn = e.target.closest('.filter-btn');

@@ -173,30 +173,6 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     }
 }
 
-/* Algemene knop styling */
-.filter-btn {
-    white-space: nowrap;
-    padding: 8px 18px;
-    border-radius: 25px;
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-/* De knop die geselecteerd is */
-.filter-btn.active, .add-biz-btn {
-    background-color: #2d5a27 !important; /* Donker olijfgroen */
-    border-color: #24481f !important;
-    color: white !important;
-}
-
-/* De standaard knoppen (niet geselecteerd) bij een hover effect */
-.filter-btn:hover {
-    background-color: #e2e8f0;
-    border-color: #cbd5e1;
-}
-
 /* --- CATEGORIE KOPPEN --- */
 /* --- Verbeterde Categorie Koppen (Gelijk aan Buttons) --- */
 /* --- Verfijnde Categorie Koppen (Lichter & Rustiger) --- */
@@ -867,21 +843,52 @@ form label {
     color: #94a3b8 !important;
 }
 
-#location-buttons .filter-btn {
-    font-size: 13px;
-    padding: 6px 14px;
-    opacity: 0.8;
+/* 1. Reset alle filter knoppen naar één standaard */
+.filter-btn {
+    /* Dwing de vorm terug naar ovaal */
+    border-radius: 20px !important; 
+    height: 38px !important;
+    padding: 0 16px !important;
+    
+    /* Zorg voor gelijke breedte basis */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* Tekst styling */
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+    
+    /* Kleuren voor niet-actieve knoppen */
+    background-color: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #475569 !important;
+    opacity: 1 !important; /* Fix voor de fletse onderste knoppen */
 }
 
-#location-buttons .filter-btn.active {
-    opacity: 1;
-    background-color: var(--primary-olive-dark) !important;
+/* 2. De 'All' buttons exact even breed maken */
+/* We selecteren de knoppen specifiek op hun data-attribuut */
+button[data-category="all"], 
+button[data-location="all"] {
+    min-width: 80px !important; /* Dit zorgt dat ze beide even breed zijn */
 }
 
-#location-buttons {
-    margin-top: 5px;
-    border-top: 1px solid var(--border);
-    padding-top: 15px;
+/* 3. De Icoontjes (De Pinnetjes) */
+.filter-btn i {
+    display: inline-block !important;
+    width: 16px !important;      /* Breedte van het onzichtbare vakje */
+    font-size: 14px !important;   /* De grootte van het pinnetje zelf */
+    text-align: center !important;
+    margin-right: 6px !important;
+    font-weight: 900 !important;  /* Dwingt 'Solid' gewicht voor beide */
+}
+
+/* 4. De Actieve (Groene) status */
+.filter-btn.active {
+    background-color: #2d5a27 !important; /* Jouw olijfgroen */
+    color: white !important;
+    border-color: #24481f !important;
 }
 
 .offline-banner {
