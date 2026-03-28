@@ -138,7 +138,7 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 /* --- DE NIEUWE SOFT SEARCHBAR --- */
 .search-container { 
     position: relative; 
-    margin-bottom: 25px; 
+    margin-bottom: 35px !important; /* Verhoogd van 25px naar 35px voor meer lucht */
     max-width: 500px; 
     margin-inline: auto; 
 }
@@ -191,12 +191,10 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 /* --- BASIS STYLING (DESKTOP) --- */
 .filter-container {
     display: flex;
-    flex-wrap: wrap;           /* Op desktop mogen ze naar de volgende regel als het moet */
-    justify-content: center;    /* Netjes in het midden op desktop */
     gap: 10px;
-    margin: 20px auto;
-    padding: 10px;
-    max-width: 1200px;         /* Zorg dat het niet breder wordt dan je content */
+    padding: 5px 2px 15px 2px !important; /* Minder padding boven (5px), meer onder (15px) */
+    overflow-x: auto;
+    scrollbar-width: none;
 }
 
 /* --- MOBIELE FILTER SCROLLING --- */
@@ -834,9 +832,7 @@ form label {
 
 
 #location-buttons {
-    margin-top: 5px;
-    border-top: 1px solid var(--border);
-    padding-top: 15px;
+    margin-top: 10px !important; /* Geeft extra ruimte tussen de twee rijen knoppen */
 }
 
 .offline-banner {
