@@ -1295,8 +1295,7 @@ body {
         bottom: 80px; /* Komt BOVEN de knop te staan */
         right: 0;
         width: 550px; /* Compacte breedte op desktop */
-        height: 600px;
-        height: 600px;
+        height: 500px;
         background: white;
         border-radius: 12px;
         overflow: hidden;
