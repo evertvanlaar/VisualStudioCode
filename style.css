@@ -23,6 +23,12 @@ html, body {
     overflow: visible;
 }
 
+/* Tip: Zorg dat de zoekbalk eruitziet als een echte app-input */
+.search-input {
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+}
 
 /* --- GLOBALE VARIABELEN (OLIJF EDITIE) --- */
 :root {
@@ -138,106 +144,97 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     transition: all 0.3s ease;
 }
 
-/* --- DE DEFINITIEVE APPLE GLASS ZOEKBALK --- */
-.search-container {
-    position: relative;
-    margin: 20px auto;
-    max-width: 600px; /* Of de breedte die je wenst */
-}
-
+/* 2. De Input: Basis styling */
 .search-input { 
     width: 100% !important; 
-    padding: 14px 20px 14px 45px !important; 
-    border-radius: 9999px !important; /* Perfecte pil-vorm */
+    padding: 12px 20px 12px 45px !important; /* Ruimte links voor het icoon */
+    border-radius: 50px !important; 
+    border: 1px solid var(--border) !important; 
     outline: none !important; 
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    
-    /* Apple Glass Effect */
-    background-color: rgba(255, 255, 255, 0.7) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    
-    /* Subtiele rand en zachte schaduw */
-    border: 1px solid rgba(255, 255, 255, 0.5) !important; 
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important; 
-    
-    color: #333 !important;
-    font-size: 1rem !important;
-    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
-    
-    /* Het 'X' kruisje als SVG (jouw slimme truc hergebruikt) */
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2394a3b8'%3E%3Cpath d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3E%3C/svg%3E") !important;
-    background-repeat: no-repeat !important;
-    background-position: right 15px center !important;
-    background-size: 20px !important;
+    background-color: white !important;
+    transition: all 0.3s ease !important; 
 }
 
-/* Verberg kruisje als er niet getypt wordt */
-.search-input:placeholder-shown {
-    background-image: none !important;
-}
-
-/* Focus staat: iets witter en groenere rand */
+/* 3. Interactie: Wanneer je in de balk klikt (Focus) */
 .search-input:focus { 
-    background-color: rgba(255, 255, 255, 0.9) !important;
-    border-color: #2d5a27 !important; 
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08) !important;
-    transform: translateY(-1px);
+    border-color: #2d5a27 !important; /* Jouw olijfgroen */
+    box-shadow: 0 4px 12px rgba(45, 90, 39, 0.15) !important; /* Zachte gloed */
 }
 
-/* Het loep-icoon styling */
+/* 4. Het Icoon: Altijd netjes in het midden */
 .search-icon { 
     position: absolute; 
     left: 18px; 
     top: 50%; 
-    transform: translateY(-50%); 
-    color: #2d5a27; /* Direct jouw olijfgroen voor een frisse look */
-    opacity: 0.6;
-    transition: all 0.3s ease;
-    z-index: 10; 
-    pointer-events: none; 
+    transform: translateY(-50%); /* Dwingt het icoon precies in het verticale midden */
+    color: #94a3b8; 
+    transition: color 0.3s ease;
+    z-index: 10; /* Zorgt dat het icoon bovenop de input ligt */
+    pointer-events: none; /* Je klikt 'door' het icoon heen in het tekstveld */
 }
 
-/* Icoon wordt feller als je in de balk klikt */
+/* 5. DE TRUC: Kleur het icoon groen als de container focus heeft */
 .search-container:focus-within .search-icon { 
-    opacity: 1;
-    transform: translateY(-50%) scale(1.1);
+    color: #2d5a27 !important; 
 }
 
-/* Browser-standaard kruisjes overal uitzetten */
-.search-input::-webkit-search-cancel-button,
-.search-input::-webkit-search-decoration {
+/* Verwijder het standaard lelijke kruisje van de browser zelf */
+.search-input::-webkit-search-cancel-button {
     -webkit-appearance: none;
     appearance: none;
 }
 
-/* --- 1. DE CONTAINER (Hoe de knoppen staan) --- */
-.filter-container {
-    display: flex;
-    flex-wrap: wrap;           /* Desktop: knoppen lopen door naar volgende regel */
-    justify-content: center;   /* Desktop: netjes in het midden */
-    gap: 12px;
-    margin: 20px auto;
-    padding: 10px;
-    max-width: 1200px;
+/* Styling voor het kruisje (X) */
+.search-input::-ms-clear { display: none; width: 0; height: 0; } /* IE fix */
+
+/* We gebruiken een achtergrond-afbeelding voor het kruisje die alleen verschijnt bij typen */
+.search-input {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2394a3b8'%3E%3Cpath d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 20px;
+    cursor: pointer;
 }
 
+/* Verberg het kruisje als het veld leeg is */
+.search-input:placeholder-shown {
+    background-image: none !important;
+}
 
+/* Laat het kruisje oplichten (groen) als je erover hovert */
+.search-input:not(:placeholder-shown):hover {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232d5a27'%3E%3Cpath d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3E%3C/svg%3E") !important;
+}
 
-/* --- 4. MOBIEL (Schermen kleiner dan 768px) --- */
+/* --- BASIS STYLING (DESKTOP) --- */
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;           /* Op desktop mogen ze naar de volgende regel als het moet */
+    justify-content: center;    /* Netjes in het midden op desktop */
+    gap: 10px;
+    margin: 20px auto;
+    padding: 10px;
+    max-width: 1200px;         /* Zorg dat het niet breder wordt dan je content */
+}
+
+/* --- SPECIFIEKE MOBIELE STYLING (Schermen kleiner dan 768px) --- */
 @media screen and (max-width: 768px) {
     .filter-container {
-        flex-wrap: nowrap;     /* Mobiel: knoppen blijven op één lijn */
-        overflow-x: auto;      /* Mobiel: horizontaal scrollen */
-        justify-content: flex-start;
-        padding: 15px 20px !important;
-        scrollbar-width: none; /* Geen lelijke scrollbalken */
+        display: flex;
+        flex-wrap: nowrap;     /* Dwing alles op één regel voor de scroll */
+        overflow-x: auto;      /* Activeer het vegen/scrollen */
+        justify-content: flex-start; /* Begin links, zodat je naar rechts kunt vegen */
+        padding: 15px 20px;    /* Extra padding zodat de laatste knop niet plakt */
         -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Verberg scrollbalk Firefox */
     }
-    
+
     .filter-container::-webkit-scrollbar {
-        display: none;
+        display: none;         /* Verberg scrollbalk Chrome/Safari */
+    }
+
+    .filter-btn {
+        flex: 0 0 auto;        /* Voorkom dat knoppen vervormen op mobiel */
     }
 }
 
@@ -531,56 +528,24 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 }
 
 /* --- BUTTONS & FORMS --- */
-/* --- ADD BUSINESS BUTTON (GEOPTIMALISEERD) --- */
-/* --- ADD BUSINESS BUTTON (SLANKER & ROND) --- */
-.add-business-container { 
-    text-align: center; 
-    margin-bottom: 30px; /* Iets minder witruimte onder de container */
-}
-
+.add-business-container { text-align: center; margin-bottom: 40px; }
 .add-biz-btn {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background-color: #2d5a27 !important; 
+    display: inline-block;
+    background-color: var(--primary-olive) !important; 
     color: white !important;
-    
-    /* DIT MAAKT HEM MINDER HOOG: */
-    height: 40px !important;  /* Was 48px, nu een stuk slanker */
-    padding: 0 22px !important; /* Iets minder brede padding voor de balans */
-    
-    border-radius: 50px !important; 
-    border: 1px solid #24481f !important;
-    text-decoration: none !important;
-    font-weight: 700 !important;
-    font-size: 14px !important; /* Iets kleinere font-size voor de slankere knop */
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    box-shadow: 0 3px 8px rgba(45, 90, 39, 0.2) !important;
+    padding: 12px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 10px rgba(74, 108, 74, 0.2);
 }
 
-/* Hover-animatie */
 .add-biz-btn:hover {
-    background-color: #386f31 !important;
-    transform: translateY(-2px) !important; /* Iets subtieler omhoog */
-    box-shadow: 0 6px 15px rgba(45, 90, 39, 0.25) !important;
-}
-
-/* Het plus-icoontje (+) in een cirkeltje (ook iets kleiner gemaakt) */
-.add-biz-btn i {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 20px !important; /* Iets kleiner cirkeltje */
-    height: 20px !important;
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    border-radius: 50% !important;
-    margin-right: 10px !important;
-    font-size: 10px !important; /* Iets kleinere plus */
-    transition: background-color 0.2s ease !important;
-}
-
-.add-biz-btn:hover i {
-    background-color: rgba(255, 255, 255, 0.35) !important;
+    background-color: var(--primary-olive-dark) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(74, 108, 74, 0.3);
 }
 
 /* --- KAART --- */
@@ -757,7 +722,11 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
         width: 100% !important;
     }
 
-
+    .filter-btn.active, .add-biz-btn {
+    background-color: #2d5a27 !important; /* Donker olijfgroen */
+    border-color: #24481f !important;
+    color: white !important;
+}
 
 
     .phone-group { padding: 2px 6px !important; }
@@ -939,86 +908,53 @@ form label {
     color: #94a3b8 !important;
 }
 
-/* --- DE BASIS BUTTON (Symmetrisch & Sexy) --- */
+/* 1. Reset alle filter knoppen naar één standaard */
 .filter-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    /* De 'gap' tussen icoon, tekst en badge overal gelijk */
-    gap: 8px;               
-    /* Padding: boven/onder 10px, links/rechts 16px voor een strakke look */
-    padding: 10px 16px;      
-    border-radius: 9999px;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    /* Dwing de vorm terug naar ovaal */
+    border-radius: 20px !important; 
+    height: 38px !important;
+    padding: 0 16px !important;
     
-    /* Apple Glass Effect */
-    background: rgba(255, 255, 255, 0.7); 
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    /* Zorg voor gelijke breedte basis */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     
-    color: #333;
-    font-weight: 600;
-    font-size: 0.95rem;
+    /* Tekst styling */
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+    
+    /* Kleuren voor niet-actieve knoppen */
+    background-color: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #475569 !important;
+    opacity: 1 !important; /* Fix voor de fletse onderste knoppen */
 }
 
-/* --- SPECIFIEKE FIX VOOR DE 'ALL' BUTTONS --- */
-/* Omdat 'All' zo kort is, geven we deze iets meer zij-padding om de vorm mooi te houden */
+/* 2. De 'All' buttons exact even breed maken */
+/* We selecteren de knoppen specifiek op hun data-attribuut */
 button[data-category="all"], 
 button[data-location="all"] {
-    padding-left: 18px !important;
-    padding-right: 18px !important;
-    min-width: auto !important; /* Verwijder de vaste breedte die we eerder hadden */
+    min-width: 80px !important; /* Dit zorgt dat ze beide even breed zijn */
 }
-/* 3. De Icoontjes */
+
+/* 3. De Icoontjes (De Pinnetjes) */
 .filter-btn i {
-    color: #2d5a27;
-    font-size: 1.1rem;
-    opacity: 0.9;
+    display: inline-block !important;
+    width: 16px !important;      /* Breedte van het onzichtbare vakje */
+    font-size: 14px !important;   /* De grootte van het pinnetje zelf */
+    text-align: center !important;
+    margin-right: 6px !important;
+    font-weight: 900 !important;  /* Dwingt 'Solid' gewicht voor beide */
 }
 
-/* De Badge (het getalletje) */
-.count-badge {
-    background: rgba(0, 0, 0, 0.06);
-    color: #2d5a27;
-    font-size: 0.7rem;
-    /* Compacte badge padding zodat hij niet te dominant is */
-    padding: 2px 8px;
-    border-radius: 9999px;
-    font-weight: 700;
-    flex-shrink: 0;
-}
-
-/* --- ACTIEVE STAAT --- */
+/* 4. De Actieve (Groene) status */
 .filter-btn.active {
-    background: #2d5a27 !important;
-    color: #ffffff !important;
+    background-color: #2d5a27 !important; /* Jouw olijfgroen */
+    color: white !important;
     border-color: #24481f !important;
-    box-shadow: 0 8px 25px rgba(45, 90, 39, 0.3) !important;
 }
-
-.filter-btn.active i, 
-.filter-btn.active .count-badge {
-    color: #ffffff !important;
-}
-
-.filter-btn.active .count-badge {
-    background: rgba(255, 255, 255, 0.25);
-}
-
-/* 6. HOVER EFFECT (Desktop) */
-@media (hover: hover) {
-    .filter-btn:hover:not(.active) {
-        background: rgba(255, 255, 255, 0.9);
-        border-color: #2d5a27;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
-    }
-}
-
 
 .offline-banner {
     background-color: #fff3e0; /* Zacht oranje/amber */
@@ -1039,7 +975,16 @@ button[data-location="all"] {
     to { transform: translateY(0); }
 }
 
+.search-input {
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+}
 
+/* Verwijder het standaard kruisje in Chrome/Safari als je dat mooier vindt */
+.search-input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+}
 
 /* --- GLOBALE FIXES --- */
 iframe { max-width: 100% !important; }
@@ -1577,91 +1522,87 @@ body {
     color: #cbd5c1 !important; /* Saliegroen */
 }
 
-/* --- BASIS CONTAINER --- */
-.fab-map-container {
-    position: fixed;
-    bottom: 30px; 
-    right: 30px;  
-    z-index: 9999; 
-    font-family: 'Segoe UI', Roboto, sans-serif;
-}
 
-/* --- DE RONDE KNOP (SUMMARY) --- */
-.fab-map-details summary {
-    list-style: none;
-    background-color: #2d5a27 !important; /* MATCH: Jouw olijfgroen */
-    color: white !important;
-    width: 60px; 
-    height: 60px;
-    border-radius: 50%; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.8rem; 
-    cursor: pointer;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3); 
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-    border: 2px solid white; /* Wit randje voor contrast op de kaart */
-    outline: none; /* Verwijder blauwe focus-rand */
-}
-
-.fab-map-details summary::-webkit-details-marker {
-    display: none;
-}
-
-/* Hover effect: Knop komt omhoog en wordt iets lichter */
-.fab-map-details summary:hover {
-    transform: scale(1.1) translateY(-5px);
-    background-color: #386f31 !important; /* Iets lichter groen bij hover */
-}
-
-/* --- ALS DE KAART OPEN IS --- */
-.fab-map-details[open] summary {
-    background-color: #d32f2f !important; /* Rood voor sluiten */
-    transform: rotate(45deg); /* Geeft een leuk visueel effect */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-
-/* --- DE KAART-CONTAINER (CONTENT) --- */
-.fab-map-content {
-    position: absolute;
-    bottom: 80px; 
-    right: 0;
-    width: 550px; 
-    height: 500px;
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    animation: popIn 0.4s ease-out;
-    border: 2px solid #2d5a27; /* Rand matcht ook met olijfgroen */
-}
-
-/* Mobiele aanpassing */
-@media (max-width: 600px) {
+    /* De container die alles rechtsonder vastzet */
     .fab-map-container {
-        bottom: 20px;
-        right: 20px;
+        position: fixed;
+        bottom: 30px; /* Afstand van de onderkant */
+        right: 30px;  /* Afstand van de rechterkant */
+        z-index: 9999; /* Zorgt dat het BOVENOP alles zweeft */
+        font-family: 'Segoe UI', Roboto, sans-serif;
     }
+
+    /* De styling van de ronde knop (Summary) */
+    .fab-map-details summary {
+        list-style: none;
+        background-color: #556b2f; /* Olijfgroen */
+        color: white;
+        width: 60px; /* Perfect ronde knop */
+        height: 60px;
+        border-radius: 50%; /* Maakt het rond */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem; /* Groot icoon */
+        cursor: pointer;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.3); /* Diepe schaduw voor zweef-effect */
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Elastisch effect */
+        border: 2px solid white; /* Subtiel randje voor contrast */
+    }
+
+    /* Verwijder standaard pijltje van de browser */
+    .fab-map-details summary::-webkit-details-marker {
+        display: none;
+    }
+
+    /* Hover effect: Knop komt iets omhoog */
+    .fab-map-details summary:hover {
+        transform: scale(1.1) translateY(-5px);
+        background-color: #445624; /* Iets donkerder olijfgroen */
+    }
+
+    /* Styling voor als de kaart OPEN is */
+    .fab-map-details[open] summary {
+        background-color: #d32f2f; /* Verander kleur naar rood (voor sluiten) */
+        transform: rotate(45deg); /* Draai het icoon (bijv. van 📍 naar een X) */
+        color: white;
+    }
+
+    /* De container voor de kaart die tevoorschijn komt */
     .fab-map-content {
-        width: calc(100vw - 40px); /* Maximaal schermvullend minus marges */
-        height: 70vh; /* Iets groter op mobiel voor beter gebruik */
+        position: absolute;
+        bottom: 80px; /* Komt BOVEN de knop te staan */
         right: 0;
+        width: 550px; /* Compacte breedte op desktop */
+        height: 500px;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        animation: popIn 0.4s ease-out;
+        border: 2px solid #556b2f;
     }
-}
 
-/* Animatie */
-@keyframes popIn {
-    0% { opacity: 0; transform: scale(0.5) translateY(20px); }
-    100% { opacity: 1; transform: scale(1) translateY(0); }
-}
+    /* Mobiele aanpassing: Maak de kaart breder op telefoons */
+    @media (max-width: 600px) {
+        .fab-map-content {
+            width: 300px;
+            right: -10px; /* Iets meer gecentreerd op klein scherm */
+        }
+    }
 
-.fab-map-content iframe {
-    display: block;
-    width: 100%;
-    height: 100%;
-    border: 0;
-}
+    /* Animatie wanneer de kaart opent */
+    @keyframes popIn {
+        0% { opacity: 0; transform: scale(0.5) translateY(20px); }
+        100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .fab-map-content iframe {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
 
 /* --- DE DEFINITIEVE CLEAN COPY BUTTON --- */
 
