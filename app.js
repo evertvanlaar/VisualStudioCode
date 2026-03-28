@@ -175,15 +175,11 @@ function renderBusinesses(data) {
         return;
     }
 
-    // Veilig de wishlist ophalen
+    // Wishlist ophalen
     let wishlist = [];
     try {
-        if (typeof getWishlist === 'function') {
-            wishlist = getWishlist();
-        } else {
-            const saved = localStorage.getItem('kalanera_wishlist');
-            wishlist = saved ? JSON.parse(saved) : [];
-        }
+        const saved = localStorage.getItem('kalanera_wishlist');
+        wishlist = saved ? JSON.parse(saved) : [];
     } catch (e) { wishlist = []; }
 
     const grouped = data.reduce((acc, biz) => {
@@ -203,6 +199,7 @@ function renderBusinesses(data) {
         grid.className = 'business-grid';
         
         grouped[category].sort((a, b) => (a.Name || "").localeCompare(b.Name || "")).forEach(biz => {
+            // URLs voorbereiden
             const rawUrl = biz.Website || '';
             const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
             const displayUrl = rawUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
@@ -215,14 +212,14 @@ function renderBusinesses(data) {
             const isFavorite = wishlist.includes(biz.Name);
             const safeName = biz.Name.replace(/'/g, "\\'");
 
-            // --- NIEUWE LOGICA VOOR AFBEELDING ---
-            // We bouwen de preview-div alleen op als er een PhotoURL is.
+            // --- AFBEELDING LOGICA ---
+            // We tonen de preview ALLEEN als PhotoURL echt een waarde heeft
             let previewHtml = '';
             if (biz.PhotoURL && biz.PhotoURL.trim() !== '') {
                 previewHtml = `
                 <div class="mini-preview">
                     <a href="${cleanUrl}" target="_blank">
-                        <img src="${biz.PhotoURL}" onerror="this.src='https://via.placeholder.com/180x130?text=Error'">
+                        <img src="${biz.PhotoURL}" alt="${biz.Name}" onerror="this.src='https://via.placeholder.com/180x130?text=No+Image'">
                     </a>
                     <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeName}', this)">
                         <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
@@ -264,14 +261,14 @@ function renderBusinesses(data) {
         container.appendChild(grid);
     });
 
-    // Sync info
+    // Laatste synchronisatie info
     const lastSync = localStorage.getItem('kalanera_last_sync') || 'Onbekend';
     const syncDiv = document.createElement('div');
     syncDiv.className = 'sync-info';
     syncDiv.innerHTML = `<small style="display:block; text-align:center; margin-top:20px; color:var(--muted); font-size:11px;">Last sync: ${lastSync}</small>`;
     container.appendChild(syncDiv);
     
-    // Animatie
+    // Kaarten laten inklappen/animeren
     setTimeout(() => {
         document.querySelectorAll('.biz-card-mini').forEach((card, index) => {
             setTimeout(() => { card.classList.add('show'); }, index * 30);
