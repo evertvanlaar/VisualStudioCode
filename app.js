@@ -176,6 +176,25 @@ function applyFilters() {
     renderBusinesses(filtered);
 }
 
+document.getElementById('search-input').addEventListener('input', function(e) {
+    // Als het veld leeg is (door het kruisje of handmatig wissen)
+    if (this.value === "") {
+        applyFilters(); // Zorg dat alle resultaten direct weer verschijnen
+    }
+});
+
+const searchInput = document.getElementById('search-input');
+
+searchInput.addEventListener('click', function(e) {
+    // We berekenen of de klik aan de rechterkant van het veld was (waar het kruisje staat)
+    // 40 pixels van de rechterkant is ongeveer de plek van het icoontje
+    if (e.offsetX > (this.offsetWidth - 40)) {
+        this.value = '';        // Maak het veld leeg
+        applyFilters();         // Ververs de lijst met bedrijven direct
+        this.focus();           // Houd de cursor in het veld
+    }
+});
+
 // --- DE HOOFDLIJST RENDEREN ---
 
 function renderBusinesses(data) {
