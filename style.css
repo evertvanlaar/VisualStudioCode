@@ -135,11 +135,58 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     }
 }
 
-/* --- ZOEKBALK & FILTERS --- */
-.search-container { position: relative; margin-bottom: 25px; max-width: 500px; margin-inline: auto; }
-.search-input { width: 100%; padding: 12px 45px; border-radius: 50px; border: 1px solid var(--border); outline: none; transition: border-color 0.3s; }
-.search-input:focus { border-color: var(--primary-olive); box-shadow: 0 0 0 3px rgba(74, 108, 74, 0.1); }
-.search-icon { position: absolute; left: 18px; top: 15px; color: #94a3b8; }
+/* --- DE NIEUWE SOFT SEARCHBAR --- */
+.search-container { 
+    position: relative; 
+    margin-bottom: 25px; 
+    max-width: 500px; 
+    margin-inline: auto; 
+}
+
+.search-input { 
+    width: 100%; 
+    padding: 12px 15px 12px 45px !important; /* Ruimte links voor icoon */
+    
+    /* De Soft Look */
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    
+    border: 1px solid rgba(226, 232, 240, 0.8) !important; 
+    border-radius: 14px !important; /* Matcht met je buttons */
+    
+    font-size: 14px !important;
+    color: #475569;
+    outline: none !important; 
+    appearance: none;
+    -webkit-appearance: none;
+    
+    transition: all 0.3s ease; 
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+/* Focus effect: subtiele olijfgroene gloed */
+.search-input:focus { 
+    background: #ffffff !important;
+    border-color: var(--primary-olive) !important; 
+    box-shadow: 0 4px 15px rgba(45, 90, 39, 0.1) !important; 
+}
+
+/* Het Icoontje */
+.search-icon { 
+    position: absolute; 
+    left: 18px; 
+    top: 50% !important; 
+    transform: translateY(-50%) !important; 
+    
+    /* Kleur en Zichtbaarheid */
+    color: #2d5a27 !important; /* Dwing de olijfgroene kleur af */
+    font-size: 16px !important;
+    z-index: 10 !important;    /* Zorgt dat hij Bovenop de input ligt */
+    
+    pointer-events: none;      /* Zorgt dat je door het icoon heen kunt klikken */
+    display: block !important; /* Zorgt dat hij niet op 'none' staat */
+}
 
 /* --- BASIS STYLING (DESKTOP) --- */
 .filter-container {
@@ -179,44 +226,48 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 /* --- DE NIEUWE SOFT FILTER & ACTIE BUTTONS --- */
 .filter-btn, .add-biz-btn {
     white-space: nowrap;
-    padding: 8px 18px !important;
-    border-radius: 12px !important; /* Iets minder rond, meer 'app' stijl */
+    padding: 8px 16px !important;
+    border-radius: 12px !important;
     font-size: 13px !important;
     font-weight: 700 !important;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
     border: 1px solid rgba(226, 232, 240, 0.8) !important;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    text-decoration: none;
 }
 
-/* De standaard 'niet-actieve' knoppen (Soft Glassy) */
+/* 1. De Standaard 'niet-actieve' knoppen */
 .filter-btn {
     background: rgba(241, 245, 249, 0.7) !important;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     color: #64748b !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
 }
 
-/* De Actieve Filter OF de Add Business knop (Solid Soft Look) */
+/* 2. De ACTIEVE knop (Weg met het harde groen!) */
+/* Dit zorgt dat 'All' en de geselecteerde filters zacht olijfgroen worden */
 .filter-btn.active {
-    background-color: #2d5a27 !important; /* Jouw olijfgroen */
-    border-color: #24481f !important;
-    color: white !important;
-    box-shadow: 0 4px 12px rgba(45, 90, 39, 0.2);
+    background: rgba(45, 90, 39, 0.12) !important; /* Zachte olijf-waas */
+    color: #2d5a27 !important;                     /* Donkergroene tekst */
+    border: 1px solid rgba(45, 90, 39, 0.3) !important;
+    box-shadow: 0 4px 10px rgba(45, 90, 39, 0.08) !important;
 }
 
-/* Hover effect voor niet-actieve knoppen */
+/* 3. Hover effecten */
 .filter-btn:hover:not(.active) {
-    background-color: rgba(226, 232, 240, 0.9) !important;
+    background: rgba(226, 232, 240, 0.9) !important;
     transform: translateY(-1px);
 }
 
-/* Specifieke fix voor locatie knoppen (geen lagere opacity meer nodig) */
-#location-buttons .filter-btn {
-    font-size: 13px !important;
-    /* We houden de padding gelijk voor een rustig beeld */
+/* Icoontjes in de buttons */
+.filter-btn i {
+    font-size: 14px;
+    color: inherit; /* Neemt kleur van tekst over (dus groen als actief) */
+    opacity: 0.9;
 }
 
 /* --- CATEGORIE KOPPEN (SOFT GLASSY EDITIE) --- */
@@ -781,11 +832,6 @@ form label {
     color: var(--primary-olive) !important; /* Het olijfgroene accent */
 }
 
-
-#location-buttons .filter-btn.active {
-    opacity: 1;
-    background-color: var(--primary-olive-dark) !important;
-}
 
 #location-buttons {
     margin-top: 5px;
