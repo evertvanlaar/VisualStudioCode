@@ -209,27 +209,36 @@ function renderBusinesses(data) {
             const catColor = getColor(category);
             
             const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' Kala Nera reviews')}`;
-            const mapsUrl = biz.GoogleMapsLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' Kala Nera')}`;
+            const mapsUrl = biz.GoogleMapsLink || `https://www.google.com/maps/search/${encodeURIComponent(biz.Name + ' Kala Nera')}`;
             const emailHtml = biz.Email ? `<a href="mailto:${biz.Email}" class="btn-icon email-btn" title="E-mail"><i class="fa fa-envelope"></i></a>` : '';
 
             const isFavorite = wishlist.includes(biz.Name);
-            // let finalImageUrl = biz.PhotoURL || (rawUrl ? `https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130` : `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`);
-            // Gebruik de PhotoURL als die er is, anders een nette placeholder met de naam
-            let finalImageUrl = biz.PhotoURL || `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`;
+            const safeName = biz.Name.replace(/'/g, "\\'");
+
+            // --- NIEUWE LOGICA VOOR AFBEELDING ---
+            // We bouwen de preview-div alleen op als er een PhotoURL is.
+            let previewHtml = '';
+            if (biz.PhotoURL && biz.PhotoURL.trim() !== '') {
+                previewHtml = `
+                <div class="mini-preview">
+                    <a href="${cleanUrl}" target="_blank">
+                        <img src="${biz.PhotoURL}" onerror="this.src='https://via.placeholder.com/180x130?text=Error'">
+                    </a>
+                    <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeName}', this)">
+                        <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                    </button>
+                </div>`;
+            }
 
             grid.innerHTML += `
             <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
-                <div class="mini-preview">
-                    <a href="${cleanUrl}" target="_blank">
-                        <img src="${finalImageUrl}" onerror="this.src='https://via.placeholder.com/180x130?text=No+Photo'">
-                    </a>
-                    <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${biz.Name.replace(/'/g, "\\'")}', this)">
-                        <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
-                    </button>
-                </div>
+                ${previewHtml}
                 <div class="mini-content">
                     <div class="mini-row-top">
-                        <h2 class="biz-name">${biz.Name}</h2>
+                        <h2 class="biz-name">
+                            ${biz.Name}
+                            ${!previewHtml ? `<button class="wishlist-btn-inline ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeName}', this)" style="background:none; border:none; cursor:pointer; margin-left:8px; color:${isFavorite ? '#e74c3c' : 'inherit'};"><i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i></button>` : ''}
+                        </h2>
                         <span class="biz-location"><i class="fa fa-map-marker-alt"></i> ${biz.Location || 'Kala Nera'}</span>
                     </div>
                     <div class="mini-row-sub">
