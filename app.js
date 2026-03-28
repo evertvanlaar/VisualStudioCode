@@ -210,7 +210,7 @@ function renderBusinesses(data) {
             
             const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' Kala Nera reviews')}`;
             const mapsUrl = biz.GoogleMapsLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' Kala Nera')}`;
-            const emailHtml = biz.Email ? `<a href="mailto:${biz.Email}" class="btn-icon email-btn" title="E-mail"><i class="fa fa-envelope"></i></a>` : '';
+            const emailHtml = biz.Email ? `<a href="mailto:${biz.Email}" class="btn-icon mail-btn" title="E-mail"><i class="fa fa-envelope"></i></a>` : '';
 
             const isFavorite = wishlist.includes(biz.Name);
             // let finalImageUrl = biz.PhotoURL || (rawUrl ? `https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130` : `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`);
@@ -218,39 +218,38 @@ function renderBusinesses(data) {
             let finalImageUrl = biz.PhotoURL || `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`;
 
             grid.innerHTML += `
-            <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
-                <div class="mini-preview">
-                    <a href="${cleanUrl}" target="_blank">
-                        <img src="${finalImageUrl}" onerror="this.src='https://via.placeholder.com/180x130?text=No+Photo'">
-                    </a>
-                    <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${biz.Name.replace(/'/g, "\\'")}', this)">
-                        <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
-                    </button>
-                </div>
-                <div class="mini-content">
-                    <div class="mini-row-top">
-                        <h2 class="biz-name">${biz.Name}</h2>
-                        <span class="biz-location"><i class="fa fa-map-marker-alt"></i> ${biz.Location || 'Kala Nera'}</span>
-                    </div>
-                    <div class="mini-row-sub">
-                        <a href="${cleanUrl}" target="_blank" class="mini-web-link">
-                            <i class="fa fa-external-link"></i> ${displayUrl || 'Visit Website'}
+                <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
+                    <div class="mini-preview">
+                        <a href="${cleanUrl}" target="_blank">
+                            <img src="${finalImageUrl}" onerror="this.src='https://via.placeholder.com/180x130?text=No+Photo'">
                         </a>
+                        <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${biz.Name.replace(/'/g, "\\'")}', this)">
+                            <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                        </button>
                     </div>
-                    <div class="mini-actions">
-                        <div class="phone-group">
-                            <a href="tel:${biz.Phone}" class="btn-icon"><i class="fa fa-phone"></i></a>
-                            <span class="phone-txt">${biz.Phone || '-'}</span>
-                            <button class="copy-btn" onclick="copyToClipboard('${biz.Phone}', this)"><i class="fa fa-copy"></i></button>
+                    <div class="mini-content">
+                        <div class="mini-row-top">
+                            <h2 class="biz-name">${biz.Name}</h2>
+                            <span class="biz-location"><i class="fa fa-map-marker-alt"></i> ${biz.Location || 'Kato Gatzea'}</span>
                         </div>
-                        <div class="action-right">
-                            ${emailHtml}
-                            <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn"><i class="fa fa-star"></i></a>
-                            <a href="${mapsUrl}" target="_blank" class="btn-icon nav-btn-action"><i class="fa fa-location-dot"></i></a>
+                        
+                        <div class="mini-actions">
+                            <div class="phone-group">
+                                <a href="tel:${biz.Phone}" class="btn-icon phone-btn"><i class="fa fa-phone"></i></a>
+                                <span class="phone-txt">${biz.Phone || '-'}</span>
+                                <button class="btn-icon copy-btn" onclick="copyToClipboard('${biz.Phone}', this)"><i class="fa fa-copy"></i></button>
+                            </div>
+                            <div class="action-right">
+                                <a href="${cleanUrl}" target="_blank" class="btn-icon web-btn"><i class="fa fa-globe"></i></a>
+                                
+                                ${emailHtml}
+                                
+                                <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn"><i class="fa fa-star"></i></a>
+                                <a href="${mapsUrl}" target="_blank" class="btn-icon nav-btn-action"><i class="fa fa-location-dot"></i></a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>`;
+                </div>`;
         });
         container.appendChild(grid);
     });

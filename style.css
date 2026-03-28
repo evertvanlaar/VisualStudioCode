@@ -269,35 +269,100 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     align-self: flex-start;
 }
 
-/* --- ACTIONS & ICONS --- */
-.mini-actions { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
-.phone-group { display: flex; align-items: center; gap: 8px; background: var(--bg); padding: 4px 10px; border-radius: 8px; border: 1px solid #f1f5f9; }
-.phone-txt { font-size: 12px; font-weight: 600; }
+/* --- ACTIONS & ICONS (DE DEFINITIEVE SOFT-COLOR EDITIE) --- */
+.mini-actions { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-top: auto; 
+    padding-top: 8px;
+}
 
-.action-right { display: flex; gap: 8px; }
+/* 1. De Linkergroep (Telefoon/Kopiëren): blijft rustig maar mét soft kleur */
+.phone-group { 
+    display: flex; 
+    align-items: center; 
+    gap: 6px; 
+    background: #f1f5f9; /* UI grijs */
+    padding: 2px 8px; 
+    border-radius: 20px; 
+    border: 1px solid #e2e8f0; 
+}
 
+/* Maak knoppen BINNEN de telefoon-groep iets kleiner en minder zwevend */
+.phone-group .btn-icon {
+    width: 28px;
+    height: 28px;
+    box-shadow: none; /* Geen extra schaduw in de grijze bubbel */
+    font-size: 13px;
+}
+
+/* 2. De Rechtergroep (Interactie): zwevend en kleurrijk */
+.action-right { 
+    display: flex; 
+    gap: 8px; 
+}
+
+/* Basis voor de zwevende ronde knoppen rechts */
+.action-right .btn-icon {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.08); /* De zwevende schaduw */
+}
+
+/* --- DE ALGEMENE KNOP STYLING (VORM & HOVER) --- */
 .btn-icon { 
-    width: 32px; height: 32px; 
-    background: var(--pill); 
+    width: 34px; 
+    height: 34px; 
     border-radius: 50%; 
-    display: flex; align-items: center; justify-content: center; 
-    color: var(--muted); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
     text-decoration: none; 
-    font-size: 14px; 
     transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
 }
 
-.btn-icon:hover { 
-    background-color: var(--soft-olive); 
-    color: var(--primary-olive); 
+/* Hover effect voor de zwevende knoppen */
+.action-right .btn-icon:hover { 
     transform: translateY(-2px); 
+    box-shadow: 0 5px 12px rgba(0,0,0,0.12);
 }
 
-.review-btn { color: #f59e0b; background: #fffbeb; }
-.review-btn:hover { background-color: #f59e0b !important; color: white !important; }
+/* Hover effect voor de platte knoppen in de grijze balk */
+.phone-group .btn-icon:hover {
+    transform: scale(1.05); /* Iets groter ipv zweven */
+}
 
-.copy-btn { background: none; border: none; cursor: pointer; color: #94a3b8; font-size: 13px; transition: 0.2s; }
-.copy-btn:hover { color: var(--primary-olive); }
+
+/* --- DE SOFT KLEUREN-LOGICA (GEBASEERD OP DOEL-SCREENSHOT) --- */
+/* ZORG DAT JE DEZE KLASSES IN JE HTML/JS KOPPELT! */
+
+/* Telefoon (Groen) - links */
+.btn-icon.phone-btn   { color: #4caf50 !important; background-color: rgba(76, 175, 80, 0.1) !important; }
+
+/* Kopieer/Gray (Grijsblauw) - links */
+.btn-icon.copy-btn    { color: #78909c !important; background-color: rgba(120, 144, 156, 0.1) !important; font-size: 14px; }
+
+/* Website/Wereldbol (Blauw) - rechts */
+.btn-icon.web-btn     { color: #42a5f5 !important; background-color: rgba(66, 165, 245, 0.1) !important; }
+
+/* E-mail (Paars) - rechts */
+.btn-icon.mail-btn    { color: #ab47bc !important; background-color: rgba(171, 71, 188, 0.1) !important; }
+
+/* Review/Ster (Geel) - rechts */
+.btn-icon.review-btn  { color: #ffca28 !important; background-color: rgba(255, 202, 40, 0.1) !important; }
+
+/* Navigatie/Locatie (Rood/Blauw) - rechts */
+/* In je doel-screenshot is navigatie blauw, in je oorspronkelijke visie was de kleur paars.
+   Ik heb de paarse soft-kleur gekozen voor meer contrast. Pas hieronder de HEX aan indien gewenst. */
+.btn-icon.nav-btn-action { color: #ef5350 !important; background-color: rgba(239, 83, 80, 0.1) !important; }
+
+
+/* Mobiele fix voor kleine schermen */
+@media screen and (max-width: 400px) {
+    .action-right { gap: 4px; }
+    .btn-icon { width: 30px; height: 30px; font-size: 12px; }
+}
 
 /* --- BUTTONS & FORMS --- */
 .add-business-container { text-align: center; margin-bottom: 40px; }
