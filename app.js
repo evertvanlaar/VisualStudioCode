@@ -217,39 +217,46 @@ function renderBusinesses(data) {
             // Gebruik de PhotoURL als die er is, anders een nette placeholder met de naam
             let finalImageUrl = biz.PhotoURL || `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`;
 
-            grid.innerHTML += `
-                <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
-                    <div class="mini-preview">
-                        <a href="${cleanUrl}" target="_blank">
-                            <img src="${finalImageUrl}" onerror="this.src='https://via.placeholder.com/180x130?text=No+Photo'">
-                        </a>
-                        <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${biz.Name.replace(/'/g, "\\'")}', this)">
-                            <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
-                        </button>
-                    </div>
-                    <div class="mini-content">
-                        <div class="mini-row-top">
-                            <h2 class="biz-name">${biz.Name}</h2>
-                            <span class="biz-location"><i class="fa fa-map-marker-alt"></i> ${biz.Location || 'Kato Gatzea'}</span>
-                        </div>
-                        
-                        <div class="mini-actions">
-                            <div class="phone-group">
-                                <a href="tel:${biz.Phone}" class="btn-icon phone-btn"><i class="fa fa-phone"></i></a>
-                                <span class="phone-txt">${biz.Phone || '-'}</span>
-                                <button class="btn-icon copy-btn" onclick="copyToClipboard('${biz.Phone}', this)"><i class="fa fa-copy"></i></button>
-                            </div>
-                            <div class="action-right">
-                                <a href="${cleanUrl}" target="_blank" class="btn-icon web-btn"><i class="fa fa-globe"></i></a>
-                                
-                                ${emailHtml}
-                                
-                                <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn"><i class="fa fa-star"></i></a>
-                                <a href="${mapsUrl}" target="_blank" class="btn-icon nav-btn-action"><i class="fa fa-location-dot"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
+// 1. Maak de variabele aan (boven grid.innerHTML)
+const webHtml = biz.Website && biz.Website.trim() !== "" 
+    ? `<a href="${cleanUrl}" target="_blank" class="btn-icon web-btn"><i class="fa fa-globe"></i></a>` 
+    : '';
+
+// 2. Gebruik de variabele in de grid
+grid.innerHTML += `
+    <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
+        <div class="mini-preview">
+            <a href="${cleanUrl}" target="_blank">
+                <img src="${finalImageUrl}" onerror="this.src='https://via.placeholder.com/180x130?text=No+Photo'">
+            </a>
+            <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${biz.Name.replace(/'/g, "\\'")}', this)">
+                <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+            </button>
+        </div>
+        <div class="mini-content">
+            <div class="mini-row-top">
+                <h2 class="biz-name">${biz.Name}</h2>
+                <span class="biz-location"><i class="fa fa-map-marker-alt"></i> ${biz.Location || 'Kato Gatzea'}</span>
+            </div>
+            
+            <div class="mini-actions">
+                ${(biz.Phone && biz.Phone.trim() !== "" && biz.Phone !== "-") 
+                    ? `<div class="phone-group">
+                            <a href="tel:${biz.Phone}" class="btn-icon phone-btn"><i class="fa fa-phone"></i></a>
+                            <span class="phone-txt">${biz.Phone}</span>
+                            <button class="btn-icon copy-btn" onclick="copyToClipboard('${biz.Phone}', this)"><i class="fa fa-copy"></i></button>
+                       </div>` 
+                    : `<div class="phone-group" style="visibility: hidden;"></div>`
+                }
+                <div class="action-right">
+                    ${webHtml}
+                    ${emailHtml}
+                    <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn"><i class="fa fa-star"></i></a>
+                    <a href="${mapsUrl}" target="_blank" class="btn-icon nav-btn-action"><i class="fa fa-location-dot"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>`;
         });
         container.appendChild(grid);
     });
