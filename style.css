@@ -18,7 +18,7 @@ html, body {
 
 /* De container waar je kaarten in staan moet scrollen toestaan */
 #business-list {
-    display: block;
+    /* display: block; */
     width: 100%;
     overflow: visible;
 }
@@ -360,6 +360,11 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 
 .mini-preview { width: 100px; height: 75px; flex-shrink: 0; border-radius: 8px; overflow: hidden; border: 1px solid #f1f5f9; }
 .mini-preview img { width: 100%; height: 100%; object-fit: cover; }
+/* Zorg dat de container de knop binnenboord houdt */
+.mini-preview {
+    position: relative;
+    overflow: hidden;
+}
 
 .mini-content { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
 
@@ -709,57 +714,7 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
         display: none !important;
     }
 }
-    /* 3. Business Grid naar 1 kolom */
-    .business-grid {
-        display: flex !important;
-        flex-direction: column !important;
-        width: 100% !important;
-        gap: 15px !important;
-        padding: 0 !important;
-    }
 
-    /* 4. Kaartjes horizontaal en compact */
-    .biz-card-mini {
-        display: flex !important;
-        flex-direction: row !important;
-        width: 100% !important;
-        height: auto !important;
-        padding: 10px !important;
-        gap: 12px !important;
-        box-sizing: border-box !important;
-        margin-bottom: 5px !important;
-        opacity: 1 !important; /* Forceer zichtbaarheid */
-        transform: none !important; /* Forceer positie */
-    }
-
-    .mini-preview {
-        width: 85px !important;
-        height: 65px !important;
-        flex-shrink: 0 !important;
-        border-radius: 6px !important;
-    }
-
-    .mini-content {
-        flex: 1 !important;
-        position: relative !important; /* Voeg dit toe als extra ankerpunt */
-        display: flex !important;
-        flex-direction: column !important;
-        min-width: 0 !important;
-    }
-
-
-
-    .mini-actions {
-        display: flex !important;
-        flex-direction: row !important;
-        justify-content: space-between !important;
-        width: 100% !important;
-    }
-
-    .phone-group { padding: 2px 6px !important; }
-    .phone-txt { font-size: 11px !important; }
-    .btn-icon { width: 28px !important; height: 28px !important; font-size: 12px !important; }
-}
 
 /* --- GLOBALE FIXES (BUITEN MEDIA QUERY) --- */
 iframe { max-width: 100% !important; }
@@ -767,8 +722,8 @@ iframe { max-width: 100% !important; }
 /* Animatie (Alleen voor desktop of als je JS gebruikt die de 'show' class toevoegt) */
 @media screen and (min-width: 769px) {
     .biz-card-mini { 
-        opacity: 0; 
-        transform: translateY(15px); 
+        opacity: 1 !important;
+        transform: none !important;
         transition: all 0.3s ease;
     }
     .biz-card-mini.show { 
@@ -1176,11 +1131,6 @@ body.is-offline .map-section {
     .weather-mini span { font-size: 0.8rem; }
 }
 
-/* Zorg dat de container de knop binnenboord houdt */
-.mini-preview {
-    position: relative;
-    overflow: hidden;
-}
 
 /* De knop zelf */
 .wishlist-btn {
@@ -1405,104 +1355,6 @@ body {
     border-color: var(--border-color, #eee);
 }
 
-/* --- ESTHETISCHE OLIVE & VANILLA DARK MODE --- */
-[data-theme="dark"] {
-    --bg-color: #1a221a;           /* Diep mosgroen */
-    --card-bg: #242d24;            /* Iets lichtere olijf */
-    --text-main: #f3e5ab;          /* Zacht vanillegeel (Titels) */
-    --text-muted: #cbd5c1;         /* Gedempt saliegroen (Tekst) */
-    --accent-gold: #d4af37;        /* Luxe Goud (Iconen) */
-    --border-soft: #2d3a2d;        /* Subtiele groene lijnen */
-}
-
-/* De Business Card (Eindelijk in balans) */
-[data-theme="dark"] .biz-card-mini {
-    background: var(--card-bg) !important;
-    border: 1px solid var(--border-soft) !important;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-}
-
-/* De Naam en gegevens */
-[data-theme="dark"] .biz-name {
-    color: var(--text-main) !important;
-    font-weight: 700;
-}
-
-[data-theme="dark"] .phone-group {
-    background: #2d382d !important;
-    border-left: 3px solid var(--accent-gold) !important; /* Gouden accent */
-    border-radius: 4px;
-}
-
-[data-theme="dark"] .phone-txt {
-    color: var(--text-main) !important;
-}
-
-/* De knoppen binnen de kaart */
-[data-theme="dark"] .btn-icon {
-    background: #2d382d !important;
-    color: var(--accent-gold) !important;
-    border: 1px solid var(--border-soft);
-}
-
-/* Categorie Headers */
-[data-theme="dark"] .category-section-header {
-    background: transparent !important;
-    color: var(--text-main) !important;
-    border-bottom: 2px solid var(--primary-olive);
-}
-
-/* --- LUXE DARK MODE BALANS --- */
-[data-theme="dark"] .biz-card-mini {
-    background: #242d24 !important; /* Rustgevend olijfgroen */
-    border: 1px solid rgba(243, 229, 171, 0.1) !important;
-}
-
-[data-theme="dark"] .biz-name {
-    color: #f3e5ab !important; /* Zacht vanillegeel */
-    font-weight: 700;
-}
-
-[data-theme="dark"] .phone-group {
-    background: rgba(0,0,0,0.2) !important;
-    border-left: 3px solid #d4af37 !important; /* Goud accent */
-}
-
-[data-theme="dark"] .phone-txt {
-    color: #f3e5ab !important;
-}
-
-/* --- LUXE DARK MODE BALANS VOOR DE KAARTJES --- */
-[data-theme="dark"] .biz-card-mini {
-    background: #242d24 !important; /* Olijfgroen */
-    border: 1px solid rgba(243, 229, 171, 0.1) !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-[data-theme="dark"] .biz-card-mini:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-}
-
-/* De Placeholder afbeelding styling */
-[data-theme="dark"] .mini-preview img {
-    filter: sepia(20%) contrast(90%); /* Geeft placeholders een warmere 'vanille' tint */
-    border-bottom: 1px solid rgba(243, 229, 171, 0.05);
-}
-
-/* Tekstkleuren in balans */
-[data-theme="dark"] .biz-name {
-    color: #f3e5ab !important; /* Vanillegeel */
-}
-
-[data-theme="dark"] .phone-txt {
-    color: #f3e5ab !important;
-}
-
-[data-theme="dark"] .biz-location {
-    color: #cbd5c1 !important; /* Saliegroen */
-}
 
 .map-fab-fixed {
     position: fixed !important; /* Forceer de positie */
@@ -1531,4 +1383,220 @@ body {
 
 .map-fab-fixed:active {
     transform: scale(0.9);
+}
+
+
+@media screen and (min-width: 769px) {
+    /* 1. De Container waar de kaarten ÉCHT in zitten */
+    .business-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important; /* Dwingt 2 kolommen af */
+        gap: 20px !important;
+        margin-bottom: 30px !important;
+        width: 100% !important;
+    }
+
+    /* 2. De Header: Ruimte tussen kop en kaartjes verkleinen */
+    .category-section-header {
+        width: 100% !important;
+        margin: 20px 0 8px 0 !important; /* Boven 20px, Onder 8px (was 15) */
+        padding: 10px 18px !important;
+        box-sizing: border-box !important;
+    }
+
+    .category-section-header small {
+        background: rgba(255, 255, 255, 0.3) !important;
+        backdrop-filter: blur(5px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        color: #475569 !important;
+    }
+
+    /* 3. Het Kaartje: Terug naar de horizontale look */
+    .biz-card-mini {
+        display: flex !important;
+        flex-direction: row !important;
+        width: 100% !important;
+        height: 130px !important; /* Fixeert de hoogte voor strakke rijen */
+        padding: 12px !important;
+        gap: 12px !important;
+        background: white !important;
+        box-sizing: border-box !important;
+        /* Reset animaties die de boel verschuiven */
+        transform: none !important;
+        opacity: 1 !important;
+    }
+
+    /* Foto & Content balans herstellen */
+    .mini-preview {
+        width: 110px !important;
+        height: 106px !important;
+        flex-shrink: 0 !important;
+    }
+
+    .mini-content {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        min-width: 0 !important;
+    }
+
+    /* 4. Acties & Iconen: Desktop Optimalisatie */
+    .mini-actions {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: flex-end !important; 
+        align-items: center !important;
+        gap: 10px !important; 
+        width: 100% !important;
+        margin-top: auto !important;
+        padding-top: 5px !important;
+    }
+
+    .phone-group {
+        margin-right: auto !important; 
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        background: #f1f5f9 !important;
+        padding: 6px 14px !important; /* Ruime bubbel */
+        border-radius: 20px !important;
+        border: 1px solid #e2e8f0 !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* De rechtergroep met iconen (wereldbol, mail, etc.) */
+    .action-right {
+        display: flex !important;
+        gap: 8px !important;
+        margin: 0 !important;
+    }
+
+    /* --- UNIFORME KNOP STYLING --- */
+    .btn-icon {
+        width: 30px !important;
+        height: 30px !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
+        font-size: 13px !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.06) !important;
+        border: none !important;
+    }
+
+    /* Specifieke uitzondering: het telefoontje in de grijze bubbel iets kleiner */
+    .phone-group .btn-icon {
+        width: 26px !important;
+        height: 26px !important;
+        font-size: 11px !important;
+        box-shadow: none !important; /* Geen schaduw op schaduw */
+    }
+
+    /* Telefoonnummer: Groter, dikker en duidelijker */
+    .phone-txt {
+        font-size: 13.5px !important; /* Net dat beetje extra leesbaarheid */
+        font-weight: 700 !important;
+        color: #1e293b !important; /* Krachtig contrast */
+        margin-right: 4px !important;
+        white-space: nowrap !important;
+    }
+}
+
+
+@media screen and (max-width: 768px) {
+    /* 1. Layout & Grid: Volledige breedte gelijk aan de headers */
+    .business-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        width: 100% !important;
+        padding: 0 !important; 
+        margin: 0 !important;
+    }
+
+    .biz-card-mini {
+        width: 100% !important;
+        margin: 0 0 8px 0 !important;
+        padding: 10px !important;
+        display: flex !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 2. De Foto: Compact voor de knoppenrij */
+    .mini-preview {
+        width: 72px !important; 
+        height: 72px !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* 3. De Actiebalk: Ruimteverdeling */
+    .mini-actions {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        margin-top: auto !important;
+    }
+
+    /* 4. De Telefoongroep: Capsule-vorm van desktop */
+    .phone-group {
+        display: flex !important;
+        align-items: center !important;
+        background: #f8fafc !important; 
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 20px !important;
+        padding: 2px !important;
+        height: 32px !important;
+        gap: 4px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 5. De Knoppen: DE DESKTOP LOOK */
+    .btn-icon, .phone-group .btn-icon {
+        width: 28px !important;
+        height: 28px !important;
+        min-width: 28px !important;
+        max-width: 28px !important;
+        background: white !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+        font-size: 13px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Specifieke knopkleuren zoals op desktop */
+    
+    /* Telefoon: Zachter groen */
+    .phone-group .btn-icon:first-child {
+        color: #22c55e !important; 
+        border-color: #dcfce7 !important;
+    }
+
+    /* Copy icon: Grijzig/Neutraal */
+    .phone-group .btn-icon:last-child {
+        color: #94a3b8 !important;
+        background: #f8fafc !important;
+        box-shadow: none !important;
+    }
+
+    /* Rechter iconen: Kleuren van desktop overnemen */
+    .action-right .fa-globe { color: #3b82f6 !important; }       /* Blauw */
+    .action-right .fa-envelope { color: #a855f7 !important; }    /* Paars */
+    .action-right .fa-star { color: #eab308 !important; }        /* Goud */
+    .action-right .fa-map-marker-alt { color: #ef4444 !important; } /* Rood */
+
+    /* 6. Rechtergroep uitlijning */
+    .action-right {
+        display: flex !important;
+        gap: 6px !important; 
+    }
+
+    .phone-txt { display: none !important; }
 }
