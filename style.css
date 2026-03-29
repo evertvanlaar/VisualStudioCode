@@ -1173,13 +1173,67 @@ body.is-offline .map-section {
     transition: 0.2s;
 }
 
-/* Zorg dat de form-container een rustige achtergrond heeft die matcht met je thema */
+/* De Container */
 .form-container {
-    background-color: var(--card); /* Gebruikt je witte kaartkleur */
-    border: 1px solid var(--border); /* Gebruikt je standaard border-kleur */
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(45, 90, 39, 0.15) !important;
+    border-radius: 20px !important;
+    
+    /* Ruimte onderaan de container zelf */
+    padding: 15px 15px 40px 15px !important; 
+    overflow: visible !important; 
+    max-width: 700px;
+    margin: 20px auto;
+}
+
+/* De Iframe dwingen om niet te 'krimpen' */
+.form-container iframe {
+    /* We geven het formulier een harde minimale hoogte */
+    /* Gebruik een waarde die iets hoger is dan je formulier lang is */
+    min-height: 850px !important; 
+    width: 100% !important;
+    margin-bottom: 20px !important;
+}
+
+/* Subtiele styling voor de Tally velden (via de container) */
+.form-container iframe {
+    /* Dit helpt Tally om de fonts en kleuren beter over te nemen */
+    color-scheme: light;
+}
+
+/* De 'Back to Directory' knop een kleine hover-animatie geven */
+.filter-btn:hover {
+    background: rgba(45, 90, 39, 0.2) !important;
+    transform: translateX(-4px); /* Subtiel effect naar links */
+    transition: all 0.3s ease;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    background: rgba(45, 90, 39, 0.1) !important; /* De zachte olijf-waas */
+    color: #2d5a27 !important;                     /* Donkergroen */
+    border: 1px solid rgba(45, 90, 39, 0.2) !important;
+    border-radius: 20px;                            /* Matcht je hoofdknop */
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 6px rgba(45, 90, 39, 0.05);  /* Subtiele groene schaduw */
+}
+
+.back-btn:hover {
+    background: rgba(45, 90, 39, 0.15) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(45, 90, 39, 0.1); /* Iets meer schaduw bij hover */
+}
+
+.back-btn i {
+    font-size: 12px;
 }
 
 /* Verberg de kaart sectie op mobiel als we offline zijn */
