@@ -117,45 +117,58 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
 .hero-section {
     width: 100%;
     height: 65vh;
-    min-height: 450px;
-    background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('villageoverview.jpg');
+    min-height: 400px;
+    /* De gradient is nu subtieler (0.3 ipv 0.2) voor net dat beetje extra leesbaarheid */
+    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), url('villageoverview.jpg');
     background-size: cover;
     background-position: center;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+}
+
+.hero-overlay {
+    text-align: center;
+    padding: 0 20px;
+    max-width: 900px;
 }
 
 .hero-overlay h1 {
     font-size: 48px;
-    color: white;
+    color: white !important;
     font-weight: 800;
-    text-shadow: 2px 2px 15px rgba(0,0,0,0.6);
-}
-
-/* --- HERO SUBTEKST FIX --- */
-.hero-overlay {
-    text-align: center; /* Zorgt dat alles in de overlay (H1 + P) gecentreerd is */
-    padding: 0 20px;
+    /* Een schaduw die 'zacht' is (blur 15px) ipv een harde zwarte rand */
+    text-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
 }
 
 .hero-overlay p {
-    font-size: 18px;
-    color: white; /* Maakt de tekst wit */
-    font-weight: 400;
-    text-shadow: 1px 1px 8px rgba(0,0,0,0.6); /* Iets schaduw voor leesbaarheid op lichte foto's */
-    margin-top: 10px;
-    max-width: 600px; /* Voorkomt dat de tekst op hele brede schermen te ver uitrekt */
+    font-size: 1.2rem;
+    color: white !important;
+    font-weight: 500;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.7);
+    margin-top: 15px;
+    max-width: 600px;
     margin-left: auto;
     margin-right: auto;
 }
 
+/* --- MOBIEL --- */
 @media screen and (max-width: 768px) {
+    .hero-section {
+        height: 50vh; /* Iets minder hoog op mobiel voor betere balans */
+        min-height: 300px;
+    }
     .hero-overlay h1 {
-        font-size: 32px; /* Iets kleiner op mobiel zodat het past */
+        font-size: 32px !important;
+        line-height: 1.2;
     }
     .hero-overlay p {
-        font-size: 15px; /* Iets compacter op mobiel */
+        font-size: 16px !important;
+        max-width: 85%;
     }
 }
 
