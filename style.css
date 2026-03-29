@@ -653,45 +653,50 @@ h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px;
     .menu-toggle.active .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
     .menu-toggle.active .bar:nth-child(4) { display: none; }
 
-    /* 1. Zorg dat de lijstitems van het menu er goed uitzien */
-        .nav-links li {
-            width: 100% !important;
-            border-bottom: 1px solid #f0f0f0;
-        }
+/* 1. De container van de knop (witte balk, zoals de rest) */
+    ul#nav-list li#menu-install-item.mobile-only-item.show-install {
+        display: block !important;
+        width: 100% !important;
+        background: #ffffff !important; /* Forceer puur wit voor de hele balk */
+        padding: 5px 0 15px 0 !important;
+        border-top: 1px solid #f0f0f0;
+        margin: 0 !important;
+    }
 
-        /* 2. De specifieke fix voor de Install knop */
-        /* We gebruiken 'ul#nav-list' om sterker te zijn dan regel 1149 */
-        ul#nav-list li#menu-install-item.mobile-only-item.show-install {
-            display: block !important; /* Overschrijft regel 1149 */
-            background: #ffffff !important;
-            padding: 15px 0 !important;
-            border-top: 1px solid #eee;
-            border-bottom: none !important;
-        }
+    /* 2. De GLAZIGE install-knop zelf */
+    ul#nav-list li#menu-install-item a {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin: 0 20px !important;
+        padding: 12px !important;
+        
+        /* --- DIT IS DE GLASSY FIX --- */
+        /* De lichtgroene kleur met 90% doorschijnendheid */
+        background: rgba(240, 244, 240, 0.9) !important;
+        /* Een zeer subtiele lichtgroene rand voor de vorm */
+        border: 1px solid rgba(220, 230, 220, 0.7) !important;
+        /* Tekstkleur terug naar donkergroen, passend bij de 'Home' tekst */
+        color: #2d5a27 !important; 
+        border-radius: 8px !important;
+        /* --------------------------- */
+        
+        text-decoration: none !important;
+        font-weight: 700 !important;
+        font-size: 16px !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Subtiele diepte */
+    }
 
-        /* 3. De styling van de groene knop zelf */
-        ul#nav-list li#menu-install-item a {
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin: 0 20px !important;
-            padding: 12px !important;
-            background: #2d5a27 !important; /* Kala Nera Groen */
-            color: #ffffff !important;
-            border-radius: 6px !important;
-            font-weight: 700 !important;
-            text-decoration: none !important;
-        }
+    /* Icoontje in de knop ook donkergroen maken */
+    ul#nav-list li#menu-install-item a i {
+        color: #2d5a27 !important;
+    }
 
-        /* Icoontje in de knop wit maken */
-        ul#nav-list li#menu-install-item a i {
-            color: #ffffff !important;
-        }
-
-        /* 4. Active effect voor alle menu items voor feedback bij klikken */
-        .nav-links a:active {
-            background-color: #f5f5f5 !important;
+    /* Active effect voor mobiele feedback */
+    ul#nav-list li#menu-install-item a:active {
+        background: rgba(230, 235, 230, 0.95) !important;
+        transform: scale(0.99);
     }
 
 }
