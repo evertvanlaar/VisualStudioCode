@@ -560,3 +560,36 @@ function initDarkMode() {
 }
 
 // Zorg dat deze functie wordt aangeroepen in je DOMContentLoaded event listener (die heb je al staan!)
+
+// install button ja of nee logica
+// --- UNIEKE INSTALLATIE CODE (BOTST NIET) ---
+(function() {
+    let kalaNeraPrompt;
+    const installItem = document.getElementById('menu-install-item');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        kalaNeraPrompt = e;
+        if (installItem) {
+            installItem.classList.add('show-install');
+        }
+    });
+
+    // We hangen de functie aan window zodat de 'onclick' in de HTML hem kan vinden
+    window.triggerManualInstall = function(event) {
+        if (event) event.preventDefault();
+        if (!kalaNeraPrompt) return;
+
+        kalaNeraPrompt.prompt();
+        kalaNeraPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                if (installItem) installItem.classList.remove('show-install');
+            }
+            kalaNeraPrompt = null;
+        });
+    };
+
+    window.addEventListener('appinstalled', () => {
+        if (installItem) installItem.classList.remove('show-install');
+    });
+})();
