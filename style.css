@@ -1616,7 +1616,7 @@ body {
 
 
 /* Definitieve fix voor Xiaomi Redmi Pad Pro (1280px viewport) */
-@media screen and (max-width: 1281px) {
+@media screen and (max-width: 628px) {
     
     /* 1. Haal de rode kleur weg en dwing de container naar één kolom */
     body { background-color: #f8faf4 !important; /* Terug naar je zachte achtergrondkleur */ }
@@ -1647,3 +1647,28 @@ body {
     }
 }
 
+/* Verberg de installatie-optie als de site wordt geopend als 'App' */
+@media (display-mode: standalone) {
+    #menu-install-item, .mobile-only-item {
+        display: none !important;
+    }
+}
+
+/* --- DE PWA FIX --- */
+
+/* 1. Verberg de installatieknop ALTIJD als de site als App (standalone) is geopend */
+@media (display-mode: standalone) {
+    #menu-install-item, 
+    .mobile-only-item, 
+    #install-banner, 
+    .ios-banner {
+        display: none !important;
+    }
+}
+
+/* 2. Extra veiligheid: Verberg de knop op Desktop boven 768px breedte */
+@media screen and (min-width: 769px) {
+    #menu-install-item {
+        display: none !important;
+    }
+}
