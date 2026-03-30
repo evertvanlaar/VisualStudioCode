@@ -1613,3 +1613,31 @@ body {
 
     .phone-txt { display: none !important; }
 }
+
+
+//* Specifieke fix voor High-Res tablets (2560x1600) in Portrait */
+@media screen and (max-width: 1601px) {
+    
+    /* 1. Dwing de container naar één kolom */
+    .business-container, .results-container { 
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 10px !important;
+    }
+
+    /* 2. Maak de kaartjes breder zodat ze de ruimte vullen */
+    .business-card {
+        width: 90% !important;
+        max-width: 800px; /* Voorkom dat ze té breed worden op dit grote scherm */
+        margin: 15px auto !important;
+        float: none !important; /* Voor het geval er nog oude floats in zitten */
+    }
+
+    /* 3. Zorg dat er niets buiten het scherm valt */
+    body, html {
+        overflow-x: hidden !important;
+        position: relative;
+    }
+}
