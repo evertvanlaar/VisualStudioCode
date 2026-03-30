@@ -1616,7 +1616,7 @@ body {
 
 
 /* Definitieve fix voor Xiaomi Redmi Pad Pro (1280px viewport) */
-@media screen and (max-width: 628px) {
+@media screen and (max-width: 1281px) {
     
     /* 1. Haal de rode kleur weg en dwing de container naar één kolom */
     body { background-color: #f8faf4 !important; /* Terug naar je zachte achtergrondkleur */ }
