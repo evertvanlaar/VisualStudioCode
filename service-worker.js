@@ -1,6 +1,6 @@
 // service-worker.js
-const CACHE_NAME = 'kalanera-cache-v1.0.101'; // Verhoog naar 83
-const IMAGE_CACHE = 'kalanera-images-v101';
+const CACHE_NAME = 'kalanera-cache-v1.0.102'; // Verhoog naar 83
+const IMAGE_CACHE = 'kalanera-images-v102';
 
 const STATIC_ASSETS = [
   '/',
