@@ -1642,12 +1642,3 @@ body {
     }
 }
 
-/* Als het scherm smaller is dan 1001px wordt de achtergrond rood */
-@media screen and (max-width: 1001px) {
-    body { background-color: red !important; }
-}
-
-/* Als het scherm tussen 1002px en 1280px is, wordt het blauw */
-@media screen and (min-width: 1002px) and (max-width: 1280px) {
-    body { background-color: blue !important; }
-}
