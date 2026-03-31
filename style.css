@@ -1657,44 +1657,21 @@ body {
 }
 
 /* ============================================================
-   PWA / APP SPECIFIEKE FIX
-   Verbergt installatie-opties als de app al geopend is
+   PWA / APP MENU OPTIE
+   Zorg dat de installatie-optie ALTIJD zichtbaar blijft op mobiel
    ============================================================ */
 
-@media (display-mode: standalone) {
-    /* Verberg de installatieknop en banners als men de App-versie gebruikt */
-    #menu-install-item, 
-    .mobile-only-item, 
-    #install-banner, 
-    .ios-banner {
-        display: none !important;
-    }
-}
-
-/* Extra beveiliging: verberg install-knop op echte grote desktops */
-@media screen and (min-width: 1301px) {
-    #menu-install-item {
-        display: none !important;
-    }
-}
-
-/* --- DE PWA FIX --- */
-
-/* 1. Verberg de installatieknop ALTIJD als de site als App (standalone) is geopend */
-@media (display-mode: standalone) {
-    #menu-install-item, 
-    .mobile-only-item, 
-    #install-banner, 
-    .ios-banner {
-        display: none !important;
-    }
-}
-
-/* 2. Extra veiligheid: Verberg de knop op Desktop boven 768px breedte */
+/* 1. Verberg de knop ALLEEN op grote schermen (Desktop) */
 @media screen and (min-width: 769px) {
     #menu-install-item {
         display: none !important;
     }
 }
 
+/* 2. Verberg banners (optioneel), maar laat het menu-item met rust */
+#install-banner, 
+.ios-banner {
+    /* Je kunt besluiten deze wel of niet te tonen, 
+       maar ze staan los van je menu-item */
+}
 

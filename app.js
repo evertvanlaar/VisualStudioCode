@@ -335,20 +335,14 @@ window.addEventListener('offline', updateOnlineStatus);
 
 // --- GEOPTIMALISEERD PWA INSTALL EVENT ---
 window.addEventListener('beforeinstallprompt', (e) => {
-    // 1. Altijd blokkeren op desktop
+    // 1. Altijd blokkeren op desktop (boven 767px)
     if (window.innerWidth > 767) return; 
 
     // 2. Stop het standaard gedrag en sla het event op
     e.preventDefault();
     deferredPrompt = e;
 
-    // 3. Voer de checks uit zonder de pagina te blokkeren
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    const isFlagged = localStorage.getItem('kalanera_app_installed') === 'true';
-
-    if (isStandalone || isFlagged) return;
-
-    // 4. Toon de optie in het menu
+    // 3. Toon de optie ALTIJD in het menu
     const installItem = document.getElementById('menu-install-item');
     if (installItem) {
         installItem.style.display = 'block';
@@ -389,21 +383,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Handmatige Installatie Functie
+// Handmatige Installatie Functie (ALTIJD ZICHTBAAR VERSIE)
 async function triggerManualInstall(event) {
     if (event) event.preventDefault();
-    if (!deferredPrompt) return;
     
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    
-    if (outcome === 'accepted') {
-        // --- NIEUW: Sla op dat de app geïnstalleerd is ---
-        localStorage.setItem('kalanera_app_installed', 'true');
-        
-        const installItem = document.getElementById('menu-install-item');
-        if (installItem) installItem.classList.remove('show-install');
+    // Als de browser de prompt niet heeft (bijv. op iOS of als de app al is geïnstalleerd)
+    if (!deferredPrompt) {
+        alert("De app is al geïnstalleerd op je toestel of kan via je browser-instellingen worden toegevoegd.");
+        return;
     }
+    
+    // Toon de installatie prompt
+    deferredPrompt.prompt();
+    
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`Gebruiker koos: ${outcome}`);
+    
+    // Belangrijk: We laten de knop in het menu gewoon staan!
+    // We resetten alleen de prompt-variabele voor de volgende keer
     deferredPrompt = null;
 }
 
