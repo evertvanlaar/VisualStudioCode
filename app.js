@@ -638,31 +638,31 @@ function initDarkMode() {
     }, 500); 
   }
 
-// 1. De functie accepteert nu een 'versionToSend' parameter
-  function sendStats(eventType, versionToSend) {
-// Haal de versie uit de <link> tag van de CSS
-    const cssLink = document.getElementById('main-stylesheet');
-    const cssVersion = cssLink ? cssLink.href.split('v=')[1] : 'onbekend';
+function sendStats(eventType, versionToSend) {
+  // 1. Zoek de CSS link en haal de versie op (bijv. uit style.css?v=1.0.5)
+  const cssLink = document.getElementById('main-stylesheet');
+  const cssVersion = cssLink ? cssLink.href.split('v=')[1] : 'geen-v';
 
-    const data = {
-      event: eventType,
-      version: versionToSend || CURRENT_APP_VERSION || '1.0.5', // Val terug op 1.0.5 als alles faalt
-      os: /android/i.test(navigator.userAgent) ? "Android" : /iPhone|iPad|iPod/i.test(navigator.userAgent) ? "iOS" : "Desktop",
-      device: /Mobi|Android/i.test(navigator.userAgent) ? "Mobile" : "Desktop",
-      screen: window.innerWidth + 'x' + window.innerHeight,
-      referrer: document.referrer || 'direct',
-      theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
-      datum: new Date().toLocaleString('nl-NL')
-    };
+  const data = {
+    event: eventType,
+    version: versionToSend || CURRENT_APP_VERSION || '1.0.5',
+    css_version: cssVersion, // <-- DEZE MOET ER INDERDAAD BIJ!
+    os: /android/i.test(navigator.userAgent) ? "Android" : /iPhone|iPad|iPod/i.test(navigator.userAgent) ? "iOS" : "Desktop",
+    device: /Mobi|Android/i.test(navigator.userAgent) ? "Mobile" : "Desktop",
+    screen: window.innerWidth + 'x' + window.innerHeight,
+    referrer: document.referrer || 'direct',
+    theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+    datum: new Date().toLocaleString('nl-NL')
+  };
 
-    console.log("Verzenden naar n8n:", data);
+  console.log("Verzenden met CSS-versie:", data);
 
-    fetch(WEBHOOK_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(data)
-    }).catch(err => console.error("Fetch fout:", err));
-  }
+  fetch(WEBHOOK_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  }).catch(err => console.error("Fetch fout:", err));
+}
 
   // 2. Start de check zodra de app geladen is
   window.addEventListener('load', () => {
