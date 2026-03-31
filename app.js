@@ -383,26 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Handmatige Installatie Functie (ALTIJD ZICHTBAAR VERSIE)
-async function triggerManualInstall(event) {
-    if (event) event.preventDefault();
-    
-    // Als de browser de prompt niet heeft (bijv. op iOS of als de app al is geïnstalleerd)
-    if (!deferredPrompt) {
-        alert("De app is al geïnstalleerd op je toestel of kan via je browser-instellingen worden toegevoegd.");
-        return;
-    }
-    
-    // Toon de installatie prompt
-    deferredPrompt.prompt();
-    
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log(`Gebruiker koos: ${outcome}`);
-    
-    // Belangrijk: We laten de knop in het menu gewoon staan!
-    // We resetten alleen de prompt-variabele voor de volgende keer
-    deferredPrompt = null;
-}
+
 
 async function updateWeather() {
     const tempEl = document.getElementById('weather-temp');
@@ -583,36 +564,57 @@ function initDarkMode() {
 
 // Zorg dat deze functie wordt aangeroepen in je DOMContentLoaded event listener (die heb je al staan!)
 
-// install button ja of nee logica
-// --- UNIEKE INSTALLATIE CODE (BOTST NIET) ---
+// --- GEOPTIMALISEERDE INSTALLATIE CODE (VERSIE 1.0.8) ---
 (function() {
-    let kalaNeraPrompt;
+    let deferredPrompt; // We gebruiken nu één universele naam
     const installItem = document.getElementById('menu-install-item');
 
+    // 1. Luister naar het installatie-event
     window.addEventListener('beforeinstallprompt', (e) => {
+        console.log("PWA Installatie event opgevangen.");
         e.preventDefault();
-        kalaNeraPrompt = e;
+        deferredPrompt = e;
+        
+        // De CSS regelt de weergave, maar we kunnen de class voor de zekerheid toevoegen
         if (installItem) {
             installItem.classList.add('show-install');
         }
     });
 
-    // We hangen de functie aan window zodat de 'onclick' in de HTML hem kan vinden
-    window.triggerManualInstall = function(event) {
+    // 2. De functie die wordt aangeroepen door de HTML (onclick)
+    window.triggerManualInstall = async function(event) {
         if (event) event.preventDefault();
-        if (!kalaNeraPrompt) return;
+        
+        console.log("Klik op install-knop. Status event:", deferredPrompt);
 
-        kalaNeraPrompt.prompt();
-        kalaNeraPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-                if (installItem) installItem.classList.remove('show-install');
-            }
-            kalaNeraPrompt = null;
-        });
+        if (!deferredPrompt) {
+            // Als er geen event is, is de app waarschijnlijk al geïnstalleerd
+            alert("De app is al geïnstalleerd of kan via de browser-instellingen worden toegevoegd.");
+            return;
+        }
+
+        // Toon de prompt
+        deferredPrompt.prompt();
+
+        // Wacht op keuze
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`Gebruiker koos: ${outcome}`);
+
+        if (outcome === 'accepted') {
+            console.log('Installatie geaccepteerd.');
+            // We laten de knop staan (jouw wens), of we halen de class weg:
+            // if (installItem) installItem.classList.remove('show-install');
+        }
+
+        // Reset het event (verplicht door browser)
+        deferredPrompt = null;
     };
 
+    // 3. Luister naar de voltooide installatie
     window.addEventListener('appinstalled', () => {
-        if (installItem) installItem.classList.remove('show-install');
+        console.log('PWA succesvol geïnstalleerd.');
+        // Optioneel: verberg knop na installatie
+        // if (installItem) installItem.classList.remove('show-install');
     });
 })();
 
