@@ -621,22 +621,20 @@ function initDarkMode() {
     let eventType = '';
 
     if (!savedVersion) {
-      // Geen versie gevonden = Nieuwe installatie
       eventType = 'installatie';
     } else if (savedVersion !== CURRENT_APP_VERSION) {
-      // Wel een versie, maar niet de huidige = Update
       eventType = 'update';
     } else {
-      // Dezelfde versie = Gebruiker opent de app gewoon
-      // Je kunt dit 'app_open' noemen of de functie hier stoppen (return)
       eventType = 'app_open'; 
     }
 
-    // Stuur de data
-    sendStats(eventType);
-
-    // Update het geheugen van de telefoon naar de nieuwste versie
-    localStorage.setItem('app_version', CURRENT_APP_VERSION);
+    // Wacht 500ms zodat CURRENT_APP_VERSION de tijd heeft 
+    // om gevuld te worden door de Service Worker
+    setTimeout(() => {
+      sendStats(eventType);
+      // Sla de versie pas op NADAT we zeker weten wat de versie is
+      localStorage.setItem('app_version', CURRENT_APP_VERSION);
+    }, 500); 
   }
 
 function sendStats(eventType) {
