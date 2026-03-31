@@ -614,7 +614,6 @@ function initDarkMode() {
 // trace app versie os device scherm referrer theme install of update
 
 (function() {
-  const CURRENT_VERSION = '1.0.2'; // Jouw huidige app-versie
   const WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/app-stats';
 
   function checkStatusAndSend() {
@@ -624,7 +623,7 @@ function initDarkMode() {
     if (!savedVersion) {
       // Geen versie gevonden = Nieuwe installatie
       eventType = 'installatie';
-    } else if (savedVersion !== CURRENT_VERSION) {
+    } else if (savedVersion !== CURRENT_APP_VERSION) {
       // Wel een versie, maar niet de huidige = Update
       eventType = 'update';
     } else {
@@ -637,7 +636,7 @@ function initDarkMode() {
     sendStats(eventType);
 
     // Update het geheugen van de telefoon naar de nieuwste versie
-    localStorage.setItem('app_version', CURRENT_VERSION);
+    localStorage.setItem('app_version', CURRENT_APP_VERSION);
   }
 
 function sendStats(eventType) {
