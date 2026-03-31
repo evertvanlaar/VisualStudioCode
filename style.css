@@ -1622,7 +1622,7 @@ body {
    Zorgt voor 1 kolom in Portrait en herstelt 2 kolommen in Landscape
    ============================================================ */
 
-@media screen and (max-width: 1108px) {
+@media screen and (max-width: 992px) {
     /* Forceer de achtergrondkleur */
     body { 
         background-color: #f8faf4 !important; 
