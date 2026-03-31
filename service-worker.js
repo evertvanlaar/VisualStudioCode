@@ -1,7 +1,23 @@
 // service-worker.js
-const CACHE_NAME = 'kalanera-cache-v1.0.105'; // Verhoog naar 83
-const IMAGE_CACHE = 'kalanera-images-v105';
-const VERSION = '1.0.5'; // Verhoog dit nummer bij elke update!
+const VERSION = '1.0.5'; // Dit sturen we naar de Sheet
+const CACHE_NAME = 'kalanera-cache-v1.0.105'; // Dit dwingt de code-update af
+const IMAGE_CACHE = 'kalanera-images-v105'; // Dit laten we lekker staan voor de snelheid
+
+// VOEG DIT TOE: Luister naar vragen van de app
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'GET_VERSION') {
+    event.ports[0].postMessage({ version: VERSION });
+  }
+});
+
+// Zorg ook dat deze erin staan (die dwingen de update af):
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(clients.claim());
+});
 
 const STATIC_ASSETS = [
   '/',

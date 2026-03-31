@@ -19,6 +19,23 @@ const iconMap = {
     'Kapper': 'fa-cut', 'Sport': 'fa-running', 'Pharmacy': 'fa-pills', 'Garage': 'fa-car'
 };
 
+// --- STAP 2: VERSIE-OPVRAGER (HIER DUS!) ---
+let CURRENT_APP_VERSION = '1.0.5'; 
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.ready.then(reg => {
+        if (!navigator.serviceWorker.controller) return;
+        const mc = new MessageChannel();
+        mc.port1.onmessage = (e) => {
+            if (e.data && e.data.version) {
+                CURRENT_APP_VERSION = e.data.version;
+                console.log("Versie vanuit SW:", CURRENT_APP_VERSION);
+            }
+        };
+        navigator.serviceWorker.controller.postMessage({type: 'GET_VERSION'}, [mc.port2]);
+    });
+}
+
 // --- INITIALISATIE ---
 async function init() {
     const businessList = document.getElementById('business-list');
@@ -623,22 +640,25 @@ function initDarkMode() {
     localStorage.setItem('app_version', CURRENT_VERSION);
   }
 
-  function sendStats(eventType) {
+function sendStats(eventType) {
     const data = {
       event: eventType,
-      version: CURRENT_VERSION,
+      versie: CURRENT_APP_VERSION, // Gebruikt nu de versie uit de Service Worker
       os: /android/i.test(navigator.userAgent) ? "Android" : /iPhone|iPad|iPod/i.test(navigator.userAgent) ? "iOS" : "Desktop",
       device: /Mobi|Android/i.test(navigator.userAgent) ? "Mobile" : "Desktop",
       screen: window.innerWidth + 'x' + window.innerHeight,
       referrer: document.referrer || 'direct',
-      theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+      datum: new Date().toLocaleString('nl-NL')
     };
+
+    console.log("Stats verzenden:", data);
 
     fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(data)
-    });
+    }).catch(err => console.error("Fetch fout:", err));
   }
 
   // Start de check zodra de app geladen is
