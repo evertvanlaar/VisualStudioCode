@@ -640,6 +640,10 @@ function initDarkMode() {
 
 // 1. De functie accepteert nu een 'versionToSend' parameter
   function sendStats(eventType, versionToSend) {
+// Haal de versie uit de <link> tag van de CSS
+    const cssLink = document.getElementById('main-stylesheet');
+    const cssVersion = cssLink ? cssLink.href.split('v=')[1] : 'onbekend';
+
     const data = {
       event: eventType,
       version: versionToSend || CURRENT_APP_VERSION || '1.0.5', // Val terug op 1.0.5 als alles faalt
