@@ -19,12 +19,20 @@ const iconMap = {
     'Kapper': 'fa-cut', 'Sport': 'fa-running', 'Pharmacy': 'fa-pills', 'Garage': 'fa-car'
 };
 
-// --- STAP 2: VERSIE-OPVRAGER (HIER DUS!) ---
-let CURRENT_APP_VERSION = '1.0.5'; 
+// --- STAP 2: VERSIE-OPVRAGER (BIJGEWERKT NAAR 1.0.6) ---
+let CURRENT_APP_VERSION = '1.0.6'; // Update deze altijd mee!
 
 if ('serviceWorker' in navigator) {
+    // Dwing de browser om de nieuwste SW-file te downloaden
+    navigator.serviceWorker.register('/service-worker.js?v=1.0.6')
+        .then(reg => {
+            console.log("Service Worker registratie gepusht naar v1.0.6");
+            reg.update(); // Controleer direct op updates
+        });
+
     navigator.serviceWorker.ready.then(reg => {
         if (!navigator.serviceWorker.controller) return;
+        
         const mc = new MessageChannel();
         mc.port1.onmessage = (e) => {
             if (e.data && e.data.version) {
