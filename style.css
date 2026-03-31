@@ -1670,6 +1670,14 @@ body {
     }
 }
 
+/* --- DE FIX: VERBERG DE KNOP ALS DE SITE ALS APP DRAAIT --- */
+@media all and (display-mode: standalone), (display-mode: fullscreen) {
+    /* We gebruiken een extra sterke selector om regel 674 te verslaan */
+    ul#nav-list li#menu-install-item {
+        display: none !important;
+    }
+}
+
 /* 2. Verberg banners (optioneel), maar laat het menu-item met rust */
 #install-banner, 
 .ios-banner {
