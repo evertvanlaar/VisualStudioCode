@@ -20,7 +20,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-OPVRAGER (BIJGEWERKT NAAR 1.0.6) ---
-let CURRENT_APP_VERSION = '1.0.7'; // Update deze altijd mee!
+let CURRENT_APP_VERSION = '1.0.8'; // Update deze altijd mee!
 
 if ('serviceWorker' in navigator) {
     // Dwing de browser om de nieuwste SW-file te downloaden
