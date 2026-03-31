@@ -631,16 +631,18 @@ function initDarkMode() {
     // Wacht 500ms zodat CURRENT_APP_VERSION de tijd heeft 
     // om gevuld te worden door de Service Worker
     setTimeout(() => {
-      sendStats(eventType);
+     // In plaats van sendStats(eventType); doe je:
+        sendStats(eventType, CURRENT_APP_VERSION);
       // Sla de versie pas op NADAT we zeker weten wat de versie is
       localStorage.setItem('app_version', CURRENT_APP_VERSION);
     }, 500); 
   }
 
-function sendStats(eventType) {
+// 1. De functie accepteert nu een 'versionToSend' parameter
+  function sendStats(eventType, versionToSend) {
     const data = {
       event: eventType,
-      versie: CURRENT_APP_VERSION, // Gebruikt nu de versie uit de Service Worker
+      versie: versionToSend || CURRENT_APP_VERSION || '1.0.5', // Val terug op 1.0.5 als alles faalt
       os: /android/i.test(navigator.userAgent) ? "Android" : /iPhone|iPad|iPod/i.test(navigator.userAgent) ? "iOS" : "Desktop",
       device: /Mobi|Android/i.test(navigator.userAgent) ? "Mobile" : "Desktop",
       screen: window.innerWidth + 'x' + window.innerHeight,
@@ -649,7 +651,7 @@ function sendStats(eventType) {
       datum: new Date().toLocaleString('nl-NL')
     };
 
-    console.log("Stats verzenden:", data);
+    console.log("Verzenden naar n8n:", data);
 
     fetch(WEBHOOK_URL, {
       method: 'POST',
@@ -658,6 +660,10 @@ function sendStats(eventType) {
     }).catch(err => console.error("Fetch fout:", err));
   }
 
-  // Start de check zodra de app geladen is
-  window.addEventListener('load', checkStatusAndSend);
+  // 2. Start de check zodra de app geladen is
+  window.addEventListener('load', () => {
+      // We wachten even met de check zodat de Service Worker tijd heeft om CURRENT_APP_VERSION te vullen
+      setTimeout(checkStatusAndSend, 1000); 
+  });
+
 })();
