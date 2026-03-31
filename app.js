@@ -20,7 +20,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.10'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.11'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -620,6 +620,33 @@ function initDarkMode() {
         // if (installItem) installItem.classList.remove('show-install');
     });
 })();
+
+// --- STAP 3: VERBERG INSTALLATIE-OPTIE IN DE APP ZELF ---
+function checkDisplayMode() {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
+                         || window.navigator.standalone 
+                         || document.referrer.includes('android-app://');
+
+    if (isStandalone) {
+        console.log("App draait in standalone modus. Installatie-knop verbergen.");
+        const installItem = document.getElementById('menu-install-item');
+        if (installItem) {
+            // We gebruiken !important om de CSS-force die we eerder maakten te overrulen
+            installItem.style.setProperty('display', 'none', 'important');
+        }
+    }
+}
+
+// Voer de check uit zodra de pagina geladen is
+window.addEventListener('load', checkDisplayMode);
+
+// Luister ook naar de 'appinstalled' event voor directe feedback
+window.addEventListener('appinstalled', () => {
+    const installItem = document.getElementById('menu-install-item');
+    if (installItem) {
+        installItem.style.setProperty('display', 'none', 'important');
+    }
+});
 
 // trace app versie os device scherm referrer theme install of update
 
