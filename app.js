@@ -19,15 +19,18 @@ const iconMap = {
     'Kapper': 'fa-cut', 'Sport': 'fa-running', 'Pharmacy': 'fa-pills', 'Garage': 'fa-car'
 };
 
-// --- STAP 2: VERSIE-OPVRAGER (BIJGEWERKT NAAR 1.0.6) ---
-let CURRENT_APP_VERSION = '1.0.9'; // Update deze altijd mee!
+// --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
+const APP_VERSION = '1.0.10'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
-    // Dwing de browser om de nieuwste SW-file te downloaden
-    navigator.serviceWorker.register('/service-worker.js?v=1.0.6')
+    // We plakken de variabele automatisch achter de URL
+    const swUrl = `/service-worker.js?v=${APP_VERSION}`;
+
+    navigator.serviceWorker.register(swUrl)
         .then(reg => {
-            console.log("Service Worker registratie gepusht naar v1.0.6");
-            reg.update(); // Controleer direct op updates
+            console.log(`Service Worker registratie gepusht naar v${APP_VERSION}`);
+            reg.update(); 
         });
 
     navigator.serviceWorker.ready.then(reg => {
@@ -37,7 +40,7 @@ if ('serviceWorker' in navigator) {
         mc.port1.onmessage = (e) => {
             if (e.data && e.data.version) {
                 CURRENT_APP_VERSION = e.data.version;
-                console.log("Versie vanuit SW:", CURRENT_APP_VERSION);
+                console.log("Versie bevestigd door SW:", CURRENT_APP_VERSION);
             }
         };
         navigator.serviceWorker.controller.postMessage({type: 'GET_VERSION'}, [mc.port2]);
