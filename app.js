@@ -642,7 +642,7 @@ function initDarkMode() {
   function sendStats(eventType, versionToSend) {
     const data = {
       event: eventType,
-      versie: versionToSend || CURRENT_APP_VERSION || '1.0.5', // Val terug op 1.0.5 als alles faalt
+      version: versionToSend || CURRENT_APP_VERSION || '1.0.5', // Val terug op 1.0.5 als alles faalt
       os: /android/i.test(navigator.userAgent) ? "Android" : /iPhone|iPad|iPod/i.test(navigator.userAgent) ? "iOS" : "Desktop",
       device: /Mobi|Android/i.test(navigator.userAgent) ? "Mobile" : "Desktop",
       screen: window.innerWidth + 'x' + window.innerHeight,
