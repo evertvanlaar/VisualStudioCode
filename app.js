@@ -593,3 +593,54 @@ function initDarkMode() {
         if (installItem) installItem.classList.remove('show-install');
     });
 })();
+
+// trace app versie os device scherm referrer theme install of update
+
+(function() {
+  const CURRENT_VERSION = '1.0.2'; // Jouw huidige app-versie
+  const WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/app-stats';
+
+  function checkStatusAndSend() {
+    const savedVersion = localStorage.getItem('app_version');
+    let eventType = '';
+
+    if (!savedVersion) {
+      // Geen versie gevonden = Nieuwe installatie
+      eventType = 'installatie';
+    } else if (savedVersion !== CURRENT_VERSION) {
+      // Wel een versie, maar niet de huidige = Update
+      eventType = 'update';
+    } else {
+      // Dezelfde versie = Gebruiker opent de app gewoon
+      // Je kunt dit 'app_open' noemen of de functie hier stoppen (return)
+      eventType = 'app_open'; 
+    }
+
+    // Stuur de data
+    sendStats(eventType);
+
+    // Update het geheugen van de telefoon naar de nieuwste versie
+    localStorage.setItem('app_version', CURRENT_VERSION);
+  }
+
+  function sendStats(eventType) {
+    const data = {
+      event: eventType,
+      version: CURRENT_VERSION,
+      os: /android/i.test(navigator.userAgent) ? "Android" : /iPhone|iPad|iPod/i.test(navigator.userAgent) ? "iOS" : "Desktop",
+      device: /Mobi|Android/i.test(navigator.userAgent) ? "Mobile" : "Desktop",
+      screen: window.innerWidth + 'x' + window.innerHeight,
+      referrer: document.referrer || 'direct',
+      theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    };
+
+    fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+  }
+
+  // Start de check zodra de app geladen is
+  window.addEventListener('load', checkStatusAndSend);
+})();
