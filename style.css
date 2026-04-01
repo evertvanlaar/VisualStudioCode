@@ -1,1687 +1,339 @@
-html, body {
-    margin: 0;
-    padding: 0;
-    height: auto !important; /* Forceer natuurlijke hoogte */
-    min-height: 100vh;
-    overflow-x: hidden;
-    overflow-y: auto !important; /* Forceer verticaal scrollen */
-    -webkit-overflow-scrolling: touch; /* Zorgt voor 'smooth' scrollen op iPhone */
-}
-
-.container {
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    display: block; /* Geen flexbox op de hoofdcontainer die hoogte kan beperken */
-}
-
-/* De container waar je kaarten in staan moet scrollen toestaan */
-#business-list {
-    /* display: block; */
-    width: 100%;
-    overflow: visible;
-}
-
-/* Tip: Zorg dat de zoekbalk eruitziet als een echte app-input */
-.search-input {
-    appearance: none;
-    -webkit-appearance: none;
-    outline: none;
-}
-
-/* --- GLOBALE VARIABELEN (OLIJF EDITIE) --- */
-:root {
-    --primary-olive: #4a6c4a;       /* Jouw kenmerkende olijfgroen */
-    --primary-olive-dark: #3e5a3e;  /* Donkerdere tint voor hovers */
-    --soft-olive: #f4f7ed;          /* Zeer zachte groene achtergrond */
-    --bg: #f8fafc;
-    --card: #ffffff;
-    --text: #1e293b;
-    --muted: #64748b;
-    --border: #e2e8f0;
-    --pill: #f1f5f9;
-}
-
-/* --- BASIS STYLING --- */
-body { 
-    font-family: 'Inter', sans-serif; 
-    background: var(--bg); 
-    margin: 0; 
-    padding: 0; /* Padding weggehaald ivm full-width header/footer */
-    color: var(--text); 
-    overflow-x: hidden;
-}
-
-.main-container { 
-    width: 100%; 
-    max-width: 1100px; 
-    margin: 40px auto; 
-    padding: 0 20px; 
-    box-sizing: border-box;
-}
-
-h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 25px; }
-
-/* --- NAVIGATIE --- */
-.main-nav {
-    background-color: #ffffff;
-    padding: 15px 0;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    position: sticky;
-    top: 0;
-    z-index: 9999;
-}
-
-.nav-container {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px; /* Iets meer ademruimte */
-}
-
-/* Logo in donkergroen */
-.logo { 
-    font-size: 22px; 
-    font-weight: 800; 
-    color: #2d5a27 !important; 
-    text-transform: uppercase; 
-    text-decoration: none; 
-    letter-spacing: 1px;
-}
-.logo span { 
-    font-weight: 300;
-    opacity: 0.7; 
-}
-
-.nav-links { list-style: none; display: flex; gap: 25px; margin: 0; padding: 0; align-items: center; }
-
-/* Desktop links */
-.nav-links a { 
-    text-decoration: none; 
-    color: #2d5a27; 
-    font-weight: 700; 
-    font-size: 14px; 
-    transition: 0.3s; 
-    padding: 8px 12px;
-    border-radius: 12px;
-}
-
-.nav-links a:hover { 
-    background: rgba(45, 90, 39, 0.05); /* Subtiele waas bij hover op desktop */
-}
-
-/* --- HERO SECTIE --- */
-.hero-section {
-    width: 100%;
-    height: 65vh;
-    min-height: 400px;
-    /* De gradient is nu subtieler (0.3 ipv 0.2) voor net dat beetje extra leesbaarheid */
-    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), url('villageoverview.jpg');
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-.hero-overlay {
-    text-align: center;
-    padding: 0 20px;
-    max-width: 900px;
-}
-
-.hero-overlay h1 {
-    font-size: 48px;
-    color: white !important;
-    font-weight: 800;
-    /* Een schaduw die 'zacht' is (blur 15px) ipv een harde zwarte rand */
-    text-shadow: 0 4px 15px rgba(0,0,0,0.6);
-    margin-bottom: 10px;
-    letter-spacing: -0.5px;
-    line-height: 1.1;
-}
-
-.hero-overlay p {
-    font-size: 1.2rem;
-    color: white !important;
-    font-weight: 500;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.7);
-    margin-top: 15px;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* --- MOBIEL --- */
-@media screen and (max-width: 768px) {
-    .hero-section {
-        height: 50vh; /* Iets minder hoog op mobiel voor betere balans */
-        min-height: 300px;
-    }
-    .hero-overlay h1 {
-        font-size: 32px !important;
-        line-height: 1.2;
-    }
-    .hero-overlay p {
-        font-size: 16px !important;
-        max-width: 85%;
-    }
-}
-
-/* --- DE NIEUWE SOFT SEARCHBAR --- */
-.search-container { 
-    position: relative; 
-    margin-bottom: 35px !important; /* Verhoogd van 25px naar 35px voor meer lucht */
-    max-width: 500px; 
-    margin-inline: auto; 
-}
-
-.search-input { 
-    width: 100%; 
-    padding: 12px 15px 12px 45px !important; /* Ruimte links voor icoon */
-    
-    /* De Soft Look */
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    
-    border: 1px solid rgba(226, 232, 240, 0.8) !important; 
-    border-radius: 14px !important; /* Matcht met je buttons */
-    
-    font-size: 14px !important;
-    color: #475569;
-    outline: none !important; 
-    appearance: none;
-    -webkit-appearance: none;
-    
-    transition: all 0.3s ease; 
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-}
-
-/* Focus effect: subtiele olijfgroene gloed */
-.search-input:focus { 
-    background: #ffffff !important;
-    border-color: var(--primary-olive) !important; 
-    box-shadow: 0 4px 15px rgba(45, 90, 39, 0.1) !important; 
-}
-
-/* Het Icoontje */
-.search-icon { 
-    position: absolute; 
-    left: 18px; 
-    top: 50% !important; 
-    transform: translateY(-50%) !important; 
-    
-    /* Kleur en Zichtbaarheid */
-    color: #2d5a27 !important; /* Dwing de olijfgroene kleur af */
-    font-size: 16px !important;
-    z-index: 10 !important;    /* Zorgt dat hij Bovenop de input ligt */
-    
-    pointer-events: none;      /* Zorgt dat je door het icoon heen kunt klikken */
-    display: block !important; /* Zorgt dat hij niet op 'none' staat */
-}
-
-/* --- BASIS STYLING (DESKTOP) --- */
-.filter-container {
-    display: flex;
-    gap: 10px;
-    padding: 5px 2px 15px 2px !important; /* Minder padding boven (5px), meer onder (15px) */
-    overflow-x: auto;
-    scrollbar-width: none;
-}
-
-/* --- MOBIELE FILTER SCROLLING --- */
-@media screen and (max-width: 768px) {
-    .filter-container {
-        display: flex !important;
-        flex-wrap: nowrap !important;
-        overflow-x: auto !important;
-        justify-content: flex-start !important;
-        padding: 10px 20px !important;
-        gap: 8px !important;
-        
-        /* Verberg scrollbars */
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none; 
-    }
-
-    .filter-container::-webkit-scrollbar {
-        display: none;
-    }
-
-    .filter-btn {
-        flex: 0 0 auto !important; /* Zorgt dat knoppen niet inklappen */
-    }
-}
-
-/* --- DE NIEUWE SOFT FILTER & ACTIE BUTTONS --- */
-.filter-btn, .add-biz-btn {
-    white-space: nowrap;
-    padding: 8px 16px !important;
-    border-radius: 12px !important;
-    font-size: 13px !important;
-    font-weight: 700 !important;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    border: 1px solid rgba(226, 232, 240, 0.8) !important;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-}
-
-/* 1. De Standaard 'niet-actieve' knoppen */
-.filter-btn {
-    background: rgba(241, 245, 249, 0.7) !important;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    color: #64748b !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
-}
-
-/* 2. De ACTIEVE knop (Weg met het harde groen!) */
-/* Dit zorgt dat 'All' en de geselecteerde filters zacht olijfgroen worden */
-.filter-btn.active {
-    background: rgba(45, 90, 39, 0.12) !important; /* Zachte olijf-waas */
-    color: #2d5a27 !important;                     /* Donkergroene tekst */
-    border: 1px solid rgba(45, 90, 39, 0.3) !important;
-    box-shadow: 0 4px 10px rgba(45, 90, 39, 0.08) !important;
-}
-
-/* 3. Hover effecten */
-.filter-btn:hover:not(.active) {
-    background: rgba(226, 232, 240, 0.9) !important;
-    transform: translateY(-1px);
-}
-
-/* Icoontjes in de buttons */
-.filter-btn i {
-    font-size: 14px;
-    color: inherit; /* Neemt kleur van tekst over (dus groen als actief) */
-    opacity: 0.9;
-}
-
-/* --- CATEGORIE KOPPEN (SOFT GLASSY EDITIE) --- */
-.category-section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    
-    /* Soft effect: semi-transparant grijs met een blur op de achtergrond */
-    background: rgba(241, 245, 249, 0.7) !important; 
-    backdrop-filter: blur(10px); 
-    -webkit-backdrop-filter: blur(10px); /* Voor Safari support */
-    
-    padding: 10px 18px;
-    margin: 35px 0 15px 0;
-    border-radius: 15px; /* Iets ronder voor de moderne look */
-    
-    /* Subtieler kleuraccent: afgeronde olijfgroene lijn */
-    border-left: 6px solid var(--primary-olive); 
-    border: 1px solid rgba(255, 255, 255, 0.5); /* Glasrandje */
-    
-    font-weight: 800; /* Iets dikker voor een "app" gevoel */
-    color: #334155; 
-    font-size: 1.1rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03); /* Hele lichte schaduw */
-}
-
-.category-section-header span {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.category-section-header i {
-    font-size: 1.3rem;
-    color: var(--primary-olive);
-    /* Optioneel: geef het icoon ook een heel zachte achtergrond */
-    background: rgba(255, 255, 255, 0.4);
-    padding: 6px;
-    border-radius: 10px;
-}
-
-/* De teller-bubbel (2) of (7) */
-.category-section-header small {
-    background: rgba(226, 232, 240, 0.6); 
-    color: #64748b;
-    padding: 2px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    margin-left: auto;
-    border: 1px solid rgba(0,0,0,0.03);
-}
-
-/* --- BUSINESS CARDS --- */
-.business-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 40px; }
-
-.biz-card-mini { 
-    background: var(--card); 
-    border-radius: 12px; 
-    padding: 14px; 
-    display: flex; 
-    gap: 14px; 
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); 
-    border: 1px solid var(--border);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.mini-preview { width: 100px; height: 75px; flex-shrink: 0; border-radius: 8px; overflow: hidden; border: 1px solid #f1f5f9; }
-.mini-preview img { width: 100%; height: 100%; object-fit: cover; }
-/* Zorg dat de container de knop binnenboord houdt */
-.mini-preview {
-    position: relative;
-    overflow: hidden;
-}
-
-.mini-content { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
-
-
-.mini-web-link { 
-    font-size: 11px; 
-    color: var(--primary-olive); 
-    text-decoration: none; 
-    font-weight: 700; 
-    background: var(--soft-olive); 
-    padding: 3px 10px; 
-    border-radius: 6px; 
-    align-self: flex-start;
-}
-
-/* --- ACTIONS & ICONS (DE DEFINITIEVE SOFT-COLOR EDITIE) --- */
-.mini-actions { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-top: auto; 
-    padding-top: 8px;
-}
-
-/* 1. De Linkergroep (Telefoon/Kopiëren): blijft rustig maar mét soft kleur */
-.phone-group { 
-    display: flex; 
-    align-items: center; 
-    gap: 6px; 
-    background: #f1f5f9; /* UI grijs */
-    padding: 2px 8px; 
-    border-radius: 20px; 
-    border: 1px solid #e2e8f0; 
-}
-
-/* Maak knoppen BINNEN de telefoon-groep iets kleiner en minder zwevend */
-.phone-group .btn-icon {
-    width: 28px;
-    height: 28px;
-    box-shadow: none; /* Geen extra schaduw in de grijze bubbel */
-    font-size: 13px;
-}
-
-/* 2. De Rechtergroep (Interactie): zwevend en kleurrijk */
-.action-right { 
-    display: flex; 
-    gap: 8px; 
-}
-
-/* Basis voor de zwevende ronde knoppen rechts */
-.action-right .btn-icon {
-    box-shadow: 0 3px 6px rgba(0,0,0,0.08); /* De zwevende schaduw */
-}
-
-/* --- DE ALGEMENE KNOP STYLING (VORM & HOVER) --- */
-.btn-icon { 
-    width: 34px; 
-    height: 34px; 
-    border-radius: 50%; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    text-decoration: none; 
-    transition: all 0.2s ease;
-    border: none;
-    cursor: pointer;
-}
-
-/* Hover effect voor de zwevende knoppen */
-.action-right .btn-icon:hover { 
-    transform: translateY(-2px); 
-    box-shadow: 0 5px 12px rgba(0,0,0,0.12);
-}
-
-/* Hover effect voor de platte knoppen in de grijze balk */
-.phone-group .btn-icon:hover {
-    transform: scale(1.05); /* Iets groter ipv zweven */
-}
-
-
-/* --- DE SOFT KLEUREN-LOGICA (GEBASEERD OP DOEL-SCREENSHOT) --- */
-/* ZORG DAT JE DEZE KLASSES IN JE HTML/JS KOPPELT! */
-
-/* Telefoon (Groen) - links */
-.btn-icon.phone-btn   { color: #4caf50 !important; background-color: rgba(76, 175, 80, 0.1) !important; }
-
-/* Kopieer/Gray (Grijsblauw) - links */
-.btn-icon.copy-btn    { color: #78909c !important; background-color: rgba(120, 144, 156, 0.1) !important; font-size: 14px; }
-
-/* Website/Wereldbol (Blauw) - rechts */
-.btn-icon.web-btn     { color: #42a5f5 !important; background-color: rgba(66, 165, 245, 0.1) !important; }
-
-/* E-mail (Paars) - rechts */
-.btn-icon.mail-btn    { color: #ab47bc !important; background-color: rgba(171, 71, 188, 0.1) !important; }
-
-/* Review/Ster (Geel) - rechts */
-.btn-icon.review-btn  { color: #ffca28 !important; background-color: rgba(255, 202, 40, 0.1) !important; }
-
-/* Navigatie/Locatie (Rood/Blauw) - rechts */
-/* In je doel-screenshot is navigatie blauw, in je oorspronkelijke visie was de kleur paars.
-   Ik heb de paarse soft-kleur gekozen voor meer contrast. Pas hieronder de HEX aan indien gewenst. */
-.btn-icon.nav-btn-action { color: #ef5350 !important; background-color: rgba(239, 83, 80, 0.1) !important; }
-
-
-/* Mobiele fix voor kleine schermen */
-@media screen and (max-width: 400px) {
-    .action-right { gap: 4px; }
-    .btn-icon { width: 30px; height: 30px; font-size: 12px; }
-}
-
-/* --- DE NIEUWE SOFT ADD BUSINESS BUTTON --- */
-.add-business-container { 
-    text-align: center; 
-    margin: 20px 0 40px 0; 
-}
-
-/* --- DE SOFT ADD BUSINESS BUTTON --- */
-.add-biz-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    
-    /* De "Soft" basis */
-    background: rgba(45, 90, 39, 0.08) !important; 
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    
-    color: #2d5a27 !important;
-    border: 1px solid rgba(45, 90, 39, 0.15) !important;
-    
-    padding: 10px 24px !important;
-    border-radius: 14px !important;
-    text-decoration: none;
-    
-    font-size: 14px !important;
-    font-weight: 800 !important;
-    
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-}
-
-/* Hover effect (buiten de media query plaatsen voor alle apparaten) */
-.add-biz-btn:hover {
-    background: #2d5a27 !important;
-    color: white !important;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(45, 90, 39, 0.2);
-}
-
-
-/* --- KAART --- */
-/* --- KAART FIX --- */
-.map-section { 
-    max-width: 1100px; 
-    margin: 40px auto; 
-    padding: 0 20px; 
-}
-
-.map-wrapper { 
-    width: 100%; 
-    height: 400px; 
-    border-radius: 15px; 
-    overflow: hidden; 
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
-    border: 1px solid var(--border); 
-}
-
-/* VOEG DIT TOE: Dit vult het witte vlak op */
-.map-wrapper iframe {
-    width: 100% !important;
-    height: 100% !important;
-    border: none;
-    display: block;
-}
-/* --- FOOTER --- */
-.site-footer {
-    background-color: #232f3e;
-    color: #ffffff;
-    padding: 60px 0 30px 0;
-    margin-top: 80px;
-    width: 100%;
-}
-
-.footer-container {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding: 0 20px;
-}
-
-.footer-column { flex: 1; min-width: 250px; margin-bottom: 30px; }
-.footer-column h3 { margin-bottom: 20px; font-size: 18px; font-weight: 700; }
-.footer-column p { font-size: 14px; line-height: 1.6; color: #ced4da; }
-.footer-column ul { list-style: none; padding: 0; }
-.footer-column ul li a { color: #ced4da; text-decoration: none; transition: 0.3s; font-size: 14px; }
-.footer-column ul li a:hover { color: var(--primary-olive); }
-
-.social-icon {
-    display: flex; align-items: center; justify-content: center;
-    width: 40px; height: 40px;
-    background-color: var(--primary-olive);
-    color: #ffffff; border-radius: 50%; text-decoration: none;
-}
-.social-icon:hover { background-color: var(--primary-olive-dark); transform: translateY(-3px); }
-
-.footer-bottom { text-align: center; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 40px; padding-top: 20px; color: #868e96; font-size: 12px; }
-
-
-.site-header {
-    background: #ffffff !important; 
-    position: sticky;
-    top: 0;
-    z-index: 10001; 
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-}
-
-
-
-@media screen and (max-width: 768px) {
-    /* STAP 1: Voeg dit toe - dit dwingt het menu naar de volgende regel */
-    .nav-container {
-        display: flex !important;
-        flex-wrap: wrap !important; /* DIT FIXT DE PUINHOOP */
-        justify-content: space-between !important;
-        align-items: center !important;
+@keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
+
+@keyframes slideDown{from{transform: translate(-50%, -100%); opacity: 0}to{transform: translate(-50%, 0); opacity: 1}}
+
+html, body{margin:0;padding:0;height:auto !important;min-height:100vh;overflow-x:hidden;overflow-y:auto !important;-webkit-overflow-scrolling:touch}
+
+.container{width:100%;max-width:800px;margin:0 auto;padding:20px;display:block}
+
+#business-list{width:100%;overflow:visible}
+
+.search-input{appearance:none;-webkit-appearance:none;outline:none;width:100%;padding:12px 15px 12px 45px !important;background:rgba(255, 255, 255, 0.8) !important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(226, 232, 240, 0.8) !important;border-radius:14px !important;font-size:14px !important;color:#475569;transition:all 0.3s ease;box-shadow:0 2px 10px rgba(0, 0, 0, 0.02)}
+
+:root{--primary-olive:#4a6c4a;--primary-olive-dark:#3e5a3e;--soft-olive:#f4f7ed;--bg:#f8fafc;--card:#ffffff;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--pill:#f1f5f9;--bg-color:#f4f7ed;--card-bg:#ffffff;--text-main:#333333;--text-muted:#666666;--border-color:#eeeeee}
+
+body{font-family:'Inter', sans-serif;background:var(--bg);margin:0;padding:0;color:var(--text-main, #333);overflow-x:hidden;background-color:var(--bg-color, #f4f7ed);transition:background-color 0.3s, color 0.3s}
+
+.main-container{width:100%;max-width:1100px;margin:40px auto;padding:0 20px;box-sizing:border-box}
+
+h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:25px}
+
+.main-nav{background-color:#ffffff;padding:15px 0;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:0;z-index:9999}
+
+.nav-container{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:10px 20px}
+
+.logo{font-size:22px;font-weight:800;color:#2d5a27 !important;text-transform:uppercase;text-decoration:none;letter-spacing:1px}
+
+.logo span{font-weight:300;opacity:0.7}
+
+.nav-links{list-style:none;display:flex;gap:25px;margin:0;padding:0;align-items:center}
+
+.nav-links a{text-decoration:none;color:#2d5a27;font-weight:700;font-size:14px;transition:0.3s;padding:8px 12px;border-radius:12px}
+
+.nav-links a:hover{background:rgba(45, 90, 39, 0.05)}
+
+.hero-section{width:100%;height:65vh;min-height:400px;background-image:linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), url('villageoverview.jpg');background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;position:relative}
+
+.hero-overlay{text-align:center;padding:0 20px;max-width:900px}
+
+.hero-overlay h1{font-size:48px;color:white !important;font-weight:800;text-shadow:0 4px 15px rgba(0,0,0,0.6);margin-bottom:10px;letter-spacing:-0.5px;line-height:1.1}
+
+.hero-overlay p{font-size:1.2rem;color:white !important;font-weight:500;text-shadow:0 2px 10px rgba(0,0,0,0.7);margin-top:15px;max-width:600px;margin-left:auto;margin-right:auto}
+
+.search-container{position:relative;margin-bottom:35px !important;max-width:500px;margin-inline:auto}
+
+.search-input:focus{background:#ffffff !important;border-color:var(--primary-olive) !important;box-shadow:0 4px 15px rgba(45, 90, 39, 0.1) !important}
+
+.search-icon{position:absolute;left:18px;top:50% !important;transform:translateY(-50%) !important;color:#2d5a27 !important;font-size:16px !important;z-index:10 !important;pointer-events:none;display:block !important}
+
+.filter-container{display:flex;gap:10px;padding:5px 2px 15px 2px !important;overflow-x:auto;scrollbar-width:none}
+
+.filter-btn, .add-biz-btn{white-space:nowrap;padding:8px 16px !important;border-radius:12px !important;font-size:13px !important;font-weight:700 !important;cursor:pointer;transition:all 0.25s ease;border:1px solid rgba(226, 232, 240, 0.8) !important;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+
+.filter-btn{background:rgba(241, 245, 249, 0.7) !important;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#64748b !important;box-shadow:0 2px 4px rgba(0,0,0,0.02) !important}
+
+.filter-btn.active{background:rgba(45, 90, 39, 0.12) !important;color:#2d5a27 !important;border:1px solid rgba(45, 90, 39, 0.3) !important;box-shadow:0 4px 10px rgba(45, 90, 39, 0.08) !important}
+
+.filter-btn:hover:not(.active){background:rgba(226, 232, 240, 0.9) !important;transform:translateY(-1px)}
+
+.filter-btn i{font-size:14px;color:inherit;opacity:0.9}
+
+.category-section-header{display:flex;align-items:center;justify-content:space-between;background:rgba(241, 245, 249, 0.7) !important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:10px 18px;margin:35px 0 15px 0;border-radius:15px;border-left:6px solid var(--primary-olive);border:1px solid rgba(255, 255, 255, 0.5);font-weight:800;color:#334155;font-size:1.1rem;box-shadow:0 4px 12px rgba(0,0,0,0.03)}
+
+.category-section-header span{display:flex;align-items:center;gap:12px}
+
+.category-section-header i{font-size:1.3rem;color:var(--primary-olive);background:rgba(255, 255, 255, 0.4);padding:6px;border-radius:10px}
+
+.category-section-header small{background:rgba(226, 232, 240, 0.6);color:#64748b;padding:2px 12px;border-radius:20px;font-size:0.85rem;font-weight:700;margin-left:auto;border:1px solid rgba(0,0,0,0.03)}
+
+.business-grid{display:grid;grid-template-columns:repeat(2, 1fr);gap:20px;margin-bottom:40px}
+
+.biz-card-mini{background:var(--card);border-radius:12px;padding:14px;display:flex;gap:14px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);border:1px solid var(--border);transition:transform 0.3s ease, opacity 0.3s ease;position:relative !important}
+
+.mini-preview{width:100px;height:75px;flex-shrink:0;border-radius:8px;overflow:hidden;border:1px solid #f1f5f9;position:relative}
+
+.mini-preview img{width:100%;height:100%;object-fit:cover}
+
+.mini-content{flex:1;display:flex !important;flex-direction:column !important;gap:8px;overflow:hidden;position:relative !important;justify-content:flex-start !important;padding-top:2px !important}
+
+.mini-web-link{font-size:12px;color:#007bff;text-decoration:none;font-weight:700;background:var(--soft-olive);padding:3px 10px;border-radius:6px;align-self:flex-start}
+
+.mini-actions{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:8px}
+
+.phone-group{display:flex;align-items:center;gap:6px;background:#f1f5f9;padding:2px 8px;border-radius:20px;border:1px solid #e2e8f0}
+
+.phone-group .btn-icon{width:28px;height:28px;box-shadow:none;font-size:13px}
+
+.action-right{display:flex;gap:8px}
+
+.action-right .btn-icon{box-shadow:0 3px 6px rgba(0,0,0,0.08)}
+
+.btn-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all 0.2s ease;border:none;cursor:pointer}
+
+.action-right .btn-icon:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(0,0,0,0.12)}
+
+.phone-group .btn-icon:hover{transform:scale(1.05)}
+
+.btn-icon.phone-btn{color:#4caf50 !important;background-color:rgba(76, 175, 80, 0.1) !important}
+
+.btn-icon.copy-btn{color:#78909c !important;background-color:rgba(120, 144, 156, 0.1) !important;font-size:14px}
+
+.btn-icon.web-btn{color:#42a5f5 !important;background-color:rgba(66, 165, 245, 0.1) !important}
+
+.btn-icon.mail-btn{color:#ab47bc !important;background-color:rgba(171, 71, 188, 0.1) !important}
+
+.btn-icon.review-btn{color:#ffca28 !important;background-color:rgba(255, 202, 40, 0.1) !important}
+
+.btn-icon.nav-btn-action{color:#ef5350 !important;background-color:rgba(239, 83, 80, 0.1) !important}
+
+.add-business-container{text-align:center;margin:20px 0 40px 0}
+
+.add-biz-btn{display:inline-flex;align-items:center;gap:10px;background:rgba(45, 90, 39, 0.08) !important;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#2d5a27 !important;border:1px solid rgba(45, 90, 39, 0.15) !important;padding:10px 24px !important;border-radius:14px !important;text-decoration:none;font-size:14px !important;font-weight:800 !important;transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);box-shadow:0 4px 12px rgba(0, 0, 0, 0.03)}
+
+.add-biz-btn:hover{background:#2d5a27 !important;color:white !important;transform:translateY(-2px);box-shadow:0 6px 15px rgba(45, 90, 39, 0.2)}
+
+.map-section{max-width:1100px;margin:40px auto;padding:0 20px}
+
+.map-wrapper{width:100%;height:400px;border-radius:15px;overflow:hidden;box-shadow:0 4px 15px rgba(0, 0, 0, 0.1);border:1px solid var(--border)}
+
+.map-wrapper iframe{width:100% !important;height:100% !important;border:none;display:block}
+
+.site-footer{background-color:#232f3e;color:#ffffff;padding:60px 0 30px 0;margin-top:80px;width:100%}
+
+.footer-container{max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;padding:0 20px}
+
+.footer-column{flex:1;min-width:250px;margin-bottom:30px}
+
+.footer-column h3{margin-bottom:20px;font-size:18px;font-weight:700}
+
+.footer-column p{font-size:14px;line-height:1.6;color:#ced4da}
+
+.footer-column ul{list-style:none;padding:0}
+
+.footer-column ul li a{color:#ced4da;text-decoration:none;transition:0.3s;font-size:14px}
+
+.footer-column ul li a:hover{color:var(--primary-olive)}
+
+.social-icon{display:flex;align-items:center;justify-content:center;width:40px;height:40px;background-color:var(--primary-olive);color:#ffffff;border-radius:50%;text-decoration:none}
+
+.social-icon:hover{background-color:var(--primary-olive-dark);transform:translateY(-3px)}
+
+.footer-bottom{text-align:center;border-top:1px solid rgba(255,255,255,0.1);margin-top:40px;padding-top:20px;color:#868e96;font-size:12px}
+
+.site-header{background:#ffffff !important;position:sticky;top:0;z-index:10001;box-shadow:0 2px 10px rgba(0,0,0,0.05)}
+
+iframe{max-width:100% !important}
+
+form{display:flex;flex-direction:column;width:100%;max-width:600px;margin:0 auto;background:var(--card);padding:30px;border-radius:12px;border:1px solid var(--border);box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);box-sizing:border-box}
+
+form input, form textarea, form select{width:100%;padding:12px;margin-bottom:20px;border:1px solid var(--border);border-radius:8px;font-family:inherit;box-sizing:border-box}
+
+form label{display:block;margin-bottom:8px;font-weight:600;color:var(--text)}
+
+.phone-txt{display:inline;margin-right:10px;font-size:0.8rem;color:var(--text-main)}
+
+.mini-row-sub{margin-bottom:8px}
+
+.mini-row-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px;width:100%}
+
+.biz-name{display:block !important;margin:0 !important;padding-right:0 !important;flex:1;min-width:0;font-size:15px !important;font-weight:800 !important;line-height:1.2 !important;text-align:left !important;color:var(--text) !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important}
+
+.biz-location{flex-shrink:0;background:rgba(241, 245, 249, 0.8) !important;color:#64748b !important;padding:2px 8px !important;border-radius:6px !important;border:1px solid rgba(226, 232, 240, 0.8) !important;font-size:8px !important;font-weight:900 !important;text-transform:uppercase !important;display:flex !important;align-items:center !important;gap:3px !important}
+
+.biz-location i{font-size:9px !important;color:var(--primary-olive) !important}
+
+#location-buttons{margin-top:10px !important}
+
+.offline-banner{background-color:#fff3e0;color:#e65100;text-align:center;padding:10px;font-size:13px;font-weight:500;border-bottom:1px solid #ffe0b2;position:sticky;top:0;z-index:1000;animation:slideDown 0.3s ease-out}
+
+.search-input::-webkit-search-cancel-button{-webkit-appearance:none}
+
+body.is-offline .map-wrapper iframe{display:none !important}
+
+body.is-offline .map-wrapper::before{content:"📍 Map is unavailable while offline";font-weight:600;color:#666;text-align:center}
+
+body.is-offline .map-section{display:none !important}
+
+.app-version-tag{display:none !important;margin-top:12px;padding:5px 15px;background:rgba(74, 108, 74, 0.15);border:1px solid var(--primary-olive);border-radius:25px;font-size:11px;color:#a3b8a3;font-weight:600;letter-spacing:0.8px;text-transform:uppercase}
+
+.ios-banner{position:sticky;top:0;z-index:1001;background:#ffffff;border-bottom:1px solid #d1d1d6;padding:15px;font-size:14px;color:#1c1c1e;text-align:left;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
+
+.ios-banner i.fa-share-square{color:#007aff;font-size:1.2rem;margin:0 3px}
+
+#close-ios-banner{padding:5px 10px;line-height:1}
+
+#install-banner, #ios-install-instructions{position:fixed;top:10px;left:50%;transform:translateX(-50%);width:95%;max-width:500px;z-index:10000;background:white;padding:15px;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.2);border:2px solid var(--primary-olive);animation:slideDown 0.5s ease;display:none}
+
+#install-banner p, #ios-install-instructions p{margin:0 0 12px 0;font-size:15px;line-height:1.4;color:var(--text)}
+
+.banner-buttons{display:flex;gap:10px;justify-content:center;align-items:center}
+
+.app-version-tag:hover{background:rgba(74, 108, 74, 0.15)}
+
+#install-banner{display:none}
+
+.nav-btn-action{background-color:#4285F4 !important;color:white !important;border-radius:50%;width:35px;height:35px;display:flex;align-items:center;justify-content:center;transition:transform 0.2s, background-color 0.2s;box-shadow:0 2px 4px rgba(66, 133, 244, 0.3)}
+
+.nav-btn-action:active{transform:scale(0.9);background-color:#3367D6 !important}
+
+.nav-btn-action i{font-size:14px}
+
+.mobile-only-item{display:none !important}
+
+.weather-mini{display:flex;align-items:center;gap:5px;font-size:0.9rem;font-weight:600;color:var(--primary-olive);background:rgba(255, 255, 255, 0.5);padding:2px 8px;border-radius:20px;margin-left:10px}
+
+.wishlist-btn{position:absolute;top:2px;right:2px;width:20px;height:20px;background:rgba(255, 255, 255, 0.95);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,0.3);z-index:100;transition:all 0.2s ease}
+
+.wishlist-btn i{font-size:10px;color:#888}
+
+.wishlist-btn.active i{color:#e74c3c !important}
+
+.wishlist-btn:active{transform:scale(0.9)}
+
+.menu-heart{color:#e74c3c !important;margin-right:10px !important;filter:drop-shadow(0 0 2px rgba(231, 76, 60, 0.2));display:inline-block}
+
+.nav-links a:hover .menu-heart{transform:scale(1.2);transition:0.2s}
+
+.form-container{background:rgba(255, 255, 255, 0.7) !important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(45, 90, 39, 0.15) !important;border-radius:20px !important;padding:15px 15px 40px 15px !important;overflow:visible !important;max-width:700px;margin:20px auto}
+
+.form-container iframe{min-height:850px !important;width:100% !important;margin-bottom:20px !important;color-scheme:light}
+
+.filter-btn:hover{background:rgba(45, 90, 39, 0.2) !important;transform:translateX(-4px);transition:all 0.3s ease}
+
+.back-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;background:rgba(45, 90, 39, 0.1) !important;color:#2d5a27 !important;border:1px solid rgba(45, 90, 39, 0.2) !important;border-radius:20px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.25s ease;box-shadow:0 2px 6px rgba(45, 90, 39, 0.05)}
+
+.back-btn:hover{background:rgba(45, 90, 39, 0.15) !important;transform:translateY(-1px);box-shadow:0 4px 12px rgba(45, 90, 39, 0.1)}
+
+.back-btn i{font-size:12px}
+
+body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offline modus";display:block;text-align:center;padding:20px;color:#666}
+
+[data-theme="dark"]{--bg-color:#121212;--card-bg:#1e1e1e;--text-main:#f0f0f0;--text-muted:#a0a0a0;--border-color:#333;--soft-olive:#2a3a2a;--header-bg:#1a1a1a}
+
+.business-card{background-color:var(--card-bg, #fff);border:1px solid var(--border-color);border-color:var(--border-color, #eee)}
+
+.business-card h3{color:var(--text-main)}
+
+.dark-mode-btn{background:none;border:none;color:var(--primary-olive);font-size:1.2rem;cursor:pointer;padding:10px;margin-right:10px;display:flex;align-items:center;transition:transform 0.2s ease}
+
+.dark-mode-btn:active{transform:scale(0.9)}
+
+.map-fab-fixed{position:fixed !important;bottom:25px !important;right:25px !important;width:60px !important;height:60px !important;background:rgba(255, 255, 255, 0.8) !important;backdrop-filter:blur(10px) !important;-webkit-backdrop-filter:blur(10px) !important;border:1px solid rgba(255, 255, 255, 0.5) !important;border-radius:50% !important;display:flex !important;align-items:center !important;justify-content:center !important;z-index:99999 !important;box-shadow:0 4px 15px rgba(0,0,0,0.2) !important;text-decoration:none !important;transition:transform 0.2s ease}
+
+.map-fab-fixed i{color:#2d5a27 !important;font-size:24px !important}
+
+.map-fab-fixed:active{transform:scale(0.9)}
+
+@media screen and (max-width: 768px){.hero-section{height:50vh;min-height:300px}.filter-container{display:flex !important;flex-wrap:nowrap !important;overflow-x:auto !important;justify-content:flex-start !important;padding:10px 20px !important;gap:8px !important;-webkit-overflow-scrolling:touch;scrollbar-width:none}.filter-container::-webkit-scrollbar{display:none}.filter-btn{flex:0 0 auto !important}.nav-container{display:flex !important;flex-wrap:wrap !important;justify-content:space-between !important;align-items:center !important;width:100% !important;padding:10px 20px !important;box-sizing:border-box !important}.nav-links{display:none !important;flex-basis:100% !important;order:10;margin:10px -20px 0 -20px !important;padding:0 !important;background:#ffffff !important;list-style:none;border-top:1px solid #f0f0f0;box-shadow:0 4px 12px rgba(0, 0, 0, 0.1)}.nav-links.active{display:flex !important;flex-direction:column !important}.menu-toggle{display:flex !important;flex-direction:column;gap:5px;background:transparent;border:none;z-index:1002}.bar{width:25px;height:2px;background-color:#2d5a27 !important;transition:0.3s}.phone-txt{display:none !important}.phone-group{gap:4px !important;display:flex !important;align-items:center !important;background:#f8fafc !important;border:1px solid #e2e8f0 !important;border-radius:20px !important;padding:2px !important;height:32px !important;box-sizing:border-box !important}.business-grid{display:flex !important;flex-direction:column !important;gap:12px !important;width:100% !important;padding:0 !important;margin:0 !important}.biz-card-mini{width:100% !important;margin:0 0 8px 0 !important;padding:10px !important;display:flex !important;box-sizing:border-box !important}.mini-preview{width:72px !important;height:72px !important;flex-shrink:0 !important}.mini-actions{display:flex !important;justify-content:space-between !important;align-items:center !important;width:100% !important;margin-top:auto !important}.action-right{display:flex !important;gap:6px !important}.hero-overlay h1{font-size:32px !important;line-height:1.2}.hero-overlay p{font-size:16px !important;max-width:85%}.nav-links li{width:100% !important;border-bottom:1px solid #f8f8f8}.nav-links a{display:block !important;padding:18px 25px !important;color:#2d5a27 !important;text-decoration:none !important;font-weight:600;text-align:left !important;background:white !important;transition:background 0.2s}.menu-toggle.active .bar:nth-child(1){transform:translateY(7px) rotate(45deg)}.menu-toggle.active .bar:nth-child(2){opacity:0}.menu-toggle.active .bar:nth-child(3){transform:translateY(-7px) rotate(-45deg)}.menu-toggle.active .bar:nth-child(4){display:none}ul#nav-list li#menu-install-item{display:block !important;visibility:visible !important;opacity:1 !important;width:100% !important;background:#ffffff !important;padding:5px 0 15px 0 !important;border-top:1px solid #f0f0f0;margin:0 !important}.phone-group .btn-icon:first-child{color:#22c55e !important;border-color:#dcfce7 !important}.phone-group .btn-icon:last-child{color:#94a3b8 !important;background:#f8fafc !important;box-shadow:none !important}.action-right .fa-globe{color:#3b82f6 !important}.action-right .fa-envelope{color:#a855f7 !important}.action-right .fa-star{color:#eab308 !important}.action-right .fa-map-marker-alt{color:#ef4444 !important}ul#nav-list li#menu-install-item a{display:flex !important;align-items:center;justify-content:center;gap:10px;margin:0 20px !important;padding:12px !important;background:rgba(240, 244, 240, 0.9) !important;border:1px solid rgba(220, 230, 220, 0.7) !important;color:#2d5a27 !important;border-radius:8px !important;text-decoration:none !important;font-weight:700 !important;font-size:16px !important;box-shadow:0 1px 3px rgba(0,0,0,0.05)}ul#nav-list li#menu-install-item a:active{background:rgba(230, 235, 230, 0.95) !important;transform:scale(0.99)}.btn-icon, .phone-group .btn-icon{width:28px !important;height:28px !important;min-width:28px !important;max-width:28px !important;background:white !important;border:1px solid #e2e8f0 !important;border-radius:50% !important;display:flex !important;align-items:center !important;justify-content:center !important;box-shadow:0 1px 3px rgba(0,0,0,0.1) !important;font-size:13px !important;margin:0 !important;padding:0 !important}.nav-links a:active, .nav-links a:hover{background-color:#f5f5f5 !important;color:#1a3317 !important}ul#nav-list li#menu-install-item a i{color:#2d5a27 !important}body.is-offline .map-section, body.is-offline iframe[src*="google.com/maps"]{display:none !important}}
+
+@media screen and (max-width: 400px){.action-right{gap:4px}.btn-icon{width:30px;height:30px;font-size:12px}}
+
+@media screen and (min-width: 992px){.menu-toggle{display:none !important}.biz-card-mini{opacity:1 !important;transform:none !important;transition:all 0.3s ease;display:flex !important;flex-direction:row !important;width:100% !important;height:130px !important;padding:12px !important;gap:12px !important;background:white !important;box-sizing:border-box !important}.biz-card-mini.show{opacity:1;transform:translateY(0)}.business-grid{display:grid !important;grid-template-columns:repeat(2, 1fr) !important;gap:20px !important;margin-bottom:30px !important;width:100% !important}.category-section-header{width:100% !important;margin:20px 0 8px 0 !important;padding:10px 18px !important;box-sizing:border-box !important}.mini-preview{width:110px !important;height:106px !important;flex-shrink:0 !important}.mini-content{flex:1 !important;display:flex !important;flex-direction:column !important;justify-content:space-between !important;min-width:0 !important}.mini-actions{display:flex !important;flex-direction:row !important;justify-content:flex-end !important;align-items:center !important;gap:10px !important;width:100% !important;margin-top:auto !important;padding-top:5px !important}.phone-group{margin-right:auto !important;display:flex !important;align-items:center !important;gap:8px !important;background:#f1f5f9 !important;padding:6px 14px !important;border-radius:20px !important;border:1px solid #e2e8f0 !important;flex-shrink:0 !important}.action-right{display:flex !important;gap:8px !important;margin:0 !important}.btn-icon{width:30px !important;height:30px !important;border-radius:50% !important;display:flex !important;align-items:center !important;justify-content:center !important;flex-shrink:0 !important;font-size:13px !important;box-shadow:0 2px 5px rgba(0,0,0,0.06) !important;border:none !important}.phone-txt{font-size:13.5px !important;font-weight:700 !important;color:#1e293b !important;margin-right:4px !important;white-space:nowrap !important}#menu-install-item{display:none !important}.category-section-header small{background:rgba(255, 255, 255, 0.3) !important;backdrop-filter:blur(5px) !important;border:1px solid rgba(255, 255, 255, 0.2) !important;color:#475569 !important}.phone-group .btn-icon{width:26px !important;height:26px !important;font-size:11px !important;box-shadow:none !important}}
+
+@media (min-width: 768px){.app-version-tag{opacity:0.7}}
+
+@media (max-width: 767px){.app-version-tag{display:inline-block !important;margin-top:12px;padding:5px 15px;background:rgba(74, 108, 74, 0.08);border:1px solid var(--primary-olive);border-radius:25px;font-size:11px;color:var(--primary-olive);font-weight:600;text-transform:uppercase}}
+
+@media (max-width: 400px){.weather-mini span{font-size:0.8rem}}
+
+@media screen and (max-width: 992px){body{background-color:#f8faf4 !important}body .business-card{width:92% !important;max-width:650px !important;margin:0 auto !important;float:none !important;display:block !important;box-sizing:border-box !important}html, body{overflow-x:hidden !important;width:100% !important;position:relative !important}body .business-container, body .results-container{display:flex !important;flex-direction:column !important;align-items:center !important;width:100% !important;padding:20px 10px !important;gap:30px !important;overflow-x:hidden !important}}
+
+@media all and (display-mode: standalone), (display-mode: fullscreen){ul#nav-list li#menu-install-item{display:none !important}}
+
+/* --- RESPONSIVE LAYOUT ENGINE --- */
+
+/* 1. DE VERFIJNDE MOBIELE BASIS (Telefoons tot 480px) */
+/* Minimale marges voor maximale breedte op kleine schermen */
+@media screen and (max-width: 480px) {
+    #business-list, .business-grid {
+        padding: 0 6px !important; /* Ultradunne marge voor 'edge-to-edge' look */
         width: 100% !important;
-        padding: 10px 20px !important;
-        box-sizing: border-box !important;
-    }
-
-    /* STAP 2: Je bestaande .nav-links, maar met aangepaste margin */
-    .nav-links {
-        display: none !important;
-        flex-basis: 100% !important; /* Neemt de hele breedte onder het logo in */
-        order: 10;
-        margin: 10px -20px 0 -20px !important; /* De -20px zorgt dat hij de hele breedte vult */
-        padding: 0 !important;
-        background: #ffffff !important;
-        list-style: none;
-        border-top: 1px solid #f0f0f0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .nav-links.active {
         display: flex !important;
         flex-direction: column !important;
-    }
-
-    .nav-links li {
-        width: 100% !important;
-        border-bottom: 1px solid #f8f8f8;
-    }
-
-    .nav-links a {
-        display: block !important;
-        padding: 18px 25px !important;
-        color: #2d5a27 !important;
-        text-decoration: none !important;
-        font-weight: 600;
-        text-align: left !important;
-        background: white !important;
-        transition: background 0.2s; /* Zorgt voor een vloeiend effect */
-    }
-
-    /* Dit zie je wanneer je de link op je telefoon aanraakt */
-    .nav-links a:active, .nav-links a:hover {
-        background-color: #f5f5f5 !important; 
-        color: #1a3317 !important;
-    }
-
-    .menu-toggle {
-        display: flex !important;
-        flex-direction: column;
-        gap: 5px;
-        background: transparent;
-        border: none;
-        z-index: 1002;
-    }
-
-    .bar {
-        width: 25px;
-        height: 2px;
-        background-color: #2d5a27 !important;
-        transition: 0.3s;
-    }
-
-    .menu-toggle.active .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    .menu-toggle.active .bar:nth-child(2) { opacity: 0; }
-    .menu-toggle.active .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-    .menu-toggle.active .bar:nth-child(4) { display: none; }
-
-/* 1. De container van de knop (Nu ALTIJD zichtbaar op mobiel) */
-ul#nav-list li#menu-install-item {
-    display: block !important; 
-    visibility: visible !important;
-    opacity: 1 !important;
-    width: 100% !important;
-    background: #ffffff !important; 
-    padding: 5px 0 15px 0 !important;
-    border-top: 1px solid #f0f0f0;
-    margin: 0 !important;
-}
-
-    /* 2. De GLAZIGE install-knop zelf */
-    ul#nav-list li#menu-install-item a {
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        margin: 0 20px !important;
-        padding: 12px !important;
-        
-        /* --- DIT IS DE GLASSY FIX --- */
-        /* De lichtgroene kleur met 90% doorschijnendheid */
-        background: rgba(240, 244, 240, 0.9) !important;
-        /* Een zeer subtiele lichtgroene rand voor de vorm */
-        border: 1px solid rgba(220, 230, 220, 0.7) !important;
-        /* Tekstkleur terug naar donkergroen, passend bij de 'Home' tekst */
-        color: #2d5a27 !important; 
-        border-radius: 8px !important;
-        /* --------------------------- */
-        
-        text-decoration: none !important;
-        font-weight: 700 !important;
-        font-size: 16px !important;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Subtiele diepte */
-    }
-
-    /* Icoontje in de knop ook donkergroen maken */
-    ul#nav-list li#menu-install-item a i {
-        color: #2d5a27 !important;
-    }
-
-    /* Active effect voor mobiele feedback */
-    ul#nav-list li#menu-install-item a:active {
-        background: rgba(230, 235, 230, 0.95) !important;
-        transform: scale(0.99);
-    }
-
-}
-
-
-
-/* 5. Desktop fix: Verberg de hamburger knop op grote schermen */
-@media screen and (min-width: 769px) {
-    .menu-toggle {
-        display: none !important;
-    }
-}
-
-
-/* --- GLOBALE FIXES (BUITEN MEDIA QUERY) --- */
-iframe { max-width: 100% !important; }
-
-/* Animatie (Alleen voor desktop of als je JS gebruikt die de 'show' class toevoegt) */
-@media screen and (min-width: 769px) {
-    .biz-card-mini { 
-        opacity: 1 !important;
-        transform: none !important;
-        transition: all 0.3s ease;
-    }
-    .biz-card-mini.show { 
-        opacity: 1; 
-        transform: translateY(0); 
-    }
-}
-
-/* --- UNIVERSELE FORMULIER STYLING --- */
-form {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 600px; /* Beperkt de breedte voor leesbaarheid */
-    margin: 0 auto;   /* Hét geheim: dit centreert het blok horizontaal */
-    background: var(--card);
-    padding: 30px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-    box-sizing: border-box; /* Zorgt dat padding de box niet breder maakt */
-}
-
-/* Zorg dat de invoervelden ook netjes binnen de box blijven */
-form input, 
-form textarea, 
-form select {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 20px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-family: inherit;
-    box-sizing: border-box; /* Cruciaal voor centrering */
-}
-
-form label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: var(--text);
-}
-
-/* Standaard: toon het nummer (Desktop) */
-.phone-txt {
-    display: inline;
-    margin-right: 10px;
-    font-size: 0.8rem;
-    color: var(--text-main);
-}
-
-/* Mobiel: verberg het nummer (Schermen kleiner dan 768px) */
-@media screen and (max-width: 768px) {
-    .phone-txt {
-        display: none !important; /* Verbergt de tekst volledig op mobiel */
-    }
-    
-    .phone-group {
-        gap: 5px; /* Houdt de icoontjes dicht bij elkaar op mobiel */
-    }
-}
-
-
-
-.mini-row-sub {
-    margin-bottom: 8px;
-}
-
-.mini-web-link {
-    font-size: 12px;
-    color: #007bff; /* Of je eigen accentkleur */
-    text-decoration: none;
-}
-
-
-/* --- DE DEFINITIEVE BADGE FIX --- */
-
-/* --- COMPACTE LOCATIE BADGE (NAAST DE TITEL) --- */
-.mini-row-top {
-    display: flex;
-    justify-content: space-between; /* Zet titel links, badge rechts */
-    align-items: center;            /* Lijn ze verticaal precies in het midden uit */
-    gap: 10px;
-    margin-bottom: 4px;
-    width: 100%;
-}
-
-
-/* We maken het hele kaartje de 'ankerplaats' in plaats van alleen de bovenste rij */
-.biz-card-mini {
-    position: relative !important;
-}
-
-/* 1. Zorg dat de tekstkolom het ankerpunt is */
-.mini-content {
-    position: relative !important; /* DIT IS HET ANKER */
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: flex-start !important; /* Dwingt alles naar boven */
-    padding-top: 2px !important; /* Een klein beetje ademruimte bovenin */
-}
-
-/* --- DE DEFINITIEVE BEDRIJFSNAAM (SINGLE LINE) --- */
-.biz-name {
-    display: block !important;
-    margin: 0 !important;
-    padding-right: 0 !important; /* Ruimte wordt nu door Flexbox geregeld */
-    
-    flex: 1;                     /* Pak alle ruimte naast de locatie-badge */
-    min-width: 0;                /* Cruciaal: dwingt de tekst om te krimpen binnen flex */
-    
-    font-size: 15px !important;
-    font-weight: 800 !important; /* De dikke 'app' look */
-    line-height: 1.2 !important;
-    text-align: left !important;
-    color: var(--text) !important;
-
-    /* DE MAGIE VOOR MAXIMAAL ÉÉN REGEL MET PUNTJES (...) */
-    white-space: nowrap !important;    /* Verbiedt tekst om naar regel 2 te gaan */
-    overflow: hidden !important;       /* Verbergt wat er niet past */
-    text-overflow: ellipsis !important; /* Voegt de '...' toe */
-}
-
-/* 3. De Badge: we pinnen hem nu strak in de hoek van .mini-content */
-/* --- DE DEFINITIEVE SOFT LOCATIE BADGE (Regel 694) --- */
-/* --- ULTRA-COMPACTE LOCATIE BADGE --- */
-.biz-location {
-    /* Geen absolute positie meer nodig! */
-    flex-shrink: 0;                 /* Badge mag niet versmallen */
-    
-    background: rgba(241, 245, 249, 0.8) !important;
-    color: #64748b !important;
-    padding: 2px 8px !important;
-    border-radius: 6px !important;
-    border: 1px solid rgba(226, 232, 240, 0.8) !important;
-
-    font-size: 8px !important;
-    font-weight: 900 !important;
-    text-transform: uppercase !important;
-    
-    display: flex !important;
-    align-items: center !important;
-    gap: 3px !important;
-}
-
-/* Verklein ook het icoontje */
-.biz-location i {
-    font-size: 7px !important;
-    color: var(--primary-olive) !important;
-}
-
-/* Kleuraccent voor het icoontje in de badge */
-.biz-location i {
-    font-size: 9px !important;
-    color: var(--primary-olive) !important; /* Het olijfgroene accent */
-}
-
-
-#location-buttons {
-    margin-top: 10px !important; /* Geeft extra ruimte tussen de twee rijen knoppen */
-}
-
-.offline-banner {
-    background-color: #fff3e0; /* Zacht oranje/amber */
-    color: #e65100;           /* Donker oranje tekst */
-    text-align: center;
-    padding: 10px;
-    font-size: 13px;
-    font-weight: 500;
-    border-bottom: 1px solid #ffe0b2;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-    from { transform: translateY(-100%); }
-    to { transform: translateY(0); }
-}
-
-.search-input {
-    outline: none;
-    appearance: none;
-    -webkit-appearance: none;
-}
-
-/* Verwijder het standaard kruisje in Chrome/Safari als je dat mooier vindt */
-.search-input::-webkit-search-cancel-button {
-    -webkit-appearance: none;
-}
-
-/* --- GLOBALE FIXES --- */
-iframe { max-width: 100% !important; }
-
-/* DE FIX: Voeg !important toe om de blokkade hierboven te verbreken */
-body.is-offline .map-wrapper iframe {
-    display: none !important;
-}
-
-/* Toon een offline melding in het kaartvak */
-body.is-offline .map-wrapper::before {
-    content: "📍 Map is unavailable while offline";
-    font-weight: 600;
-    color: #666;
-    text-align: center;
-}
-
-/* OPTIONEEL: Verberg de hele sectie voor de zekerheid ook */
-body.is-offline .map-section {
-    display: none !important;
-}
-
-.app-version-tag {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 4px 12px;
-    background: rgba(74, 108, 74, 0.1); /* Subtiel groen van je thema */
-    border: 1px solid var(--primary-olive);
-    border-radius: 20px;
-    font-size: 12px;
-    color: var(--primary-olive);
-    font-weight: 600;
-    letter-spacing: 0.5px;
-}
-
-/* Verberg deze tag op desktop als je wilt dat het echt een 'app' ding is */
-@media (min-width: 768px) {
-    .app-version-tag {
-        opacity: 0.7;
-    }
-}
-
-.ios-banner {
-    position: sticky;
-    top: 0;
-    z-index: 1001; /* Zorgt dat hij boven de header blijft */
-    background: #ffffff;
-    border-bottom: 1px solid #d1d1d6;
-    padding: 15px;
-    font-size: 14px;
-    color: #1c1c1e;
-    text-align: left;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.ios-banner i.fa-share-square {
-    color: #007aff;
-    font-size: 1.2rem;
-    margin: 0 3px;
-}
-
-/* Zorg dat de sluitknop goed gepositioneerd is */
-#close-ios-banner {
-    padding: 5px 10px;
-    line-height: 1;
-}
-
-/* De basis voor beide banners (Android & iOS) */
-#install-banner, #ios-install-instructions {
-    position: fixed;
-    top: 10px; /* Klein beetje ruimte van de bovenkant */
-    left: 50%;
-    transform: translateX(-50%); /* Netjes in het midden */
-    width: 95%; /* Op mobiel bijna de volle breedte */
-    max-width: 500px; /* Op desktop wordt hij niet breder dan dit */
-    z-index: 10000;
-    background: white;
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    border: 2px solid var(--primary-olive);
-    animation: slideDown 0.5s ease;
-    display: none; /* Wordt door JS op 'block' gezet */
-}
-
-/* Specifieke styling voor de tekst binnen de banner */
-#install-banner p, #ios-install-instructions p {
-    margin: 0 0 12px 0;
-    font-size: 15px;
-    line-height: 1.4;
-    color: var(--text);
-}
-
-/* De knoppen in de banner naast elkaar */
-.banner-buttons {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Animatie voor het binnenkomen */
-@keyframes slideDown {
-    from { transform: translate(-50%, -100%); opacity: 0; }
-    to { transform: translate(-50%, 0); opacity: 1; }
-}
-
-.app-version-tag {
-    display: inline-block;
-    margin-top: 12px;
-    padding: 5px 15px;
-    border: 1px solid var(--primary-olive);
-    border-radius: 25px;
-    font-size: 11px;
-    color: var(--primary-olive);
-    font-weight: 600;
-    letter-spacing: 0.8px;
-    text-transform: uppercase; /* Geeft een officiële 'badge' look */
-    background: rgba(74, 108, 74, 0.15); /* Iets meer contrast */
-    color: #a3b8a3; /* Of een iets lichtere variant van je groen */
-}
-
-/* Een kleine hover-effect voor op desktop */
-.app-version-tag:hover {
-    background: rgba(74, 108, 74, 0.15);
-}
-
-/* Standaard: Verberg de app-label (voor Desktop) */
-.app-version-tag {
-    display: none !important;
-}
-
-/* Alleen tonen op schermen kleiner dan 768px (Mobiel/Tablet) */
-@media (max-width: 767px) {
-    .app-version-tag {
-        display: inline-block !important;
-        margin-top: 12px;
-        padding: 5px 15px;
-        background: rgba(74, 108, 74, 0.08);
-        border: 1px solid var(--primary-olive);
-        border-radius: 25px;
-        font-size: 11px;
-        color: var(--primary-olive);
-        font-weight: 600;
-        text-transform: uppercase;
-    }
-}
-
-/* Zet de banner standaard op 'none'. 
-   Alleen de mobiele JS mag hem op 'block' zetten. */
-#install-banner {
-    display: none !important;
-}
-
-/* Verberg ook de footer label op desktop (zoals je vroeg) */
-.app-version-tag {
-    display: none !important;
-}
-
-/* Alleen op mobiel mag de footer label weer terugkomen */
-@media (max-width: 767px) {
-    .app-version-tag {
-        display: inline-block !important;
-    }
-}
-
-/* De Navigatieknop in de actiebalk */
-.nav-btn-action {
-    background-color: #4285F4 !important; /* Google Maps Blauw */
-    color: white !important;
-    border-radius: 50%;
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s, background-color 0.2s;
-    box-shadow: 0 2px 4px rgba(66, 133, 244, 0.3);
-}
-
-.nav-btn-action:active {
-    transform: scale(0.9);
-    background-color: #3367D6 !important;
-}
-
-.nav-btn-action i {
-    font-size: 14px;
-}
-
-/* Verberg de banner standaard altijd */
-#install-banner {
-    display: none;
-}
-
-/* Standaard volledig verbergen op desktop */
-.mobile-only-item {
-    display: none !important;
-}
-
-.weather-mini {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--primary-olive);
-    background: rgba(255, 255, 255, 0.5);
-    padding: 2px 8px;
-    border-radius: 20px;
-    margin-left: 10px;
-}
-
-@media (max-width: 400px) {
-    .weather-mini span { font-size: 0.8rem; }
-}
-
-
-/* De knop zelf */
-.wishlist-btn {
-    position: absolute;
-    /* --- STAPPEN NAAR HOEK --- */
-    top: 2px;       /* Heel dicht bij de bovenrand */
-    right: 2px;     /* Heel dicht bij de rechterrand */
-    
-    /* --- KLEIN FORMAAT --- */
-    width: 20px;    /* Nog iets kleiner (ongeveer 50% van 35px) */
-    height: 20px;   /* Nog iets kleiner */
-    
-    /* --- STYLING --- */
-    background: rgba(255, 255, 255, 0.95); /* Bijna vol wit */
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    z-index: 100;
-    transition: all 0.2s ease;
-}
-
-/* Het icoontje binnen de knop */
-.wishlist-btn i {
-    font-size: 10px; /* Klein icoon */
-    color: #888;     /* Grijs als het geen favoriet is */
-}
-
-/* Styling als hij 'active' is (rood hartje) */
-.wishlist-btn.active i {
-    color: #e74c3c !important; /* Felrood */
-}
-
-/* Kleine feedback bij klikken */
-.wishlist-btn:active {
-    transform: scale(0.9);
-}
-
-/* Het hartje in het navigatiemenu */
-.menu-heart {
-    color: #e74c3c; /* Dezelfde kleur rood als de hartjes op de kaarten */
-    margin-right: 5px; /* Extra witruimte aan de rechterkant van het hartje */
-    filter: drop-shadow(0 0 2px rgba(231, 76, 60, 0.2)); /* Optioneel: een heel zachte gloed */
-}
-
-/* Zorg dat het hartje rood blijft, ook als de tekst eromheen wit of zwart is */
-.nav-links a:hover .menu-heart {
-    transform: scale(1.2);
-    transition: transform 0.2s ease;
-}
-
-/* We spreken hier specifiek het hartje aan met de nieuwe naam */
-.menu-heart {
-    color: #e74c3c !important; /* Dwingt de kleur naar rood */
-    margin-right: 10px !important; /* Maakt de spatie tussen hartje en tekst */
-    display: inline-block;
-}
-
-/* Optioneel: een klein effectje als je eroverheen muist */
-.nav-links a:hover .menu-heart {
-    transform: scale(1.2);
-    transition: 0.2s;
-}
-
-/* De Container */
-.form-container {
-    background: rgba(255, 255, 255, 0.7) !important;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(45, 90, 39, 0.15) !important;
-    border-radius: 20px !important;
-    
-    /* Ruimte onderaan de container zelf */
-    padding: 15px 15px 40px 15px !important; 
-    overflow: visible !important; 
-    max-width: 700px;
-    margin: 20px auto;
-}
-
-/* De Iframe dwingen om niet te 'krimpen' */
-.form-container iframe {
-    /* We geven het formulier een harde minimale hoogte */
-    /* Gebruik een waarde die iets hoger is dan je formulier lang is */
-    min-height: 850px !important; 
-    width: 100% !important;
-    margin-bottom: 20px !important;
-}
-
-/* Subtiele styling voor de Tally velden (via de container) */
-.form-container iframe {
-    /* Dit helpt Tally om de fonts en kleuren beter over te nemen */
-    color-scheme: light;
-}
-
-/* De 'Back to Directory' knop een kleine hover-animatie geven */
-.filter-btn:hover {
-    background: rgba(45, 90, 39, 0.2) !important;
-    transform: translateX(-4px); /* Subtiel effect naar links */
-    transition: all 0.3s ease;
-}
-
-.back-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 18px;
-    background: rgba(45, 90, 39, 0.1) !important; /* De zachte olijf-waas */
-    color: #2d5a27 !important;                     /* Donkergroen */
-    border: 1px solid rgba(45, 90, 39, 0.2) !important;
-    border-radius: 20px;                            /* Matcht je hoofdknop */
-    font-size: 13px;
-    font-weight: 700;
-    text-decoration: none;
-    transition: all 0.25s ease;
-    box-shadow: 0 2px 6px rgba(45, 90, 39, 0.05);  /* Subtiele groene schaduw */
-}
-
-.back-btn:hover {
-    background: rgba(45, 90, 39, 0.15) !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(45, 90, 39, 0.1); /* Iets meer schaduw bij hover */
-}
-
-.back-btn i {
-    font-size: 12px;
-}
-
-/* Verberg de kaart sectie op mobiel als we offline zijn */
-@media screen and (max-width: 768px) {
-    body.is-offline .map-section, 
-    body.is-offline iframe[src*="google.com/maps"] {
-        display: none !important;
-    }
-}
-
-/* Optioneel: toon een tekstje op de plek van de kaart op desktop */
-body.is-offline .map-wrapper::after {
-    content: "📍 Kaart niet beschikbaar in offline modus";
-    display: block;
-    text-align: center;
-    padding: 20px;
-    color: #666;
-}
-
-/* --- DARK MODE KLEUREN --- */
-[data-theme="dark"] {
-    --bg-color: #121212;
-    --card-bg: #1e1e1e;
-    --text-main: #e0e0e0;
-    --text-muted: #b0b0b0;
-    --border-color: #333;
-    --soft-olive: #2a3a2a; /* Donkerdere olijftint voor dark mode */
-}
-
-/* --- STANDAARD (LIGHT) KLEUREN --- */
-:root {
-    --bg-color: #f4f7ed; /* Je huidige soft-olive */
-    --card-bg: #ffffff;
-    --text-main: #333333;
-    --text-muted: #666666;
-    --border-color: #eeeeee;
-}
-
-/* Update je bestaande elementen om deze variabelen te gebruiken */
-body {
-    background-color: var(--bg-color);
-    color: var(--text-main);
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.business-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-}
-
-.business-card h3 {
-    color: var(--text-main);
-}
-
-/* De CSS voor de knop (`style.css`)
-/* Voeg dit toe aan je CSS om de knop er goed uit te laten zien en de kleuren variabel te maken:
-
-/* Styling voor de knop zelf */
-.dark-mode-btn {
-    background: none;
-    border: none;
-    color: var(--primary-olive); /* Of wit als dat beter past in je header */
-    font-size: 1.2rem;
-    cursor: pointer;
-    padding: 10px;
-    margin-right: 10px;
-    display: flex;
-    align-items: center;
-    transition: transform 0.2s ease;
-}
-
-.dark-mode-btn:active {
-    transform: scale(0.9);
-}
-
-/* --- DARK MODE VARIABELEN --- */
-[data-theme="dark"] {
-    --bg-color: #121212;
-    --card-bg: #1e1e1e;
-    --text-main: #f0f0f0;
-    --text-muted: #a0a0a0;
-    --border-color: #333;
-    --header-bg: #1a1a1a;
-}
-
-/* Zorg dat je bestaande classes deze variabelen gebruiken */
-body {
-    background-color: var(--bg-color, #f4f7ed);
-    color: var(--text-main, #333);
-}
-
-.business-card {
-    background-color: var(--card-bg, #fff);
-    border-color: var(--border-color, #eee);
-}
-
-
-.map-fab-fixed {
-    position: fixed !important; /* Forceer de positie */
-    bottom: 25px !important;
-    right: 25px !important;
-    width: 60px !important;
-    height: 60px !important;
-    background: rgba(255, 255, 255, 0.8) !important; /* Apple Glass */
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.5) !important;
-    border-radius: 50% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    z-index: 99999 !important; /* Zorg dat hij echt bovenop ligt */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
-    text-decoration: none !important;
-    transition: transform 0.2s ease;
-}
-
-.map-fab-fixed i {
-    color: #2d5a27 !important; /* Jouw olijfgroen */
-    font-size: 24px !important;
-}
-
-.map-fab-fixed:active {
-    transform: scale(0.9);
-}
-
-
-@media screen and (min-width: 769px) {
-    /* 1. De Container waar de kaarten ÉCHT in zitten */
-    .business-grid {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important; /* Dwingt 2 kolommen af */
-        gap: 20px !important;
-        margin-bottom: 30px !important;
-        width: 100% !important;
-    }
-
-    /* 2. De Header: Ruimte tussen kop en kaartjes verkleinen */
-    .category-section-header {
-        width: 100% !important;
-        margin: 20px 0 8px 0 !important; /* Boven 20px, Onder 8px (was 15) */
-        padding: 10px 18px !important;
+        align-items: center !important;
         box-sizing: border-box !important;
     }
 
-    .category-section-header small {
-        background: rgba(255, 255, 255, 0.3) !important;
-        backdrop-filter: blur(5px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        color: #475569 !important;
-    }
-
-    /* 3. Het Kaartje: Terug naar de horizontale look */
     .biz-card-mini {
-        display: flex !important;
-        flex-direction: row !important;
         width: 100% !important;
-        height: 130px !important; /* Fixeert de hoogte voor strakke rijen */
-        padding: 12px !important;
-        gap: 12px !important;
-        background: white !important;
+        max-width: 100% !important;
+        margin: 0 0 8px 0 !important;
+        padding: 8px !important; /* Compactere binnenkant */
         box-sizing: border-box !important;
-        /* Reset animaties die de boel verschuiven */
-        transform: none !important;
-        opacity: 1 !important;
     }
 
-    /* Foto & Content balans herstellen */
     .mini-preview {
-        width: 110px !important;
-        height: 106px !important;
+        width: 65px !important; /* Iets kleiner voor meer tekstruimte */
+        height: 65px !important;
         flex-shrink: 0 !important;
     }
 
     .mini-content {
+        padding-left: 6px !important;
         flex: 1 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: space-between !important;
         min-width: 0 !important;
     }
 
-    /* 4. Acties & Iconen: Desktop Optimalisatie */
-    .mini-actions {
-        display: flex !important;
-        flex-direction: row !important;
-        justify-content: flex-end !important; 
-        align-items: center !important;
-        gap: 10px !important; 
-        width: 100% !important;
-        margin-top: auto !important;
-        padding-top: 5px !important;
-    }
-
-    .phone-group {
-        margin-right: auto !important; 
-        display: flex !important;
-        align-items: center !important;
-        gap: 8px !important;
-        background: #f1f5f9 !important;
-        padding: 6px 14px !important; /* Ruime bubbel */
-        border-radius: 20px !important;
-        border: 1px solid #e2e8f0 !important;
-        flex-shrink: 0 !important;
-    }
-
-    /* De rechtergroep met iconen (wereldbol, mail, etc.) */
-    .action-right {
-        display: flex !important;
-        gap: 8px !important;
-        margin: 0 !important;
-    }
-
-    /* --- UNIFORME KNOP STYLING --- */
-    .btn-icon {
-        width: 30px !important;
-        height: 30px !important;
-        border-radius: 50% !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        flex-shrink: 0 !important;
-        font-size: 13px !important;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.06) !important;
-        border: none !important;
-    }
-
-    /* Specifieke uitzondering: het telefoontje in de grijze bubbel iets kleiner */
-    .phone-group .btn-icon {
-        width: 26px !important;
-        height: 26px !important;
-        font-size: 11px !important;
-        box-shadow: none !important; /* Geen schaduw op schaduw */
-    }
-
-    /* Telefoonnummer: Groter, dikker en duidelijker */
-    .phone-txt {
-        font-size: 13.5px !important; /* Net dat beetje extra leesbaarheid */
-        font-weight: 700 !important;
-        color: #1e293b !important; /* Krachtig contrast */
-        margin-right: 4px !important;
-        white-space: nowrap !important;
+    .biz-name {
+        font-size: 15px !important;
+        margin-bottom: 2px !important;
     }
 }
 
-
-@media screen and (max-width: 768px) {
-    /* 1. Layout & Grid: Volledige breedte gelijk aan de headers */
-    .business-grid {
+/* 2. DE TABLET PORTRAIT (Van 481px tot 991px) */
+/* Meer ademruimte en rust voor het grotere tablet-scherm */
+@media screen and (min-width: 481px) and (max-width: 991px) {
+    #business-list, .business-grid {
+        padding: 0 20px !important; /* Ruime marges aan de zijkant */
         display: flex !important;
         flex-direction: column !important;
-        gap: 12px !important;
+        align-items: center !important; 
         width: 100% !important;
-        padding: 0 !important; 
-        margin: 0 !important;
+        box-sizing: border-box !important;
     }
 
     .biz-card-mini {
         width: 100% !important;
-        margin: 0 0 8px 0 !important;
-        padding: 10px !important;
-        display: flex !important;
-        box-sizing: border-box !important;
+        max-width: 100% !important; 
+        margin-bottom: 15px !important;
+        padding: 12px !important;
     }
+}
 
-    /* 2. De Foto: Compact voor de knoppenrij */
-    .mini-preview {
-        width: 72px !important; 
-        height: 72px !important;
-        flex-shrink: 0 !important;
-    }
-
-    /* 3. De Actiebalk: Ruimteverdeling */
-    .mini-actions {
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
+/* 3. DE DESKTOP & LANDSCAPE TABLET (Vanaf 992px) */
+/* Terug naar de vertrouwde 2-koloms grid */
+@media screen and (min-width: 992px) {
+    .business-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 20px !important;
+        padding: 0 20px !important;
         width: 100% !important;
-        margin-top: auto !important;
-    }
-
-    /* 4. De Telefoongroep: Capsule-vorm van desktop */
-    .phone-group {
-        display: flex !important;
-        align-items: center !important;
-        background: #f8fafc !important; 
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 20px !important;
-        padding: 2px !important;
-        height: 32px !important;
-        gap: 4px !important;
         box-sizing: border-box !important;
     }
-
-    /* 5. De Knoppen: DE DESKTOP LOOK */
-    .btn-icon, .phone-group .btn-icon {
-        width: 28px !important;
-        height: 28px !important;
-        min-width: 28px !important;
-        max-width: 28px !important;
-        background: white !important;
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 50% !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
-        font-size: 13px !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    /* Specifieke knopkleuren zoals op desktop */
     
-    /* Telefoon: Zachter groen */
-    .phone-group .btn-icon:first-child {
-        color: #22c55e !important; 
-        border-color: #dcfce7 !important;
-    }
-
-    /* Copy icon: Grijzig/Neutraal */
-    .phone-group .btn-icon:last-child {
-        color: #94a3b8 !important;
-        background: #f8fafc !important;
-        box-shadow: none !important;
-    }
-
-    /* Rechter iconen: Kleuren van desktop overnemen */
-    .action-right .fa-globe { color: #3b82f6 !important; }       /* Blauw */
-    .action-right .fa-envelope { color: #a855f7 !important; }    /* Paars */
-    .action-right .fa-star { color: #eab308 !important; }        /* Goud */
-    .action-right .fa-map-marker-alt { color: #ef4444 !important; } /* Rood */
-
-    /* 6. Rechtergroep uitlijning */
-    .action-right {
-        display: flex !important;
-        gap: 6px !important; 
-    }
-
-    .phone-txt { display: none !important; }
-}
-
-
-/* ============================================================
-   BREDE TABLET & DESKTOP-SITE FIX (XIAOMI REDMI PAD PRO)
-   Zorgt voor 1 kolom in Portrait en herstelt 2 kolommen in Landscape
-   ============================================================ */
-
-@media screen and (max-width: 992px) {
-    /* Forceer de achtergrondkleur */
-    body { 
-        background-color: #f8faf4 !important; 
-    }
-
-    /* Dwing de container naar één verticale kolom */
-    body .business-container, 
-    body .results-container { 
-        display: flex !important;
-        flex-direction: column !important; 
-        align-items: center !important;
+    .biz-card-mini {
         width: 100% !important;
-        padding: 20px 10px !important;
-        gap: 30px !important; /* Ruimte tussen de kaartjes onder elkaar */
-        overflow-x: hidden !important;
-    }
-
-    /* Zorg dat de kaartjes de breedte van de tablet optimaal benutten */
-    body .business-card {
-        width: 92% !important;
-        max-width: 650px !important; /* Voorkomt dat ze te lomp worden op het grote scherm */
-        margin: 0 auto !important;
-        float: none !important; /* Schakel eventuele desktop-floats uit */
-        display: block !important;
-        box-sizing: border-box !important;
-    }
-
-    /* Voorkom dat de pagina zijwaarts kan wiebelen */
-    html, body {
-        overflow-x: hidden !important;
-        width: 100% !important;
-        position: relative !important;
+        height: 130px !important; /* Vaste hoogte voor strakke grid-look */
     }
 }
-
-/* ============================================================
-   PWA / APP MENU OPTIE
-   Zorg dat de installatie-optie ALTIJD zichtbaar blijft op mobiel
-   ============================================================ */
-
-/* 1. Verberg de knop ALLEEN op grote schermen (Desktop) */
-@media screen and (min-width: 769px) {
-    #menu-install-item {
-        display: none !important;
-    }
-}
-
-/* --- DE FIX: VERBERG DE KNOP ALS DE SITE ALS APP DRAAIT --- */
-@media all and (display-mode: standalone), (display-mode: fullscreen) {
-    /* We gebruiken een extra sterke selector om regel 674 te verslaan */
-    ul#nav-list li#menu-install-item {
-        display: none !important;
-    }
-}
-
-/* 2. Verberg banners (optioneel), maar laat het menu-item met rust */
-#install-banner, 
-.ios-banner {
-    /* Je kunt besluiten deze wel of niet te tonen, 
-       maar ze staan los van je menu-item */
-}
-
