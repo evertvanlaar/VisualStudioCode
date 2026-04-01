@@ -344,7 +344,7 @@ function updateSchemaOrg(businesses) {
                     "@type": "PostalAddress",
                     "addressLocality": biz.Location || "Kala Nera",
                     "addressRegion": "Pelion",
-                    "postalCode": "37023",
+                    "postalCode": "37010",
                     "addressCountry": "GR"
                 }
             }
