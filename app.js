@@ -20,7 +20,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.15'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.16'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -696,63 +696,66 @@ window.addEventListener('appinstalled', () => {
     }
 });
 
-// trace app versie os device scherm referrer theme install of update
-
+// Trace app versie, OS, Device, Scherm, Referrer, Theme, Install/Update en SOURCE (Web vs App)
 (function() {
-  const WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/app-stats';
+    const WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/app-stats';
 
-  function checkStatusAndSend() {
-    const savedVersion = localStorage.getItem('app_version');
-    let eventType = '';
+    function checkStatusAndSend() {
+        const savedVersion = localStorage.getItem('app_version');
+        // We gebruiken de variabele die je bovenin app.js hebt staan
+        const currentVersion = typeof APP_VERSION !== 'undefined' ? APP_VERSION : 'unknown';
+        
+        let eventType = 'app_open';
 
-    if (!savedVersion) {
-      eventType = 'installatie';
-    } else if (savedVersion !== CURRENT_APP_VERSION) {
-      eventType = 'update';
-    } else {
-      eventType = 'app_open'; 
+        if (!savedVersion) {
+            eventType = 'installatie';
+        } else if (savedVersion !== currentVersion) {
+            eventType = 'update';
+        }
+
+        // Verstuur de stats met de actuele versie
+        sendStats(eventType, currentVersion);
+
+        // Sla de versie op
+        localStorage.setItem('app_version', currentVersion);
+    }
+    
+    function sendStats(eventType, versionToSend) {
+        // 1. Haal de CSS versie op
+        const cssLink = document.getElementById('main-stylesheet');
+        const cssVersion = cssLink && cssLink.href.includes('v=') ? cssLink.href.split('v=')[1] : 'geen-v';
+
+        // 2. Bepaal de bron (Website of App)
+        const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        const source = isPWA ? "App (PWA)" : "Website (Browser)";
+
+        // 3. Verzamel alle data
+        const data = {
+            event: eventType,
+            source: source, // <-- NIEUW: Onderscheid tussen Web en App
+            version: versionToSend,
+            css_version: cssVersion,
+            os: /android/i.test(navigator.userAgent) ? "Android" : /iPhone|iPad|iPod/i.test(navigator.userAgent) ? "iOS" : "Desktop",
+            device: /Mobi|Android/i.test(navigator.userAgent) ? "Mobile" : "Desktop",
+            screen: window.innerWidth + 'x' + window.innerHeight,
+            referrer: document.referrer || 'direct',
+            theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+            datum: new Date().toLocaleString('nl-NL')
+        };
+
+        console.log("Stats verzenden:", data);
+
+        fetch(WEBHOOK_URL, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        }).catch(err => console.error("Stats Fetch fout:", err));
     }
 
-    // Wacht 500ms zodat CURRENT_APP_VERSION de tijd heeft 
-    // om gevuld te worden door de Service Worker
-    setTimeout(() => {
-     // In plaats van sendStats(eventType); doe je:
-        sendStats(eventType, CURRENT_APP_VERSION);
-      // Sla de versie pas op NADAT we zeker weten wat de versie is
-      localStorage.setItem('app_version', CURRENT_APP_VERSION);
-    }, 500); 
-  }
-
-function sendStats(eventType, versionToSend) {
-  // 1. Zoek de CSS link en haal de versie op (bijv. uit style.css?v=1.0.5)
-  const cssLink = document.getElementById('main-stylesheet');
-  const cssVersion = cssLink ? cssLink.href.split('v=')[1] : 'geen-v';
-
-  const data = {
-    event: eventType,
-    version: versionToSend || CURRENT_APP_VERSION || '1.0.5',
-    css_version: cssVersion, // <-- DEZE MOET ER INDERDAAD BIJ!
-    os: /android/i.test(navigator.userAgent) ? "Android" : /iPhone|iPad|iPod/i.test(navigator.userAgent) ? "iOS" : "Desktop",
-    device: /Mobi|Android/i.test(navigator.userAgent) ? "Mobile" : "Desktop",
-    screen: window.innerWidth + 'x' + window.innerHeight,
-    referrer: document.referrer || 'direct',
-    theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
-    datum: new Date().toLocaleString('nl-NL')
-  };
-
-  console.log("Verzenden met CSS-versie:", data);
-
-  fetch(WEBHOOK_URL, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(data)
-  }).catch(err => console.error("Fetch fout:", err));
-}
-
-  // 2. Start de check zodra de app geladen is
-  window.addEventListener('load', () => {
-      // We wachten even met de check zodat de Service Worker tijd heeft om CURRENT_APP_VERSION te vullen
-      setTimeout(checkStatusAndSend, 1000); 
-  });
+    // Start de check zodra de pagina volledig geladen is
+    window.addEventListener('load', () => {
+        // We wachten 1.5 seconde zodat Service Workers en variabelen stabiel zijn
+        setTimeout(checkStatusAndSend, 1500);
+    });
 
 })();
