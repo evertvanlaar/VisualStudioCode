@@ -1,7 +1,7 @@
 // service-worker.js
-const VERSION = '1.0.17'; // Dit sturen we naar de Sheet
-const CACHE_NAME = 'kalanera-cache-v1.0.117'; // Dit dwingt de code-update af
-const IMAGE_CACHE = 'kalanera-images-v117'; // Dit laten we lekker staan voor de snelheid
+const VERSION = '1.0.18'; // Dit sturen we naar de Sheet
+const CACHE_NAME = 'kalanera-cache-v1.0.118'; // Dit dwingt de code-update af
+const IMAGE_CACHE = 'kalanera-images-v118'; // Dit laten we lekker staan voor de snelheid
 
 // VOEG DIT TOE: Luister naar vragen van de app
 self.addEventListener('message', (event) => {
@@ -21,11 +21,6 @@ self.addEventListener('activate', (event) => {
 
 const STATIC_ASSETS = [
   '/',
-  '/index.html',
-  '/c-form.html', // Voeg je formulier pagina's toe
-  '/t-form.html',
-  '/style.css',
-  '/app.js',
   '/manifest.json',
   '/icon-512.png'
 ];
