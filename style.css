@@ -263,3 +263,5 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 @media screen and (max-width: 480px){.biz-card-mini{width:100% !important;max-width:100% !important;margin:0 0 8px 0 !important;padding:8px !important;box-sizing:border-box !important}.mini-preview{width:65px !important;height:65px !important;flex-shrink:0 !important}.mini-content{padding-left:6px !important;flex:1 !important;min-width:0 !important}.biz-name{font-size:15px !important;margin-bottom:2px !important}#business-list, .business-grid{padding:0 6px !important;width:100% !important;display:flex !important;flex-direction:column !important;align-items:center !important;box-sizing:border-box !important}}
 
 @media screen and (min-width: 481px) and (max-width: 991px){.biz-card-mini{width:100% !important;max-width:100% !important;margin-bottom:15px !important;padding:12px !important}#business-list, .business-grid{padding:0 20px !important;display:flex !important;flex-direction:column !important;align-items:center !important;width:100% !important;box-sizing:border-box !important}}
+
+

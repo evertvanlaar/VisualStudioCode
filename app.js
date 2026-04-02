@@ -759,3 +759,34 @@ window.addEventListener('appinstalled', () => {
     });
 
 })();
+
+
+// 1. VOER DIT DIRECT UIT (Voorkomt 'flitsen' + zet icoon goed)
+(function() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('wotai-nightmode');
+        // Wacht heel even tot de DOM geladen is om het icoon te zetten
+        window.addEventListener('DOMContentLoaded', () => {
+            const icon = document.querySelector('#dark-mode-toggle i');
+            if (icon) icon.className = 'fas fa-sun';
+        });
+    }
+})();
+
+// 2. De functie voor je knop (Schakelaar)
+function toggleDarkMode() {
+    const body = document.body;
+    body.classList.toggle('wotai-nightmode');
+    
+    const isDark = body.classList.contains('wotai-nightmode');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    
+    // Update het icoontje direct bij klik
+    const icon = document.querySelector('#dark-mode-toggle i');
+    if (icon) {
+        icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+    }
+    
+    console.log("WotAI Mode is nu:", isDark ? "AAN" : "UIT");
+}
