@@ -224,3 +224,12 @@ body.wotai-nightmode .form-section{background-color:#1B1F16 !important;padding:4
 
 @media screen and (min-width: 481px) and (max-width: 1024px){body .add-business-button, body.wotai-nightmode .add-business-button{font-size:1rem !important;padding:12px 24px !important}body .hero-overlay h1, body.wotai-nightmode .hero-overlay h1{font-size:2.2rem !important;line-height:1.2 !important;margin-bottom:12px !important}body .hero-overlay p, body.wotai-nightmode .hero-overlay p{font-size:1.1rem !important;max-width:80% !important;margin:0 auto !important}body .main-container h1, body.wotai-nightmode .main-container h1{font-size:1.8rem !important;margin-top:30px !important}}
 
+/* --- Standaard (Light Mode) --- */
+:root {
+    --install-color: #2d5a27; /* De donkere kleur voor overdag */
+}
+
+/* --- Als Nachtmodus aan staat --- */
+body.wotai-nightmode {
+    --install-color: #E2D5B5; /* Onze zandkleur voor 's nachts */
+}

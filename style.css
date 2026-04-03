@@ -265,3 +265,16 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 @media screen and (min-width: 481px) and (max-width: 991px){.biz-card-mini{width:100% !important;max-width:100% !important;margin-bottom:15px !important;padding:12px !important}#business-list, .business-grid{padding:0 20px !important;display:flex !important;flex-direction:column !important;align-items:center !important;width:100% !important;box-sizing:border-box !important}}
 
 
+/* --- 1. LIGHT MODE (Overdag) --- */
+/* We maken deze selector heel specifiek zodat hij wint van Font Awesome */
+.nav-links li#menu-install-item a i, 
+.nav-links li#menu-install-item a {
+    color: #2d5a27 !important; /* Hier de donkere kleur voor overdag */
+}
+
+/* --- 2. DARK MODE (Nachtstand) --- */
+/* Deze regel wordt pas actief als 'wotai-nightmode' op de body staat */
+body.wotai-nightmode .nav-links li#menu-install-item a i,
+body.wotai-nightmode .nav-links li#menu-install-item a {
+    color: #E2D5B5 !important; /* Onze zachte zandkleur voor 's nachts */
+}
