@@ -6,7 +6,7 @@ body.wotai-nightmode header a, body.wotai-nightmode .navbar-nav a{color:var(--w-
 
 body.wotai-nightmode header a:hover{color:var(--w-accent-neon) !important}
 
-body.wotai-nightmode .special-section-block{background-color:rgba(57, 211, 83, 0.05) !important;border:1px solid rgba(57, 211, 83, 0.2) !important;border-radius:12px;padding:30px;text-align:center;margin:40px auto}
+body.wotai-nightmode .special-section-block{background-color:rgba(226, 213, 181, 0.05) !important;border:1px solid rgba(226, 213, 181, 0.2) !important;border-radius:12px;padding:30px;text-align:center;margin:40px auto}
 
 body.wotai-nightmode .special-section-block .btn-primary, body.wotai-nightmode .special-section-block .btn-generate{background-color:var(--w-accent-neon) !important;color:#1B1F16 !important;font-weight:600;border-radius:20px;padding:12px 24px;border:none;box-shadow: 0 0 15px rgba(226, 213, 181, 0.15) !important;}
 
@@ -34,11 +34,11 @@ body.wotai-nightmode footer a{color:var(--w-text-muted) !important;font-size:0.9
 
 body.wotai-nightmode footer a:hover{color:var(--w-accent-neon) !important}
 
-body.wotai-nightmode .business-card{background-color:rgba(57, 211, 83, 0.03) !important;border:1px solid rgba(57, 211, 83, 0.15) !important;border-radius:16px !important;padding:24px !important;margin-bottom:20px;transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;box-shadow:0 4px 20px rgba(0, 0, 0, 0.4) !important}
+body.wotai-nightmode .business-card{background-color:rgba(226, 213, 181, 0.03) !important;border:1px solid rgba(226, 213, 181, 0.15) !important;border-radius:16px !important;padding:24px !important;margin-bottom:20px;transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;box-shadow:0 4px 20px rgba(0, 0, 0, 0.4) !important}
 
 body.wotai-nightmode .business-card h3{color:#FFB800 !important;font-size:1.25rem;font-weight:700;margin-bottom:10px;letter-spacing:0.5px}
 
-body.wotai-nightmode .business-card:hover{background-color:rgba(57, 211, 83, 0.08) !important;border-color:#E6A055 !important;transform:translateY(-5px);box-shadow:0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(57, 211, 83, 0.1) !important}
+body.wotai-nightmode .business-card:hover{background-color:rgba(226, 213, 181, 0.08) !important;border-color:#E6A055 !important;transform:translateY(-5px);box-shadow:0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(226, 213, 181, 0.1) !important}
 
 body.wotai-nightmode .business-card p, body.wotai-nightmode .business-card .info-text{color:#A1A1A1 !important;font-size:0.9rem;line-height:1.5}
 
@@ -46,13 +46,13 @@ body.wotai-nightmode .biz-card-mini{background-color:#24291E !important;border:1
 
 body.wotai-nightmode .biz-card-mini .biz-name{color:#FFB800 !important;font-size:0.85rem !important;font-weight:700 !important;margin:0 !important;text-shadow:0 2px 4px rgba(0,0,0,0.3)}
 
-body.wotai-nightmode .biz-card-mini:hover{background-color:rgba(57, 211, 83, 0.15) !important;border-color:#E6A055 !important;transform:translateY(-8px) scale(1.01);box-shadow:0 0 35px rgba(57, 211, 83, 0.3), 0 20px 50px rgba(0, 0, 0, 0.8) !important}
+body.wotai-nightmode .biz-card-mini:hover{background-color:rgba(226, 213, 181, 0.15) !important;border-color:#E6A055 !important;transform:translateY(-8px) scale(1.01);box-shadow:0 0 35px rgba(226, 213, 181, 0.3), 0 20px 50px rgba(0, 0, 0, 0.8) !important}
 
 body.wotai-nightmode .biz-card-mini .btn-icon{background:#1a1a1a !important;border:1px solid #333 !important;color:#E6A055 !important;border-radius:8px !important;width:35px;height:35px;display:inline-flex;align-items:center;justify-content:center;transition:0.2s}
 
 body.wotai-nightmode .biz-card-mini .btn-icon:hover{background:#E6A055 !important;color:#000 !important}
 
-body.wotai-nightmode .search-container{background-color:#1B1F16 !important;border:2px solid #E6A055 !important;border-radius:50px !important;display:flex !important;align-items:center !important;padding:6px 20px !important;margin-bottom:20px;margin:25px auto !important;max-width:600px;transition:all 0.3s ease !important;background:#1B1F16 !important;box-shadow:0 0 20px rgba(57, 211, 83, 0.25) !important;backdrop-filter:none !important}
+body.wotai-nightmode .search-container{background-color:#1B1F16 !important;border:2px solid #E6A055 !important;border-radius:50px !important;display:flex !important;align-items:center !important;padding:6px 20px !important;margin-bottom:20px;margin:25px auto !important;max-width:600px;transition:all 0.3s ease !important;background:#1B1F16 !important;box-shadow:0 0 20px rgba(226, 213, 181, 0.25) !important;backdrop-filter:none !important}
 
 body.wotai-nightmode .search-input{background:transparent !important;border:none !important;color:#E2E8F0 !important;padding:12px !important;font-size:1.1rem !important;width:100%;background-color:transparent !important;font-weight:500 !important}
 
@@ -62,7 +62,7 @@ body.wotai-nightmode .search-icon{color:#E6A055 !important;font-size:1.2rem !imp
 
 body.wotai-nightmode .filter-btn{background-color:#0a0a0a !important;border:1px solid #333 !important;color:#bbbbbb !important;padding:8px 18px !important;border-radius:50px !important;font-weight:500;margin:5px;cursor:pointer;transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;display:inline-flex;align-items:center;gap:8px;background:#0a0a0a !important;backdrop-filter:none !important}
 
-body.wotai-nightmode .filter-btn:hover{border-color:#E6A055 !important;color:#E6A055 !important;background-color:#1B1F16 !important;box-shadow:0 0 10px rgba(57, 211, 83, 0.2) !important;transform:translateY(-2px)}
+body.wotai-nightmode .filter-btn:hover{border-color:#E6A055 !important;color:#E6A055 !important;background-color:#1B1F16 !important;box-shadow:0 0 10px rgba(226, 213, 181, 0.2) !important;transform:translateY(-2px)}
 
 body.wotai-nightmode .filter-btn.active{background-color:#E6A055 !important;color:#1B1F16 !important;border-color:#E6A055 !important;font-weight:700;box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;background:#E6A055 !important}
 
@@ -88,9 +88,9 @@ body.wotai-nightmode .category-section-header{background-color:#1a1a1a !importan
 
 body.wotai-nightmode .filter-btn:hover:not(.active){border-color:#E6A055 !important;color:#E6A055 !important;background-color:#24291E !important;box-shadow: 0 0 15px rgba(226, 213, 181, 0.15) !important;;transform:translateY(-2px) !important}
 
-body.wotai-nightmode .category-section-header small{background:#1a1a1a !important;color:#E6A055 !important;border:1px solid #E6A055 !important;background-color:#000 !important;font-weight:800 !important;padding:2px 10px !important;border-radius:6px !important;font-family:'Courier New', monospace !important;box-shadow:0 0 8px rgba(57, 211, 83, 0.2) !important}
+body.wotai-nightmode .category-section-header small{background:#1a1a1a !important;color:#E6A055 !important;border:1px solid #E6A055 !important;background-color:#000 !important;font-weight:800 !important;padding:2px 10px !important;border-radius:6px !important;font-family:'Courier New', monospace !important;box-shadow:0 0 8px rgba(226, 213, 181, 0.2) !important}
 
-body.wotai-nightmode .add-biz-btn{background-color:#E6A055 !important;background:#E6A055 !important;color:#1B1F16 !important;border:none !important;border-radius:50px !important;padding:14px 30px !important;font-weight:800 !important;text-transform:uppercase;text-decoration:none !important;letter-spacing:1px;box-shadow:0 0 30px rgba(57, 211, 83, 0.4) !important;transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;display:inline-flex;align-items:center;gap:10px;margin-bottom:10px;transform:scale(1.05)}
+body.wotai-nightmode .add-biz-btn{background-color:#E6A055 !important;background:#E6A055 !important;color:#1B1F16 !important;border:none !important;border-radius:50px !important;padding:14px 30px !important;font-weight:800 !important;text-transform:uppercase;text-decoration:none !important;letter-spacing:1px;box-shadow:0 0 30px rgba(226, 213, 181, 0.4) !important;transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;display:inline-flex;align-items:center;gap:10px;margin-bottom:10px;transform:scale(1.05)}
 
 body.wotai-nightmode .add-biz-btn:hover{transform:translateY(-4px) scale(1.03) !important;box-shadow:0 0 35px rgba(0, 0, 0, 0.6) !important;background-color:#E2D5B5 !important}
 
@@ -134,9 +134,9 @@ body.wotai-nightmode .hero-overlay p{color:#E6A055 !important;font-size:1.2rem !
 
 body.wotai-nightmode .nav-links li a{color:#E2E8F0 !important;background:none !important;text-decoration:none !important;padding:10px 15px !important;display:block !important;font-size:13px !important;text-transform:uppercase;letter-spacing:1px;transition:all 0.3s ease-in-out !important;text-shadow:0 0 5px rgba(255, 255, 255, 0.1) !important;position:relative}
 
-body.wotai-nightmode .nav-links li a:hover{color:#E6A055 !important;text-shadow:0 0 8px rgba(57, 211, 83, 0.8), 0 0 12px rgba(57, 211, 83, 0.4) !important;transform:translateY(-1px)}
+body.wotai-nightmode .nav-links li a:hover{color:#E6A055 !important;text-shadow:0 0 8px rgba(226, 213, 181, 0.8), 0 0 12px rgba(226, 213, 181, 0.4) !important;transform:translateY(-1px)}
 
-body.wotai-nightmode #weather-widget{background:#0a0a0a !important;border:1px solid #222 !important;color:#E2E8F0 !important;padding:5px 15px !important;border-radius:50px !important;box-shadow:inset 0 0 10px rgba(57, 211, 83, 0.1) !important}
+body.wotai-nightmode #weather-widget{background:#0a0a0a !important;border:1px solid #222 !important;color:#E2E8F0 !important;padding:5px 15px !important;border-radius:50px !important;box-shadow:inset 0 0 10px rgba(226, 213, 181, 0.1) !important}
 
 body.wotai-nightmode .main-nav, body.wotai-nightmode .nav-container{background-color:#1B1F16 !important;background:transparent !important;max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;margin-bottom:0 !important}
 
@@ -158,11 +158,11 @@ body.wotai-nightmode .site-footer a[href*="goatcounter"]:hover{color:#E2E8F0 !im
 
 body.wotai-nightmode .footer-bottom{margin-top:40px !important;padding-top:20px !important;border-top:1px solid #111 !important;text-align:center}
 
-body.wotai-nightmode .app-version-tag{display:inline-block !important;margin-top:15px;padding:6px 15px;background:rgba(57, 211, 83, 0.1) !important;border:1px solid #E6A055 !important;border-radius:50px;color:#E6A055 !important;font-size:11px !important;font-weight:700;text-transform:uppercase}
+body.wotai-nightmode .app-version-tag{display:inline-block !important;margin-top:15px;padding:6px 15px;background:rgba(226, 213, 181, 0.1) !important;border:1px solid #E6A055 !important;border-radius:50px;color:#E6A055 !important;font-size:11px !important;font-weight:700;text-transform:uppercase}
 
 body.wotai-nightmode .footer-column:nth-child(2) h3:empty{display:none}
 
-body.wotai-nightmode .hero-section{position:relative !important;margin-top:0 !important;margin-bottom:0 !important;padding:0 !important;border-top:2px solid #E6A055 !important;border-bottom:2px solid #E6A055 !important;box-shadow:inset 0 10px 20px -10px rgba(0, 0, 0, 0.6), inset 0 -10px 20px -10px rgba(0, 0, 0, 0.6), 0 0 15px rgba(57, 211, 83, 0.4) !important;z-index:5 !important}
+body.wotai-nightmode .hero-section{position:relative !important;margin-top:0 !important;margin-bottom:0 !important;padding:0 !important;border-top:2px solid #E6A055 !important;border-bottom:2px solid #E6A055 !important;box-shadow:inset 0 10px 20px -10px rgba(0, 0, 0, 0.6), inset 0 -10px 20px -10px rgba(0, 0, 0, 0.6), 0 0 15px rgba(226, 213, 181, 0.2) !important;z-index:5 !important}
 
 body.wotai-nightmode .directory-section, body.wotai-nightmode #directory-container{margin-top:0 !important;border-top:none !important}
 
@@ -170,13 +170,13 @@ body.wotai-nightmode .map-fab-fixed{background-color:#1B1F16 !important;position
 
 body.wotai-nightmode .map-fab-fixed i{display:none !important}
 
-body.wotai-nightmode .map-fab-fixed::before{content:'\f5a0';font-family:"Font Awesome 6 Free", "Font Awesome 5 Free" !important;font-weight:900 !important;font-size:26px !important;color:#E2E8F0 !important;filter:drop-shadow(0 0 2px rgba(57, 211, 83, 0.8)) !important;transition:all 0.2s ease !important}
+body.wotai-nightmode .map-fab-fixed::before{content:'\f5a0';font-family:"Font Awesome 6 Free", "Font Awesome 5 Free" !important;font-weight:900 !important;font-size:26px !important;color:#E2E8F0 !important;filter:drop-shadow(0 0 2px rgba(226, 213, 181, 0.4)) !important;transition:all 0.2s ease !important}
 
 body.wotai-nightmode .map-fab-fixed:hover{background-color:#E6A055 !important;transform:scale(1.1) !important}
 
 body.wotai-nightmode .map-fab-fixed:hover::before{color:#1B1F16 !important;filter:none !important}
 
-body.wotai-nightmode #weather-widget, body.wotai-nightmode .weather-mini{background:#0a0a0a !important;border:1px solid #222 !important;border-radius:50px !important;padding:6px 18px !important;display:flex !important;align-items:center !important;gap:12px !important;box-shadow:inset 0 0 10px rgba(57, 211, 83, 0.05), 0 4px 10px rgba(0,0,0,0.5) !important;transition:all 0.3s ease !important}
+body.wotai-nightmode #weather-widget, body.wotai-nightmode .weather-mini{background:#0a0a0a !important;border:1px solid #222 !important;border-radius:50px !important;padding:6px 18px !important;display:flex !important;align-items:center !important;gap:12px !important;box-shadow:inset 0 0 10px rgba(226, 213, 181, 0.05), 0 4px 10px rgba(0,0,0,0.5) !important;transition:all 0.3s ease !important}
 
 body.wotai-nightmode #weather-widget img, body.wotai-nightmode #weather-widget .weather-icon{width:28px !important;height:auto !important;filter:drop-shadow(0 0 5px rgba(0, 0, 0, 0.6)) brightness(1.2) !important}
 
@@ -190,11 +190,11 @@ body.wotai-nightmode .nav-links li a::after{content:'';position:absolute;bottom:
 
 body.wotai-nightmode .nav-links li a:hover::after{width:70%}
 
-body.wotai-nightmode .nav-links li a[href*="add"], body.wotai-nightmode .nav-links li a.add-business-btn{border:1px solid rgba(57, 211, 83, 0.3) !important;border-radius:4px;margin-left:10px}
+body.wotai-nightmode .nav-links li a[href*="add"], body.wotai-nightmode .nav-links li a.add-business-btn{border:1px solid rgba(226, 213, 181, 0.2) !important;border-radius:4px;margin-left:10px}
 
 body.wotai-nightmode .biz-name{color:#E2D5B5 !important}
 
-body.wotai-nightmode .mini-preview{border:1px solid rgba(57, 211, 83, 0.3) !important;box-shadow:0 0 8px rgba(57, 211, 83, 0.15) !important}
+body.wotai-nightmode .mini-preview{border:1px solid rgba(226, 213, 181, 0.3) !important;box-shadow:0 0 8px rgba(226, 213, 181, 0.15) !important}
 
 body.wotai-nightmode .btn-icon, body.wotai-nightmode .mini-actions i, body.wotai-nightmode .phone-group i, body.wotai-nightmode .fa-globe, body.wotai-nightmode .fa-envelope, body.wotai-nightmode .fa-star, body.wotai-nightmode .fa-map-marker-alt{color:#E6A055 !important}
 
@@ -214,11 +214,11 @@ body.wotai-nightmode .form-section{background-color:#1B1F16 !important;padding:4
 
 @media screen and (max-width: 992px){html body.wotai-nightmode{background-color:#1B1F16 !important;background:#1B1F16 !important}}
 
-@media screen and (min-width: 992px){body.wotai-nightmode .mini-preview{border:1px solid rgba(57, 211, 83, 0.3) !important;box-shadow:0 0 10px rgba(57, 211, 83, 0.2) !important;background-color:#1a1a1a !important;border-radius:10px !important;object-fit:cover !important}body.wotai-nightmode .biz-name{color:#E2D5B5 !important;font-size:1.0rem !important;font-weight:700 !important;margin-bottom:5px !important}body.wotai-nightmode .biz-card-mini{background-color:#24291E !important;border:1px solid #222 !important;box-shadow:0 6px 15px rgba(0, 0, 0, 0.5) !important;transition:transform 0.2s ease !important}body.wotai-nightmode .biz-card-mini:hover{border-color:#E6A055 !important;transform:translateY(-2px)}body.wotai-nightmode .btn-icon, body.wotai-nightmode .action-right i, body.wotai-nightmode .phone-group i{color:#E6A055 !important}}
+@media screen and (min-width: 992px){body.wotai-nightmode .mini-preview{border:1px solid rgba(226, 213, 181, 0.3) !important;box-shadow:0 0 10px rgba(226, 213, 181, 0.2) !important;background-color:#1a1a1a !important;border-radius:10px !important;object-fit:cover !important}body.wotai-nightmode .biz-name{color:#E2D5B5 !important;font-size:1.0rem !important;font-weight:700 !important;margin-bottom:5px !important}body.wotai-nightmode .biz-card-mini{background-color:#24291E !important;border:1px solid #222 !important;box-shadow:0 6px 15px rgba(0, 0, 0, 0.5) !important;transition:transform 0.2s ease !important}body.wotai-nightmode .biz-card-mini:hover{border-color:#E6A055 !important;transform:translateY(-2px)}body.wotai-nightmode .btn-icon, body.wotai-nightmode .action-right i, body.wotai-nightmode .phone-group i{color:#E6A055 !important}}
 
 @media (max-width: 768px){body.wotai-nightmode .footer-container{grid-template-columns:1fr !important;text-align:center}body.wotai-nightmode .footer-column h3{justify-content:center}}
 
-@media screen and (max-width: 991px){body.wotai-nightmode .nav-container{display:flex !important;flex-wrap:wrap !important;justify-content:space-between !important;align-items:center !important;background:#1B1F16 !important;border-bottom:1px solid #222 !important}body.wotai-nightmode .nav-links{display:none !important;flex-basis:100% !important;order:10;margin:10px -20px 0 -20px !important;padding:0 !important;background:#1B1F16 !important;list-style:none;border-top:1px solid #222;box-shadow:0 4px 12px rgba(0, 0, 0, 0.5)}body.wotai-nightmode .nav-links.active{display:flex !important;flex-direction:column !important}body.wotai-nightmode .hero-section{position:relative !important;z-index:1 !important}body.wotai-nightmode .biz-card-mini{display:flex !important;flex-direction:row !important;background-color:#24291E !important;border:1px solid #222 !important;border-radius:12px !important;margin-bottom:12px !important;padding:10px !important;gap:12px !important}body.wotai-nightmode .biz-name{color:#E2D5B5 !important;font-size:15px !important;font-weight:700 !important;margin-bottom:2px !important;line-height:1.2 !important;display:block !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important}body.wotai-nightmode .btn-icon{background:rgba(57, 211, 83, 0.1) !important;border:1px solid rgba(57, 211, 83, 0.2) !important}body.wotai-nightmode .phone-group{background:#1a1a1a !important;border:1px solid #333 !important}body.wotai-nightmode .phone-txt{color:#E2E8F0 !important}body.wotai-nightmode .category-section-header{color:#E6A055 !important;border-left:6px solid #E6A055 !important;width:100% !important;margin:25px 0 15px 0 !important;padding:12px 15px !important;background-color:#1a1a1a !important;border-radius:4px !important;box-sizing:border-box !important;display:flex !important;justify-content:space-between !important;align-items:center !important}body.wotai-nightmode .mini-preview{border:1px solid rgba(57, 211, 83, 0.3) !important;box-shadow:0 0 8px rgba(57, 211, 83, 0.15) !important;background-color:#1a1a1a !important;border-radius:8px !important;object-fit:cover !important}body.wotai-nightmode .menu-toggle .bar{background-color:#E6A055 !important}body.wotai-nightmode .nav-links li{width:100% !important;border-bottom:1px solid #111}body.wotai-nightmode .nav-links a{display:block !important;padding:18px 25px !important;color:#E2E8F0 !important;background:#1B1F16 !important;transition:background 0.2s}body.wotai-nightmode ul#nav-list li#menu-install-item{background:#1B1F16 !important;border-top:1px solid #222}body.wotai-nightmode .phone-group i{color:#E6A055 !important}body.wotai-nightmode .mini-content p{font-size:12.5px !important;color:#aaaaaa !important}body.wotai-nightmode ul#nav-list li#menu-install-item a{background:rgba(57, 211, 83, 0.1) !important;border:1px solid #E6A055 !important;color:#E6A055 !important}body.wotai-nightmode .business-grid, body.wotai-nightmode #business-list{padding-left:10px !important;padding-right:10px !important}body.wotai-nightmode .nav-links a:active, body.wotai-nightmode .nav-links a:hover{background-color:#24291E !important;color:#E6A055 !important}body.wotai-nightmode .btn-icon, body.wotai-nightmode .mini-actions i, body.wotai-nightmode .action-right i, body.wotai-nightmode .fa-globe, body.wotai-nightmode .fa-envelope, body.wotai-nightmode .fa-star, body.wotai-nightmode .fa-map-marker-alt{color:#E6A055 !important}}
+@media screen and (max-width: 991px){body.wotai-nightmode .nav-container{display:flex !important;flex-wrap:wrap !important;justify-content:space-between !important;align-items:center !important;background:#1B1F16 !important;border-bottom:1px solid #222 !important}body.wotai-nightmode .nav-links{display:none !important;flex-basis:100% !important;order:10;margin:10px -20px 0 -20px !important;padding:0 !important;background:#1B1F16 !important;list-style:none;border-top:1px solid #222;box-shadow:0 4px 12px rgba(0, 0, 0, 0.5)}body.wotai-nightmode .nav-links.active{display:flex !important;flex-direction:column !important}body.wotai-nightmode .hero-section{position:relative !important;z-index:1 !important}body.wotai-nightmode .biz-card-mini{display:flex !important;flex-direction:row !important;background-color:#24291E !important;border:1px solid #222 !important;border-radius:12px !important;margin-bottom:12px !important;padding:10px !important;gap:12px !important}body.wotai-nightmode .biz-name{color:#E2D5B5 !important;font-size:15px !important;font-weight:700 !important;margin-bottom:2px !important;line-height:1.2 !important;display:block !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important}body.wotai-nightmode .btn-icon{background:rgba(226, 213, 181, 0.1) !important;border:1px solid rgba(226, 213, 181, 0.2) !important}body.wotai-nightmode .phone-group{background:#1a1a1a !important;border:1px solid #333 !important}body.wotai-nightmode .phone-txt{color:#E2E8F0 !important}body.wotai-nightmode .category-section-header{color:#E6A055 !important;border-left:6px solid #E6A055 !important;width:100% !important;margin:25px 0 15px 0 !important;padding:12px 15px !important;background-color:#1a1a1a !important;border-radius:4px !important;box-sizing:border-box !important;display:flex !important;justify-content:space-between !important;align-items:center !important}body.wotai-nightmode .mini-preview{border:1px solid rgba(226, 213, 181, 0.3) !important;box-shadow:0 0 8px rgba(226, 213, 181, 0.15) !important;background-color:#1a1a1a !important;border-radius:8px !important;object-fit:cover !important}body.wotai-nightmode .menu-toggle .bar{background-color:#E6A055 !important}body.wotai-nightmode .nav-links li{width:100% !important;border-bottom:1px solid #111}body.wotai-nightmode .nav-links a{display:block !important;padding:18px 25px !important;color:#E2E8F0 !important;background:#1B1F16 !important;transition:background 0.2s}body.wotai-nightmode ul#nav-list li#menu-install-item{background:#1B1F16 !important;border-top:1px solid #222}body.wotai-nightmode .phone-group i{color:#E6A055 !important}body.wotai-nightmode .mini-content p{font-size:12.5px !important;color:#aaaaaa !important}body.wotai-nightmode ul#nav-list li#menu-install-item a{background:rgba(226, 213, 181, 0.1) !important;border:1px solid #E6A055 !important;color:#E6A055 !important}body.wotai-nightmode .business-grid, body.wotai-nightmode #business-list{padding-left:10px !important;padding-right:10px !important}body.wotai-nightmode .nav-links a:active, body.wotai-nightmode .nav-links a:hover{background-color:#24291E !important;color:#E6A055 !important}body.wotai-nightmode .btn-icon, body.wotai-nightmode .mini-actions i, body.wotai-nightmode .action-right i, body.wotai-nightmode .fa-globe, body.wotai-nightmode .fa-envelope, body.wotai-nightmode .fa-star, body.wotai-nightmode .fa-map-marker-alt{color:#E6A055 !important}}
 
 @media screen and (max-width: 480px){body .add-business-button, body.wotai-nightmode .add-business-button{font-size:0.8rem !important;padding:8px 16px !important}body .hero-overlay h1, body.wotai-nightmode .hero-overlay h1{font-size:1.5rem !important;line-height:1.1 !important;margin-bottom:8px !important}body .hero-overlay p, body.wotai-nightmode .hero-overlay p{font-size:0.85rem !important;line-height:1.3 !important}body .main-container h1, body.wotai-nightmode .main-container h1{font-size:1.4rem !important;margin-top:20px !important;margin-bottom:10px !important}}
 
