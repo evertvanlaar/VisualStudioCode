@@ -760,30 +760,35 @@ window.addEventListener('appinstalled', () => {
 
 })();
 
-
-// 1. VOER DIT DIRECT UIT (Voorkomt 'flitsen' + zet icoon goed)
+// 1. DIRECT UITVOEREN (Tegen het flitsen van wit licht bij laden)
 (function() {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
         document.body.classList.add('wotai-nightmode');
-        // Wacht heel even tot de DOM geladen is om het icoon te zetten
-        window.addEventListener('DOMContentLoaded', () => {
-            const icon = document.querySelector('#dark-mode-toggle i');
-            if (icon) icon.className = 'fas fa-sun';
-        });
     }
 })();
 
-// 2. De functie voor je knop (Schakelaar)
+// 2. ZORG DAT HET ICOONTJE KLOPT BIJ OPSTARTEN
+window.addEventListener('DOMContentLoaded', () => {
+    const icon = document.querySelector('#dark-mode-toggle i');
+    const isDark = document.body.classList.contains('wotai-nightmode');
+    
+    if (icon) {
+        // Zet het icoon direct goed op basis van de huidige mode
+        icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+    }
+});
+
+// 3. DE SCHAKELAAR (Klik-functie)
 function toggleDarkMode() {
     const body = document.body;
+    const icon = document.querySelector('#dark-mode-toggle i');
+    
     body.classList.toggle('wotai-nightmode');
     
     const isDark = body.classList.contains('wotai-nightmode');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
     
-    // Update het icoontje direct bij klik
-    const icon = document.querySelector('#dark-mode-toggle i');
     if (icon) {
         icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
     }

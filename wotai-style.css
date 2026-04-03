@@ -1,4 +1,4 @@
-body.wotai-nightmode{--w-bg:#1B1F16;--w-card-bg:#24291E;--w-border:#222222;--w-text-main:#E2E8F0;--w-text-muted:#A1A1A1;--w-accent-neon:#E6A055;--w-accent-yellow:#FFB800;background-color:#1B1F16 !important;color:#E2E8F0 !important;font-family:'Inter', -apple-system, sans-serif !important;-webkit-font-smoothing:antialiased !important;padding-top:0 !important;margin:0 !important;padding:0 !important}
+body.wotai-nightmode{--w-bg:#1B1F16;--w-card-bg:#24291E;--w-border:#222222;--w-text-main:#E2E8F0;--w-text-muted:#A1A1A1;--w-accent-neon:#E6A055;--w-accent-yellow:#FFB800;background-color:#1B1F16 !important;color:#E2E8F0 !important;font-family:'Inter', -apple-system, sans-serif !important;-webkit-font-smoothing:antialiased !important;padding-top:0 !important;margin:0 !important;padding:0 !important;--install-color:#E2D5B5}
 
 body.wotai-nightmode header, body.wotai-nightmode .navbar{background-color:rgba(0, 0, 0, 0.9) !important;border-bottom:1px solid var(--w-border) !important;padding:15px 50px !important}
 
@@ -8,9 +8,9 @@ body.wotai-nightmode header a:hover{color:var(--w-accent-neon) !important}
 
 body.wotai-nightmode .special-section-block{background-color:rgba(226, 213, 181, 0.05) !important;border:1px solid rgba(226, 213, 181, 0.2) !important;border-radius:12px;padding:30px;text-align:center;margin:40px auto}
 
-body.wotai-nightmode .special-section-block .btn-primary, body.wotai-nightmode .special-section-block .btn-generate{background-color:var(--w-accent-neon) !important;color:#1B1F16 !important;font-weight:600;border-radius:20px;padding:12px 24px;border:none;box-shadow: 0 0 15px rgba(226, 213, 181, 0.15) !important;}
+body.wotai-nightmode .special-section-block .btn-primary, body.wotai-nightmode .special-section-block .btn-generate{background-color:var(--w-accent-neon) !important;color:#1B1F16 !important;font-weight:600;border-radius:20px;padding:12px 24px;border:none;box-shadow:0 0 15px rgba(226, 213, 181, 0.15) !important}
 
-body.wotai-nightmode .special-section-block .btn-primary:hover{box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important}
+body.wotai-nightmode .special-section-block .btn-primary:hover{box-shadow:0 10px 30px rgba(0, 0, 0, 0.5) !important}
 
 body.wotai-nightmode .special-section-block a{color:var(--w-accent-neon) !important;font-weight:500}
 
@@ -64,7 +64,7 @@ body.wotai-nightmode .filter-btn{background-color:#0a0a0a !important;border:1px 
 
 body.wotai-nightmode .filter-btn:hover{border-color:#E6A055 !important;color:#E6A055 !important;background-color:#1B1F16 !important;box-shadow:0 0 10px rgba(226, 213, 181, 0.2) !important;transform:translateY(-2px)}
 
-body.wotai-nightmode .filter-btn.active{background-color:#E6A055 !important;color:#1B1F16 !important;border-color:#E6A055 !important;font-weight:700;box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;background:#E6A055 !important}
+body.wotai-nightmode .filter-btn.active{background-color:#E6A055 !important;color:#1B1F16 !important;border-color:#E6A055 !important;font-weight:700;box-shadow:0 4px 12px rgba(0, 0, 0, 0.5) !important;background:#E6A055 !important}
 
 body.wotai-nightmode .filter-btn i{font-size:0.9rem;color:#E6A055 !important;opacity:0.8}
 
@@ -72,7 +72,7 @@ body.wotai-nightmode .filter-btn.active i{color:#1B1F16 !important;opacity:1}
 
 body.wotai-nightmode .filter-container{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:15px;justify-content:flex-start}
 
-body.wotai-nightmode .search-container:focus-within{border-color:#E6A055 !important;box-shadow: 0 0 15px rgba(226, 213, 181, 0.15) !important;transform:scale(1.01)}
+body.wotai-nightmode .search-container:focus-within{border-color:#E6A055 !important;box-shadow:0 0 15px rgba(226, 213, 181, 0.15) !important;transform:scale(1.01)}
 
 html body.wotai-nightmode .search-container{background-color:#1B1F16 !important;background:#1B1F16 !important;border:1px solid #333 !important;border-radius:12px !important;box-shadow:none !important;backdrop-filter:none !important}
 
@@ -82,11 +82,11 @@ html body.wotai-nightmode .filter-btn{background-color:#0a0a0a !important;backgr
 
 html body.wotai-nightmode .filter-btn:hover{background-color:#1B1F16 !important;background:#1B1F16 !important;border-color:#E6A055 !important;color:#E6A055 !important;transform:translateY(-2px) !important}
 
-html body.wotai-nightmode .filter-btn.active{background-color:#E6A055 !important;background:#E6A055 !important;color:#1B1F16 !important;border-color:#E6A055 !important;box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6) !important}
+html body.wotai-nightmode .filter-btn.active{background-color:#E6A055 !important;background:#E6A055 !important;color:#1B1F16 !important;border-color:#E6A055 !important;box-shadow:0 8px 20px rgba(0, 0, 0, 0.6) !important}
 
 body.wotai-nightmode .category-section-header{background-color:#1a1a1a !important;background:linear-gradient(90deg, #0a0a0a 0%, #151515 100%) !important;border:1px solid #222 !important;color:#E6A055 !important;border-radius:12px !important;margin-top:40px !important;padding:15px 25px !important;border-left:6px solid #E6A055 !important;border-top:1px solid #222 !important;border-bottom:1px solid #111 !important;margin-bottom:20px !important;display:flex !important;align-items:center !important;gap:15px !important;box-shadow:inset 0 1px 1px rgba(255,255,255,0.05), 0 10px 20px rgba(0,0,0,0.4) !important;width:100% !important;box-sizing:border-box !important}
 
-body.wotai-nightmode .filter-btn:hover:not(.active){border-color:#E6A055 !important;color:#E6A055 !important;background-color:#24291E !important;box-shadow: 0 0 15px rgba(226, 213, 181, 0.15) !important;;transform:translateY(-2px) !important}
+body.wotai-nightmode .filter-btn:hover:not(.active){border-color:#E6A055 !important;color:#E6A055 !important;background-color:#24291E !important;box-shadow:0 0 15px rgba(226, 213, 181, 0.15) !important;transform:translateY(-2px) !important}
 
 body.wotai-nightmode .category-section-header small{background:#1a1a1a !important;color:#E6A055 !important;border:1px solid #E6A055 !important;background-color:#000 !important;font-weight:800 !important;padding:2px 10px !important;border-radius:6px !important;font-family:'Courier New', monospace !important;box-shadow:0 0 8px rgba(226, 213, 181, 0.2) !important}
 
@@ -150,7 +150,7 @@ body.wotai-nightmode .footer-column h3{color:#E2E8F0 !important;font-size:1.1rem
 
 body.wotai-nightmode .social-icon{display:inline-flex !important;align-items:center;justify-content:center;width:40px;height:40px;background:#111 !important;border:1px solid #333 !important;color:#E6A055 !important;border-radius:50%;transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;text-decoration:none !important}
 
-body.wotai-nightmode .social-icon:hover{background:#E6A055 !important;color:#000 !important;transform:translateY(-5px) scale(1.1);box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6) !important}
+body.wotai-nightmode .social-icon:hover{background:#E6A055 !important;color:#000 !important;transform:translateY(-5px) scale(1.1);box-shadow:0 8px 20px rgba(0, 0, 0, 0.6) !important}
 
 body.wotai-nightmode .site-footer a[href*="goatcounter"]{color:#E6A055 !important;transition:all 0.3s ease}
 
@@ -184,7 +184,7 @@ body.wotai-nightmode #weather-widget .temp, body.wotai-nightmode #weather-widget
 
 body.wotai-nightmode #weather-widget .location, body.wotai-nightmode #weather-widget .weather-desc{color:#E2E8F0 !important;font-size:0.85rem !important;text-transform:uppercase;letter-spacing:1px;opacity:0.9}
 
-body.wotai-nightmode #weather-widget:hover{border-color:#E6A055 !important;box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;transform:translateY(-1px)}
+body.wotai-nightmode #weather-widget:hover{border-color:#E6A055 !important;box-shadow:0 4px 12px rgba(0, 0, 0, 0.4) !important;transform:translateY(-1px)}
 
 body.wotai-nightmode .nav-links li a::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;background:#E6A055;box-shadow:0 0 10px #E6A055;transition:all 0.3s ease;transform:translateX(-50%)}
 
@@ -212,6 +212,8 @@ body.wotai-nightmode iframe[data-tally-src]{background-color:transparent !import
 
 body.wotai-nightmode .form-section{background-color:#1B1F16 !important;padding:40px 10px !important}
 
+:root{--install-color:#2d5a27}
+
 @media screen and (max-width: 992px){html body.wotai-nightmode{background-color:#1B1F16 !important;background:#1B1F16 !important}}
 
 @media screen and (min-width: 992px){body.wotai-nightmode .mini-preview{border:1px solid rgba(226, 213, 181, 0.3) !important;box-shadow:0 0 10px rgba(226, 213, 181, 0.2) !important;background-color:#1a1a1a !important;border-radius:10px !important;object-fit:cover !important}body.wotai-nightmode .biz-name{color:#E2D5B5 !important;font-size:1.0rem !important;font-weight:700 !important;margin-bottom:5px !important}body.wotai-nightmode .biz-card-mini{background-color:#24291E !important;border:1px solid #222 !important;box-shadow:0 6px 15px rgba(0, 0, 0, 0.5) !important;transition:transform 0.2s ease !important}body.wotai-nightmode .biz-card-mini:hover{border-color:#E6A055 !important;transform:translateY(-2px)}body.wotai-nightmode .btn-icon, body.wotai-nightmode .action-right i, body.wotai-nightmode .phone-group i{color:#E6A055 !important}}
@@ -224,12 +226,23 @@ body.wotai-nightmode .form-section{background-color:#1B1F16 !important;padding:4
 
 @media screen and (min-width: 481px) and (max-width: 1024px){body .add-business-button, body.wotai-nightmode .add-business-button{font-size:1rem !important;padding:12px 24px !important}body .hero-overlay h1, body.wotai-nightmode .hero-overlay h1{font-size:2.2rem !important;line-height:1.2 !important;margin-bottom:12px !important}body .hero-overlay p, body.wotai-nightmode .hero-overlay p{font-size:1.1rem !important;max-width:80% !important;margin:0 auto !important}body .main-container h1, body.wotai-nightmode .main-container h1{font-size:1.8rem !important;margin-top:30px !important}}
 
-/* --- Standaard (Light Mode) --- */
-:root {
-    --install-color: #2d5a27; /* De donkere kleur voor overdag */
+/* --- De Switch in Nachtmodus --- */
+body.wotai-nightmode #dark-mode-toggle {
+    background-color: #1B1F16 !important; 
+    /* color: #FFD700 !important; <--- Verander naar dit voor een gouden zon! */
+    color: #E2D5B5 !important; 
+    border: 1px solid rgba(226, 213, 181, 0.3) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease; /* Maakt de overgang naar wit/hover mooi zacht */
 }
 
-/* --- Als Nachtmodus aan staat --- */
-body.wotai-nightmode {
-    --install-color: #E2D5B5; /* Onze zandkleur voor 's nachts */
+/* --- De Hover stand voor de switch --- */
+body.wotai-nightmode #dark-mode-toggle:hover {
+    background-color: #252a1e !important;
+    color: #ffffff !important; /* De zon wordt wit-heet bij hover */
+    border-color: rgba(226, 213, 181, 0.8) !important;
+    transform: scale(1.05); /* Laat de knop heel subtiel groeien bij hover */
 }
