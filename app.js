@@ -20,7 +20,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.24'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.30'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -795,3 +795,49 @@ function toggleDarkMode() {
     
     console.log("WotAI Mode is nu:", isDark ? "AAN" : "UIT");
 }
+
+// MELDING ONDERAAN SCHERM 
+/**
+ * PWA Toast Loader
+ * Toont een uitnodiging om de app te installeren zonder de kern-logica te breken.
+ */
+// --- ÉÉN SCHONE EN WERKENDE TOAST FUNCTIE ---
+function showInstallToast() {
+    // 1. Alleen tonen als we NIET in de app zelf zitten
+    const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (isPWA) return;
+
+    // 2. Voorkom dubbele toasts
+    if (document.querySelector('.install-toast')) return;
+
+    console.log("Toast wordt aangemaakt...");
+
+    const toast = document.createElement('div');
+    toast.className = 'install-toast';
+    
+    // We gebruiken de compacte HTML die we eerder hebben getest
+    toast.innerHTML = `
+        <i class="fas fa-mobile-alt"></i>
+        <p class="toast-text">Install the Mobile APP for the best experience.</p>
+        <a href="#" onclick="if(typeof triggerManualInstall === 'function'){ triggerManualInstall(event); } return false;" class="toast-link">Install</a>
+    `;
+
+    document.body.appendChild(toast);
+
+    // 3. Toon de toast (animatie via CSS class 'show')
+    setTimeout(() => toast.classList.add('show'), 100);
+
+    // 4. Verwijder automatisch na 10 seconden
+    setTimeout(() => {
+        if (toast) {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 500);
+        }
+    }, 10000);
+}
+
+// 5. Start de toast pas 4 seconden na het laden van de pagina
+// Dit zorgt dat je data eerst rustig kan laden
+window.addEventListener('load', () => {
+    setTimeout(showInstallToast, 4000);
+});
