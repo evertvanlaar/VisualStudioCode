@@ -640,7 +640,7 @@ function initDarkMode() {
 
         if (!deferredPrompt) {
             // Als er geen event is, is de app waarschijnlijk al geïnstalleerd
-            alert("De app is al geïnstalleerd of kan via de browser-instellingen worden toegevoegd.");
+            alert("The app is already installed or can be added via the browser-settings.");
             return;
         }
 
@@ -676,7 +676,7 @@ function checkDisplayMode() {
                          || document.referrer.includes('android-app://');
 
     if (isStandalone) {
-        console.log("App draait in standalone modus. Installatie-knop verbergen.");
+        console.log("App running in standalone mode. Hide installation-button.");
         const installItem = document.getElementById('menu-install-item');
         if (installItem) {
             // We gebruiken !important om de CSS-force die we eerder maakten te overrulen
@@ -749,7 +749,7 @@ window.addEventListener('appinstalled', () => {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data)
-        }).catch(err => console.error("Stats Fetch fout:", err));
+        }).catch(err => console.error("Stats Fetch error:", err));
     }
 
     // Start de check zodra de pagina volledig geladen is
