@@ -1,4 +1,4 @@
-/*  style.css?v=1.0.30 */
+/*  style.css?v=1.0.31 */
 
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
@@ -352,3 +352,4 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
     transform: translateY(20px);
     transition: all 0.5s ease;
 }
+
