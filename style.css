@@ -260,7 +260,7 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 
 .install-toast.fade-out{opacity:0;transform:translateY(20px);transition:all 0.5s ease}
 
-.webcam-float-wrapper{position:absolute;bottom:15px;left:15px;width:130px;height:75px;border-radius:10px;border:2px solid rgba(255, 255, 255, 0.9);box-shadow:0 4px 12px rgba(0, 0, 0, 0.4);overflow:hidden;cursor:pointer;z-index:1000;transition:all 0.5s cubic-bezier(0.19, 1, 0.22, 1);background-color:#000}
+.webcam-float-wrapper{position:absolute;bottom:15px;left:15px;width:130px;height:75px;border-radius:10px;border:2px solid rgba(255, 255, 255, 0.9);box-shadow:0 4px 12px rgba(0, 0, 0, 0.4);overflow:hidden;cursor:pointer;z-index:999999;transition:all 0.5s cubic-bezier(0.19, 1, 0.22, 1);background-color:#000}
 
 .webcam-live-badge{position:absolute;top:6px;left:6px;background:rgba(255, 0, 0, 0.85);color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;letter-spacing:0.5px;z-index:101;display:flex;align-items:center;gap:4px}
 
