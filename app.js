@@ -842,3 +842,25 @@ window.addEventListener('load', () => {
     setTimeout(showInstallToast, 4000);
 });
 
+
+
+function refreshWebcam() {
+    const img = document.getElementById('webcamImage');
+    const status = document.getElementById('cam-status');
+    
+    // Maak een unieke tijdstempel om caching te voorkomen
+    const timestamp = new Date().getTime();
+    
+    // Update de bron van de afbeelding
+    img.src = "https://www.meteology.gr/cam/milina/index.php?t=" + timestamp;
+    
+    // Even een visuele hint dat hij ververst
+    status.style.opacity = "0.5";
+    setTimeout(() => { status.style.opacity = "1"; }, 500);
+}
+
+// Ververs elke 10 seconden (10000 milliseconden)
+setInterval(refreshWebcam, 10000);
+
+// Start de eerste keer direct bij laden
+window.onload = refreshWebcam;

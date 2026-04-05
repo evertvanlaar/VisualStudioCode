@@ -353,3 +353,107 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
     transition: all 0.5s ease;
 }
 
+
+
+/* Container voor de webcam binnen de hero */
+/* De standaard kleine stand */
+/* De standaard kleine stand (bescheiden in de hoek) */
+.webcam-float-wrapper {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    width: 130px; 
+    height: 75px;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 1000; /* Zorg dat hij altijd bovenop de hero-content ligt */
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    background-color: #000;
+}
+
+/* Het Live-labeltje */
+.webcam-live-badge {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    background: rgba(255, 0, 0, 0.85);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    /*text-transform: uppercase; */
+    letter-spacing: 0.5px;
+    z-index: 101;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Het knipperende puntje in het label */
+.webcam-live-badge::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    background-color: #fff;
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse-live 1.5s infinite;
+}
+
+/* De afbeelding zelf */
+.webcam-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Hover effect: iets groter worden */
+.webcam-float-wrapper:hover {
+    transform: scale(1.05);
+    border-color: #fff;
+}
+
+/* De schermbrede stand voor Mobiel & Tablet */
+.webcam-float-wrapper.is-zoomed {
+    /* Op mobiel/tablet: 90% van de schermbreedte met 5% marge aan de zijkant */
+    width: 92vw; 
+    height: calc(92vw * 0.5625); /* Behoudt de 16:9 verhouding */
+    left: 4vw;
+    bottom: 20px;
+    border-radius: 15px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    border-color: #fff;
+}
+
+@keyframes pulse-live {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
+/* Zorg dat de hero container de referentie is */
+.hero-container {
+    position: relative;
+}
+
+/* Hover effect voor desktop (optioneel) */
+@media (min-width: 768px) {
+    .webcam-float-wrapper:hover:not(.is-zoomed) {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
+}
+
+/* Voor grotere schermen (Desktop) voorkomen we dat hij té lomp wordt */
+@media (min-width: 1024px) {
+    .webcam-float-wrapper.is-zoomed {
+        width: 500px;
+        height: 281px;
+        left: 20px;
+    }
+}

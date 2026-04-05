@@ -69,6 +69,7 @@
             </div>
             </a>
 
+
 <!--             <button id="dark-mode-toggle" onclick="toggleDarkMode()" class="btn-dark-toggle">
                 <i class="fas fa-moon"></i>
             </button> -->
@@ -90,6 +91,11 @@
                         <i class="fa fa-download" style="color: var(--install-color) !important;"></i> Install App
                     </a>
                 </li>     
+                <li>
+                <a href="https://www.meteology.gr/cam/milina/index.php?t=1775399307453" target="_blank" class="menu-item" style="text-decoration:none; color:inherit;">
+                    <i class="fas fa-video"></i> <span>Webcam</span>
+                </a>
+                </li>
             </ul>
         </div>
     </nav>
@@ -100,6 +106,17 @@
         <p>Experience the perfect blend of mountain and sea</p>
     </div>
 </div>
+
+
+<div class="hero-container">
+    <div id="floating-webcam" class="webcam-float-wrapper" onclick="this.classList.toggle('is-zoomed')">
+        <div class="webcam-live-badge">PELION LIVE</div>
+        <img id="webcamImage" src="https://www.meteology.gr/cam/milina/index.php" class="webcam-img">
+    </div>
+</div>
+
+
+
 </header>
 
     <div class="main-container">
