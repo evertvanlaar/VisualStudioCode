@@ -270,7 +270,7 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 
 .webcam-float-wrapper:hover{transform:scale(1.05);border-color:#fff}
 
-.webcam-float-wrapper.is-zoomed{width:92vw;height:calc(92vw * 0.5625);left:4vw;bottom:20px;border-radius:15px;box-shadow:0 20px 40px rgba(0, 0, 0, 0.6);border-color:#fff}
+.webcam-float-wrapper.is-zoomed{width:92vw;height:calc(92vw * 0.5625);left:4vw;bottom:20px;border-radius:15px;box-shadow:0 20px 40px rgba(0, 0, 0, 0.6);border-color:#fff;z-index:999999}
 
 .hero-container{position:relative}
 
