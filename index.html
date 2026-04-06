@@ -37,7 +37,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
     
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=1.0.34">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=1.0.35">
     <!-- <link rel="stylesheet" href="wotai-style.css?v=1.0.23"> -->
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -86,6 +86,20 @@
                 <li><a href="wishlist.html"><i class="fa-solid fa-heart menu-heart"></i> Favorites</a></li>
                 <li><a href="t-form.html">Add your Business</a></li>
                 <li><a href="c-form.html">Contact</a></li>
+
+                <li class="nav-emergency-item">
+                    <a href="#" onclick="toggleNavEmergency(event)" class="sos-trigger">
+                         <i class="fa-solid fa-phone" style="color: #3498db;"></i>Useful Numbers
+                    </a>
+                    <div id="navEmergencyMenu" class="nav-sos-dropdown">
+                        <div class="nav-sos-header"> </div>
+                        <a href="tel:+302423086222"><i class="fa-solid fa-shield"></i> Police Office Milies <span class="phone-no">(+30 24230 86222)</span></a>
+                        <a href="tel:+302423022385"><i class="fa-solid fa-pills"></i> Pharmacy Kala Nera <span class="phone-no">(+30 24230 22385)</span></a>
+                        <a href="tel:+302423022160"><i class="fa-solid fa-pills"></i> Pharmacy Kato Gatzea <span class="phone-no">(+30 24230 22160)</span></a>
+                        <a href="tel:+302423086666"><i class="fa-solid fa-user-doctor"></i> Doctor Kala Nera <span class="phone-no">(+30 24230 86666)</span></a>
+                    </div>
+                </li>
+
                 <li id="menu-install-item" class="mobile-only-item">
                     <a href="#" onclick="triggerManualInstall(event)">
                         <i class="fa fa-download" style="color: var(--install-color) !important;"></i> Install App
