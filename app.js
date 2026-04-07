@@ -20,7 +20,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.40'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.41'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -58,9 +58,16 @@ async function init() {
     // Functie om de juiste weergave te kiezen
     const showData = () => {
         if (isWishlistPage) {
-            renderWishlist(); // Toon alleen hartjes
+            renderWishlist(); 
         } else {
-            renderEverything(); // Toon alles + filters (Home)
+            renderEverything(); 
+        }
+
+        // --- NIEUW: Vertel Analytics dat de pagina (inclusief anker #) geladen is ---
+        if (typeof gtag === 'function') {
+            gtag('config', 'G-XXXXXXXXXX', {
+                'page_path': window.location.pathname + window.location.hash
+            });
         }
     };
 
@@ -85,14 +92,12 @@ async function init() {
             const timeString = now.toLocaleDateString('nl-NL') + ' ' + now.toLocaleTimeString('nl-NL', {hour: '2-digit', minute:'2-digit'});
             localStorage.setItem('kalanera_last_sync', timeString);
 
-            // --- VOEG DIT HIER TOE VOOR EENMALIGE UITVOER ---
-            // exportSitemap(freshData);                                // HIERMEE GENEREER JE EEN ACTUELE STIEMAP.XML
-            // ------------------------------------------------
+            // exportSitemap(freshData); // Eenmalig aanzetten voor sitemap download
 
             localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
             allBusinesses = freshData;
             
-            showData(); // Update de pagina met verse data
+            showData(); 
         }
     } catch (error) {
         console.warn("Offline mode.");
@@ -100,7 +105,17 @@ async function init() {
 
     // --- STAP 4: Overige extra's ---
     updateOnlineStatus();
-    updateWeather(); // Zorg dat het weer ook geladen wordt
+    updateWeather(); 
+
+    // --- NIEUW: Luister naar hash-veranderingen voor Analytics ---
+    // (Als mensen op een link naar een specifiek bedrijf klikken)
+    window.addEventListener('hashchange', () => {
+        if (typeof gtag === 'function') {
+            gtag('event', 'page_view', {
+                page_path: window.location.pathname + window.location.hash
+            });
+        }
+    });
 }
 
 // --- UI RENDERING & FILTERS ---
