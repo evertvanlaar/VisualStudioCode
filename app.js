@@ -20,7 +20,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.35'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.36'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -80,10 +80,14 @@ async function init() {
         if (response.ok) {
             const rawData = await response.json();
             const freshData = rawData.filter(biz => biz.Status === 'Active');
-
+           
             const now = new Date();
             const timeString = now.toLocaleDateString('nl-NL') + ' ' + now.toLocaleTimeString('nl-NL', {hour: '2-digit', minute:'2-digit'});
             localStorage.setItem('kalanera_last_sync', timeString);
+
+            // --- VOEG DIT HIER TOE VOOR EENMALIGE UITVOER ---
+            // exportSitemap(freshData);                                // HIERMEE GENEREER JE EEN ACTUELE STIEMAP.XML
+            // ------------------------------------------------
 
             localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
             allBusinesses = freshData;
@@ -323,11 +327,11 @@ function updateSchemaOrg(businesses) {
         
         if (cat.includes("restaurant") || cat.includes("eat") || cat.includes("food")) {
             specificType = "Restaurant";
-        } else if (cat.includes("hotel") || cat.includes("room") || cat.includes("stay")) {
+        } else if (cat.includes("hotel") || cat.includes("room") || cat.includes("sleep")) {
             specificType = "Hotel";
         } else if (cat.includes("shop") || cat.includes("store")) {
             specificType = "Store";
-        } else if (cat.includes("bar") || cat.includes("cafe")) {
+        } else if (cat.includes("drink") || cat.includes("cafe")) {
             specificType = "BarOrPub";
         }
 
@@ -881,3 +885,52 @@ window.addEventListener('click', function(e) {
         menu.classList.remove("is-open");
     }
 });
+
+
+
+/**
+ * Sitemap Export Functie
+ * Gebruik dit eenmalig om sitemap.xml te genereren
+ */
+function exportSitemap(businesses) {
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://www.kalanera.gr/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.kalanera.gr/wishlist.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>`;
+
+    businesses.forEach(biz => {
+        // Maak een URL-vriendelijke slug die matcht met je IDs in de HTML
+        const slug = biz.Name.toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '');
+        
+        xml += `
+  <url>
+    <loc>https://www.kalanera.gr/#${slug}</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+    });
+
+    xml += `\n</urlset>`;
+    
+    console.log("--- START SITEMAP XML ---");
+    console.log(xml);
+    console.log("--- EINDE SITEMAP XML ---");
+
+    // Start download automatisch
+    const blob = new Blob([xml], { type: 'text/xml' });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = 'sitemap.xml';
+    link.click();
+}
