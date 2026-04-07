@@ -20,7 +20,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.36'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.37'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -255,10 +255,15 @@ function renderBusinesses(data) {
             const webHtml = biz.Website && biz.Website.trim() !== "" 
                 ? `<a href="${cleanUrl}" target="_blank" class="btn-icon web-btn"><i class="fa fa-globe"></i></a>` 
                 : '';
+                
+            // 1. Maak een URL-vriendelijke ID (slug) die exact matcht met je sitemap
+            const bizId = biz.Name.toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '');    
 
             // 2. Gebruik de variabele in de grid
             grid.innerHTML += `
-                <div class="biz-card-mini" style="border-left: 4px solid ${catColor}">
+                <div class="biz-card-mini" id="${bizId}" style="border-left: 4px solid ${catColor}">
                     <div class="mini-preview">
                         <a href="${cleanUrl}" target="_blank">
                             <img src="${finalImageUrl}" onerror="this.src='https://via.placeholder.com/180x130?text=No+Photo'">
