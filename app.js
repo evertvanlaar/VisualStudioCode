@@ -20,7 +20,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.41'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.43'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -252,38 +252,38 @@ function renderBusinesses(data) {
         grouped[category].sort((a, b) => (a.Name || "").localeCompare(b.Name || "")).forEach(biz => {
             const rawUrl = biz.Website || '';
             const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
-            const displayUrl = rawUrl.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
             const catColor = getColor(category);
+            const safeBizName = biz.Name.replace(/'/g, "\\'"); // Veilig voor JS strings
             
             const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' Kala Nera reviews')}`;
-            const mapsUrl = biz.GoogleMapsLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.Name + ' Kala Nera')}`;
+            const mapsUrl = biz.GoogleMapsLink || `https://www.google.com/maps/search/${encodeURIComponent(biz.Name + ' Kala Nera')}`;
+            
+            // Email HTML
             const emailHtml = (biz.Email && biz.Email.trim() !== "" && biz.Email !== "-") 
-            ? `<a href="mailto:${biz.Email}" class="btn-icon mail-btn" title="E-mail"><i class="fa fa-envelope"></i></a>` 
+            ? `<a href="mailto:${biz.Email}" class="btn-icon mail-btn" title="E-mail" onclick="gtag('event', 'click_email', {'biz_name': '${safeBizName}'})"><i class="fa fa-envelope"></i></a>` 
             : '';
 
             const isFavorite = wishlist.includes(biz.Name);
-            // let finalImageUrl = biz.PhotoURL || (rawUrl ? `https://s0.wp.com/mshots/v1/${encodeURIComponent(cleanUrl)}?w=180&h=130` : `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`);
-            // Gebruik de PhotoURL als die er is, anders een nette placeholder met de naam
             let finalImageUrl = biz.PhotoURL || `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`;
 
-            // 1. Maak de variabele aan (boven grid.innerHTML)
+            // 1. Website knop met tracking
             const webHtml = biz.Website && biz.Website.trim() !== "" 
-                ? `<a href="${cleanUrl}" target="_blank" class="btn-icon web-btn"><i class="fa fa-globe"></i></a>` 
+                ? `<a href="${cleanUrl}" target="_blank" class="btn-icon web-btn" onclick="gtag('event', 'exit_to_website', {'biz_name': '${safeBizName}'})"><i class="fa fa-globe"></i></a>` 
                 : '';
                 
-            // 1. Maak een URL-vriendelijke ID (slug) die exact matcht met je sitemap
+            // 2. Unieke ID voor deep-linking en AI-vindbaarheid
             const bizId = biz.Name.toLowerCase()
                 .replace(/[^a-z0-9]+/g, '-')
                 .replace(/(^-|-$)/g, '');    
 
-            // 2. Gebruik de variabele in de grid
+            // 3. De Grid HTML
             grid.innerHTML += `
                 <div class="biz-card-mini" id="${bizId}" style="border-left: 4px solid ${catColor}">
                     <div class="mini-preview">
-                        <a href="${cleanUrl}" target="_blank">
+                        <a href="${cleanUrl}" target="_blank" onclick="gtag('event', 'click_image', {'biz_name': '${safeBizName}'})">
                             <img src="${finalImageUrl}" onerror="this.src='https://via.placeholder.com/180x130?text=No+Photo'">
                         </a>
-                        <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${biz.Name.replace(/'/g, "\\'")}', this)">
+                        <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeBizName}', this)">
                             <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
                         </button>
                     </div>
@@ -296,7 +296,9 @@ function renderBusinesses(data) {
                         <div class="mini-actions">
                             ${(biz.Phone && biz.Phone.trim() !== "" && biz.Phone !== "-") 
                                 ? `<div class="phone-group">
-                                        <a href="tel:${biz.Phone}" class="btn-icon phone-btn"><i class="fa fa-phone"></i></a>
+                                        <a href="tel:${biz.Phone}" class="btn-icon phone-btn" onclick="gtag('event', 'click_phone', {'biz_name': '${safeBizName}'})">
+                                            <i class="fa fa-phone"></i>
+                                        </a>
                                         <span class="phone-txt">${biz.Phone}</span>
                                         <button class="btn-icon copy-btn" onclick="copyToClipboard('${biz.Phone}', this)"><i class="fa fa-copy"></i></button>
                                 </div>` 
@@ -305,8 +307,12 @@ function renderBusinesses(data) {
                             <div class="action-right">
                                 ${webHtml}
                                 ${emailHtml}
-                                <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn"><i class="fa fa-star"></i></a>
-                                <a href="${mapsUrl}" target="_blank" class="btn-icon nav-btn-action"><i class="fa fa-location-dot"></i></a>
+                                <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn" onclick="gtag('event', 'click_reviews', {'biz_name': '${safeBizName}'})">
+                                    <i class="fa fa-star"></i>
+                                </a>
+                                <a href="${mapsUrl}" target="_blank" class="btn-icon nav-btn-action" onclick="gtag('event', 'open_maps', {'biz_name': '${safeBizName}'})">
+                                    <i class="fa fa-location-dot"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -329,7 +335,7 @@ function renderBusinesses(data) {
         });
     }, 50);
 
-    // Nadat de kaartjes op het scherm staan:
+    // Schema.org update voor SEO
     updateSchemaOrg(data);
 }
 
