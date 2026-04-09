@@ -20,7 +20,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.43'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.45'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -959,4 +959,94 @@ function exportSitemap(businesses) {
     link.href = window.URL.createObjectURL(blob);
     link.download = 'sitemap.xml';
     link.click();
+}
+
+// chatbot
+// 1. Schakelen tussen openen en sluiten van de chat
+function toggleChat() {
+    const popup = document.getElementById('chatPopup');
+    const robotIcon = document.getElementById('kn-robot');
+    const closeIcon = document.getElementById('kn-close');
+    
+    if (popup.style.display === 'none') {
+        popup.style.display = 'flex';
+        if(robotIcon) robotIcon.style.display = 'none';
+        if(closeIcon) closeIcon.style.display = 'block';
+    } else {
+        popup.style.display = 'none';
+        if(robotIcon) robotIcon.style.display = 'block';
+        if(closeIcon) closeIcon.style.display = 'none';
+    }
+}
+
+// 2. Zorg dat de chat automatisch naar beneden scrollt bij lange antwoorden
+function scrollToBottom() {
+    const content = document.getElementById('chatScrollArea');
+    if (content) {
+        content.scrollTop = content.scrollHeight;
+    }
+}
+
+// 3. De vraag versturen
+async function verstuurVraag() {
+    const input = document.getElementById('chatInput');
+    const display = document.getElementById('chatAntwoord');
+    const container = document.getElementById('chatResponseContainer');
+    const vraag = input.value.trim();
+
+    // Stop als er geen tekst is
+    if (!vraag) return;
+
+    // UI klaarmaken: toon laad-status
+    container.style.display = 'block';
+    display.innerHTML = "<em>The guide is typing a response...</em>";
+    display.style.opacity = "0.6";
+    
+    // Maak input leeg en scroll naar beneden
+    input.value = ""; 
+    scrollToBottom();
+
+    // Roep de n8n webhook aan
+    const resultaat = await chatMetGids(vraag);
+    
+    // Toon het resultaat
+    display.innerText = resultaat;
+    display.style.opacity = "1";
+    scrollToBottom();
+}
+
+// 4. Verbinding met n8n
+async function chatMetGids(gebruikersVraag) {
+    // Unieke sessie per bezoeker onthouden
+    if (!localStorage.getItem('chat_session_id')) {
+        localStorage.setItem('chat_session_id', 'session_' + Math.random().toString(36).substr(2, 9));
+    }
+    const sessionId = localStorage.getItem('chat_session_id');
+
+    try {
+        const response = await fetch('https://n8n.vanlaar.cloud/webhook/kala-nera-chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                question: gebruikersVraag,
+                sessionId: sessionId
+            })
+        });
+
+        if (!response.ok) throw new Error('Netwerkfout');
+
+        // We verwachten platte tekst terug van de n8n "Respond to Webhook" node
+        return await response.text();
+        
+    } catch (error) {
+        console.error("Chat fout:", error);
+        return "Oops! The guide is out for a swim. Try again later .";
+    }
+}
+
+// 5. Enter-toets ondersteuning
+function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+        verstuurVraag();
+    }
 }

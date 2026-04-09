@@ -163,29 +163,8 @@
         <button id="close-ios-banner" style="position: absolute; right: 10px; top: 10px; background: transparent; border: none; color: #8e8e93; cursor: pointer; font-size: 18px;">✕</button>
     </div>
 
-        <div class="search-container">
-            <i class="fa fa-search search-icon"></i>
-            <input 
-                type="search" 
-                class="search-input" 
-                id="search-input" 
-                placeholder="Search by name or category..."
-                inputmode="search"
-                enterkeyhint="search"
-                autocomplete="off"
-            >
-        </div>
 
-        <div class="filter-container" id="filter-buttons"></div>
-        <div class="filter-container" id="location-buttons"></div>
-
-        <div id="business-list">
-            <p class="status-msg">Data is loading...</p>
-        </div>
-    </div>
-
-
-    <div id="chatLauncher" onclick="toggleChat()" class="kn-launcher glossy-glass">
+<div id="chatLauncher" onclick="toggleChat()" class="kn-launcher glossy-glass">
     <div class="kn-icon-container">
         <svg id="kn-robot" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="11" width="18" height="10" rx="2"></rect>
@@ -215,7 +194,7 @@
     </div>
 
     <div class="kn-chat-popup-footer">
-        <input type="text" id="chatInput" placeholder="Ask your question..." onkeypress="handleKeyPress(event)" />
+        <input type="text" id="chatInput" placeholder="Stel je vraag..." onkeypress="handleKeyPress(event)" />
         <button onclick="verstuurVraag()" id="chatSubmitBtn" class="kn-send-btn">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                 <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
