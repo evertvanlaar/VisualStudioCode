@@ -720,3 +720,48 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
     padding: 10px 15px !important;
     outline: none !important;
 }
+
+/* Container voor de berichten */
+#chatScrollArea {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+}
+
+/* Algemene stijl voor bubbels */
+.chat-bubble {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 15px;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+/* Gebruiker: rechts, grijs/blauw */
+.user-bubble {
+    align-self: flex-end;
+    background-color: #f0f0f0;
+    color: #333;
+    border-bottom-right-radius: 2px;
+}
+
+/* AI: links, groen (matcht met je thema) */
+.ai-bubble {
+    align-self: flex-start;
+    background: linear-gradient(135deg, #3a7532 0%, #2d5a27 100%);
+    color: white;
+    border-bottom-left-radius: 2px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Welkomsttekst styling aanpassen naar een bubbel-look indien gewenst */
+.kn-welcome-text {
+    align-self: flex-start;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}

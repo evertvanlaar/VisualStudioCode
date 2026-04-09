@@ -962,13 +962,13 @@ function exportSitemap(businesses) {
 }
 
 // chatbot
-// 1. Schakelen tussen openen en sluiten van de chat
+// 1. Schakelen tussen openen en sluiten van de chat (ongewijzigd)
 function toggleChat() {
     const popup = document.getElementById('chatPopup');
     const robotIcon = document.getElementById('kn-robot');
     const closeIcon = document.getElementById('kn-close');
     
-    if (popup.style.display === 'none') {
+    if (popup.style.display === 'none' || popup.style.display === '') {
         popup.style.display = 'flex';
         if(robotIcon) robotIcon.style.display = 'none';
         if(closeIcon) closeIcon.style.display = 'block';
@@ -979,72 +979,73 @@ function toggleChat() {
     }
 }
 
-// 2. Zorg dat de chat automatisch naar beneden scrollt bij lange antwoorden
-function scrollToBottom() {
-    const content = document.getElementById('chatScrollArea');
-    if (content) {
-        content.scrollTop = content.scrollHeight;
-    }
+// 2. Hulpmiddel om berichten toe te voegen aan de chat
+function voegBerichtToe(tekst, type) {
+    const scrollArea = document.getElementById('chatScrollArea');
+    const berichtDiv = document.createElement('div');
+    
+    // We geven het bericht een class mee: 'user-bubble' of 'ai-bubble'
+    berichtDiv.className = `chat-bubble ${type}-bubble`;
+    berichtDiv.innerText = tekst;
+    
+    scrollArea.appendChild(berichtDiv);
+    
+    // Automatisch naar beneden scrollen
+    scrollArea.scrollTop = scrollArea.scrollHeight;
+    
+    return berichtDiv; // Handig om later de laad-status te verwijderen
 }
 
 // 3. De vraag versturen
 async function verstuurVraag() {
     const input = document.getElementById('chatInput');
-    const display = document.getElementById('chatAntwoord');
-    const container = document.getElementById('chatResponseContainer');
     const vraag = input.value.trim();
 
-    // Stop als er geen tekst is
     if (!vraag) return;
 
-    // UI klaarmaken: toon laad-status
-    container.style.display = 'block';
-    display.innerHTML = "<em>The guide is typing a response...</em>";
-    display.style.opacity = "0.6";
-    
-    // Maak input leeg en scroll naar beneden
+    // Toon de vraag van de gebruiker direct in de chat
+    voegBerichtToe(vraag, 'user');
+
+    // Maak inputveld leeg
     input.value = ""; 
-    scrollToBottom();
 
-    // Roep de n8n webhook aan
-    const resultaat = await chatMetGids(vraag);
-    
-    // Toon het resultaat
-    display.innerText = resultaat;
-    display.style.opacity = "1";
-    scrollToBottom();
-}
+    // Toon "typing" indicator
+    const laadBericht = voegBerichtToe("The guide is typing...", 'ai');
+    laadBericht.style.opacity = "0.6";
+    laadBericht.style.fontStyle = "italic";
 
-// 4. Verbinding met n8n
-async function chatMetGids(gebruikersVraag) {
-    // Unieke sessie per bezoeker onthouden
+    // Sessie ID ophalen of maken
     if (!localStorage.getItem('chat_session_id')) {
         localStorage.setItem('chat_session_id', 'session_' + Math.random().toString(36).substr(2, 9));
     }
     const sessionId = localStorage.getItem('chat_session_id');
 
+    // Roep n8n aan
     try {
         const response = await fetch('https://n8n.vanlaar.cloud/webhook/kala-nera-chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                question: gebruikersVraag,
+                question: vraag,
                 sessionId: sessionId
             })
         });
 
         if (!response.ok) throw new Error('Netwerkfout');
-
-        // We verwachten platte tekst terug van de n8n "Respond to Webhook" node
-        return await response.text();
+        const antwoordTekst = await response.text();
+        
+        // Verwijder laad-bericht en toon echt antwoord
+        laadBericht.remove();
+        voegBerichtToe(antwoordTekst, 'ai');
         
     } catch (error) {
         console.error("Chat fout:", error);
-        return "Oops! The guide is out for a swim. Try again later .";
+        laadBericht.innerText = "Oops! The guide is out for a swim. Try again later.";
+        laadBericht.style.opacity = "1";
     }
 }
 
-// 5. Enter-toets ondersteuning
+// 4. Enter-toets ondersteuning
 function handleKeyPress(event) {
     if (event.key === 'Enter') {
         verstuurVraag();
