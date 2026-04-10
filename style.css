@@ -765,3 +765,22 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
     border-radius: 10px;
     margin-bottom: 10px;
 }
+
+/* De AI Bubbel (Links) */
+.ai-bubble {
+    align-self: flex-start;
+    background: #3a7532; /* Solide groen of je verloop */
+    color: white;
+    border-radius: 18px 18px 18px 4px !important; /* Mooie afgeronde hoek linksonder */
+    padding: 12px 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* De User Bubbel (Rechts) */
+.user-bubble {
+    align-self: flex-end;
+    background: #e9e9eb; /* Lichtgrijs zoals Apple */
+    color: black;
+    border-radius: 18px 18px 4px 18px !important; /* Mooie afgeronde hoek rechtsonder */
+    padding: 12px 16px;
+}
