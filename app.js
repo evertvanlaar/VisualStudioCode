@@ -20,7 +20,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.46'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.47'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -979,21 +979,59 @@ function toggleChat() {
     }
 }
 
-// 2. Hulpmiddel om berichten toe te voegen aan de chat
+// 2. Hulpmiddel om berichten toe te voegen aan de chat (GEUPDATE VOOR LINKS)
 function voegBerichtToe(tekst, type) {
     const scrollArea = document.getElementById('chatScrollArea');
     const berichtDiv = document.createElement('div');
     
     // We geven het bericht een class mee: 'user-bubble' of 'ai-bubble'
     berichtDiv.className = `chat-bubble ${type}-bubble`;
-    berichtDiv.innerText = tekst;
+
+    if (type === 'ai') {
+        // 1. Maak de tekst veilig tegen script-injecties
+        let veiligeTekst = tekst.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+        // 2. Markdown Link Parser: Zoekt [tekst](url)
+        veiligeTekst = veiligeTekst.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, function(match, label, url) {
+            return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: white; font-weight: bold; text-decoration: underline;">${label}</a>`;
+        });
+
+        // 3. Losse URL Parser: Zoekt rauwe URL's (zoals die Facebook link)
+        // De regex checkt of de URL niet al in een href-tag zit
+        const urlRegex = /(?<!href="|">)(https?:\/\/[^\s<]+)/g;
+        const htmlMetLinks = veiligeTekst.replace(urlRegex, function(url) {
+            return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: white; font-weight: bold; text-decoration: underline; word-break: break-all;">${url}</a>`;
+        });
+
+        // 4. Verbeterde Telefoonnummer Parser
+        // Zoekt naar nummers die beginnen met + of 00, gevolgd door cijfers, spaties of streepjes (8 t/m 20 tekens totaal)
+        veiligeTekst = veiligeTekst.replace(/(?:\+|00)[\d\s-]{8,20}/g, function(nummer) {
+            // Verwijder alles wat geen cijfer of de '+' is voor de actie-link
+            const schoonNummer = nummer.replace(/[^\d+]/g, ''); 
+            
+            // Check of het nummer wel echt lang genoeg is om een telefoonnummer te zijn (voorkomt valse matches)
+            if (schoonNummer.length < 10) return nummer;
+
+            return `<a href="tel:${schoonNummer}" style="color: white; font-weight: bold; text-decoration: underline; white-space: nowrap;">${nummer}</a>`;
+        });
+
+
+
+// BELANGRIJK: Zorg dat dit de LAATSTE stap is voor berichtDiv.innerHTML = veiligeTekst;
+
+        // Gebruik innerHTML om de aangemaakte <a> tags te activeren
+        berichtDiv.innerHTML = htmlMetLinks;
+    } else {
+        // Voor de gebruiker (user-bubble) houden we het simpel en veilig als tekst
+        berichtDiv.innerText = tekst;
+    }
     
     scrollArea.appendChild(berichtDiv);
     
     // Automatisch naar beneden scrollen
     scrollArea.scrollTop = scrollArea.scrollHeight;
     
-    return berichtDiv; // Handig om later de laad-status te verwijderen
+    return berichtDiv; 
 }
 
 // 3. De vraag versturen
