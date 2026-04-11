@@ -1,4 +1,4 @@
-/* VERSIE 1.0.47 */
+/* VERSIE 1.0.50 */
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
 @keyframes slideDown{from{transform: translate(-50%, -100%); opacity: 0}to{transform: translate(-50%, 0); opacity: 1}}
@@ -783,4 +783,36 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
     color: black;
     border-radius: 18px 18px 4px 18px !important; /* Mooie afgeronde hoek rechtsonder */
     padding: 12px 16px;
+}
+
+
+
+
+/* --- FIX VOOR VIEWPORT CLIPPING OP MOBIEL --- */
+@media screen and (max-width: 991px) {
+    .mini-actions {
+        display: flex !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        gap: 2px !important; /* Extreem kleine gap om ruimte te winnen */
+    }
+
+    .phone-group {
+        flex-shrink: 1 !important; /* Telefoon mag krimpen */
+        min-width: 0 !important;
+        margin-right: 2px !important;
+    }
+
+    .action-right {
+        display: flex !important;
+        gap: 3px !important; /* Minder ruimte tussen iconen (was 8px) */
+        flex-shrink: 0 !important; /* De iconen mogen NOOIT verdwijnen */
+        margin-left: auto !important;
+    }
+
+    .btn-icon {
+        width: 26px !important; /* Ietsje smaller (was 28px) voor de zekerheid */
+        height: 26px !important;
+        min-width: 26px !important;
+    }
 }
