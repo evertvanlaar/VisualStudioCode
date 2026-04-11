@@ -20,7 +20,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.50'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.51'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -336,53 +336,9 @@ function renderBusinesses(data) {
     }, 50);
 
     // Schema.org update voor SEO
-    updateSchemaOrg(data);
+    // updateSchemaOrg(data); // wordt nu via n8n ingevuld
 }
 
-function updateSchemaOrg(businesses) {
-    const schemaScript = document.getElementById('schema-jsonld');
-    if (!schemaScript) return;
-
-    let schemaData = JSON.parse(schemaScript.textContent);
-
-    schemaData.itemListElement = businesses.map((biz, index) => {
-        // Mapping van jouw categorieën naar officiële Schema types
-        let specificType = "LocalBusiness"; // De veilige standaard
-        
-        const cat = biz.Category ? biz.Category.toLowerCase() : "";
-        
-        if (cat.includes("restaurant") || cat.includes("eat") || cat.includes("food")) {
-            specificType = "Restaurant";
-        } else if (cat.includes("hotel") || cat.includes("room") || cat.includes("sleep")) {
-            specificType = "Hotel";
-        } else if (cat.includes("shop") || cat.includes("store")) {
-            specificType = "Store";
-        } else if (cat.includes("drink") || cat.includes("cafe")) {
-            specificType = "BarOrPub";
-        }
-
-        // Pas dit aan in je updateSchemaOrg functie:
-        return {
-            "@type": "ListItem",
-            "position": index + 1,
-            "item": {
-                "@type": specificType,
-                "name": biz.Name, // Met hoofdletter N
-                "description": biz.Category + " in Kala Nera: " + biz.Name,
-                "image": biz.PhotoURL || "https://www.kalanera.gr/default-image.jpg",
-                "address": {
-                    "@type": "PostalAddress",
-                    "addressLocality": biz.Location || "Kala Nera",
-                    "addressRegion": "Pelion",
-                    "postalCode": "37010",
-                    "addressCountry": "GR"
-                }
-            }
-        };
-    });
-
-    schemaScript.textContent = JSON.stringify(schemaData, null, 2);
-}
 
 // --- HULPFUNCTIES (Zorg dat deze eronder staan!) ---
 
