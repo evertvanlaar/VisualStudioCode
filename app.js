@@ -281,7 +281,7 @@ function renderBusinesses(data) {
                 <div class="biz-card-mini" id="${bizId}" style="border-left: 4px solid ${catColor}">
                     <div class="mini-preview">
                         <a href="${cleanUrl}" target="_blank" onclick="gtag('event', 'click_image', {'biz_name': '${safeBizName}'})">
-                            <img src="${finalImageUrl}" onerror="this.src='https://placehold.co/180x130?text=No+Photo'">
+                            <img src="${finalImageUrl}" onerror="this.src='pix/nophoto.jpg'">
                         </a>
                         <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeBizName}', this)">
                             <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
