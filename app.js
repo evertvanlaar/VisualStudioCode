@@ -20,7 +20,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.47'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.48'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -281,7 +281,7 @@ function renderBusinesses(data) {
                 <div class="biz-card-mini" id="${bizId}" style="border-left: 4px solid ${catColor}">
                     <div class="mini-preview">
                         <a href="${cleanUrl}" target="_blank" onclick="gtag('event', 'click_image', {'biz_name': '${safeBizName}'})">
-                            <img src="${finalImageUrl}" onerror="this.src='https://via.placeholder.com/180x130?text=No+Photo'">
+                            <img src="${finalImageUrl}" onerror="this.src='https://placehold.co/180x130?text=No+Photo'">
                         </a>
                         <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeBizName}', this)">
                             <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
