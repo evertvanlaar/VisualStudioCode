@@ -1,285 +1,276 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
 
-    <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-12LDX13JG6"></script>
-        <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+<section id="seo-directory" style="display:none;"><ul><li><a href="https://www.kalanera.gr/#hellas">Hellas</a></li></ul></section>
 
-        gtag('config', 'G-12LDX13JG6');
-    </script>
-
-    <!-- N8N_SCHEMA_START --> <!-- N8N_SCHEMA_END -->
-
-    <meta charset="UTF-8">
-        
-    <title>Kala Nera Guide | Best Local Businesses, Restaurants & Hotels</title>
-    <link rel="canonical" href="https://www.kalanera.gr/">
-    <meta name="description" content="Discover the best local businesses in Kala Nera. From authentic Greek restaurants to luxury hotels and charming shops. Your complete travel guide to Kala Nera, Pelion.">
-    <meta name="keywords" content="Kala Nera, Greece, travel guide, hotels, restaurants, Pelion, holiday, vacation, Volos">
-
-    <meta property="og:title" content="Kala Nera Local Business Directory">
-    <meta property="og:description" content="Everything you need to know about businesses and services in Kala Nera in one place.">
-    <meta property="og:image" content="villageoverview.jpg">
-    <meta property="og:url" content="https://www.kalanera.gr">
-
-    <meta name="revisit-after" content="7 days">
-    <meta name="language" content="English">
-    <meta name="geo.region" content="GR-41">
-    <meta name="geo.placename" content="Kala Nera">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#4a6c4a">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="manifest" href="/manifest.json">
-    
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=1.0.50">
-    <!-- <link rel="stylesheet" href="wotai-style.css?v=1.0.23"> -->
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-</head>
-<body>
-
-<div id="offline-indicator" class="offline-banner" style="display: none;">
-    <i class="fa fa-plane"></i> You are currently browsing offline. Data is loaded from cache.
-</div>
-
-<header class="site-header">
-    <nav class="main-nav">
-        <div class="nav-container">
-            <a href="index.html" class="logo">Kala <span>Nera</span></a>
-            
-<!--             <div id="weather-widget" class="weather-mini" onclick="openWeather()" style="cursor: pointer; position: relative; z-index: 10;">
-                <span id="weather-icon"></span>
-                <span id="weather-temp">--°C</span>
-            </div> -->
-            <a href="https://www.meteoblue.com/en/weather/forecast/week/kal%c3%a1-ner%c3%a1_greece_261556" 
-                target="_blank" 
-                rel="noopener" 
-                style="text-decoration: none; color: inherit;">
-            <div class="weather-icon-container">
-                <span id="weather-icon"></span>
-                <span id="weather-temp">--°C</span>
-            </div>
-            </a>
-
-
-<!--             <button id="dark-mode-toggle" onclick="toggleDarkMode()" class="btn-dark-toggle">
-                <i class="fas fa-moon"></i>
-            </button> -->
-
-            <button class="menu-toggle" id="mobile-menu">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </button>
-
-            <ul class="nav-links" id="nav-list">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="wishlist.html"><i class="fa-solid fa-heart menu-heart"></i> Favorites</a></li>
-                <li><a href="t-form.html">Add your Business</a></li>
-                <li><a href="c-form.html">Contact</a></li>
-
-                <li class="nav-emergency-item">
-                    <a href="#" onclick="toggleNavEmergency(event)" class="sos-trigger">
-                         <i class="fa-solid fa-phone" style="color: #3498db;"></i>Useful Numbers
-                    </a>
-                    <div id="navEmergencyMenu" class="nav-sos-dropdown">
-                        <div class="nav-sos-header"> </div>
-                        <a href="tel:+302423086222"><i class="fa-solid fa-shield"></i> Police Office Milies <span class="phone-no">(+30 24230 86222)</span></a>
-                        <a href="tel:+302423022385"><i class="fa-solid fa-pills"></i> Pharmacy Kala Nera <span class="phone-no">(+30 24230 22385)</span></a>
-                        <a href="tel:+302423022160"><i class="fa-solid fa-pills"></i> Pharmacy Kato Gatzea <span class="phone-no">(+30 24230 22160)</span></a>
-                        <a href="tel:+302423086666"><i class="fa-solid fa-user-doctor"></i> Doctor Kala Nera <span class="phone-no">(+30 24230 86666)</span></a>
-                    </div>
-                </li>
-
-                <li id="menu-install-item" class="mobile-only-item">
-                    <a href="#" onclick="triggerManualInstall(event)">
-                        <i class="fa fa-download" style="color: var(--install-color) !important;"></i> Install App
-                    </a>
-                </li>     
-            </ul>
-        </div>
-    </nav>
-
-<div class="hero-section">
-    <div class="hero-overlay">
-        <h1>Discover the Magic of Pelion</h1>
-        <p>Experience the perfect blend of mountain and sea</p>
-    </div>
-</div>
-
-
-<div class="hero-container">
-    <div id="floating-webcam" class="webcam-float-wrapper" onclick="this.classList.toggle('is-zoomed')">
-        <div class="webcam-live-badge">PELION LIVE</div>
-        <img id="webcamImage" src="https://www.meteology.gr/cam/milina/index.php" class="webcam-img">
-    </div>
-</div>
-
-
-
-</header>
-
-    <div class="main-container">
-        <h1>Business Directory</h1>
-
-        <div class="add-business-container">
-            <a href="t-form.html" target="_blank" class="add-biz-btn">
-                <i class="fa fa-plus-circle"></i> Add your business
-            </a>
-        </div>
-
-<div id="install-banner">
-    <p>Add <b>Kala Nera</b> to your home screen for easy access!</p>
-    <div class="banner-buttons">
-        <button id="custom-install-button" class="location-btn" style="margin:0;">Install App</button>
-        <button id="close-banner" style="background:none; border:none; color:var(--muted); cursor:pointer;">Not now</button>
-    </div>
-</div>
-
-    <div id="ios-install-instructions" class="ios-banner" style="display: none;">
-        <p style="margin: 0;">
-            <i class="fab fa-apple"></i> <strong>Install as App:</strong> 
-            Tap the <i class="far fa-share-square"></i> icon and select <strong>'Add to Home Screen'</strong>.
-        </p>
-        <button id="close-ios-banner" style="position: absolute; right: 10px; top: 10px; background: transparent; border: none; color: #8e8e93; cursor: pointer; font-size: 18px;">✕</button>
-    </div>
-
-        <div class="search-container">
-            <i class="fa fa-search search-icon"></i>
-            <input 
-                type="search" 
-                class="search-input" 
-                id="search-input" 
-                placeholder="Search by name or category..."
-                inputmode="search"
-                enterkeyhint="search"
-                autocomplete="off"
-            >
-        </div>
-
-        <div class="filter-container" id="filter-buttons"></div>
-        <div class="filter-container" id="location-buttons"></div>
-
-        <div id="business-list">
-            <p class="status-msg">Data is loading...</p>
-        </div>
-    </div>
-
-
-    <div id="chatLauncher" onclick="toggleChat()" class="kn-launcher glossy-glass">
-    <div class="kn-icon-container">
-        <svg id="kn-robot" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="11" width="18" height="10" rx="2"></rect>
-            <circle cx="12" cy="5" r="2"></circle>
-            <path d="M12 7v4"></path>
-            <line x1="8" y1="16" x2="8" y2="16"></line>
-            <line x1="16" y1="16" x2="16" y2="16"></line>
-        </svg>
-        <span id="kn-close" style="display:none; font-size: 24px;">✕</span>
-    </div>
-</div>
-
-<div id="chatPopup" class="kn-chat-popup glass-panel" style="display:none;">
-    <div class="kn-chat-popup-header">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div class="mini-robot-head">🤖</div>
-            <strong>Kala Nera Guide</strong>
-        </div>
-        <span onclick="toggleChat()" style="cursor:pointer; opacity: 0.8;">✕</span>
-    </div>
-    
-    <div class="kn-chat-popup-content" id="chatScrollArea">
-        <p class="kn-welcome-text">Kalimera! I am your local guide. How can I help you?</p>
-        <div id="chatResponseContainer" class="kn-chat-response" style="display:none;">
-            <div id="chatAntwoord" class="kn-chat-body"></div>
-        </div>
-    </div>
-
-    <div class="kn-chat-popup-footer">
-        <input type="text" id="chatInput" placeholder="Ask your question..." onkeypress="handleKeyPress(event)" />
-        <button onclick="verstuurVraag()" id="chatSubmitBtn" class="kn-send-btn">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
-            </svg>
-        </button>
-    </div>
-</div>
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-<footer class="site-footer">
-    <div class="footer-container">
-        <div class="footer-column">
-            <h3>About us</h3>
-            <p>We help travelers discover the best places from authentic taverns to the finest accommodations in Kala Nera and the surrounding area.</p>
-        </div>
-
-        <div class="footer-column">
-            <h3></h3>
-            <ul>
-                <li></li>
-            </ul>
-        </div>
-
-        <div class="footer-column">
-            <h3>Follow Us</h3>
-            <div class="social-icons">
-                <a href="https://www.facebook.com/kalanera.info" target="_blank" class="social-icon">
-                    <i class="fab fa-facebook-f"></i>
-                </a>
-                </div>
-        </div>
-    </div>
-
-    <div style="margin-top: 10px; opacity: 0.6; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">
-        <a href="http://www.goatcounter.com" target="_blank" rel="noopener" title="Bezoekersstatistieken (Inloggen vereist)" style="text-decoration: none; color: inherit; display: flex; align-items: center; justify-content: center; gap: 8px;">
-            <img src="https://static.zgo.at/favicon/favicon-32x32.png" alt="GoatCounter" style="width: 16px; height: 16px;">
-            <span style="font-size: 12px; font-family: sans-serif;">Statistics</span>
-        </a>
-    </div>
-
-    <div class="footer-bottom">
-        <p>© 2026 Kala Nera Business Directory. E-Project all rights reserved.</p>
-        <div class="app-version-tag">
-            <i class="fa fa-th-large"></i> Mobile App
-        </div>
-    </div>
-
-</footer>
-
-<script data-goatcounter="https://evertvanlaar.cloud/count"
-        async src="//gc.zgo.at/count.js"></script>
-
-<script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then(reg => console.log('PWA Service Worker registered.'))
-                .catch(err => console.log('SW registration failed: ', err));
-        });
-    }
-</script>
-
-<a href="https://www.google.com/maps/search/?api=1&query=Kala+Nera" 
-   target="_blank" 
-   class="map-fab-fixed">
-    <i class="fa-solid fa-map-location-dot"></i>
-</a>
-
-<!-- N8N_SEO_START --> <!-- N8N_SEO_END -->
- 
-<script src="app.js"></script>
-</body>
-</html>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ItemList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@type":"LocalBusiness","name":"Hellas","url":"https://www.kalanera.gr/#hellas"}}]}</script>
+PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CgogICAg
+PCEtLSBHb29nbGUgdGFnIChndGFnLmpzKSAtLT4KICAgICAgICA8c2NyaXB0
+IGFzeW5jIHNyYz0iaHR0cHM6Ly93d3cuZ29vZ2xldGFnbWFuYWdlci5jb20v
+Z3RhZy9qcz9pZD1HLTEyTERYMTNKRzYiPjwvc2NyaXB0PgogICAgICAgIDxz
+Y3JpcHQ+CiAgICAgICAgd2luZG93LmRhdGFMYXllciA9IHdpbmRvdy5kYXRh
+TGF5ZXIgfHwgW107CiAgICAgICAgZnVuY3Rpb24gZ3RhZygpe2RhdGFMYXll
+ci5wdXNoKGFyZ3VtZW50cyk7fQogICAgICAgIGd0YWcoJ2pzJywgbmV3IERh
+dGUoKSk7CgogICAgICAgIGd0YWcoJ2NvbmZpZycsICdHLTEyTERYMTNKRzYn
+KTsKICAgIDwvc2NyaXB0PgoKICAgIDwhLS0gTjhOX1NDSEVNQV9TVEFSVCAt
+LT4gPCEtLSBOOE5fU0NIRU1BX0VORCAtLT4KCiAgICA8bWV0YSBjaGFyc2V0
+PSJVVEYtOCI+CiAgICAgICAgCiAgICA8dGl0bGU+S2FsYSBOZXJhIEd1aWRl
+IHwgQmVzdCBMb2NhbCBCdXNpbmVzc2VzLCBSZXN0YXVyYW50cyAmIEhvdGVs
+czwvdGl0bGU+CiAgICA8bGluayByZWw9ImNhbm9uaWNhbCIgaHJlZj0iaHR0
+cHM6Ly93d3cua2FsYW5lcmEuZ3IvIj4KICAgIDxtZXRhIG5hbWU9ImRlc2Ny
+aXB0aW9uIiBjb250ZW50PSJEaXNjb3ZlciB0aGUgYmVzdCBsb2NhbCBidXNp
+bmVzc2VzIGluIEthbGEgTmVyYS4gRnJvbSBhdXRoZW50aWMgR3JlZWsgcmVz
+dGF1cmFudHMgdG8gbHV4dXJ5IGhvdGVscyBhbmQgY2hhcm1pbmcgc2hvcHMu
+IFlvdXIgY29tcGxldGUgdHJhdmVsIGd1aWRlIHRvIEthbGEgTmVyYSwgUGVs
+aW9uLiI+CiAgICA8bWV0YSBuYW1lPSJrZXl3b3JkcyIgY29udGVudD0iS2Fs
+YSBOZXJhLCBHcmVlY2UsIHRyYXZlbCBndWlkZSwgaG90ZWxzLCByZXN0YXVy
+YW50cywgUGVsaW9uLCBob2xpZGF5LCB2YWNhdGlvbiwgVm9sb3MiPgoKICAg
+IDxtZXRhIHByb3BlcnR5PSJvZzp0aXRsZSIgY29udGVudD0iS2FsYSBOZXJh
+IExvY2FsIEJ1c2luZXNzIERpcmVjdG9yeSI+CiAgICA8bWV0YSBwcm9wZXJ0
+eT0ib2c6ZGVzY3JpcHRpb24iIGNvbnRlbnQ9IkV2ZXJ5dGhpbmcgeW91IG5l
+ZWQgdG8ga25vdyBhYm91dCBidXNpbmVzc2VzIGFuZCBzZXJ2aWNlcyBpbiBL
+YWxhIE5lcmEgaW4gb25lIHBsYWNlLiI+CiAgICA8bWV0YSBwcm9wZXJ0eT0i
+b2c6aW1hZ2UiIGNvbnRlbnQ9InZpbGxhZ2VvdmVydmlldy5qcGciPgogICAg
+PG1ldGEgcHJvcGVydHk9Im9nOnVybCIgY29udGVudD0iaHR0cHM6Ly93d3cu
+a2FsYW5lcmEuZ3IiPgoKICAgIDxtZXRhIG5hbWU9InJldmlzaXQtYWZ0ZXIi
+IGNvbnRlbnQ9IjcgZGF5cyI+CiAgICA8bWV0YSBuYW1lPSJsYW5ndWFnZSIg
+Y29udGVudD0iRW5nbGlzaCI+CiAgICA8bWV0YSBuYW1lPSJnZW8ucmVnaW9u
+IiBjb250ZW50PSJHUi00MSI+CiAgICA8bWV0YSBuYW1lPSJnZW8ucGxhY2Vu
+YW1lIiBjb250ZW50PSJLYWxhIE5lcmEiPgoKICAgIDxtZXRhIG5hbWU9InZp
+ZXdwb3J0IiBjb250ZW50PSJ3aWR0aD1kZXZpY2Utd2lkdGgsIGluaXRpYWwt
+c2NhbGU9MS4wIj4KICAgIDxtZXRhIG5hbWU9InRoZW1lLWNvbG9yIiBjb250
+ZW50PSIjNGE2YzRhIj4KICAgIDxtZXRhIG5hbWU9Im1vYmlsZS13ZWItYXBw
+LWNhcGFibGUiIGNvbnRlbnQ9InllcyI+CiAgICA8bWV0YSBuYW1lPSJhcHBs
+ZS1tb2JpbGUtd2ViLWFwcC1zdGF0dXMtYmFyLXN0eWxlIiBjb250ZW50PSJi
+bGFjay10cmFuc2x1Y2VudCI+CgogICAgPGxpbmsgaHJlZj0iaHR0cHM6Ly9m
+b250cy5nb29nbGVhcGlzLmNvbS9jc3MyP2ZhbWlseT1JbnRlcjp3Z2h0QDQw
+MDs2MDA7ODAwJmRpc3BsYXk9c3dhcCIgcmVsPSJzdHlsZXNoZWV0Ij4KICAg
+IDxsaW5rIHJlbD0ibWFuaWZlc3QiIGhyZWY9Ii9tYW5pZmVzdC5qc29uIj4K
+ICAgIAogICAgPGxpbmsgaWQ9Im1haW4tc3R5bGVzaGVldCIgcmVsPSJzdHls
+ZXNoZWV0IiBocmVmPSJzdHlsZS5jc3M/dj0xLjAuNTAiPgogICAgPCEtLSA8
+bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9IndvdGFpLXN0eWxlLmNzcz92
+PTEuMC4yMyI+IC0tPgoKICAgIDxsaW5rIHJlbD0ic3R5bGVzaGVldCIgaHJl
+Zj0iaHR0cHM6Ly9jZG5qcy5jbG91ZGZsYXJlLmNvbS9hamF4L2xpYnMvZm9u
+dC1hd2Vzb21lLzYuMC4wL2Nzcy9hbGwubWluLmNzcyI+CiAgICA8bGluayBy
+ZWw9Imljb24iIHR5cGU9ImltYWdlL3BuZyIgaHJlZj0iZmF2aWNvbi5wbmci
+PgogICAgPGxpbmsgcmVsPSJhcHBsZS10b3VjaC1pY29uIiBocmVmPSJhcHBs
+ZS10b3VjaC1pY29uLnBuZyI+CjwvaGVhZD4KPGJvZHk+Cgo8ZGl2IGlkPSJv
+ZmZsaW5lLWluZGljYXRvciIgY2xhc3M9Im9mZmxpbmUtYmFubmVyIiBzdHls
+ZT0iZGlzcGxheTogbm9uZTsiPgogICAgPGkgY2xhc3M9ImZhIGZhLXBsYW5l
+Ij48L2k+IFlvdSBhcmUgY3VycmVudGx5IGJyb3dzaW5nIG9mZmxpbmUuIERh
+dGEgaXMgbG9hZGVkIGZyb20gY2FjaGUuCjwvZGl2PgoKPGhlYWRlciBjbGFz
+cz0ic2l0ZS1oZWFkZXIiPgogICAgPG5hdiBjbGFzcz0ibWFpbi1uYXYiPgog
+ICAgICAgIDxkaXYgY2xhc3M9Im5hdi1jb250YWluZXIiPgogICAgICAgICAg
+ICA8YSBocmVmPSJpbmRleC5odG1sIiBjbGFzcz0ibG9nbyI+S2FsYSA8c3Bh
+bj5OZXJhPC9zcGFuPjwvYT4KICAgICAgICAgICAgCjwhLS0gICAgICAgICAg
+ICAgPGRpdiBpZD0id2VhdGhlci13aWRnZXQiIGNsYXNzPSJ3ZWF0aGVyLW1p
+bmkiIG9uY2xpY2s9Im9wZW5XZWF0aGVyKCkiIHN0eWxlPSJjdXJzb3I6IHBv
+aW50ZXI7IHBvc2l0aW9uOiByZWxhdGl2ZTsgei1pbmRleDogMTA7Ij4KICAg
+ICAgICAgICAgICAgIDxzcGFuIGlkPSJ3ZWF0aGVyLWljb24iPjwvc3Bhbj4K
+ICAgICAgICAgICAgICAgIDxzcGFuIGlkPSJ3ZWF0aGVyLXRlbXAiPi0twrBD
+PC9zcGFuPgogICAgICAgICAgICA8L2Rpdj4gLS0+CiAgICAgICAgICAgIDxh
+IGhyZWY9Imh0dHBzOi8vd3d3Lm1ldGVvYmx1ZS5jb20vZW4vd2VhdGhlci9m
+b3JlY2FzdC93ZWVrL2thbCVjMyVhMS1uZXIlYzMlYTFfZ3JlZWNlXzI2MTU1
+NiIgCiAgICAgICAgICAgICAgICB0YXJnZXQ9Il9ibGFuayIgCiAgICAgICAg
+ICAgICAgICByZWw9Im5vb3BlbmVyIiAKICAgICAgICAgICAgICAgIHN0eWxl
+PSJ0ZXh0LWRlY29yYXRpb246IG5vbmU7IGNvbG9yOiBpbmhlcml0OyI+CiAg
+ICAgICAgICAgIDxkaXYgY2xhc3M9IndlYXRoZXItaWNvbi1jb250YWluZXIi
+PgogICAgICAgICAgICAgICAgPHNwYW4gaWQ9IndlYXRoZXItaWNvbiI+PC9z
+cGFuPgogICAgICAgICAgICAgICAgPHNwYW4gaWQ9IndlYXRoZXItdGVtcCI+
+LS3CsEM8L3NwYW4+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8
+L2E+CgoKPCEtLSAgICAgICAgICAgICA8YnV0dG9uIGlkPSJkYXJrLW1vZGUt
+dG9nZ2xlIiBvbmNsaWNrPSJ0b2dnbGVEYXJrTW9kZSgpIiBjbGFzcz0iYnRu
+LWRhcmstdG9nZ2xlIj4KICAgICAgICAgICAgICAgIDxpIGNsYXNzPSJmYXMg
+ZmEtbW9vbiI+PC9pPgogICAgICAgICAgICA8L2J1dHRvbj4gLS0+CgogICAg
+ICAgICAgICA8YnV0dG9uIGNsYXNzPSJtZW51LXRvZ2dsZSIgaWQ9Im1vYmls
+ZS1tZW51Ij4KICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzPSJiYXIiPjwv
+c3Bhbj4KICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzPSJiYXIiPjwvc3Bh
+bj4KICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzPSJiYXIiPjwvc3Bhbj4K
+ICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzPSJiYXIiPjwvc3Bhbj4KICAg
+ICAgICAgICAgPC9idXR0b24+CgogICAgICAgICAgICA8dWwgY2xhc3M9Im5h
+di1saW5rcyIgaWQ9Im5hdi1saXN0Ij4KICAgICAgICAgICAgICAgIDxsaT48
+YSBocmVmPSJpbmRleC5odG1sIj5Ib21lPC9hPjwvbGk+CiAgICAgICAgICAg
+ICAgICA8bGk+PGEgaHJlZj0id2lzaGxpc3QuaHRtbCI+PGkgY2xhc3M9ImZh
+LXNvbGlkIGZhLWhlYXJ0IG1lbnUtaGVhcnQiPjwvaT4gRmF2b3JpdGVzPC9h
+PjwvbGk+CiAgICAgICAgICAgICAgICA8bGk+PGEgaHJlZj0idC1mb3JtLmh0
+bWwiPkFkZCB5b3VyIEJ1c2luZXNzPC9hPjwvbGk+CiAgICAgICAgICAgICAg
+ICA8bGk+PGEgaHJlZj0iYy1mb3JtLmh0bWwiPkNvbnRhY3Q8L2E+PC9saT4K
+CiAgICAgICAgICAgICAgICA8bGkgY2xhc3M9Im5hdi1lbWVyZ2VuY3ktaXRl
+bSI+CiAgICAgICAgICAgICAgICAgICAgPGEgaHJlZj0iIyIgb25jbGljaz0i
+dG9nZ2xlTmF2RW1lcmdlbmN5KGV2ZW50KSIgY2xhc3M9InNvcy10cmlnZ2Vy
+Ij4KICAgICAgICAgICAgICAgICAgICAgICAgIDxpIGNsYXNzPSJmYS1zb2xp
+ZCBmYS1waG9uZSIgc3R5bGU9ImNvbG9yOiAjMzQ5OGRiOyI+PC9pPlVzZWZ1
+bCBOdW1iZXJzCiAgICAgICAgICAgICAgICAgICAgPC9hPgogICAgICAgICAg
+ICAgICAgICAgIDxkaXYgaWQ9Im5hdkVtZXJnZW5jeU1lbnUiIGNsYXNzPSJu
+YXYtc29zLWRyb3Bkb3duIj4KICAgICAgICAgICAgICAgICAgICAgICAgPGRp
+diBjbGFzcz0ibmF2LXNvcy1oZWFkZXIiPiA8L2Rpdj4KICAgICAgICAgICAg
+ICAgICAgICAgICAgPGEgaHJlZj0idGVsOiszMDI0MjMwODYyMjIiPjxpIGNs
+YXNzPSJmYS1zb2xpZCBmYS1zaGllbGQiPjwvaT4gUG9saWNlIE9mZmljZSBN
+aWxpZXMgPHNwYW4gY2xhc3M9InBob25lLW5vIj4oKzMwIDI0MjMwIDg2MjIy
+KTwvc3Bhbj48L2E+CiAgICAgICAgICAgICAgICAgICAgICAgIDxhIGhyZWY9
+InRlbDorMzAyNDIzMDIyMzg1Ij48aSBjbGFzcz0iZmEtc29saWQgZmEtcGls
+bHMiPjwvaT4gUGhhcm1hY3kgS2FsYSBOZXJhIDxzcGFuIGNsYXNzPSJwaG9u
+ZS1ubyI+KCszMCAyNDIzMCAyMjM4NSk8L3NwYW4+PC9hPgogICAgICAgICAg
+ICAgICAgICAgICAgICA8YSBocmVmPSJ0ZWw6KzMwMjQyMzAyMjE2MCI+PGkg
+Y2xhc3M9ImZhLXNvbGlkIGZhLXBpbGxzIj48L2k+IFBoYXJtYWN5IEthdG8g
+R2F0emVhIDxzcGFuIGNsYXNzPSJwaG9uZS1ubyI+KCszMCAyNDIzMCAyMjE2
+MCk8L3NwYW4+PC9hPgogICAgICAgICAgICAgICAgICAgICAgICA8YSBocmVm
+PSJ0ZWw6KzMwMjQyMzA4NjY2NiI+PGkgY2xhc3M9ImZhLXNvbGlkIGZhLXVz
+ZXItZG9jdG9yIj48L2k+IERvY3RvciBLYWxhIE5lcmEgPHNwYW4gY2xhc3M9
+InBob25lLW5vIj4oKzMwIDI0MjMwIDg2NjY2KTwvc3Bhbj48L2E+CiAgICAg
+ICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICA8L2xpPgoK
+ICAgICAgICAgICAgICAgIDxsaSBpZD0ibWVudS1pbnN0YWxsLWl0ZW0iIGNs
+YXNzPSJtb2JpbGUtb25seS1pdGVtIj4KICAgICAgICAgICAgICAgICAgICA8
+YSBocmVmPSIjIiBvbmNsaWNrPSJ0cmlnZ2VyTWFudWFsSW5zdGFsbChldmVu
+dCkiPgogICAgICAgICAgICAgICAgICAgICAgICA8aSBjbGFzcz0iZmEgZmEt
+ZG93bmxvYWQiIHN0eWxlPSJjb2xvcjogdmFyKC0taW5zdGFsbC1jb2xvcikg
+IWltcG9ydGFudDsiPjwvaT4gSW5zdGFsbCBBcHAKICAgICAgICAgICAgICAg
+ICAgICA8L2E+CiAgICAgICAgICAgICAgICA8L2xpPiAgICAgCiAgICAgICAg
+ICAgIDwvdWw+CiAgICAgICAgPC9kaXY+CiAgICA8L25hdj4KCjxkaXYgY2xh
+c3M9Imhlcm8tc2VjdGlvbiI+CiAgICA8ZGl2IGNsYXNzPSJoZXJvLW92ZXJs
+YXkiPgogICAgICAgIDxoMT5EaXNjb3ZlciB0aGUgTWFnaWMgb2YgUGVsaW9u
+PC9oMT4KICAgICAgICA8cD5FeHBlcmllbmNlIHRoZSBwZXJmZWN0IGJsZW5k
+IG9mIG1vdW50YWluIGFuZCBzZWE8L3A+CiAgICA8L2Rpdj4KPC9kaXY+CgoK
+PGRpdiBjbGFzcz0iaGVyby1jb250YWluZXIiPgogICAgPGRpdiBpZD0iZmxv
+YXRpbmctd2ViY2FtIiBjbGFzcz0id2ViY2FtLWZsb2F0LXdyYXBwZXIiIG9u
+Y2xpY2s9InRoaXMuY2xhc3NMaXN0LnRvZ2dsZSgnaXMtem9vbWVkJykiPgog
+ICAgICAgIDxkaXYgY2xhc3M9IndlYmNhbS1saXZlLWJhZGdlIj5QRUxJT04g
+TElWRTwvZGl2PgogICAgICAgIDxpbWcgaWQ9IndlYmNhbUltYWdlIiBzcmM9
+Imh0dHBzOi8vd3d3Lm1ldGVvbG9neS5nci9jYW0vbWlsaW5hL2luZGV4LnBo
+cCIgY2xhc3M9IndlYmNhbS1pbWciPgogICAgPC9kaXY+CjwvZGl2PgoKCgo8
+L2hlYWRlcj4KCiAgICA8ZGl2IGNsYXNzPSJtYWluLWNvbnRhaW5lciI+CiAg
+ICAgICAgPGgxPkJ1c2luZXNzIERpcmVjdG9yeTwvaDE+CgogICAgICAgIDxk
+aXYgY2xhc3M9ImFkZC1idXNpbmVzcy1jb250YWluZXIiPgogICAgICAgICAg
+ICA8YSBocmVmPSJ0LWZvcm0uaHRtbCIgdGFyZ2V0PSJfYmxhbmsiIGNsYXNz
+PSJhZGQtYml6LWJ0biI+CiAgICAgICAgICAgICAgICA8aSBjbGFzcz0iZmEg
+ZmEtcGx1cy1jaXJjbGUiPjwvaT4gQWRkIHlvdXIgYnVzaW5lc3MKICAgICAg
+ICAgICAgPC9hPgogICAgICAgIDwvZGl2PgoKPGRpdiBpZD0iaW5zdGFsbC1i
+YW5uZXIiPgogICAgPHA+QWRkIDxiPkthbGEgTmVyYTwvYj4gdG8geW91ciBo
+b21lIHNjcmVlbiBmb3IgZWFzeSBhY2Nlc3MhPC9wPgogICAgPGRpdiBjbGFz
+cz0iYmFubmVyLWJ1dHRvbnMiPgogICAgICAgIDxidXR0b24gaWQ9ImN1c3Rv
+bS1pbnN0YWxsLWJ1dHRvbiIgY2xhc3M9ImxvY2F0aW9uLWJ0biIgc3R5bGU9
+Im1hcmdpbjowOyI+SW5zdGFsbCBBcHA8L2J1dHRvbj4KICAgICAgICA8YnV0
+dG9uIGlkPSJjbG9zZS1iYW5uZXIiIHN0eWxlPSJiYWNrZ3JvdW5kOm5vbmU7
+IGJvcmRlcjpub25lOyBjb2xvcjp2YXIoLS1tdXRlZCk7IGN1cnNvcjpwb2lu
+dGVyOyI+Tm90IG5vdzwvYnV0dG9uPgogICAgPC9kaXY+CjwvZGl2PgoKICAg
+IDxkaXYgaWQ9Imlvcy1pbnN0YWxsLWluc3RydWN0aW9ucyIgY2xhc3M9Imlv
+cy1iYW5uZXIiIHN0eWxlPSJkaXNwbGF5OiBub25lOyI+CiAgICAgICAgPHAg
+c3R5bGU9Im1hcmdpbjogMDsiPgogICAgICAgICAgICA8aSBjbGFzcz0iZmFi
+IGZhLWFwcGxlIj48L2k+IDxzdHJvbmc+SW5zdGFsbCBhcyBBcHA6PC9zdHJv
+bmc+IAogICAgICAgICAgICBUYXAgdGhlIDxpIGNsYXNzPSJmYXIgZmEtc2hh
+cmUtc3F1YXJlIj48L2k+IGljb24gYW5kIHNlbGVjdCA8c3Ryb25nPidBZGQg
+dG8gSG9tZSBTY3JlZW4nPC9zdHJvbmc+LgogICAgICAgIDwvcD4KICAgICAg
+ICA8YnV0dG9uIGlkPSJjbG9zZS1pb3MtYmFubmVyIiBzdHlsZT0icG9zaXRp
+b246IGFic29sdXRlOyByaWdodDogMTBweDsgdG9wOiAxMHB4OyBiYWNrZ3Jv
+dW5kOiB0cmFuc3BhcmVudDsgYm9yZGVyOiBub25lOyBjb2xvcjogIzhlOGU5
+MzsgY3Vyc29yOiBwb2ludGVyOyBmb250LXNpemU6IDE4cHg7Ij7inJU8L2J1
+dHRvbj4KICAgIDwvZGl2PgoKICAgICAgICA8ZGl2IGNsYXNzPSJzZWFyY2gt
+Y29udGFpbmVyIj4KICAgICAgICAgICAgPGkgY2xhc3M9ImZhIGZhLXNlYXJj
+aCBzZWFyY2gtaWNvbiI+PC9pPgogICAgICAgICAgICA8aW5wdXQgCiAgICAg
+ICAgICAgICAgICB0eXBlPSJzZWFyY2giIAogICAgICAgICAgICAgICAgY2xh
+c3M9InNlYXJjaC1pbnB1dCIgCiAgICAgICAgICAgICAgICBpZD0ic2VhcmNo
+LWlucHV0IiAKICAgICAgICAgICAgICAgIHBsYWNlaG9sZGVyPSJTZWFyY2gg
+YnkgbmFtZSBvciBjYXRlZ29yeS4uLiIKICAgICAgICAgICAgICAgIGlucHV0
+bW9kZT0ic2VhcmNoIgogICAgICAgICAgICAgICAgZW50ZXJrZXloaW50PSJz
+ZWFyY2giCiAgICAgICAgICAgICAgICBhdXRvY29tcGxldGU9Im9mZiIKICAg
+ICAgICAgICAgPgogICAgICAgIDwvZGl2PgoKICAgICAgICA8ZGl2IGNsYXNz
+PSJmaWx0ZXItY29udGFpbmVyIiBpZD0iZmlsdGVyLWJ1dHRvbnMiPjwvZGl2
+PgogICAgICAgIDxkaXYgY2xhc3M9ImZpbHRlci1jb250YWluZXIiIGlkPSJs
+b2NhdGlvbi1idXR0b25zIj48L2Rpdj4KCiAgICAgICAgPGRpdiBpZD0iYnVz
+aW5lc3MtbGlzdCI+CiAgICAgICAgICAgIDxwIGNsYXNzPSJzdGF0dXMtbXNn
+Ij5EYXRhIGlzIGxvYWRpbmcuLi48L3A+CiAgICAgICAgPC9kaXY+CiAgICA8
+L2Rpdj4KCgogICAgPGRpdiBpZD0iY2hhdExhdW5jaGVyIiBvbmNsaWNrPSJ0
+b2dnbGVDaGF0KCkiIGNsYXNzPSJrbi1sYXVuY2hlciBnbG9zc3ktZ2xhc3Mi
+PgogICAgPGRpdiBjbGFzcz0ia24taWNvbi1jb250YWluZXIiPgogICAgICAg
+IDxzdmcgaWQ9ImtuLXJvYm90IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRo
+PSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50
+Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5k
+IiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KICAgICAgICAgICAgPHJlY3Qg
+eD0iMyIgeT0iMTEiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxMCIgcng9IjIiPjwv
+cmVjdD4KICAgICAgICAgICAgPGNpcmNsZSBjeD0iMTIiIGN5PSI1IiByPSIy
+Ij48L2NpcmNsZT4KICAgICAgICAgICAgPHBhdGggZD0iTTEyIDd2NCI+PC9w
+YXRoPgogICAgICAgICAgICA8bGluZSB4MT0iOCIgeTE9IjE2IiB4Mj0iOCIg
+eTI9IjE2Ij48L2xpbmU+CiAgICAgICAgICAgIDxsaW5lIHgxPSIxNiIgeTE9
+IjE2IiB4Mj0iMTYiIHkyPSIxNiI+PC9saW5lPgogICAgICAgIDwvc3ZnPgog
+ICAgICAgIDxzcGFuIGlkPSJrbi1jbG9zZSIgc3R5bGU9ImRpc3BsYXk6bm9u
+ZTsgZm9udC1zaXplOiAyNHB4OyI+4pyVPC9zcGFuPgogICAgPC9kaXY+Cjwv
+ZGl2PgoKPGRpdiBpZD0iY2hhdFBvcHVwIiBjbGFzcz0ia24tY2hhdC1wb3B1
+cCBnbGFzcy1wYW5lbCIgc3R5bGU9ImRpc3BsYXk6bm9uZTsiPgogICAgPGRp
+diBjbGFzcz0ia24tY2hhdC1wb3B1cC1oZWFkZXIiPgogICAgICAgIDxkaXYg
+c3R5bGU9ImRpc3BsYXk6IGZsZXg7IGFsaWduLWl0ZW1zOiBjZW50ZXI7IGdh
+cDogMTBweDsiPgogICAgICAgICAgICA8ZGl2IGNsYXNzPSJtaW5pLXJvYm90
+LWhlYWQiPvCfpJY8L2Rpdj4KICAgICAgICAgICAgPHN0cm9uZz5LYWxhIE5l
+cmEgR3VpZGU8L3N0cm9uZz4KICAgICAgICA8L2Rpdj4KICAgICAgICA8c3Bh
+biBvbmNsaWNrPSJ0b2dnbGVDaGF0KCkiIHN0eWxlPSJjdXJzb3I6cG9pbnRl
+cjsgb3BhY2l0eTogMC44OyI+4pyVPC9zcGFuPgogICAgPC9kaXY+CiAgICAK
+ICAgIDxkaXYgY2xhc3M9ImtuLWNoYXQtcG9wdXAtY29udGVudCIgaWQ9ImNo
+YXRTY3JvbGxBcmVhIj4KICAgICAgICA8cCBjbGFzcz0ia24td2VsY29tZS10
+ZXh0Ij5LYWxpbWVyYSEgSSBhbSB5b3VyIGxvY2FsIGd1aWRlLiBIb3cgY2Fu
+IEkgaGVscCB5b3U/PC9wPgogICAgICAgIDxkaXYgaWQ9ImNoYXRSZXNwb25z
+ZUNvbnRhaW5lciIgY2xhc3M9ImtuLWNoYXQtcmVzcG9uc2UiIHN0eWxlPSJk
+aXNwbGF5Om5vbmU7Ij4KICAgICAgICAgICAgPGRpdiBpZD0iY2hhdEFudHdv
+b3JkIiBjbGFzcz0ia24tY2hhdC1ib2R5Ij48L2Rpdj4KICAgICAgICA8L2Rp
+dj4KICAgIDwvZGl2PgoKICAgIDxkaXYgY2xhc3M9ImtuLWNoYXQtcG9wdXAt
+Zm9vdGVyIj4KICAgICAgICA8aW5wdXQgdHlwZT0idGV4dCIgaWQ9ImNoYXRJ
+bnB1dCIgcGxhY2Vob2xkZXI9IkFzayB5b3VyIHF1ZXN0aW9uLi4uIiBvbmtl
+eXByZXNzPSJoYW5kbGVLZXlQcmVzcyhldmVudCkiIC8+CiAgICAgICAgPGJ1
+dHRvbiBvbmNsaWNrPSJ2ZXJzdHV1clZyYWFnKCkiIGlkPSJjaGF0U3VibWl0
+QnRuIiBjbGFzcz0ia24tc2VuZC1idG4iPgogICAgICAgICAgICA8c3ZnIHZp
+ZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxs
+PSJjdXJyZW50Q29sb3IiPgogICAgICAgICAgICAgICAgPHBhdGggZD0iTTIu
+MDEgMjFMMjMgMTIgMi4wMSAzIDIgMTBsMTUgMi0xNSAyeiI+PC9wYXRoPgog
+ICAgICAgICAgICA8L3N2Zz4KICAgICAgICA8L2J1dHRvbj4KICAgIDwvZGl2
+Pgo8L2Rpdj4KCgo8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9Imh0dHBz
+Oi8vY2RuanMuY2xvdWRmbGFyZS5jb20vYWpheC9saWJzL2ZvbnQtYXdlc29t
+ZS82LjAuMC9jc3MvYWxsLm1pbi5jc3MiPgoKPGZvb3RlciBjbGFzcz0ic2l0
+ZS1mb290ZXIiPgogICAgPGRpdiBjbGFzcz0iZm9vdGVyLWNvbnRhaW5lciI+
+CiAgICAgICAgPGRpdiBjbGFzcz0iZm9vdGVyLWNvbHVtbiI+CiAgICAgICAg
+ICAgIDxoMz5BYm91dCB1czwvaDM+CiAgICAgICAgICAgIDxwPldlIGhlbHAg
+dHJhdmVsZXJzIGRpc2NvdmVyIHRoZSBiZXN0IHBsYWNlcyBmcm9tIGF1dGhl
+bnRpYyB0YXZlcm5zIHRvIHRoZSBmaW5lc3QgYWNjb21tb2RhdGlvbnMgaW4g
+S2FsYSBOZXJhIGFuZCB0aGUgc3Vycm91bmRpbmcgYXJlYS48L3A+CiAgICAg
+ICAgPC9kaXY+CgogICAgICAgIDxkaXYgY2xhc3M9ImZvb3Rlci1jb2x1bW4i
+PgogICAgICAgICAgICA8aDM+PC9oMz4KICAgICAgICAgICAgPHVsPgogICAg
+ICAgICAgICAgICAgPGxpPjwvbGk+CiAgICAgICAgICAgIDwvdWw+CiAgICAg
+ICAgPC9kaXY+CgogICAgICAgIDxkaXYgY2xhc3M9ImZvb3Rlci1jb2x1bW4i
+PgogICAgICAgICAgICA8aDM+Rm9sbG93IFVzPC9oMz4KICAgICAgICAgICAg
+PGRpdiBjbGFzcz0ic29jaWFsLWljb25zIj4KICAgICAgICAgICAgICAgIDxh
+IGhyZWY9Imh0dHBzOi8vd3d3LmZhY2Vib29rLmNvbS9rYWxhbmVyYS5pbmZv
+IiB0YXJnZXQ9Il9ibGFuayIgY2xhc3M9InNvY2lhbC1pY29uIj4KICAgICAg
+ICAgICAgICAgICAgICA8aSBjbGFzcz0iZmFiIGZhLWZhY2Vib29rLWYiPjwv
+aT4KICAgICAgICAgICAgICAgIDwvYT4KICAgICAgICAgICAgICAgIDwvZGl2
+PgogICAgICAgIDwvZGl2PgogICAgPC9kaXY+CgogICAgPGRpdiBzdHlsZT0i
+bWFyZ2luLXRvcDogMTBweDsgb3BhY2l0eTogMC42OyB0cmFuc2l0aW9uOiBv
+cGFjaXR5IDAuM3M7IiBvbm1vdXNlb3Zlcj0idGhpcy5zdHlsZS5vcGFjaXR5
+PScxJyIgb25tb3VzZW91dD0idGhpcy5zdHlsZS5vcGFjaXR5PScwLjYnIj4K
+ICAgICAgICA8YSBocmVmPSJodHRwOi8vd3d3LmdvYXRjb3VudGVyLmNvbSIg
+dGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIiIHRpdGxlPSJCZXpvZWtl
+cnNzdGF0aXN0aWVrZW4gKElubG9nZ2VuIHZlcmVpc3QpIiBzdHlsZT0idGV4
+dC1kZWNvcmF0aW9uOiBub25lOyBjb2xvcjogaW5oZXJpdDsgZGlzcGxheTog
+ZmxleDsgYWxpZ24taXRlbXM6IGNlbnRlcjsganVzdGlmeS1jb250ZW50OiBj
+ZW50ZXI7IGdhcDogOHB4OyI+CiAgICAgICAgICAgIDxpbWcgc3JjPSJodHRw
+czovL3N0YXRpYy56Z28uYXQvZmF2aWNvbi9mYXZpY29uLTMyeDMyLnBuZyIg
+YWx0PSJHb2F0Q291bnRlciIgc3R5bGU9IndpZHRoOiAxNnB4OyBoZWlnaHQ6
+IDE2cHg7Ij4KICAgICAgICAgICAgPHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTog
+MTJweDsgZm9udC1mYW1pbHk6IHNhbnMtc2VyaWY7Ij5TdGF0aXN0aWNzPC9z
+cGFuPgogICAgICAgIDwvYT4KICAgIDwvZGl2PgoKICAgIDxkaXYgY2xhc3M9
+ImZvb3Rlci1ib3R0b20iPgogICAgICAgIDxwPsKpIDIwMjYgS2FsYSBOZXJh
+IEJ1c2luZXNzIERpcmVjdG9yeS4gRS1Qcm9qZWN0IGFsbCByaWdodHMgcmVz
+ZXJ2ZWQuPC9wPgogICAgICAgIDxkaXYgY2xhc3M9ImFwcC12ZXJzaW9uLXRh
+ZyI+CiAgICAgICAgICAgIDxpIGNsYXNzPSJmYSBmYS10aC1sYXJnZSI+PC9p
+PiBNb2JpbGUgQXBwCiAgICAgICAgPC9kaXY+CiAgICA8L2Rpdj4KCjwvZm9v
+dGVyPgoKPHNjcmlwdCBkYXRhLWdvYXRjb3VudGVyPSJodHRwczovL2V2ZXJ0
+dmFubGFhci5jbG91ZC9jb3VudCIKICAgICAgICBhc3luYyBzcmM9Ii8vZ2Mu
+emdvLmF0L2NvdW50LmpzIj48L3NjcmlwdD4KCjxzY3JpcHQ+CiAgICBpZiAo
+J3NlcnZpY2VXb3JrZXInIGluIG5hdmlnYXRvcikgewogICAgICAgIHdpbmRv
+dy5hZGRFdmVudExpc3RlbmVyKCdsb2FkJywgKCkgPT4gewogICAgICAgICAg
+ICBuYXZpZ2F0b3Iuc2VydmljZVdvcmtlci5yZWdpc3RlcignL3NlcnZpY2Ut
+d29ya2VyLmpzJykKICAgICAgICAgICAgICAgIC50aGVuKHJlZyA9PiBjb25z
+b2xlLmxvZygnUFdBIFNlcnZpY2UgV29ya2VyIHJlZ2lzdGVyZWQuJykpCiAg
+ICAgICAgICAgICAgICAuY2F0Y2goZXJyID0+IGNvbnNvbGUubG9nKCdTVyBy
+ZWdpc3RyYXRpb24gZmFpbGVkOiAnLCBlcnIpKTsKICAgICAgICB9KTsKICAg
+IH0KPC9zY3JpcHQ+Cgo8YSBocmVmPSJodHRwczovL3d3dy5nb29nbGUuY29t
+L21hcHMvc2VhcmNoLz9hcGk9MSZxdWVyeT1LYWxhK05lcmEiIAogICB0YXJn
+ZXQ9Il9ibGFuayIgCiAgIGNsYXNzPSJtYXAtZmFiLWZpeGVkIj4KICAgIDxp
+IGNsYXNzPSJmYS1zb2xpZCBmYS1tYXAtbG9jYXRpb24tZG90Ij48L2k+Cjwv
+YT4KCjwhLS0gTjhOX1NFT19TVEFSVCAtLT4gPCEtLSBOOE5fU0VPX0VORCAt
+LT4KIAo8c2NyaXB0IHNyYz0iYXBwLmpzIj48L3NjcmlwdD4KPC9ib2R5Pgo8
+L2h0bWw+
