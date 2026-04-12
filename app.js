@@ -20,7 +20,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.53'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.54'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -732,10 +732,10 @@ window.addEventListener('appinstalled', () => {
         .then(response => response.json()) // Luister naar n8n antwoord
         .then(res => {
             if (res.greeting) {
-                // Wacht 3 seconden extra na de stats-verzending voor de begroeting
+                // Wacht 2 seconden extra na de stats-verzending voor de begroeting
                 setTimeout(() => {
                     triggerAutoGreeting(res.greeting);
-                }, 3000);
+                }, 2000);
             }
         })
         .catch(err => console.error("Stats Fetch error:", err));
