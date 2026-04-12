@@ -20,7 +20,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.52'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.53'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -969,8 +969,11 @@ function voegBerichtToe(tekst, type) {
     berichtDiv.className = `chat-bubble ${type}-bubble`;
 
     if (type === 'ai') {
-        // 1. Basis opschonen (XSS beveiliging)
-        let html = tekst.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        // 1. Basis opschonen (XSS beveiliging) maar behoud de <br> tags van de AI
+let html = tekst
+    .replace(/&/g, "&amp;")
+    .replace(/<(?!\/?br\s*\/?>)/g, "&lt;") // Beveilig alles BEHALVE <br>
+    .replace(/(?<!<br\s*\/?)>/g, "&gt;");
 
         // 2. Markdown Bold Parser: Zoekt **tekst** en maakt <b>tekst</b>
         html = html.replace(/\*\*([^\*]+)\*\*/g, '<b>$1</b>');
@@ -986,13 +989,36 @@ function voegBerichtToe(tekst, type) {
             return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: inherit; font-weight: bold; text-decoration: underline;">${label}</a>`;
         });
 
-        // 5. Losse URL Parser: Zoekt rauwe URL's (niet al in een tag)
+        // 5. PhotoURL Parser: Zoekt naar afbeeldings-URL's (jpg, png, etc.)
+        // We doen dit EERST om te voorkomen dat ze als gewone tekstlinks worden behandeld
+        const imageRegex = /(https?:\/\/[^\s<]+\.(?:jpg|jpeg|png|gif|webp))/gi;
+        const imageURLs = html.match(imageRegex) || [];
+
+        // Vervang afbeeldingen door een tijdelijke placeholder
+        imageURLs.forEach((url, index) => {
+            html = html.replace(url, `{{IMAGE_${index}}}`);
+        });
+
+        // 6. Losse URL Parser: Maakt van overgebleven URL's klikbare links
         const urlRegex = /(?<!href="|">)(https?:\/\/[^\s<]+)/g;
         html = html.replace(urlRegex, function(url) {
+            // Sla placeholders over
+            if (url.includes('{{IMAGE_')) return url;
             return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: inherit; font-weight: bold; text-decoration: underline; word-break: break-all;">${url}</a>`;
         });
 
-        // 6. Telefoonnummer Parser
+        // 7. Plaats de echte afbeeldingen nu terug op de plek van de placeholders
+        imageURLs.forEach((url, index) => {
+            const imgTag = `<div style="margin-top: 10px; margin-bottom: 10px;">
+                                <img src="${url.trim()}" 
+                                     style="width: 100%; max-width: 400px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); cursor: pointer; display: block;" 
+                                     onclick="window.open('${url.trim()}', '_blank')"
+                                     onerror="this.parentElement.style.display='none'">
+                            </div>`;
+            html = html.replace(`{{IMAGE_${index}}}`, imgTag);
+        });
+
+        // 8. Telefoonnummer Parser (Verplaatst naar hier voor de netheid)
         html = html.replace(/(?:\+|00)[\d\s-]{8,20}/g, function(nummer) {
             const schoonNummer = nummer.replace(/[^\d+]/g, ''); 
             if (schoonNummer.length < 10) return nummer;
