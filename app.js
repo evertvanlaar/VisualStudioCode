@@ -688,7 +688,6 @@ window.addEventListener('appinstalled', () => {
 
     function checkStatusAndSend() {
         const savedVersion = localStorage.getItem('app_version');
-        // We gebruiken de variabele die je bovenin app.js hebt staan
         const currentVersion = typeof APP_VERSION !== 'undefined' ? APP_VERSION : 'unknown';
         
         let eventType = 'app_open';
@@ -699,26 +698,20 @@ window.addEventListener('appinstalled', () => {
             eventType = 'update';
         }
 
-        // Verstuur de stats met de actuele versie
         sendStats(eventType, currentVersion);
-
-        // Sla de versie op
         localStorage.setItem('app_version', currentVersion);
     }
     
     function sendStats(eventType, versionToSend) {
-        // 1. Haal de CSS versie op
         const cssLink = document.getElementById('main-stylesheet');
         const cssVersion = cssLink && cssLink.href.includes('v=') ? cssLink.href.split('v=')[1] : 'geen-v';
 
-        // 2. Bepaal de bron (Website of App)
         const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
         const source = isPWA ? "App (PWA)" : "Website (Browser)";
 
-        // 3. Verzamel alle data
         const data = {
             event: eventType,
-            source: source, // <-- NIEUW: Onderscheid tussen Web en App
+            source: source,
             version: versionToSend,
             css_version: cssVersion,
             os: /android/i.test(navigator.userAgent) ? "Android" : /iPhone|iPad|iPod/i.test(navigator.userAgent) ? "iOS" : "Desktop",
@@ -735,15 +728,49 @@ window.addEventListener('appinstalled', () => {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data)
-        }).catch(err => console.error("Stats Fetch error:", err));
+        })
+        .then(response => response.json()) // Luister naar n8n antwoord
+        .then(res => {
+            if (res.greeting) {
+                // Wacht 3 seconden extra na de stats-verzending voor de begroeting
+                setTimeout(() => {
+                    triggerAutoGreeting(res.greeting);
+                }, 3000);
+            }
+        })
+        .catch(err => console.error("Stats Fetch error:", err));
     }
 
-    // Start de check zodra de pagina volledig geladen is
+    // Functie om de begroeting te tonen
+    function triggerAutoGreeting(message) {
+        const chatPopup = document.getElementById('chatPopup');
+        const antwoordDiv = document.getElementById('chatAntwoord');
+        const responseContainer = document.getElementById('chatResponseContainer');
+        const chatLauncher = document.getElementById('chatLauncher');
+
+        if (chatPopup && antwoordDiv) {
+            // Maak de popup zichtbaar
+            chatPopup.style.display = 'block';
+            responseContainer.style.display = 'block';
+            
+            // Verberg de launcher icoon als de popup open is (optioneel, afhankelijk van je CSS)
+            if (chatLauncher) chatLauncher.style.display = 'none';
+
+            // Typ het bericht in de chat
+            // antwoordDiv.innerHTML = `<p class="kn-welcome-text">🤖 <strong>Guide:</strong> ${message}</p>`;
+            // Haalt eventuele aanhalingstekens aan begin/eind weg
+            const cleanMessage = message.replace(/^["']|["']$/g, '');
+            antwoordDiv.innerHTML = `<p class="kn-welcome-text">🤖 <strong>Guide:</strong> ${cleanMessage}</p>`;
+
+            // Scroll naar het bericht
+            const scrollArea = document.getElementById('chatScrollArea');
+            if (scrollArea) scrollArea.scrollTop = scrollArea.scrollHeight;
+        }
+    }
+
     window.addEventListener('load', () => {
-        // We wachten 1.5 seconde zodat Service Workers en variabelen stabiel zijn
         setTimeout(checkStatusAndSend, 1500);
     });
-
 })();
 
 // 1. DIRECT UITVOEREN (Tegen het flitsen van wit licht bij laden)
@@ -921,17 +948,17 @@ function exportSitemap(businesses) {
 // 1. Schakelen tussen openen en sluiten van de chat (ongewijzigd)
 function toggleChat() {
     const popup = document.getElementById('chatPopup');
-    const robotIcon = document.getElementById('kn-robot');
-    const closeIcon = document.getElementById('kn-close');
-    
+    const robot = document.getElementById('kn-robot');
+    const close = document.getElementById('kn-close');
+
     if (popup.style.display === 'none' || popup.style.display === '') {
         popup.style.display = 'flex';
-        if(robotIcon) robotIcon.style.display = 'none';
-        if(closeIcon) closeIcon.style.display = 'block';
+        robot.style.display = 'none';
+        close.style.display = 'block';
     } else {
         popup.style.display = 'none';
-        if(robotIcon) robotIcon.style.display = 'block';
-        if(closeIcon) closeIcon.style.display = 'none';
+        robot.style.display = 'block'; // Robot komt terug in de launcher
+        close.style.display = 'none';
     }
 }
 
@@ -939,53 +966,53 @@ function toggleChat() {
 function voegBerichtToe(tekst, type) {
     const scrollArea = document.getElementById('chatScrollArea');
     const berichtDiv = document.createElement('div');
-    
-    // We geven het bericht een class mee: 'user-bubble' of 'ai-bubble'
     berichtDiv.className = `chat-bubble ${type}-bubble`;
 
     if (type === 'ai') {
-        // 1. Maak de tekst veilig tegen script-injecties
-        let veiligeTekst = tekst.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        // 1. Basis opschonen (XSS beveiliging)
+        let html = tekst.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-        // 2. Markdown Link Parser: Zoekt [tekst](url)
-        veiligeTekst = veiligeTekst.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, function(match, label, url) {
-            return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: white; font-weight: bold; text-decoration: underline;">${label}</a>`;
+        // 2. Markdown Bold Parser: Zoekt **tekst** en maakt <b>tekst</b>
+        html = html.replace(/\*\*([^\*]+)\*\*/g, '<b>$1</b>');
+
+        // Zoekt sterretjes aan het begin van een regel en vervangt ze door een mooie bullet
+        html = html.replace(/^\* /gm, '• ');
+
+        // 3. Newline Parser: Zet enters om in echte regeleinden
+        html = html.replace(/\n/g, '<br>');
+
+        // 4. Markdown Link Parser: Zoekt [tekst](url)
+        html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, function(match, label, url) {
+            return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: inherit; font-weight: bold; text-decoration: underline;">${label}</a>`;
         });
 
-        // 3. Losse URL Parser: Zoekt rauwe URL's (zoals die Facebook link)
-        // De regex checkt of de URL niet al in een href-tag zit
+        // 5. Losse URL Parser: Zoekt rauwe URL's (niet al in een tag)
         const urlRegex = /(?<!href="|">)(https?:\/\/[^\s<]+)/g;
-        const htmlMetLinks = veiligeTekst.replace(urlRegex, function(url) {
-            return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: white; font-weight: bold; text-decoration: underline; word-break: break-all;">${url}</a>`;
+        html = html.replace(urlRegex, function(url) {
+            return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: inherit; font-weight: bold; text-decoration: underline; word-break: break-all;">${url}</a>`;
         });
 
-        // 4. Verbeterde Telefoonnummer Parser
-        // Zoekt naar nummers die beginnen met + of 00, gevolgd door cijfers, spaties of streepjes (8 t/m 20 tekens totaal)
-        veiligeTekst = veiligeTekst.replace(/(?:\+|00)[\d\s-]{8,20}/g, function(nummer) {
-            // Verwijder alles wat geen cijfer of de '+' is voor de actie-link
+        // 6. Telefoonnummer Parser
+        html = html.replace(/(?:\+|00)[\d\s-]{8,20}/g, function(nummer) {
             const schoonNummer = nummer.replace(/[^\d+]/g, ''); 
-            
-            // Check of het nummer wel echt lang genoeg is om een telefoonnummer te zijn (voorkomt valse matches)
             if (schoonNummer.length < 10) return nummer;
-
-            return `<a href="tel:${schoonNummer}" style="color: white; font-weight: bold; text-decoration: underline; white-space: nowrap;">${nummer}</a>`;
+            return `<a href="tel:${schoonNummer}" style="color: inherit; font-weight: bold; text-decoration: underline; white-space: nowrap;">${nummer}</a>`;
         });
 
+        // Alles injecteren in de div
+        berichtDiv.innerHTML = html;
 
-
-// BELANGRIJK: Zorg dat dit de LAATSTE stap is voor berichtDiv.innerHTML = veiligeTekst;
-
-        // Gebruik innerHTML om de aangemaakte <a> tags te activeren
-        berichtDiv.innerHTML = htmlMetLinks;
     } else {
-        // Voor de gebruiker (user-bubble) houden we het simpel en veilig als tekst
+        // Gebruiker tekst gewoon als tekst
         berichtDiv.innerText = tekst;
     }
     
     scrollArea.appendChild(berichtDiv);
     
-    // Automatisch naar beneden scrollen
-    scrollArea.scrollTop = scrollArea.scrollHeight;
+    // Automatisch en soepel naar beneden scrollen (met kleine timeout voor rendering)
+    setTimeout(() => {
+        scrollArea.scrollTop = scrollArea.scrollHeight;
+    }, 50);
     
     return berichtDiv; 
 }
