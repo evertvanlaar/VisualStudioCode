@@ -23,7 +23,7 @@ body{font-family:'Inter', sans-serif;background:var(--bg);margin:0;padding:0;col
 
 .main-container{width:100%;max-width:1100px;margin:40px auto;padding:0 20px;box-sizing:border-box; }
 
-h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:25px;font-size: 6vw;}
+h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:25px;font-size: 28px;}
 
 .main-nav{background-color:#ffffff;padding:15px 0;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:0;z-index:9999}
 
@@ -304,7 +304,7 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
     display: none !important;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 991px) {
     /* 1. Maak een containertje voor vlag + weer zodat ze rechts staan */
     .nav-right-mobile {
         display: flex !important;
@@ -337,7 +337,7 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
     }
 }
 
-@media screen and (min-width: 769px) {
+@media screen and (min-width: 992px) {
     .lang-link-mobile {
         display: none !important;
     }
