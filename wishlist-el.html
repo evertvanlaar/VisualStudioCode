@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="el">
 <head>
 
     <!-- Google tag (gtag.js) -->
@@ -40,19 +40,20 @@
     </script>
 
     <meta charset="UTF-8">
+    <script>window.SITE_LANGUAGE = 'el';</script>
     
-    <title>Kala Nera Guide | My Favorites</title>
-    <meta name="description" content="Discover the best local businesses in Kala Nera. From authentic Greek restaurants to luxury hotels and charming shops. Your complete travel guide to Kala Nera, Pelion.">
-    <meta name="keywords" content="Kala Nera, Greece, travel guide, hotels, restaurants, Pelion, holiday, vacation, Volos">
+    <title>Οδηγός Καλά Νερά | Τα Αγαπημένα μου</title>
+    <meta name="description" content="Ανακαλύψτε τις καλύτερες τοπικές επιχειρήσεις στα Καλά Νερά. Από αυθεντικά ελληνικά εστιατόρια μέχρι πολυτελή ξενοδοχεία και γοητευτικά καταστήματα. Ο πλήρης ταξιδιωτικός σας οδηγός για τα Καλά Νερά, Πήλιο.">
+    <meta name="keywords" content="Καλά Νερά, Ελλάδα, ταξιδιωτικός οδηγός, ξενοδοχεία, εστιατόρια, Πήλιο, διακοπές, Βόλος">
 
-    <meta property="og:title" content="Kala Nera Local Business Directory">
-    <meta property="og:description" content="Everything you need to know about businesses and services in Kala Nera in one place.">
+    <meta property="og:title" content="Κατάλογος Τοπικών Επιχειρήσεων Καλά Νερά">
+    <meta property="og:description" content="Όλα όσα πρέπει να γνωρίζετε για τις επιχειρήσεις και τις υπηρεσίες στα Καλά Νερά σε ένα μέρος.">
     <meta property="og:image" content="https://www.kalanera.gr/villageoverview.jpg">
     <meta property="og:url" content="https://www.kalanera.gr">
-    <meta name="twitter:title" content="Kala Nera Guide">
-    <meta name="twitter:description" content="The complete travel guide to Kala Nera, Pelion.">
+    <meta name="twitter:title" content="Οδηγός Καλά Νερά">
+    <meta name="twitter:description" content="Ο πλήρης ταξιδιωτικός οδηγός για τα Καλά Νερά, Πήλιο.">
     <meta name="revisit-after" content="7 days">
-    <meta name="language" content="Dutch, English, Greek">
+    <meta name="language" content="Ολλανδικά, Αγγλικά, Ελληνικά">
     <meta name="geo.region" content="GR-41">
     <meta name="geo.placename" content="Kala Nera">
     <meta name="geo.position" content="39.3105;23.1205">
@@ -79,10 +80,12 @@
 <header class="site-header">
     <nav class="main-nav">
         <div class="nav-container">
-            <a href="index.html" class="logo">Kala <span>Nera</span></a>
+            <a href="index-el.html" class="logo">Καλά <span>Νερά</span></a>
             
-
-
+<!--             <div id="weather-widget" class="weather-mini" onclick="openWeather()" style="cursor: pointer; position: relative; z-index: 10;">
+                <span id="weather-icon"></span>
+                <span id="weather-temp">--°C</span>
+            </div> -->
             <a href="https://www.meteoblue.com/en/weather/forecast/week/kal%c3%a1-ner%c3%a1_greece_261556" 
                 target="_blank" 
                 rel="noopener" 
@@ -93,6 +96,7 @@
             </div>
             </a>
 
+
             <button class="menu-toggle" id="mobile-menu">
                 <span class="bar"></span>
                 <span class="bar"></span>
@@ -101,21 +105,21 @@
             </button>
 
             <ul class="nav-links" id="nav-list">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="wishlist.html" class="active"><i class="fa-solid fa-heart menu-heart"></i> Favorites</a></li>
-                <li><a href="t-form.html">Add your Business</a></li>
-                <li><a href="c-form.html">Contact</a></li>
-                
+                <li><a href="index-el.html">Αρχική</a></li>
+                <li><a href="wishlist-el.html" class="active"><i class="fa-solid fa-heart menu-heart"></i> Αγαπημένα</a></li>
+                <li><a href="t-form-el.html">Προσθέστε Επιχείρησή</a></li>
+                <li><a href="c-form-el.html">Επικοινωνία</a></li>
+
                 <li class="nav-emergency-item">
                     <a href="#" onclick="toggleNavEmergency(event)" class="sos-trigger">
-                         <i class="fa-solid fa-phone" style="color: #3498db;"></i>Useful Numbers
+                         <i class="fa-solid fa-phone" style="color: #3498db;"></i>Χρήσιμα Τηλέφωνα
                     </a>
                     <div id="navEmergencyMenu" class="nav-sos-dropdown">
                         <div class="nav-sos-header"> </div>
-                        <a href="tel:+302423086222"><i class="fa-solid fa-shield"></i> Police Office Milies <span class="phone-no">(+30 24230 86222)</span></a>
-                        <a href="tel:+302423022385"><i class="fa-solid fa-pills"></i> Pharmacy Kala Nera <span class="phone-no">(+30 24230 22385)</span></a>
-                        <a href="tel:+302423022160"><i class="fa-solid fa-pills"></i> Pharmacy Kato Gatzea <span class="phone-no">(+30 24230 22160)</span></a>
-                        <a href="tel:+302423086666"><i class="fa-solid fa-user-doctor"></i> Doctor Kala Nera <span class="phone-no">(+30 24230 86666)</span></a>
+                        <a href="tel:+302423086222"><i class="fa-solid fa-shield"></i> Αστυνομικό Τμήμα Μηλεών <span class="phone-no">(+30 24230 86222)</span></a>
+                        <a href="tel:+302423022385"><i class="fa-solid fa-pills"></i> Φαρμακείο Καλά Νερά <span class="phone-no">(+30 24230 22385)</span></a>
+                        <a href="tel:+302423022160"><i class="fa-solid fa-pills"></i> Φαρμακείο Κάτω Γατζέας <span class="phone-no">(+30 24230 22160)</span></a>
+                        <a href="tel:+302423086666"><i class="fa-solid fa-user-doctor"></i> Ιατρός Καλά Νερά <span class="phone-no">(+30 24230 86666)</span></a>
                     </div>
                 </li>     
 
@@ -127,10 +131,10 @@
 
 <div class="hero-section">
     <div class="hero-overlay">
-        <h1>My Favorites</h1>
-        <p>Places to note down</p>
+        <h1>Τα Αγαπημένα μου</h1>
+        <p>Μέρη για να σημειώσετε</p>
         <a href="#" id="clear-wishlist" style="display: none; color: white; text-decoration: none; font-size: 0.9rem; margin-top: 15px; opacity: 0.8; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.3); padding: 5px 15px; border-radius: 20px; background: rgba(0,0,0,0.2);">
-        <i class="fa-regular fa-trash-can"></i> Clear Wishlist
+        <i class="fa-regular fa-trash-can"></i> Εκκαθάριση Λίστας Αγαπημένων
         </a>
     </div>
 </div>
@@ -141,15 +145,15 @@
     
     <div id="empty-wishlist" style="display:none; text-align:center; padding:60px 20px;">
         <i class="fa-regular fa-heart" style="font-size: 4rem; color: #ccc; margin-bottom: 20px; display: block;"></i>
-        <p style="font-size: 1.2rem; color: var(--muted);">You haven't saved any favorites yet.</p>
+        <p style="font-size: 1.2rem; color: var(--muted);">Δεν έχετε αποθηκεύσει ακόμα αγαπημένα.</p>
         <br>
         <a href="index.html" class="add-biz-btn" style="display: inline-block; text-decoration: none; padding: 12px 25px;">
-            Explore Businesses
+            Εξερευνήστε Επιχειρήσεις
         </a>
     </div>
 
     <div id="business-list">
-        <p class="status-msg">Loading your favorites...</p>
+        <p class="status-msg">Φορτώνονται τα αγαπημένα σας...</p>
     </div>
 </main>
 
@@ -157,8 +161,8 @@
 <footer class="site-footer">
     <div class="footer-container">
         <div class="footer-column">
-            <h3>About us</h3>
-            <p>We help travelers discover the best places from authentic taverns to the finest accommodations in Kala Nera and the surrounding area.</p>
+            <h3>Σχετικά με εμάς</h3>
+            <p>Βοηθάμε τους ταξιδιώτες να ανακαλύψουν τα καλύτερα μέρη, από αυθεντικές ταβέρνες μέχρι τα πιο εκλεκτά καταλύματα στα Καλά Νερά και την ευρύτερη περιοχή.</p>
         </div>
 
         <div class="footer-column">
@@ -169,7 +173,7 @@
         </div>
 
         <div class="footer-column">
-            <h3>Follow Us</h3>
+            <h3>Ακολουθήστε μας</h3>
             <div class="social-icons">
                 <a href="https://www.facebook.com/kalanera.info" target="_blank" class="social-icon">
                     <i class="fab fa-facebook-f"></i>
@@ -181,14 +185,14 @@
     <div style="margin-top: 10px; opacity: 0.6; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">
         <a href="http://www.goatcounter.com" target="_blank" rel="noopener" title="Bezoekersstatistieken (Inloggen vereist)" style="text-decoration: none; color: inherit; display: flex; align-items: center; justify-content: center; gap: 8px;">
             <img src="https://static.zgo.at/favicon/favicon-32x32.png" alt="GoatCounter" style="width: 16px; height: 16px;">
-            <span style="font-size: 12px; font-family: sans-serif;">Statistics</span>
+            <span style="font-size: 12px; font-family: sans-serif;">Στατιστικά</span>
         </a>
     </div>
 
     <div class="footer-bottom">
-        <p>© 2026 Kala Nera Business Directory. E-Project all rights reserved.</p>
+        <p>© 2026 Κατάλογος Επιχειρήσεων Καλά Νερά. E-Project με την επιφύλαξη παντός δικαιώματος.</p>
         <div class="app-version-tag">
-            <i class="fa fa-th-large"></i> Mobile App
+            <i class="fa fa-th-large"></i> Εφαρμογή Κινητού
         </div>
     </div>
 

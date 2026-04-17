@@ -5,6 +5,44 @@
 const N8N_WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/local-businesses';
 const STORAGE_KEY = 'kalanera_offline_data';
 
+// Check de taal van de huidige pagina
+const currentLang = document.documentElement.lang || 'en'; // Nu is Engels de fallback
+
+const translations = {
+    'el': {
+        'all': 'Όλα',
+        'all_locations': 'Όλες οι τοποθεσίες',
+        // Categorieën
+        'Camp': 'Καμπινγκ',
+        'Drink': 'Ποτό',
+        'Eat': 'Φαγητό',
+        'Other': 'Άλλο',
+        'Rent' : 'Ενοικιάσεις',
+        'Shop': 'Ψώνια',
+        'Sleep': 'Διαμονή',
+        'Travel': 'Ταξίδια',
+        // Locaties
+        'Kala Nera': 'Καλά Νερά',
+        'Kato Gatzea': 'Κάτω Γατζέα',
+        'Ano Gatzea': 'Άνω Γατζέα',
+        'Koropi': 'Κορώπη',
+        'Milies': 'Μηλιές',
+        'Vizitsa': 'Βυζίτσα',
+        'Afissos': 'Αφήσσος',
+        // Voeg hier de rest van je categorieën en locaties toe
+        'pwa_msg': 'Εγκαταστήστε την εφαρμογή για καλύτερη εμπειρία.',
+        'pwa_btn': 'Εγκατάσταση'
+    }
+};
+
+// Helper functie om tekst te vertalen
+function t(text) {
+    if (currentLang === 'el' && translations['el'][text]) {
+        return translations['el'][text];
+    }
+    return text; // Fallback naar Engels
+}
+
 let allBusinesses = []; 
 let activeCategory = 'all';
 let activeLocation = 'all';
@@ -81,7 +119,7 @@ async function init() {
         }
     }
 
-    // --- STAP 3: Haal verse data op via n8n ---
+// --- STAP 3: Haal verse data op via n8n ---
     try {
         const response = await fetch(N8N_WEBHOOK_URL);
         if (response.ok) {
@@ -89,10 +127,16 @@ async function init() {
             const freshData = rawData.filter(biz => biz.Status === 'Active');
            
             const now = new Date();
-            const timeString = now.toLocaleDateString('nl-NL') + ' ' + now.toLocaleTimeString('nl-NL', {hour: '2-digit', minute:'2-digit'});
+            
+            // DYNAMISCHE TAAL CHECK
+            // We bepalen de juiste 'locale' op basis van de pagina taal
+            const locale = (currentLang === 'el') ? 'el-GR' : 'en-GB'; 
+            
+            // Formatteer datum en tijd volgens de taal van de bezoeker
+            const timeString = now.toLocaleDateString(locale) + ' ' + 
+                               now.toLocaleTimeString(locale, {hour: '2-digit', minute:'2-digit'});
+            
             localStorage.setItem('kalanera_last_sync', timeString);
-
-            // exportSitemap(freshData); // Eenmalig aanzetten voor sitemap download
 
             localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
             allBusinesses = freshData;
@@ -161,9 +205,13 @@ function generateCategoryButtons(data) {
     const container = document.getElementById('filter-buttons');
     if (!container) return;
     const categories = [...new Set(data.map(biz => biz.Category).filter(cat => cat))].sort();
-    let html = `<button class="filter-btn ${activeCategory === 'all' ? 'active' : ''}" data-category="all"><i class="fa fa-th-large"></i> <span>All</span></button>`;
+    
+    // Vertaal "All"
+    let html = `<button class="filter-btn ${activeCategory === 'all' ? 'active' : ''}" data-category="all"><i class="fa fa-th-large"></i> <span>${t('all')}</span></button>`;
+    
     categories.forEach(cat => {
-        html += `<button class="filter-btn ${activeCategory === cat ? 'active' : ''}" data-category="${cat}">${getIcon(cat)} <span>${cat}</span></button>`;
+        // We tonen t(cat) aan de gebruiker, maar houden cat in data-category
+        html += `<button class="filter-btn ${activeCategory === cat ? 'active' : ''}" data-category="${cat}">${getIcon(cat)} <span>${t(cat)}</span></button>`;
     });
     container.innerHTML = html;
     container.querySelectorAll('.filter-btn').forEach(btn => {
@@ -181,9 +229,12 @@ function generateLocationButtons(data) {
     const container = document.getElementById('location-buttons');
     if (!container) return;
     const locations = [...new Set(data.map(biz => biz.Location).filter(loc => loc))].sort();
-    let html = `<button class="filter-btn ${activeLocation === 'all' ? 'active' : ''}" data-location="all"><i class="fa fa-map-marker-alt"></i> <span>All Locations</span></button>`;
+    
+    // Vertaal "All Locations"
+    let html = `<button class="filter-btn ${activeLocation === 'all' ? 'active' : ''}" data-location="all"><i class="fa fa-map-marker-alt"></i> <span>${t('all_locations')}</span></button>`;
+    
     locations.forEach(loc => {
-        html += `<button class="filter-btn ${activeLocation === loc ? 'active' : ''}" data-location="${loc}"><span>${loc}</span></button>`;
+        html += `<button class="filter-btn ${activeLocation === loc ? 'active' : ''}" data-location="${loc}"><span>${t(loc)}</span></button>`;
     });
     container.innerHTML = html;
     container.querySelectorAll('.filter-btn').forEach(btn => {
@@ -200,11 +251,19 @@ function generateLocationButtons(data) {
 function applyFilters() {
     const searchInput = document.getElementById('search-input');
     const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
+    
     const filtered = allBusinesses.filter(biz => {
-        const matchesSearch = (biz.Name || "").toLowerCase().includes(searchTerm) || 
-                              (biz.Category || "").toLowerCase().includes(searchTerm);
+        // Check of de zoekterm voorkomt in Naam, de Engelse categorie, OF de Griekse vertaling daarvan
+        const matchesSearch = 
+            (biz.Name || "").toLowerCase().includes(searchTerm) || 
+            (biz.Name_EL || "").toLowerCase().includes(searchTerm) || // VOEG DEZE REGEL TOE
+            (biz.Category || "").toLowerCase().includes(searchTerm) ||
+            (t(biz.Category).toLowerCase().includes(searchTerm)) || // Zoek in vertaalde categorie
+            (t(biz.Location).toLowerCase().includes(searchTerm));   // Zoek in vertaalde locatie
+
         const matchesCategory = activeCategory === 'all' || biz.Category === activeCategory;
         const matchesLocation = activeLocation === 'all' || biz.Location === activeLocation;
+        
         return matchesSearch && matchesCategory && matchesLocation;
     });
     renderBusinesses(filtered);
@@ -218,9 +277,11 @@ function renderBusinesses(data) {
     container.innerHTML = '';
 
     if (!data || data.length === 0) {
-        container.innerHTML = '<p class="status-msg">No businesses found matching your criteria.</p>';
-        return;
-    }
+            // NIEUW: Vertaal ook de "geen resultaten" melding
+            const noResultsMsg = (currentLang === 'el') ? 'Δεν βρέθηκαν επιχειρήσεις.' : 'No businesses found matching your criteria.';
+            container.innerHTML = `<p class="status-msg">${noResultsMsg}</p>`;
+            return;
+        }
 
     // Veilig de wishlist ophalen
     let wishlist = [];
@@ -243,13 +304,19 @@ function renderBusinesses(data) {
     Object.keys(grouped).sort().forEach(category => {
         const header = document.createElement('div');
         header.className = 'category-section-header';
-        header.innerHTML = `<span>${getIcon(category)} ${category} <small>(${grouped[category].length})</small></span>`;
+        // NIEUW: Gebruik t(category) voor de header-tekst
+        header.innerHTML = `<span>${getIcon(category)} ${t(category)} <small>(${grouped[category].length})</small></span>`;
         container.appendChild(header);
 
         const grid = document.createElement('div');
         grid.className = 'business-grid';
         
         grouped[category].sort((a, b) => (a.Name || "").localeCompare(b.Name || "")).forEach(biz => {
+
+// --- NIEUW: DE NAAM LOGICA ---
+            const displayName = (currentLang === 'el' && biz.Name_EL) ? biz.Name_EL : biz.Name;
+            // -----------------------------
+
             const rawUrl = biz.Website || '';
             const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
             const catColor = getColor(category);
@@ -289,8 +356,11 @@ function renderBusinesses(data) {
                     </div>
                     <div class="mini-content">
                         <div class="mini-row-top">
-                            <h2 class="biz-name">${biz.Name}</h2>
-                            <span class="biz-location"><i class="fa fa-map-marker-alt"></i> ${biz.Location || 'Kato Gatzea'}</span>
+                            
+                            <h2 class="biz-name">${displayName}</h2>
+                            <span class="biz-location">
+                                <i class="fa fa-map-marker-alt"></i> ${t(biz.Location) || t('Kala Nera')}
+                            </span>
                         </div>
                         
                         <div class="mini-actions">
@@ -321,13 +391,15 @@ function renderBusinesses(data) {
         container.appendChild(grid);
     });
 
-    // Sync info
-    const lastSync = localStorage.getItem('kalanera_last_sync') || 'Onbekend';
+    // NIEUW: Vertaal "Last sync"
+    const syncLabel = (currentLang === 'el') ? 'Τελευταίος συγχρονισμός' : 'Last sync';
+    const lastSync = localStorage.getItem('kalanera_last_sync') || (currentLang === 'el' ? 'Άγνωστο' : 'Unknown');
     const syncDiv = document.createElement('div');
     syncDiv.className = 'sync-info';
-    syncDiv.innerHTML = `<small style="display:block; text-align:center; margin-top:20px; color:var(--muted); font-size:11px;">Last sync: ${lastSync}</small>`;
+    syncDiv.innerHTML = `<small style="display:block; text-align:center; margin-top:20px; color:var(--muted); font-size:11px;">${syncLabel}: ${lastSync}</small>`;
     container.appendChild(syncDiv);
-    
+
+ 
     // Animatie
     setTimeout(() => {
         document.querySelectorAll('.biz-card-mini').forEach((card, index) => {
@@ -503,15 +575,23 @@ function updateWishlistCount() {
     const wishlist = getWishlist();
     const count = wishlist.length;
     
-    // Zoek het link-element in het menu. 
-    // We zoeken specifiek naar de link die naar wishlist.html gaat.
-    const wishlistLink = document.querySelector('a[href="wishlist.html"]');
+    // Check de taal (Engels is standaard, tenzij de pagina op 'el' staat)
+    const isEl = (currentLang === 'el');
+    const label = isEl ? 'Αγαπημένα' : 'Favorites';
+    const targetPage = isEl ? 'wishlist-el.html' : 'wishlist.html';
+
+    // Zoek de link die "wishlist" in de href heeft
+    const wishlistLink = document.querySelector('a[href*="wishlist"]');
     
     if (wishlistLink) {
+        // Zorg dat de link naar de juiste taal-pagina wijst
+        wishlistLink.href = targetPage;
+
+        // Update de tekst en het icoon
         if (count > 0) {
-            wishlistLink.innerHTML = `<i class="fa-solid fa-heart menu-heart"></i> Favorites (${count})`;
+            wishlistLink.innerHTML = `<i class="fa-solid fa-heart menu-heart"></i> ${label} (${count})`;
         } else {
-            wishlistLink.innerHTML = `<i class="fa-solid fa-heart menu-heart"></i> Favorites`;
+            wishlistLink.innerHTML = `<i class="fa-solid fa-heart menu-heart"></i> ${label}`;
         }
     }
 }
@@ -560,43 +640,6 @@ function getWishlist() {
     } catch (e) {
         return [];
     }
-}
-
-// --- VEILIGE DARK MODE INITIALISATIE ---
-function initDarkMode() {
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    const body = document.body;
-    
-    // Als de knop niet op deze pagina staat, stop dan rustig zonder te crashen
-    if (!darkModeToggle) {
-        // Wel even het thema toepassen als dat al in localStorage staat
-        if (localStorage.getItem('theme') === 'dark') {
-            body.setAttribute('data-theme', 'dark');
-        }
-        return;
-    }
-
-    const icon = darkModeToggle.querySelector('i');
-
-    // Check opgeslagen thema bij het laden
-    if (localStorage.getItem('theme') === 'dark') {
-        body.setAttribute('data-theme', 'dark');
-        if (icon) icon.classList.replace('fa-moon', 'fa-sun');
-    }
-
-    darkModeToggle.addEventListener('click', () => {
-        const isDark = body.getAttribute('data-theme') === 'dark';
-        
-        if (isDark) {
-            body.removeAttribute('data-theme');
-            localStorage.setItem('theme', 'light');
-            if (icon) icon.classList.replace('fa-sun', 'fa-moon');
-        } else {
-            body.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-            if (icon) icon.classList.replace('fa-moon', 'fa-sun');
-        }
-    });
 }
 
 // Zorg dat deze functie wordt aangeroepen in je DOMContentLoaded event listener (die heb je al staan!)
@@ -741,33 +784,6 @@ window.addEventListener('appinstalled', () => {
         .catch(err => console.error("Stats Fetch error:", err));
     }
 
-    // Functie om de begroeting te tonen
-    function triggerAutoGreeting(message) {
-        const chatPopup = document.getElementById('chatPopup');
-        const antwoordDiv = document.getElementById('chatAntwoord');
-        const responseContainer = document.getElementById('chatResponseContainer');
-        const chatLauncher = document.getElementById('chatLauncher');
-
-        if (chatPopup && antwoordDiv) {
-            // Maak de popup zichtbaar
-            chatPopup.style.display = 'block';
-            responseContainer.style.display = 'block';
-            
-            // Verberg de launcher icoon als de popup open is (optioneel, afhankelijk van je CSS)
-            if (chatLauncher) chatLauncher.style.display = 'none';
-
-            // Typ het bericht in de chat
-            // antwoordDiv.innerHTML = `<p class="kn-welcome-text">🤖 <strong>Guide:</strong> ${message}</p>`;
-            // Haalt eventuele aanhalingstekens aan begin/eind weg
-            const cleanMessage = message.replace(/^["']|["']$/g, '');
-            antwoordDiv.innerHTML = `<p class="kn-welcome-text">🤖 <strong>Guide:</strong> ${cleanMessage}</p>`;
-
-            // Scroll naar het bericht
-            const scrollArea = document.getElementById('chatScrollArea');
-            if (scrollArea) scrollArea.scrollTop = scrollArea.scrollHeight;
-        }
-    }
-
     window.addEventListener('load', () => {
         setTimeout(checkStatusAndSend, 1500);
     });
@@ -781,33 +797,6 @@ window.addEventListener('appinstalled', () => {
     }
 })();
 
-// 2. ZORG DAT HET ICOONTJE KLOPT BIJ OPSTARTEN
-window.addEventListener('DOMContentLoaded', () => {
-    const icon = document.querySelector('#dark-mode-toggle i');
-    const isDark = document.body.classList.contains('wotai-nightmode');
-    
-    if (icon) {
-        // Zet het icoon direct goed op basis van de huidige mode
-        icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
-    }
-});
-
-// 3. DE SCHAKELAAR (Klik-functie)
-function toggleDarkMode() {
-    const body = document.body;
-    const icon = document.querySelector('#dark-mode-toggle i');
-    
-    body.classList.toggle('wotai-nightmode');
-    
-    const isDark = body.classList.contains('wotai-nightmode');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    
-    if (icon) {
-        icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
-    }
-    
-    console.log("WotAI Mode is nu:", isDark ? "AAN" : "UIT");
-}
 
 // MELDING ONDERAAN SCHERM 
 /**
@@ -828,11 +817,20 @@ function showInstallToast() {
     const toast = document.createElement('div');
     toast.className = 'install-toast';
     
-    // We gebruiken de compacte HTML die we eerder hebben getest
+    // --- VERTALING LOGICA ---
+    const message = (currentLang === 'el') 
+        ? translations.el.pwa_msg 
+        : 'Install the Mobile APP for the best experience.';
+    
+    const buttonText = (currentLang === 'el') 
+        ? translations.el.pwa_btn 
+        : 'Install';
+    // ------------------------
+
     toast.innerHTML = `
         <i class="fas fa-mobile-alt"></i>
-        <p class="toast-text">Install the Mobile APP for the best experience.</p>
-        <a href="#" onclick="if(typeof triggerManualInstall === 'function'){ triggerManualInstall(event); } return false;" class="toast-link">Install</a>
+        <p class="toast-text">${message}</p>
+        <a href="#" onclick="if(typeof triggerManualInstall === 'function'){ triggerManualInstall(event); } return false;" class="toast-link">${buttonText}</a>
     `;
 
     document.body.appendChild(toast);
@@ -842,7 +840,7 @@ function showInstallToast() {
 
     // 4. Verwijder automatisch na 10 seconden
     setTimeout(() => {
-        if (toast) {
+        if (toast && document.body.contains(toast)) {
             toast.classList.add('fade-out');
             setTimeout(() => toast.remove(), 500);
         }
@@ -944,157 +942,3 @@ function exportSitemap(businesses) {
     link.click();
 }
 
-// chatbot
-// 1. Schakelen tussen openen en sluiten van de chat (ongewijzigd)
-function toggleChat() {
-    const popup = document.getElementById('chatPopup');
-    const robot = document.getElementById('kn-robot');
-    const close = document.getElementById('kn-close');
-
-    if (popup.style.display === 'none' || popup.style.display === '') {
-        popup.style.display = 'flex';
-        robot.style.display = 'none';
-        close.style.display = 'block';
-    } else {
-        popup.style.display = 'none';
-        robot.style.display = 'block'; // Robot komt terug in de launcher
-        close.style.display = 'none';
-    }
-}
-
-// 2. Hulpmiddel om berichten toe te voegen aan de chat (GEUPDATE VOOR LINKS)
-function voegBerichtToe(tekst, type) {
-    const scrollArea = document.getElementById('chatScrollArea');
-    const berichtDiv = document.createElement('div');
-    berichtDiv.className = `chat-bubble ${type}-bubble`;
-
-    if (type === 'ai') {
-        // 1. Basis opschonen (XSS beveiliging) maar behoud de <br> tags van de AI
-let html = tekst
-    .replace(/&/g, "&amp;")
-    .replace(/<(?!\/?br\s*\/?>)/g, "&lt;") // Beveilig alles BEHALVE <br>
-    .replace(/(?<!<br\s*\/?)>/g, "&gt;");
-
-        // 2. Markdown Bold Parser: Zoekt **tekst** en maakt <b>tekst</b>
-        html = html.replace(/\*\*([^\*]+)\*\*/g, '<b>$1</b>');
-
-        // Zoekt sterretjes aan het begin van een regel en vervangt ze door een mooie bullet
-        html = html.replace(/^\* /gm, '• ');
-
-        // 3. Newline Parser: Zet enters om in echte regeleinden
-        html = html.replace(/\n/g, '<br>');
-
-        // 4. Markdown Link Parser: Zoekt [tekst](url)
-        html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, function(match, label, url) {
-            return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: inherit; font-weight: bold; text-decoration: underline;">${label}</a>`;
-        });
-
-        // 5. PhotoURL Parser: Zoekt naar afbeeldings-URL's (jpg, png, etc.)
-        // We doen dit EERST om te voorkomen dat ze als gewone tekstlinks worden behandeld
-        const imageRegex = /(https?:\/\/[^\s<]+\.(?:jpg|jpeg|png|gif|webp))/gi;
-        const imageURLs = html.match(imageRegex) || [];
-
-        // Vervang afbeeldingen door een tijdelijke placeholder
-        imageURLs.forEach((url, index) => {
-            html = html.replace(url, `{{IMAGE_${index}}}`);
-        });
-
-        // 6. Losse URL Parser: Maakt van overgebleven URL's klikbare links
-        const urlRegex = /(?<!href="|">)(https?:\/\/[^\s<]+)/g;
-        html = html.replace(urlRegex, function(url) {
-            // Sla placeholders over
-            if (url.includes('{{IMAGE_')) return url;
-            return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: inherit; font-weight: bold; text-decoration: underline; word-break: break-all;">${url}</a>`;
-        });
-
-        // 7. Plaats de echte afbeeldingen nu terug op de plek van de placeholders
-        imageURLs.forEach((url, index) => {
-            const imgTag = `<div style="margin-top: 10px; margin-bottom: 10px;">
-                                <img src="${url.trim()}" 
-                                     style="width: 100%; max-width: 400px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); cursor: pointer; display: block;" 
-                                     onclick="window.open('${url.trim()}', '_blank')"
-                                     onerror="this.parentElement.style.display='none'">
-                            </div>`;
-            html = html.replace(`{{IMAGE_${index}}}`, imgTag);
-        });
-
-        // 8. Telefoonnummer Parser (Verplaatst naar hier voor de netheid)
-        html = html.replace(/(?:\+|00)[\d\s-]{8,20}/g, function(nummer) {
-            const schoonNummer = nummer.replace(/[^\d+]/g, ''); 
-            if (schoonNummer.length < 10) return nummer;
-            return `<a href="tel:${schoonNummer}" style="color: inherit; font-weight: bold; text-decoration: underline; white-space: nowrap;">${nummer}</a>`;
-        });
-
-        // Alles injecteren in de div
-        berichtDiv.innerHTML = html;
-
-    } else {
-        // Gebruiker tekst gewoon als tekst
-        berichtDiv.innerText = tekst;
-    }
-    
-    scrollArea.appendChild(berichtDiv);
-    
-    // Automatisch en soepel naar beneden scrollen (met kleine timeout voor rendering)
-    setTimeout(() => {
-        scrollArea.scrollTop = scrollArea.scrollHeight;
-    }, 50);
-    
-    return berichtDiv; 
-}
-
-// 3. De vraag versturen
-async function verstuurVraag() {
-    const input = document.getElementById('chatInput');
-    const vraag = input.value.trim();
-
-    if (!vraag) return;
-
-    // Toon de vraag van de gebruiker direct in de chat
-    voegBerichtToe(vraag, 'user');
-
-    // Maak inputveld leeg
-    input.value = ""; 
-
-    // Toon "typing" indicator
-    const laadBericht = voegBerichtToe("The guide is typing...", 'ai');
-    laadBericht.style.opacity = "0.6";
-    laadBericht.style.fontStyle = "italic";
-
-    // Sessie ID ophalen of maken
-    if (!localStorage.getItem('chat_session_id')) {
-        localStorage.setItem('chat_session_id', 'session_' + Math.random().toString(36).substr(2, 9));
-    }
-    const sessionId = localStorage.getItem('chat_session_id');
-
-    // Roep n8n aan
-    try {
-        const response = await fetch('https://n8n.vanlaar.cloud/webhook/kala-nera-chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                question: vraag,
-                sessionId: sessionId
-            })
-        });
-
-        if (!response.ok) throw new Error('Netwerkfout');
-        const antwoordTekst = await response.text();
-        
-        // Verwijder laad-bericht en toon echt antwoord
-        laadBericht.remove();
-        voegBerichtToe(antwoordTekst, 'ai');
-        
-    } catch (error) {
-        console.error("Chat fout:", error);
-        laadBericht.innerText = "Oops! The guide is out for a swim. Try again later.";
-        laadBericht.style.opacity = "1";
-    }
-}
-
-// 4. Enter-toets ondersteuning
-function handleKeyPress(event) {
-    if (event.key === 'Enter') {
-        verstuurVraag();
-    }
-}
