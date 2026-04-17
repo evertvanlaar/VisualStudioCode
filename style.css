@@ -429,8 +429,8 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 
 @media screen and (max-width: 480px) {
     .biz-name {
-        font-size: 12px !important;
-        font-weight: 600 !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
         line-height: 1.2;
         margin-bottom: 2px;
         /* Zorg dat de tekst niet buiten het kaartje breekt */
