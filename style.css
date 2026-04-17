@@ -421,9 +421,25 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 
 @media screen and (max-width: 992px){body{background-color:#f8faf4 !important}body .business-card{width:92% !important;max-width:650px !important;margin:0 auto !important;float:none !important;display:block !important;box-sizing:border-box !important}html, body{overflow-x:hidden !important;width:100% !important;position:relative !important}body .business-container, body .results-container{display:flex !important;flex-direction:column !important;align-items:center !important;width:100% !important;padding:20px 10px !important;gap:30px !important;overflow-x:hidden !important}}
 
+
+
 @media all and (display-mode: standalone), (display-mode: fullscreen){ul#nav-list li#menu-install-item{display:none !important}}
 
 @media screen and (max-width: 480px){.biz-card-mini{width:100% !important;max-width:100% !important;margin:0 0 8px 0 !important;padding:8px !important;box-sizing:border-box !important}.mini-preview{width:65px !important;height:65px !important;flex-shrink:0 !important}.mini-content{padding-left:6px !important;flex:1 !important;min-width:0 !important}.biz-name{font-size:15px !important;margin-bottom:2px !important}#business-list, .business-grid{padding:0 6px !important;width:100% !important;display:flex !important;flex-direction:column !important;align-items:center !important;box-sizing:border-box !important}}
+
+@media screen and (max-width: 480px) {
+    .biz-name {
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        line-height: 1.2;
+        margin-bottom: 2px;
+        /* Zorg dat de tekst niet buiten het kaartje breekt */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 140px; /* Pas dit aan op basis van de beschikbare ruimte */
+    }
+}
 
 @media screen and (min-width: 481px) and (max-width: 991px){.biz-card-mini{width:100% !important;max-width:100% !important;margin-bottom:15px !important;padding:12px !important}#business-list, .business-grid{padding:0 20px !important;display:flex !important;flex-direction:column !important;align-items:center !important;width:100% !important;box-sizing:border-box !important}}
 
@@ -432,6 +448,20 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 @media (min-width: 1024px){.webcam-float-wrapper.is-zoomed{width:500px;height:281px;left:20px}}
 
 @media (max-width: 768px){.nav-sos-dropdown{position:static !important;width:100% !important;background:rgba(0,0,0,0.03) !important;box-shadow:none !important;border:none !important;padding:0 !important;margin:0 !important;display:none}.nav-sos-dropdown a{display:block !important;position:static !important;padding:10px 20px !important;width:100% !important;text-align:left !important;white-space:nowrap !important}.nav-sos-dropdown .phone-no{display:inline !important;margin-left:5px !important;font-size:13px !important;color:#666 !important}.nav-sos-dropdown a i{position:static !important;margin-right:10px !important;width:auto !important;display:inline-block !important}}
+
+@media screen and (max-width: 768px) {
+    .biz-name {
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        line-height: 1.2;
+        margin-bottom: 2px;
+        /* Zorg dat de tekst niet buiten het kaartje breekt */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 140px; /* Pas dit aan op basis van de beschikbare ruimte */
+    }
+}
 
 @media (min-width: 769px){.nav-sos-dropdown{width:230px !important;display:none;position:absolute;right:-68px;left:auto;top:100%;background:white;box-shadow:0 8px 25px rgba(0,0,0,0.1);border-radius:8px;z-index:1000;border:1px solid #eee}.nav-emergency-item{position:relative}.nav-sos-dropdown .phone-no{display:block !important;font-size:11px !important;color:#888 !important;margin-top:2px}.nav-sos-dropdown a{display:block !important;flex-direction:column !important;align-items:flex-start !important;padding-left:45px !important;position:relative !important;padding:12px 15px 12px 45px !important;text-decoration:none;color:#333 !important;border-bottom:1px solid #f9f9f9;text-align:left !important}.nav-sos-dropdown a i{position:absolute !important;left:15px !important;top:15px !important;margin:0 !important;width:20px !important;text-align:center;color:#3498db}}
 
