@@ -1,4 +1,4 @@
-/* versie 60 */
+/* versie 61 */
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
 @keyframes slideDown{from{transform: translate(-50%, -100%); opacity: 0}to{transform: translate(-50%, 0); opacity: 1}}
@@ -21,13 +21,13 @@ html, body{margin:0;padding:0;height:auto !important;min-height:100vh;overflow-x
 
 body{font-family:'Inter', sans-serif;background:var(--bg);margin:0;padding:0;color:var(--text-main, #333);overflow-x:hidden;background-color:var(--bg-color, #f4f7ed);transition:background-color 0.3s, color 0.3s}
 
-.main-container{width:100%;max-width:1100px;margin:40px auto;padding:0 20px;box-sizing:border-box; }
+.main-container{width:100%;max-width:1100px;margin:40px auto;padding:0 20px;box-sizing:border-box}
 
-h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:25px;font-size: 28px;}
+h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:25px}
 
 .main-nav{background-color:#ffffff;padding:15px 0;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:0;z-index:9999}
 
-.nav-container{max-width:1300px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:10px 20px; border: #000 solid 0px;}
+.nav-container{max-width:1300px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:10px 20px;border:#000 solid 0px}
 
 .logo{font-size:22px;font-weight:800;color:#2d5a27 !important;text-transform:uppercase;text-decoration:none;letter-spacing:1px}
 
@@ -295,151 +295,31 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 
 .lang-switch{position:absolute;top:10px;right:20px}
 
-/* 1. Algemene styling voor de vlag-links */
-.lang-link {
-    text-decoration: none;
-    background: rgba(255, 255, 255, 0.2); /* Transparant wit */
-    backdrop-filter: blur(8px);           /* Het glas-effect */
-    -webkit-backdrop-filter: blur(8px);
-    padding: 5px 8px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Zacht randje */
-    font-size: 0.9rem;
-    color: #333;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-}
+.lang-link{text-decoration:none;background:rgba(255, 255, 255, 0.2);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:5px 8px;border-radius:8px;border:1px solid rgba(255, 255, 255, 0.3);font-size:0.9rem;color:#333;transition:all 0.3s ease;display:flex;align-items:center}
 
-.lang-link:hover {
-    background: rgba(255, 255, 255, 0.4);
-    border-color: rgba(255, 255, 255, 0.5);
-}
+.lang-link:hover{background:rgba(255, 255, 255, 0.4);border-color:rgba(255, 255, 255, 0.5)}
 
-/* Verberg de mobiele vlag standaard op grote desktop */
-.lang-link-mobile {
-    display: none !important;
-}
+.lang-link-mobile{display:none !important}
 
-/* 1. Algemene styling voor de vlag-links */
-.lang-link {
-    text-decoration: none;
-    background: rgba(255, 255, 255, 0.2); /* Transparant wit */
-    backdrop-filter: blur(8px);           /* Het glas-effect */
-    -webkit-backdrop-filter: blur(8px);
-    padding: 5px 8px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Zacht randje */
-    font-size: 0.9rem;
-    color: #333;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-}
+@media screen and (max-width: 991px){.nav-right-mobile{display:flex !important;align-items:center;gap:12px;margin-left:auto;margin-right:15px}.lang-link-mobile{display:flex !important;align-items:center;background:rgba(255, 255, 255, 0.15);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255, 255, 255, 0.4);padding:4px 6px;border-radius:6px;box-shadow:0 4px 10px rgba(0,0,0,0.05)}.weather-icon-container{margin-right:0 !important;font-size:14px;background:rgba(255, 255, 255, 0.15);backdrop-filter:blur(10px);padding:4px 8px;border-radius:6px}.hero-section{height:50vh;min-height:300px}.filter-container{display:flex !important;flex-wrap:nowrap !important;overflow-x:auto !important;justify-content:flex-start !important;padding:10px 20px !important;gap:8px !important;-webkit-overflow-scrolling:touch;scrollbar-width:none}.filter-container::-webkit-scrollbar{display:none}.filter-btn{flex:0 0 auto !important}.nav-container{display:flex !important;flex-wrap:wrap !important;justify-content:space-between !important;align-items:center !important;width:100% !important;padding:10px 20px !important;box-sizing:border-box !important}.nav-links{display:none !important;flex-basis:100% !important;order:10;margin:10px -20px 0 -20px !important;padding:0 !important;background:#ffffff !important;list-style:none;border-top:1px solid #f0f0f0;box-shadow:0 4px 12px rgba(0, 0, 0, 0.1)}.nav-links.active{display:flex !important;flex-direction:column !important}.menu-toggle{display:flex !important;flex-direction:column;gap:5px;background:transparent;border:none;z-index:1002}.bar{width:25px;height:2px;background-color:#2d5a27 !important;transition:0.3s}.phone-txt{display:none !important}.phone-group{gap:4px !important;display:flex !important;align-items:center !important;background:#f8fafc !important;border:1px solid #e2e8f0 !important;border-radius:20px !important;padding:2px !important;height:32px !important;box-sizing:border-box !important;flex-shrink:1 !important;min-width:0 !important;margin-right:2px !important}.business-grid{display:flex !important;flex-direction:column !important;gap:12px !important;width:100% !important;padding:0 !important;margin:0 !important}.biz-card-mini{width:100% !important;margin:0 0 8px 0 !important;padding:10px !important;display:flex !important;box-sizing:border-box !important}.mini-preview{width:72px !important;height:72px !important;flex-shrink:0 !important}.mini-actions{display:flex !important;justify-content:space-between !important;align-items:center !important;width:100% !important;margin-top:auto !important;gap:2px !important}.action-right{display:flex !important;gap:3px !important;flex-shrink:0 !important;margin-left:auto !important}.btn-icon{width:26px !important;height:26px !important;min-width:26px !important}.lang-link-mobile img{width:22px;height:auto;border-radius:2px;display:block}.nav-links .lang-link{display:none !important}.hero-overlay h1{font-size:32px !important;line-height:1.2}.hero-overlay p{font-size:16px !important;max-width:85%}.nav-links li{width:100% !important;border-bottom:1px solid #f8f8f8}.nav-links a{display:block !important;padding:18px 25px !important;color:#2d5a27 !important;text-decoration:none !important;font-weight:600;text-align:left !important;background:white !important;transition:background 0.2s}.menu-toggle.active .bar:nth-child(1){transform:translateY(7px) rotate(45deg)}.menu-toggle.active .bar:nth-child(2){opacity:0}.menu-toggle.active .bar:nth-child(3){transform:translateY(-7px) rotate(-45deg)}.menu-toggle.active .bar:nth-child(4){display:none}ul#nav-list li#menu-install-item{display:block !important;visibility:visible !important;opacity:1 !important;width:100% !important;background:#ffffff !important;padding:5px 0 15px 0 !important;border-top:1px solid #f0f0f0;margin:0 !important}.phone-group .btn-icon:first-child{color:#22c55e !important;border-color:#dcfce7 !important}.phone-group .btn-icon:last-child{color:#94a3b8 !important;background:#f8fafc !important;box-shadow:none !important}.action-right .fa-globe{color:#3b82f6 !important}.action-right .fa-envelope{color:#a855f7 !important}.action-right .fa-star{color:#eab308 !important}.action-right .fa-map-marker-alt{color:#ef4444 !important}ul#nav-list li#menu-install-item a{display:flex !important;align-items:center;justify-content:center;gap:10px;margin:0 20px !important;padding:12px !important;background:rgba(240, 244, 240, 0.9) !important;border:1px solid rgba(220, 230, 220, 0.7) !important;color:#2d5a27 !important;border-radius:8px !important;text-decoration:none !important;font-weight:700 !important;font-size:16px !important;box-shadow:0 1px 3px rgba(0,0,0,0.05)}ul#nav-list li#menu-install-item a:active{background:rgba(230, 235, 230, 0.95) !important;transform:scale(0.99)}.btn-icon, .phone-group .btn-icon{width:28px !important;height:28px !important;min-width:28px !important;max-width:28px !important;background:white !important;border:1px solid #e2e8f0 !important;border-radius:50% !important;display:flex !important;align-items:center !important;justify-content:center !important;box-shadow:0 1px 3px rgba(0,0,0,0.1) !important;font-size:13px !important;margin:0 !important;padding:0 !important}.nav-links a:active, .nav-links a:hover{background-color:#f5f5f5 !important;color:#1a3317 !important}ul#nav-list li#menu-install-item a i{color:#2d5a27 !important}body.is-offline .map-section, body.is-offline iframe[src*="google.com/maps"]{display:none !important}}
 
-.lang-link:hover {
-    background: rgba(255, 255, 255, 0.4);
-    border-color: rgba(255, 255, 255, 0.5);
-}
-
-/* Verberg de mobiele vlag standaard op grote desktop */
-.lang-link-mobile {
-    display: none !important;
-}
-
-/* 2. Voor Mobiel EN Tablet (tot 991px) */
-@media screen and (max-width: 991px) {
-    .nav-right-mobile {
-        display: flex !important;
-        align-items: center;
-        gap: 12px;
-        margin-left: auto;
-        margin-right: 15px;
-    }
-
-    .lang-link-mobile {
-        display: flex !important;
-        align-items: center;
-        /* Specifieke glas-styling voor de zwevende vlag */
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        padding: 4px 6px;
-        border-radius: 6px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    }
-
-    .lang-link-mobile img {
-        width: 22px;
-        height: auto;
-        border-radius: 2px;
-        display: block;
-    }
-
-    .weather-icon-container {
-        margin-right: 0 !important;
-        font-size: 14px;
-        background: rgba(255, 255, 255, 0.15); /* Weer-icoon ook een beetje glas? */
-        backdrop-filter: blur(10px);
-        padding: 4px 8px;
-        border-radius: 6px;
-    }
-
-    /* Verberg de vlag in het uitklapmenu */
-    .nav-links .lang-link {
-        display: none !important;
-    }
-}
-
-/* 3. Voor Desktop (Vanaf 992px) */
-@media screen and (min-width: 992px) {
-    .lang-link-mobile {
-        display: none !important;
-    }
-    .nav-links .lang-link {
-        display: inline-block !important;
-    }
-}
-
-@media screen and (max-width: 991px){.hero-section{height:50vh;min-height:300px}.filter-container{display:flex !important;flex-wrap:nowrap !important;overflow-x:auto !important;justify-content:flex-start !important;padding:10px 20px !important;gap:8px !important;-webkit-overflow-scrolling:touch;scrollbar-width:none}.filter-container::-webkit-scrollbar{display:none}.filter-btn{flex:0 0 auto !important}.nav-container{display:flex !important;flex-wrap:wrap !important;justify-content:space-between !important;align-items:center !important;width:100% !important;padding:10px 20px !important;box-sizing:border-box !important}.nav-links{display:none !important;flex-basis:100% !important;order:10;margin:10px -20px 0 -20px !important;padding:0 !important;background:#ffffff !important;list-style:none;border-top:1px solid #f0f0f0;box-shadow:0 4px 12px rgba(0, 0, 0, 0.1)}.nav-links.active{display:flex !important;flex-direction:column !important}.menu-toggle{display:flex !important;flex-direction:column;gap:5px;background:transparent;border:none;z-index:1002}.bar{width:25px;height:2px;background-color:#2d5a27 !important;transition:0.3s}.phone-txt{display:none !important}.phone-group{gap:4px !important;display:flex !important;align-items:center !important;background:#f8fafc !important;border:1px solid #e2e8f0 !important;border-radius:20px !important;padding:2px !important;height:32px !important;box-sizing:border-box !important;flex-shrink:1 !important;min-width:0 !important;margin-right:2px !important}.business-grid{display:flex !important;flex-direction:column !important;gap:12px !important;width:100% !important;padding:0 !important;margin:0 !important}.biz-card-mini{width:100% !important;margin:0 0 8px 0 !important;padding:10px !important;display:flex !important;box-sizing:border-box !important}.mini-preview{width:72px !important;height:72px !important;flex-shrink:0 !important}.mini-actions{display:flex !important;justify-content:space-between !important;align-items:center !important;width:100% !important;margin-top:auto !important;gap:2px !important}.action-right{display:flex !important;gap:3px !important;flex-shrink:0 !important;margin-left:auto !important}.btn-icon{width:26px !important;height:26px !important;min-width:26px !important}.hero-overlay h1{font-size:32px !important;line-height:1.2}.hero-overlay p{font-size:16px !important;max-width:85%}.nav-links li{width:100% !important;border-bottom:1px solid #f8f8f8}.nav-links a{display:block !important;padding:18px 25px !important;color:#2d5a27 !important;text-decoration:none !important;font-weight:600;text-align:left !important;background:white !important;transition:background 0.2s}.menu-toggle.active .bar:nth-child(1){transform:translateY(7px) rotate(45deg)}.menu-toggle.active .bar:nth-child(2){opacity:0}.menu-toggle.active .bar:nth-child(3){transform:translateY(-7px) rotate(-45deg)}.menu-toggle.active .bar:nth-child(4){display:none}ul#nav-list li#menu-install-item{display:block !important;visibility:visible !important;opacity:1 !important;width:100% !important;background:#ffffff !important;padding:5px 0 15px 0 !important;border-top:1px solid #f0f0f0;margin:0 !important}.phone-group .btn-icon:first-child{color:#22c55e !important;border-color:#dcfce7 !important}.phone-group .btn-icon:last-child{color:#94a3b8 !important;background:#f8fafc !important;box-shadow:none !important}.action-right .fa-globe{color:#3b82f6 !important}.action-right .fa-envelope{color:#a855f7 !important}.action-right .fa-star{color:#eab308 !important}.action-right .fa-map-marker-alt{color:#ef4444 !important}ul#nav-list li#menu-install-item a{display:flex !important;align-items:center;justify-content:center;gap:10px;margin:0 20px !important;padding:12px !important;background:rgba(240, 244, 240, 0.9) !important;border:1px solid rgba(220, 230, 220, 0.7) !important;color:#2d5a27 !important;border-radius:8px !important;text-decoration:none !important;font-weight:700 !important;font-size:16px !important;box-shadow:0 1px 3px rgba(0,0,0,0.05)}ul#nav-list li#menu-install-item a:active{background:rgba(230, 235, 230, 0.95) !important;transform:scale(0.99)}.btn-icon, .phone-group .btn-icon{width:28px !important;height:28px !important;min-width:28px !important;max-width:28px !important;background:white !important;border:1px solid #e2e8f0 !important;border-radius:50% !important;display:flex !important;align-items:center !important;justify-content:center !important;box-shadow:0 1px 3px rgba(0,0,0,0.1) !important;font-size:13px !important;margin:0 !important;padding:0 !important}.nav-links a:active, .nav-links a:hover{background-color:#f5f5f5 !important;color:#1a3317 !important}ul#nav-list li#menu-install-item a i{color:#2d5a27 !important}body.is-offline .map-section, body.is-offline iframe[src*="google.com/maps"]{display:none !important}}
+@media screen and (min-width: 992px){.lang-link-mobile{display:none !important}.menu-toggle{display:none !important}.biz-card-mini{opacity:1 !important;transform:none !important;transition:all 0.3s ease;display:flex !important;flex-direction:row !important;width:100% !important;height:130px !important;padding:12px !important;gap:12px !important;background:white !important;box-sizing:border-box !important;overflow:hidden !important}.biz-card-mini.show{opacity:1;transform:translateY(0)}.business-grid{display:grid !important;grid-template-columns:1fr 1fr !important;gap:20px !important;margin-bottom:30px !important;width:100% !important;padding:0 20px !important;box-sizing:border-box !important;align-items:stretch !important}.category-section-header{width:100% !important;margin:20px 0 8px 0 !important;padding:10px 18px !important;box-sizing:border-box !important}.mini-preview{width:110px !important;height:106px !important;flex-shrink:0 !important}.mini-content{flex:1 !important;display:flex !important;flex-direction:column !important;justify-content:space-between !important;min-width:0 !important}.mini-actions{display:flex !important;flex-direction:row !important;justify-content:flex-end !important;align-items:center !important;gap:10px !important;width:100% !important;margin-top:auto !important;padding-top:5px !important}.phone-group{margin-right:auto !important;display:flex !important;align-items:center !important;gap:8px !important;background:#f1f5f9 !important;padding:6px 14px !important;border-radius:20px !important;border:1px solid #e2e8f0 !important;flex-shrink:0 !important}.action-right{display:flex !important;gap:8px !important;margin:0 !important}.btn-icon{width:30px !important;height:30px !important;border-radius:50% !important;display:flex !important;align-items:center !important;justify-content:center !important;flex-shrink:0 !important;font-size:13px !important;box-shadow:0 2px 5px rgba(0,0,0,0.06) !important;border:none !important}.phone-txt{font-size:13.5px !important;font-weight:700 !important;color:#1e293b !important;margin-right:4px !important;white-space:nowrap !important}#menu-install-item{display:none !important}.nav-links .lang-link{display:inline-block !important}.category-section-header small{background:rgba(255, 255, 255, 0.3) !important;backdrop-filter:blur(5px) !important;border:1px solid rgba(255, 255, 255, 0.2) !important;color:#475569 !important}.phone-group .btn-icon{width:26px !important;height:26px !important;font-size:11px !important;box-shadow:none !important}}
 
 @media screen and (max-width: 400px){.action-right{gap:4px}.btn-icon{width:30px;height:30px;font-size:12px}}
-
-@media screen and (min-width: 992px){.menu-toggle{display:none !important}.biz-card-mini{opacity:1 !important;transform:none !important;transition:all 0.3s ease;display:flex !important;flex-direction:row !important;width:100% !important;height:130px !important;padding:12px !important;gap:12px !important;background:white !important;box-sizing:border-box !important;overflow:hidden !important}.biz-card-mini.show{opacity:1;transform:translateY(0)}.business-grid{display:grid !important;grid-template-columns:1fr 1fr !important;gap:20px !important;margin-bottom:30px !important;width:100% !important;padding:0 20px !important;box-sizing:border-box !important;align-items:stretch !important}.category-section-header{width:100% !important;margin:20px 0 8px 0 !important;padding:10px 18px !important;box-sizing:border-box !important}.mini-preview{width:110px !important;height:106px !important;flex-shrink:0 !important}.mini-content{flex:1 !important;display:flex !important;flex-direction:column !important;justify-content:space-between !important;min-width:0 !important}.mini-actions{display:flex !important;flex-direction:row !important;justify-content:flex-end !important;align-items:center !important;gap:10px !important;width:100% !important;margin-top:auto !important;padding-top:5px !important}.phone-group{margin-right:auto !important;display:flex !important;align-items:center !important;gap:8px !important;background:#f1f5f9 !important;padding:6px 14px !important;border-radius:20px !important;border:1px solid #e2e8f0 !important;flex-shrink:0 !important}.action-right{display:flex !important;gap:8px !important;margin:0 !important}.btn-icon{width:30px !important;height:30px !important;border-radius:50% !important;display:flex !important;align-items:center !important;justify-content:center !important;flex-shrink:0 !important;font-size:13px !important;box-shadow:0 2px 5px rgba(0,0,0,0.06) !important;border:none !important}.phone-txt{font-size:13.5px !important;font-weight:700 !important;color:#1e293b !important;margin-right:4px !important;white-space:nowrap !important}#menu-install-item{display:none !important}.category-section-header small{background:rgba(255, 255, 255, 0.3) !important;backdrop-filter:blur(5px) !important;border:1px solid rgba(255, 255, 255, 0.2) !important;color:#475569 !important}.phone-group .btn-icon{width:26px !important;height:26px !important;font-size:11px !important;box-shadow:none !important}}
 
 @media (min-width: 768px){.app-version-tag{opacity:0.7}.webcam-float-wrapper:hover:not(.is-zoomed){transform:translateY(-5px);box-shadow:0 8px 16px rgba(0, 0, 0, 0.4)}}
 
 @media (max-width: 767px){.app-version-tag{display:inline-block !important;margin-top:12px;padding:5px 15px;background:rgba(74, 108, 74, 0.08);border:1px solid var(--primary-olive);border-radius:25px;font-size:11px;color:var(--primary-olive);font-weight:600;text-transform:uppercase}}
 
-/* Specifiek voor mobiele schermen (kleiner dan 768px) */
-@media screen and (max-width: 768px) {
-    .hero-overlay h1{font-size:4vw !important;line-height:1.2}
-}
+@media screen and (max-width: 768px){.biz-name{font-size:13px !important;font-weight:700 !important;line-height:1.2;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}.hero-overlay h1{font-size:4vw !important;line-height:1.2}}
 
 @media (max-width: 400px){.weather-mini span{font-size:0.8rem}}
 
 @media screen and (max-width: 992px){body{background-color:#f8faf4 !important}body .business-card{width:92% !important;max-width:650px !important;margin:0 auto !important;float:none !important;display:block !important;box-sizing:border-box !important}html, body{overflow-x:hidden !important;width:100% !important;position:relative !important}body .business-container, body .results-container{display:flex !important;flex-direction:column !important;align-items:center !important;width:100% !important;padding:20px 10px !important;gap:30px !important;overflow-x:hidden !important}}
 
-
-
 @media all and (display-mode: standalone), (display-mode: fullscreen){ul#nav-list li#menu-install-item{display:none !important}}
 
-@media screen and (max-width: 480px){.biz-card-mini{width:100% !important;max-width:100% !important;margin:0 0 8px 0 !important;padding:8px !important;box-sizing:border-box !important}.mini-preview{width:65px !important;height:65px !important;flex-shrink:0 !important}.mini-content{padding-left:6px !important;flex:1 !important;min-width:0 !important}.biz-name{font-size:15px !important;margin-bottom:2px !important}#business-list, .business-grid{padding:0 6px !important;width:100% !important;display:flex !important;flex-direction:column !important;align-items:center !important;box-sizing:border-box !important}}
-
-@media screen and (max-width: 480px) {
-    .biz-name {
-        font-size: 13px !important;
-        font-weight: 700 !important;
-        line-height: 1.2;
-        margin-bottom: 2px;
-        /* Zorg dat de tekst niet buiten het kaartje breekt */
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 140px; /* Pas dit aan op basis van de beschikbare ruimte */
-    }
-}
+@media screen and (max-width: 480px){.biz-card-mini{width:100% !important;max-width:100% !important;margin:0 0 8px 0 !important;padding:8px !important;box-sizing:border-box !important}.mini-preview{width:65px !important;height:65px !important;flex-shrink:0 !important}.mini-content{padding-left:6px !important;flex:1 !important;min-width:0 !important}.biz-name{font-size:13px !important;margin-bottom:2px;font-weight:700 !important;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}#business-list, .business-grid{padding:0 6px !important;width:100% !important;display:flex !important;flex-direction:column !important;align-items:center !important;box-sizing:border-box !important}}
 
 @media screen and (min-width: 481px) and (max-width: 991px){.biz-card-mini{width:100% !important;max-width:100% !important;margin-bottom:15px !important;padding:12px !important}#business-list, .business-grid{padding:0 20px !important;display:flex !important;flex-direction:column !important;align-items:center !important;width:100% !important;box-sizing:border-box !important}}
 
@@ -448,20 +328,6 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 @media (min-width: 1024px){.webcam-float-wrapper.is-zoomed{width:500px;height:281px;left:20px}}
 
 @media (max-width: 768px){.nav-sos-dropdown{position:static !important;width:100% !important;background:rgba(0,0,0,0.03) !important;box-shadow:none !important;border:none !important;padding:0 !important;margin:0 !important;display:none}.nav-sos-dropdown a{display:block !important;position:static !important;padding:10px 20px !important;width:100% !important;text-align:left !important;white-space:nowrap !important}.nav-sos-dropdown .phone-no{display:inline !important;margin-left:5px !important;font-size:13px !important;color:#666 !important}.nav-sos-dropdown a i{position:static !important;margin-right:10px !important;width:auto !important;display:inline-block !important}}
-
-@media screen and (max-width: 768px) {
-    .biz-name {
-        font-size: 13px !important;
-        font-weight: 700 !important;
-        line-height: 1.2;
-        margin-bottom: 2px;
-        /* Zorg dat de tekst niet buiten het kaartje breekt */
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 140px; /* Pas dit aan op basis van de beschikbare ruimte */
-    }
-}
 
 @media (min-width: 769px){.nav-sos-dropdown{width:230px !important;display:none;position:absolute;right:-68px;left:auto;top:100%;background:white;box-shadow:0 8px 25px rgba(0,0,0,0.1);border-radius:8px;z-index:1000;border:1px solid #eee}.nav-emergency-item{position:relative}.nav-sos-dropdown .phone-no{display:block !important;font-size:11px !important;color:#888 !important;margin-top:2px}.nav-sos-dropdown a{display:block !important;flex-direction:column !important;align-items:flex-start !important;padding-left:45px !important;position:relative !important;padding:12px 15px 12px 45px !important;text-decoration:none;color:#333 !important;border-bottom:1px solid #f9f9f9;text-align:left !important}.nav-sos-dropdown a i{position:absolute !important;left:15px !important;top:15px !important;margin:0 !important;width:20px !important;text-align:center;color:#3498db}}
 

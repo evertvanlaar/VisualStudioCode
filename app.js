@@ -408,7 +408,7 @@ function renderBusinesses(data) {
     }, 50);
 
     // Schema.org update voor SEO
-    // updateSchemaOrg(data); // wordt nu via n8n ingevuld
+     // updateSchemaOrg(data); // sitemap.xml wordt nu via n8n ingevuld
 }
 
 
