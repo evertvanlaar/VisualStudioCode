@@ -347,7 +347,7 @@ function renderBusinesses(data) {
             grid.innerHTML += `
                 <div class="biz-card-mini" id="${bizId}" style="border-left: 4px solid ${catColor}">
                     <div class="mini-preview">
-                        <a href="${cleanUrl}" target="_blank" onclick="gtag('event', 'click_image', {'biz_name': '${safeBizName}'})">
+                        <a href="business/${bizId}${currentLang === 'el' ? '-el' : ''}.html" onclick="gtag('event', 'click_image', {'biz_name': '${safeBizName}'})">
                             <img src="${finalImageUrl}" onerror="this.src='pix/nophoto.jpg'">
                         </a>
                         <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeBizName}', this)">
@@ -357,7 +357,12 @@ function renderBusinesses(data) {
                     <div class="mini-content">
                         <div class="mini-row-top">
                             
-                            <h2 class="biz-name">${displayName}</h2>
+                            // Nieuwe code:
+                            <h2 class="biz-name">
+                                <a href="business/${bizId}${currentLang === 'el' ? '-el' : ''}.html" style="text-decoration:none; color:inherit;">
+                                    ${displayName}
+                                </a>
+                            </h2>
                             <span class="biz-location">
                                 <i class="fa fa-map-marker-alt"></i> ${t(biz.Location) || t('Kala Nera')}
                             </span>
