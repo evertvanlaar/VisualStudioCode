@@ -140,7 +140,10 @@ async function init() {
 
             localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
             allBusinesses = freshData;
-            
+          
+            // VOEG DEZE REGEL TOE OM DE DOWNLOAD TE STARTEN:
+           // exportSitemap(allBusinesses); <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<--------------
+
             showData(); 
         }
     } catch (error) {
@@ -919,20 +922,22 @@ function exportSitemap(businesses) {
   </url>`;
 
     businesses.forEach(biz => {
-        // Maak een URL-vriendelijke slug die matcht met je IDs in de HTML
         const slug = biz.Name.toLowerCase()
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/(^-|-$)/g, '');
         
         xml += `
-  <url>
-    <loc>https://www.kalanera.gr/#${slug}</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>`;
+    <url>
+        <loc>https://www.kalanera.gr/business/${slug}.html</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://www.kalanera.gr/business/${slug}-el.html</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <priority>0.8</priority>
+    </url>`;
     });
-
     xml += `\n</urlset>`;
     
     console.log("--- START SITEMAP XML ---");
@@ -946,4 +951,3 @@ function exportSitemap(businesses) {
     link.download = 'sitemap.xml';
     link.click();
 }
-
