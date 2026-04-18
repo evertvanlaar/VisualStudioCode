@@ -357,7 +357,7 @@ function renderBusinesses(data) {
                     <div class="mini-content">
                         <div class="mini-row-top">
                             
-                            // Nieuwe code:
+                            
                             <h2 class="biz-name">
                                 <a href="business/${bizId}${currentLang === 'el' ? '-el' : ''}.html" style="text-decoration:none; color:inherit;">
                                     ${displayName}
