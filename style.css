@@ -596,16 +596,6 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 
 @media (min-width: 768px){.app-version-tag{opacity:0.7}.webcam-float-wrapper:hover:not(.is-zoomed){transform:translateY(-5px);box-shadow:0 8px 16px rgba(0, 0, 0, 0.4)}}
 
-/* Alleen op desktop (schermen breder dan 768px): het grijze blokje terug */
-@media (min-width: 768px) {
-    .phone-group {
-        background: rgba(0, 0, 0, 0.05) !important; /* Grijs vlak terug */
-        width: 155px !important;
-        min-width: 155px !important;
-        padding: 2px 4px 2px 8px !important;
-        border-radius: 20px;
-    }
-}
 
 
 @media (max-width: 767px){.app-version-tag{display:inline-block !important;margin-top:12px;padding:5px 15px;background:rgba(74, 108, 74, 0.08);border:1px solid var(--primary-olive);border-radius:25px;font-size:11px;color:var(--primary-olive);font-weight:600;text-transform:uppercase}}
@@ -631,4 +621,16 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 @media (min-width: 769px){.nav-sos-dropdown{width:230px !important;display:none;position:absolute;right:-68px;left:auto;top:100%;background:white;box-shadow:0 8px 25px rgba(0,0,0,0.1);border-radius:8px;z-index:1000;border:1px solid #eee}.nav-emergency-item{position:relative}.nav-sos-dropdown .phone-no{display:block !important;font-size:11px !important;color:#888 !important;margin-top:2px}.nav-sos-dropdown a{display:block !important;flex-direction:column !important;align-items:flex-start !important;padding-left:45px !important;position:relative !important;padding:12px 15px 12px 45px !important;text-decoration:none;color:#333 !important;border-bottom:1px solid #f9f9f9;text-align:left !important}.nav-sos-dropdown a i{position:absolute !important;left:15px !important;top:15px !important;margin:0 !important;width:20px !important;text-align:center;color:#3498db}}
 
 @media (min-width: 769px) and (max-width: 1100px){.nav-sos-dropdown{width:100% !important;min-width:180px;right:0 !important;left:0 !important;transform:none !important}.nav-sos-dropdown a{padding:10px 10px 10px 35px !important;font-size:12px !important}.nav-sos-dropdown .phone-no{font-size:10px !important}.nav-sos-dropdown a i{left:10px !important;top:12px !important;font-size:12px !important}}
+
+
+/* Alleen op desktop (schermen breder dan 768px): het grijze blokje terug */
+@media (min-width: 768px) {
+    .phone-group {
+        background: rgba(0, 0, 0, 0.05) !important; /* Grijs vlak terug */
+        width: 155px !important;
+        min-width: 155px !important;
+        padding: 2px 4px 2px 8px !important;
+        border-radius: 20px;
+    }
+}
 
