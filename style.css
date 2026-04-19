@@ -624,7 +624,7 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 
 
 /* Alleen op desktop (schermen breder dan 768px): het grijze blokje terug */
-@media (min-width: 768px) {
+@media (min-width: 991px) {
     .phone-group {
         background: rgba(0, 0, 0, 0.05) !important; /* Grijs vlak terug */
         width: 155px !important;
