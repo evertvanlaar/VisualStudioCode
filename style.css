@@ -596,8 +596,8 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 
 @media (min-width: 768px){.app-version-tag{opacity:0.7}.webcam-float-wrapper:hover:not(.is-zoomed){transform:translateY(-5px);box-shadow:0 8px 16px rgba(0, 0, 0, 0.4)}}
 
-/* Alleen op desktop (schermen breder dan 991px): het grijze blokje terug */
-@media (min-width: 991px) {
+/* Alleen op desktop (schermen breder dan 768px): het grijze blokje terug */
+@media (min-width: 768px) {
     .phone-group {
         background: rgba(0, 0, 0, 0.05) !important; /* Grijs vlak terug */
         width: 155px !important;
