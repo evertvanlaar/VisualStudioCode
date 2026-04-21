@@ -47,6 +47,7 @@ let allBusinesses = [];
 let activeCategory = 'all';
 let activeLocation = 'all';
 let deferredPrompt; // Global variabele voor PWA
+let listMode = (localStorage.getItem('kalanera_list_mode') || 'categories'); // 'categories' | 'az'
 
 // Icon Map voor categorieën
 const iconMap = {
@@ -58,7 +59,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.65'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.75'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -170,6 +171,7 @@ function renderEverything() {
     generateCategoryButtons(allBusinesses);
     generateLocationButtons(allBusinesses);
     renderBusinesses(allBusinesses);
+    updateFilterBadge();
 }
 
 function updateOnlineStatus() {
@@ -270,6 +272,57 @@ function applyFilters() {
         return matchesSearch && matchesCategory && matchesLocation;
     });
     renderBusinesses(filtered);
+    updateFilterBadge();
+}
+
+function updateFilterBadge() {
+    const badge = document.getElementById('filter-badge');
+    if (!badge) return;
+    const count = (activeCategory !== 'all' ? 1 : 0) + (activeLocation !== 'all' ? 1 : 0);
+    badge.textContent = String(count);
+    badge.style.display = count > 0 ? 'grid' : 'none';
+}
+
+function openFilterSheet() {
+    const sheet = document.getElementById('filter-sheet');
+    const backdrop = document.getElementById('filter-sheet-backdrop');
+    if (!sheet || !backdrop) return;
+    sheet.hidden = false;
+    backdrop.hidden = false;
+    document.body.classList.add('sheet-open');
+
+    // Desktop: position sheet near the filter button
+    const openBtn = document.getElementById('open-filters');
+    if (openBtn && window.innerWidth >= 992) {
+        const rect = openBtn.getBoundingClientRect();
+        const margin = 10;
+        const sheetWidth = Math.min(520, Math.floor(window.innerWidth * 0.92));
+        let left = Math.round(rect.right - sheetWidth);
+        left = Math.max(margin, Math.min(left, window.innerWidth - sheetWidth - margin));
+        const top = Math.round(rect.bottom + 10);
+        sheet.style.setProperty('--sheet-left', `${left}px`);
+        sheet.style.setProperty('--sheet-top', `${top}px`);
+    }
+}
+
+function closeFilterSheet() {
+    const sheet = document.getElementById('filter-sheet');
+    const backdrop = document.getElementById('filter-sheet-backdrop');
+    if (!sheet || !backdrop) return;
+    sheet.hidden = true;
+    backdrop.hidden = true;
+    document.body.classList.remove('sheet-open');
+}
+
+function resetFilters() {
+    activeCategory = 'all';
+    activeLocation = 'all';
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.value = '';
+    // Re-render filter buttons to mark "All" active
+    generateCategoryButtons(allBusinesses);
+    generateLocationButtons(allBusinesses);
+    applyFilters();
 }
 
 // --- DE HOOFDLIJST RENDEREN ---
@@ -297,24 +350,7 @@ function renderBusinesses(data) {
         }
     } catch (e) { wishlist = []; }
 
-    const grouped = data.reduce((acc, biz) => {
-        const cat = biz.Category || 'Other';
-        if (!acc[cat]) acc[cat] = [];
-        acc[cat].push(biz);
-        return acc;
-    }, {});
-
-    Object.keys(grouped).sort().forEach(category => {
-        const header = document.createElement('div');
-        header.className = 'category-section-header';
-        // NIEUW: Gebruik t(category) voor de header-tekst
-        header.innerHTML = `<span>${getIcon(category)} ${t(category)} <small>(${grouped[category].length})</small></span>`;
-        container.appendChild(header);
-
-        const grid = document.createElement('div');
-        grid.className = 'business-grid';
-        
-        grouped[category].sort((a, b) => (a.Name || "").localeCompare(b.Name || "")).forEach(biz => {
+    const renderCardInto = (grid, biz, categoryForColor) => {
 
 // --- NIEUW: DE NAAM LOGICA ---
             const displayName = (currentLang === 'el' && biz.Name_EL) ? biz.Name_EL : biz.Name;
@@ -322,7 +358,7 @@ function renderBusinesses(data) {
 
             const rawUrl = biz.Website || '';
             const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
-            const catColor = getColor(category);
+            const catColor = getColor(categoryForColor || biz.Category || 'Other');
             const safeBizName = biz.Name.replace(/'/g, "\\'"); // Veilig voor JS strings
             
             const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' Kala Nera reviews')}`;
@@ -348,12 +384,15 @@ function renderBusinesses(data) {
 
   // 3. De Grid HTML
 grid.innerHTML += `
-    <div class="biz-card-mini" id="${bizId}" style="border-left: 4px solid ${catColor}">
+    <div class="biz-card-mini is-media" id="${bizId}" style="border-left: 4px solid ${catColor}">
         <div class="mini-preview">
-            <a href="business/${bizId}${currentLang === 'el' ? '-el' : ''}.html" onclick="gtag('event', 'click_image', {'biz_name': '${safeBizName}'})">
-                <img src="${finalImageUrl}" onerror="this.src='pix/nophoto.jpg'">
+            <a class="media-link" href="business/${bizId}${currentLang === 'el' ? '-el' : ''}.html" onclick="gtag('event', 'click_image', {'biz_name': '${safeBizName}'})">
+                <img src="${finalImageUrl}" onerror="this.src='pix/nophoto.jpg'" alt="${displayName}">
             </a>
-            <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeBizName}', this)">
+            <div class="media-overlay" aria-hidden="true">
+                <div class="media-title">${displayName}</div>
+            </div>
+            <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeBizName}', this)" aria-label="Toggle favorite">
                 <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
             </button>
         </div>
@@ -369,9 +408,9 @@ grid.innerHTML += `
                 </span>
             </div>
             
-            <div class="mini-actions" style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 2px; margin-top: 8px;">
+            <div class="mini-actions mini-actions-media" style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px; margin-top: 10px;">
                 ${(biz.Phone && biz.Phone.trim() !== "" && biz.Phone !== "-") 
-                    ? `<div class="phone-group" style="display: flex; align-items: center; width: 155px; min-width: 155px; background: rgba(0,0,0,0.05); border-radius: 20px; padding: 2px 4px 2px 6px; gap: 4px;">
+                    ? `<div class="phone-group" style="display: flex; align-items: center; width: 155px; min-width: 155px; background: rgba(0,0,0,0.05); border-radius: 20px; padding: 2px 4px 2px 6px; gap: 6px;">
                             <a href="tel:${biz.Phone}" class="btn-icon phone-btn" style="background:none; box-shadow:none; width:auto; height:auto; padding:0; margin:0;" onclick="gtag('event', 'click_phone', {'biz_name': '${safeBizName}'})">
                                 <i class="fa fa-phone" style="color: #4A6C4A; font-size: 0.8rem;"></i>
                             </a>
@@ -379,22 +418,61 @@ grid.innerHTML += `
                     </div>` 
                     : `<div class="phone-group" style="width: 155px; min-width: 155px; visibility: hidden;"></div>`
                 }
-                <div class="action-right" style="display: flex; gap: 3px; flex-shrink: 0; justify-content: flex-end;">
+                <span class="below-location-chip"><i class="fa fa-map-marker-alt"></i> ${t(biz.Location) || t('Kala Nera')}</span>
+                <div class="action-right" style="display: flex; gap: 6px; flex-shrink: 0; justify-content: flex-end;">
                     ${webHtml}
                     ${emailHtml}
-                    <a href="${reviewUrl}" target="_blank" class="btn-icon review-btn" style="width: 28px;" onclick="gtag('event', 'click_reviews', {'biz_name': '${safeBizName}'})">
+                    <a href="${reviewUrl}" target="_blank" rel="noopener" class="btn-icon review-btn" style="width: 28px;" onclick="gtag('event', 'click_reviews', {'biz_name': '${safeBizName}'})">
                         <i class="fa fa-star"></i>
                     </a>
-                    <a href="${mapsUrl}" target="_blank" class="btn-icon nav-btn-action" style="width: 28px;" onclick="gtag('event', 'open_maps', {'biz_name': '${safeBizName}'})">
+                    <a href="${mapsUrl}" target="_blank" rel="noopener" class="btn-icon nav-btn-action" style="width: 28px;" onclick="gtag('event', 'open_maps', {'biz_name': '${safeBizName}'})">
                         <i class="fa fa-location-dot"></i>
                     </a>
                 </div>
             </div>
         </div>
     </div>`;
+    };
+
+    // Mode A: grouped by category (default)
+    if (listMode !== 'az') {
+        const grouped = data.reduce((acc, biz) => {
+            const cat = biz.Category || 'Other';
+            if (!acc[cat]) acc[cat] = [];
+            acc[cat].push(biz);
+            return acc;
+        }, {});
+
+        Object.keys(grouped).sort().forEach(category => {
+            const header = document.createElement('div');
+            header.className = 'category-section-header';
+            header.innerHTML = `<span>${getIcon(category)} ${t(category)} <small>(${grouped[category].length})</small></span>`;
+            container.appendChild(header);
+
+            const grid = document.createElement('div');
+            grid.className = 'business-grid';
+            grouped[category]
+                .sort((a, b) => (a.Name || "").localeCompare(b.Name || ""))
+                .forEach(biz => renderCardInto(grid, biz, category));
+            container.appendChild(grid);
         });
+    } else {
+        // Mode B: global A–Z list (best for alpha index)
+        const grid = document.createElement('div');
+        grid.className = 'business-grid';
+
+        const sorted = [...data].sort((a, b) => {
+            const nameA = (currentLang === 'el' && a.Name_EL) ? a.Name_EL : (a.Name || '');
+            const nameB = (currentLang === 'el' && b.Name_EL) ? b.Name_EL : (b.Name || '');
+            return (nameA || '').localeCompare(nameB || '');
+        });
+
+        sorted.forEach(biz => renderCardInto(grid, biz, biz.Category || 'Other'));
         container.appendChild(grid);
-    });
+    }
+
+    // Fast-scroll A–Z index (mobile): build after list is in DOM
+    buildAlphaIndex();
 
     // NIEUW: Vertaal "Last sync"
     const syncLabel = (currentLang === 'el') ? 'Τελευταίος συγχρονισμός' : 'Last sync';
@@ -414,6 +492,129 @@ grid.innerHTML += `
 
     // Schema.org update voor SEO
      // updateSchemaOrg(data); // sitemap.xml wordt nu via n8n ingevuld
+}
+
+function buildAlphaIndex() {
+    // Remove existing
+    const existing = document.querySelector('.alpha-index');
+    if (existing) {
+        try { existing._observer && existing._observer.disconnect(); } catch (e) {}
+        existing.remove();
+    }
+    const existingToast = document.querySelector('.alpha-toast');
+    if (existingToast) existingToast.remove();
+
+    // Only on the directory page (not wishlist/forms) and only in A–Z mode
+    if (listMode !== 'az') return;
+    if (!document.getElementById('filter-buttons')) return;
+
+    const cards = Array.from(document.querySelectorAll('#business-list .biz-card-mini'));
+    if (cards.length < 15) return; // avoid clutter on short lists
+
+    // Map first letter -> first card element
+    const letterToEl = new Map();
+    for (const el of cards) {
+        const titleEl = el.querySelector('.media-title') || el.querySelector('.biz-name');
+        const name = (titleEl && titleEl.textContent ? titleEl.textContent : '').trim();
+        if (!name) continue;
+        const ch = name[0].toUpperCase();
+        const letter = ch.match(/[A-Z]/) ? ch : '#';
+        if (!letterToEl.has(letter)) letterToEl.set(letter, el);
+    }
+
+    const letters = ['#', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
+
+    const index = document.createElement('div');
+    index.className = 'alpha-index';
+    index.setAttribute('aria-label', 'Alphabetical quick scroll');
+    index.innerHTML = letters.map(l => {
+        const enabled = letterToEl.has(l);
+        return `<button type="button" class="alpha-letter ${enabled ? '' : 'is-disabled'}" data-letter="${l}" ${enabled ? '' : 'disabled'}>${l}</button>`;
+    }).join('');
+
+    const toast = document.createElement('div');
+    toast.className = 'alpha-toast';
+    toast.setAttribute('aria-hidden', 'true');
+    toast.style.display = 'none';
+    document.body.appendChild(toast);
+    document.body.appendChild(index);
+
+    // Only show index once the directory list is in view (below hero)
+    const anchor = document.getElementById('business-list');
+    if (anchor && 'IntersectionObserver' in window) {
+        const obs = new IntersectionObserver((entries) => {
+            const entry = entries[0];
+            // show when list is entering viewport; hide when above it (hero region)
+            if (entry && entry.isIntersecting) {
+                index.classList.add('is-visible');
+            } else {
+                index.classList.remove('is-visible');
+            }
+        }, {
+            root: null,
+            threshold: 0.01,
+            // account for sticky header + toolbar height so it doesn't appear too early
+            rootMargin: '-140px 0px -40% 0px'
+        });
+        obs.observe(anchor);
+        // store on element for cleanup on rerender
+        index._observer = obs;
+    } else {
+        // fallback: always visible
+        index.classList.add('is-visible');
+    }
+
+    let toastTimer = null;
+    const showToast = (letter) => {
+        toast.textContent = letter;
+        toast.style.display = 'grid';
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 500);
+    };
+
+    const scrollToLetter = (letter) => {
+        const target = letterToEl.get(letter);
+        if (!target) return;
+        showToast(letter);
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    index.addEventListener('click', (e) => {
+        const btn = e.target.closest('.alpha-letter');
+        if (!btn || btn.disabled) return;
+        scrollToLetter(btn.getAttribute('data-letter'));
+    });
+
+    // Swipe support (touch / pointer)
+    const handlePoint = (clientY) => {
+        const rect = index.getBoundingClientRect();
+        const y = Math.min(Math.max(clientY - rect.top, 0), rect.height - 1);
+        const itemH = rect.height / letters.length;
+        const idx = Math.floor(y / itemH);
+        const letter = letters[Math.min(Math.max(idx, 0), letters.length - 1)];
+        if (letterToEl.has(letter)) scrollToLetter(letter);
+        else showToast(letter);
+    };
+
+    let tracking = false;
+    index.addEventListener('pointerdown', (e) => { tracking = true; index.setPointerCapture(e.pointerId); handlePoint(e.clientY); });
+    index.addEventListener('pointermove', (e) => { if (tracking) handlePoint(e.clientY); });
+    index.addEventListener('pointerup', () => { tracking = false; });
+    index.addEventListener('pointercancel', () => { tracking = false; });
+}
+
+function setListMode(mode) {
+    listMode = mode === 'az' ? 'az' : 'categories';
+    localStorage.setItem('kalanera_list_mode', listMode);
+
+    const btnCat = document.getElementById('view-mode-categories');
+    const btnAz = document.getElementById('view-mode-az');
+    if (btnCat && btnAz) {
+        btnCat.setAttribute('aria-selected', listMode === 'categories' ? 'true' : 'false');
+        btnAz.setAttribute('aria-selected', listMode === 'az' ? 'true' : 'false');
+    }
+
+    applyFilters();
 }
 
 
@@ -473,6 +674,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Zoekbalk listener
     const searchInput = document.getElementById('search-input');
     if (searchInput) searchInput.addEventListener('input', applyFilters);
+
+    // 2a. Filter sheet open/close
+    const openBtn = document.getElementById('open-filters');
+    const closeBtn = document.getElementById('close-filters');
+    const resetBtn = document.getElementById('reset-filters');
+    const backdrop = document.getElementById('filter-sheet-backdrop');
+    if (openBtn) openBtn.addEventListener('click', openFilterSheet);
+    if (closeBtn) closeBtn.addEventListener('click', closeFilterSheet);
+    if (resetBtn) resetBtn.addEventListener('click', () => { resetFilters(); });
+    if (backdrop) backdrop.addEventListener('click', closeFilterSheet);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeFilterSheet();
+    });
+
+    // 2b. View mode toggle (Categories / A-Z)
+    const btnCat = document.getElementById('view-mode-categories');
+    const btnAz = document.getElementById('view-mode-az');
+    if (btnCat && btnAz) {
+        // Initialize UI from stored mode
+        btnCat.setAttribute('aria-selected', listMode === 'categories' ? 'true' : 'false');
+        btnAz.setAttribute('aria-selected', listMode === 'az' ? 'true' : 'false');
+
+        btnCat.addEventListener('click', () => setListMode('categories'));
+        btnAz.addEventListener('click', () => setListMode('az'));
+    }
 
     // 3. Mobiel menu
     const menu = document.querySelector('#mobile-menu');

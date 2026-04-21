@@ -41,7 +41,7 @@
     <meta name="geo.placename" content="Καλά Νερά">
     <meta name="geo.position" content="39.3105;23.1205">
     <meta name="ICBM" content="39.3105, 23.1205">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#4a6c4a">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -49,7 +49,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
     
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=1.0.65">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=1.0.75">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -164,21 +164,56 @@
         <button id="close-ios-banner" style="position: absolute; right: 10px; top: 10px; background: transparent; border: none; color: #8e8e93; cursor: pointer; font-size: 18px;">✕</button>
     </div>
 
-        <div class="search-container">
-            <i class="fa fa-search search-icon"></i>
-            <input 
-                type="search" 
-                class="search-input" 
-                id="search-input" 
-                placeholder="Αναζήτηση με όνομα ή κατηγορία..."
-                inputmode="search"
-                enterkeyhint="search"
-                autocomplete="off"
-            >
+        <div class="directory-toolbar">
+            <div class="search-row">
+                <div class="search-container">
+                    <i class="fa fa-search search-icon"></i>
+                    <input 
+                        type="search" 
+                        class="search-input" 
+                        id="search-input" 
+                        placeholder="Αναζήτηση με όνομα ή κατηγορία..."
+                        inputmode="search"
+                        enterkeyhint="search"
+                        autocomplete="off"
+                    >
+                </div>
+
+                <button type="button" class="filter-fab" id="open-filters" aria-haspopup="dialog" aria-controls="filter-sheet" aria-label="Άνοιγμα φίλτρων">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span class="filter-badge" id="filter-badge" aria-hidden="true" style="display:none;">0</span>
+                </button>
+            </div>
+
+            <div class="view-toggle view-toggle-inline" role="tablist" aria-label="Λειτουργία προβολής">
+                <button type="button" class="view-toggle-btn" id="view-mode-categories" role="tab" aria-selected="true">Κατηγορίες</button>
+                <button type="button" class="view-toggle-btn" id="view-mode-az" role="tab" aria-selected="false">A–Z</button>
+            </div>
         </div>
 
-        <div class="filter-container" id="filter-buttons"></div>
-        <div class="filter-container" id="location-buttons"></div>
+        <div class="sheet-backdrop" id="filter-sheet-backdrop" hidden></div>
+        <section class="sheet" id="filter-sheet" role="dialog" aria-modal="true" aria-label="Φίλτρα" hidden>
+            <div class="sheet-handle" aria-hidden="true"></div>
+            <header class="sheet-header">
+                <div class="sheet-title">Φίλτρα</div>
+                <div class="sheet-actions">
+                    <button type="button" class="sheet-btn" id="reset-filters">Επαναφορά</button>
+                    <button type="button" class="sheet-close" id="close-filters" aria-label="Κλείσιμο φίλτρων">✕</button>
+                </div>
+            </header>
+
+            <div class="sheet-content">
+                <div class="filter-group" aria-label="Φίλτρα κατηγορίας">
+                    <div class="filter-label">Κατηγορία</div>
+                    <div class="filter-container" id="filter-buttons"></div>
+                </div>
+
+                <div class="filter-group" aria-label="Φίλτρα τοποθεσίας">
+                    <div class="filter-label">Τοποθεσία</div>
+                    <div class="filter-container" id="location-buttons"></div>
+                </div>
+            </div>
+        </section>
 
         <div id="business-list">
             <p class="status-msg">Τα δεδομένα φορτώνονται...</p>
@@ -253,5 +288,14 @@
 <!-- N8N_SEO_END -->
  
 <script src="app.js"></script>
+
+<nav class="bottom-nav" aria-label="Κύρια πλοήγηση">
+    <div class="bottom-nav-inner">
+        <a href="index-el.html" aria-current="page"><i class="fa-solid fa-house"></i><span>Αρχική</span></a>
+        <a href="wishlist-el.html"><i class="fa-solid fa-heart"></i><span>Αγαπημένα</span></a>
+        <a href="t-form-el.html"><i class="fa-solid fa-circle-plus"></i><span>Προσθήκη</span></a>
+        <a href="c-form-el.html"><i class="fa-solid fa-envelope"></i><span>Επικοινωνία</span></a>
+    </div>
+</nav>
 </body>
 </html>
