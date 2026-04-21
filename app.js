@@ -141,8 +141,8 @@ async function init() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
             allBusinesses = freshData;
           
-            // VOEG DEZE REGEL TOE OM DE DOWNLOAD TE STARTEN:
-           // exportSitemap(allBusinesses); <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<--------------
+            // VOEG DEZE REGEL TOE OM DE DOWNLOAD TE STARTEN: \/ <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<--------------
+            // exportSitemap(allBusinesses); 
 
             showData(); 
         }
