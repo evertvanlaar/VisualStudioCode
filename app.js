@@ -59,7 +59,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.77'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.78'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -804,6 +804,7 @@ function renderMoreSheetContent() {
     if (!container) return;
 
     const isEl = (document.documentElement.lang || 'en') === 'el';
+    const brandName = isEl ? 'ΚάντεΚλικ' : 'KanteKlik';
     const labels = {
         useful: isEl ? 'Χρήσιμα τηλέφωνα' : 'Useful numbers',
         install: isEl ? 'Εγκατάσταση εφαρμογής' : 'Install App',
@@ -880,12 +881,12 @@ function renderMoreSheetContent() {
             <div class="more-links" style="margin-top:10px;">
                 <div class="more-card is-meta">
                     <div class="meta-row">
-                        <span>${labels.developer}: Kanteklik</span>
+                        <span>${labels.developer}: ${brandName}</span>
                         <div class="meta-right" aria-label="Version and developer logo">
                             <div class="meta-version"><code>v${version}</code></div>
                         </div>
                     </div>
-                    ${formattedCopyright ? `<div class="copyright-row"><span class="copyright-text">© ${formattedCopyright}</span><img class="meta-logo" src="logo-72x72.png" alt="Kanteklik" width="28" height="28" loading="lazy"></div>` : ``}
+                    ${formattedCopyright ? `<div class="copyright-row"><span class="copyright-text">© ${formattedCopyright}</span><img class="meta-logo" src="logo-72x72.png" alt="Kalanera InPhoto" width="28" height="28" loading="lazy"></div>` : ``}
                 </div>
             </div>
         </section>
