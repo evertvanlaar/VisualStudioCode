@@ -59,7 +59,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.75'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.77'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -710,6 +710,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 3b. Mobile "More" tab (bottom nav)
+    initMoreTab();
+
     // 4. Wishlist teller bijwerken
     updateWishlistCount();
 
@@ -722,6 +725,219 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Map button is ready");
     }
 });
+
+function initMoreTab() {
+    const moreBtn = document.querySelector('.bottom-nav a[data-more]');
+    if (!moreBtn) return;
+
+    moreBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openMoreSheet();
+    });
+}
+
+function openMoreSheet() {
+    // Only relevant on mobile where bottom nav is shown
+    if (window.innerWidth >= 992) return;
+
+    let backdrop = document.getElementById('more-sheet-backdrop');
+    let sheet = document.getElementById('more-sheet');
+
+    if (!backdrop) {
+        backdrop = document.createElement('div');
+        backdrop.id = 'more-sheet-backdrop';
+        backdrop.className = 'more-sheet-backdrop';
+        backdrop.hidden = true;
+        document.body.appendChild(backdrop);
+    }
+
+    if (!sheet) {
+        sheet = document.createElement('section');
+        sheet.id = 'more-sheet';
+        sheet.className = 'more-sheet';
+        sheet.hidden = true;
+        sheet.setAttribute('role', 'dialog');
+        sheet.setAttribute('aria-modal', 'true');
+
+        const isEl = (document.documentElement.lang || 'en') === 'el';
+        const title = isEl ? 'Περισσότερα' : 'More';
+
+        sheet.innerHTML = `
+            <div class="more-sheet-handle" aria-hidden="true"></div>
+            <header class="more-sheet-header">
+                <div class="more-sheet-title"><i class="fa-solid fa-ellipsis"></i> ${title}</div>
+                <button type="button" class="more-sheet-close" id="more-sheet-close" aria-label="Close">✕</button>
+            </header>
+            <div class="more-sheet-content" id="more-sheet-content"></div>
+        `;
+        document.body.appendChild(sheet);
+    }
+
+    renderMoreSheetContent();
+
+    backdrop.hidden = false;
+    sheet.hidden = false;
+    document.body.classList.add('sheet-open');
+
+    const close = () => closeMoreSheet();
+    backdrop.onclick = close;
+    const closeBtn = document.getElementById('more-sheet-close');
+    if (closeBtn) closeBtn.onclick = close;
+
+    // ESC to close
+    const onKey = (e) => {
+        if (e.key === 'Escape') closeMoreSheet();
+    };
+    document.addEventListener('keydown', onKey, { once: true });
+}
+
+function closeMoreSheet() {
+    const backdrop = document.getElementById('more-sheet-backdrop');
+    const sheet = document.getElementById('more-sheet');
+    if (backdrop) backdrop.hidden = true;
+    if (sheet) sheet.hidden = true;
+    document.body.classList.remove('sheet-open');
+}
+
+function renderMoreSheetContent() {
+    const container = document.getElementById('more-sheet-content');
+    if (!container) return;
+
+    const isEl = (document.documentElement.lang || 'en') === 'el';
+    const labels = {
+        useful: isEl ? 'Χρήσιμα τηλέφωνα' : 'Useful numbers',
+        install: isEl ? 'Εγκατάσταση εφαρμογής' : 'Install App',
+        about: isEl ? 'Σχετικά με εμάς' : 'About us',
+        follow: isEl ? 'Ακολουθήστε μας' : 'Follow us',
+        contact: isEl ? 'Επικοινωνία' : 'Contact',
+        stats: isEl ? 'Στατιστικά' : 'Statistics',
+        developer: isEl ? 'Με την υποστήριξη' : 'Powered by'
+    };
+
+    const aboutText = getFooterAboutText() || (isEl
+        ? 'Βοηθάμε τους ταξιδιώτες να ανακαλύψουν τα καλύτερα μέρη στην περιοχή.'
+        : 'We help travelers discover the best places in the area.'
+    );
+
+    const fb = getFooterFacebookLink();
+    const fbHref = (fb && fb.href) ? fb.href : 'https://www.facebook.com/kalanera.info';
+    const fbLabel = (fb && fb.label) ? fb.label : labels.follow;
+
+    const gc = getFooterGoatcounterLink();
+    const statsHref = (gc && gc.href) ? gc.href : 'http://www.goatcounter.com';
+    const statsLabel = (gc && gc.label) ? gc.label : labels.stats;
+
+    const copyright = getFooterCopyrightText();
+    const version = (typeof APP_VERSION !== 'undefined') ? APP_VERSION : '';
+
+    const formattedCopyright = (() => {
+        if (!copyright) return '';
+        // Avoid double copyright symbol (some pages already include "©")
+        const withoutLeading = copyright.replace(/^\s*©+\s*/g, '').trim();
+        // Render "E-Project..." on the next line for readability
+        const escaped = escapeHtml(withoutLeading);
+        return escaped.replace(/\sE-Project\b/g, '<br>E-Project');
+    })();
+
+    container.innerHTML = `
+        <section class="more-section">
+            <h3>${labels.useful}</h3>
+            <div class="more-links">
+                <a href="tel:+302423086222"><span><i class="fa-solid fa-shield"></i> ${isEl ? 'Αστυνομία Μηλιές' : 'Police Office Milies'}</span><small>+30 24230 86222</small></a>
+                <a href="tel:+302423022385"><span><i class="fa-solid fa-pills"></i> ${isEl ? 'Φαρμακείο Καλά Νερά' : 'Pharmacy Kala Nera'}</span><small>+30 24230 22385</small></a>
+                <a href="tel:+302423022160"><span><i class="fa-solid fa-pills"></i> ${isEl ? 'Φαρμακείο Κάτω Γατζέα' : 'Pharmacy Kato Gatzea'}</span><small>+30 24230 22160</small></a>
+                <a href="tel:+302423086666"><span><i class="fa-solid fa-user-doctor"></i> ${isEl ? 'Ιατρός Καλά Νερά' : 'Doctor Kala Nera'}</span><small>+30 24230 86666</small></a>
+            </div>
+        </section>
+
+        <section class="more-section">
+            <h3>${labels.install}</h3>
+            <div class="more-links">
+                <button type="button" onclick="if(typeof triggerManualInstall === 'function'){ triggerManualInstall(event); }">
+                    <span><i class="fa fa-download"></i> ${isEl ? 'Εγκατάσταση' : 'Install'}</span>
+                    <small>${isEl ? 'PWA' : 'PWA'}</small>
+                </button>
+            </div>
+        </section>
+
+        <section class="more-section more-about">
+            <h3>${labels.about}</h3>
+            <p>${escapeHtml(aboutText)}</p>
+            <div class="more-links" style="margin-top:10px;">
+                <a href="${fbHref}" target="_blank" rel="noopener">
+                    <span><i class="fab fa-facebook-f"></i> ${fbLabel}</span>
+                    <small>Facebook</small>
+                </a>
+                <a href="mailto:info@spiti.tech?">
+                    <span><i class="fa-solid fa-envelope"></i> ${labels.contact}</span>
+                    <small>info@spiti.tech</small>
+                </a>
+                <a href="${statsHref}" target="_blank" rel="noopener">
+                    <span><i class="fa-solid fa-chart-line"></i> ${statsLabel}</span>
+                    <small>GoatCounter</small>
+                </a>
+            </div>
+            <div class="more-links" style="margin-top:10px;">
+                <div class="more-card is-meta">
+                    <div class="meta-row">
+                        <span>${labels.developer}: Kanteklik</span>
+                        <div class="meta-right" aria-label="Version and developer logo">
+                            <div class="meta-version"><code>v${version}</code></div>
+                        </div>
+                    </div>
+                    ${formattedCopyright ? `<div class="copyright-row"><span class="copyright-text">© ${formattedCopyright}</span><img class="meta-logo" src="logo-72x72.png" alt="Kanteklik" width="28" height="28" loading="lazy"></div>` : ``}
+                </div>
+            </div>
+        </section>
+    `;
+}
+
+function getFooterAboutText() {
+    const footer = document.querySelector('footer.site-footer');
+    if (!footer) return '';
+    const col = footer.querySelector('.footer-container .footer-column p');
+    return col && col.textContent ? col.textContent.trim() : '';
+}
+
+function getFooterCopyrightText() {
+    const footer = document.querySelector('footer.site-footer');
+    if (!footer) return '';
+    const p = footer.querySelector('.footer-bottom p');
+    return p && p.textContent ? p.textContent.trim() : '';
+}
+
+function getFooterFacebookLink() {
+    const footer = document.querySelector('footer.site-footer');
+    if (!footer) return null;
+    const link = footer.querySelector('.social-icons a[href*="facebook.com"]');
+    if (!link) return null;
+    return {
+        href: link.getAttribute('href'),
+        label: (footer.querySelector('.footer-column h3') && footer.querySelectorAll('.footer-column h3')[2])
+            ? footer.querySelectorAll('.footer-column h3')[2].textContent.trim()
+            : ''
+    };
+}
+
+function getFooterGoatcounterLink() {
+    const footer = document.querySelector('footer.site-footer');
+    if (!footer) return null;
+    const link = footer.querySelector('a[href*="goatcounter"]');
+    if (!link) return null;
+    return {
+        href: link.getAttribute('href'),
+        label: link.textContent ? link.textContent.trim() : ''
+    };
+}
+
+function escapeHtml(str) {
+    return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
 
 
 
@@ -1036,6 +1252,9 @@ window.addEventListener('appinstalled', () => {
  */
 // --- ÉÉN SCHONE EN WERKENDE TOAST FUNCTIE ---
 function showInstallToast() {
+    // Install is now integrated in the More menu
+    return;
+
     // 1. Alleen tonen als we NIET in de app zelf zitten
     const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
     if (isPWA) return;

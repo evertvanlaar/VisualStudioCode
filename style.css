@@ -1,4 +1,4 @@
-/* version v75*/
+/* version v77*/
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
 @keyframes slideDown{from{transform: translate(-50%, -100%); opacity: 0}to{transform: translate(-50%, 0); opacity: 1}}
@@ -31,6 +31,194 @@ body{font-family:'Inter', sans-serif;background:var(--bg);margin:0;padding:0;col
 .bottom-nav a i{font-size:18px;color:inherit}
 .bottom-nav a[aria-current="page"]{color:var(--primary-olive)}
 
+/* More sheet (mobile bottom tab) */
+.more-sheet-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,0.45);
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+  z-index:10030;
+}
+.more-sheet-backdrop[hidden]{display:none !important}
+
+.more-sheet{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:10031;
+  background:rgba(255,255,255,0.96);
+  border-radius:22px 22px 0 0;
+  border-top:1px solid rgba(15,23,42,0.10);
+  box-shadow:0 -24px 70px rgba(0,0,0,0.30);
+  max-height:min(78vh, 720px);
+  display:flex;
+  flex-direction:column;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.more-sheet[hidden]{display:none !important}
+
+.more-sheet-handle{width:44px;height:5px;border-radius:99px;background:rgba(15,23,42,0.12);margin:10px auto 6px auto}
+.more-sheet-header{display:flex;align-items:center;justify-content:space-between;padding:8px 14px 10px 14px}
+.more-sheet-title{font-size:16px;font-weight:1000;color:#0f172a;display:flex;align-items:center;gap:10px}
+.more-sheet-title i{color:#2d5a27}
+.more-sheet-close{appearance:none;-webkit-appearance:none;border:none;background:transparent;font-size:20px;line-height:1;padding:8px;cursor:pointer;color:rgba(15,23,42,0.65)}
+.more-sheet-content{overflow:auto;padding:0 14px 14px 14px}
+
+.more-section{margin-top:12px;padding:12px;border-radius:16px;border:1px solid rgba(15, 23, 42, 0.08);background:rgba(148,163,184,0.08);overflow:hidden}
+.more-section h3{margin:0 0 8px 0;font-size:12px;font-weight:1000;letter-spacing:0.08em;text-transform:uppercase;color:rgba(71,85,105,0.9)}
+.more-links{display:flex;flex-direction:column;gap:6px}
+.more-links a, .more-links button, .more-card{
+  appearance:none;-webkit-appearance:none;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:12px 12px;
+  border-radius:14px;
+  border:1px solid rgba(15, 23, 42, 0.10);
+  background:rgba(255,255,255,0.78);
+  color:#0f172a;
+  text-decoration:none;
+  font-weight:900;
+  font-size:14px;
+  cursor:pointer;
+  box-sizing:border-box;
+  min-width:0;
+}
+.more-links a i, .more-links button i{color:#2d5a27}
+.more-links a:active, .more-links button:active{transform:scale(0.99)}
+.more-links small{color:rgba(71,85,105,0.85);font-weight:800}
+
+/* Prevent right-side labels from pushing outside */
+.more-links a > span,
+.more-links button > span{display:flex;align-items:center;gap:10px;min-width:0}
+.more-links a > span,
+.more-links button > span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.more-links a > small,
+.more-links button > small{flex:0 0 auto;margin-left:10px;white-space:nowrap}
+
+/* Same layout helpers for non-link cards */
+.more-card > span{display:flex;align-items:center;gap:10px;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.more-card > small{flex:0 0 auto;margin-left:10px;white-space:nowrap}
+
+/* Combined meta card (developer + copyright) */
+.more-card.is-meta{
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:flex-start;
+  gap:6px;
+  cursor:default;
+}
+.more-card.is-meta .meta-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  min-width:0;
+}
+.more-card.is-meta .meta-row > span{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+  flex:1;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.more-card.is-meta .meta-row > small{flex:0 0 auto;margin-left:10px;white-space:nowrap}
+.more-card.is-meta .copyright-row{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  font-size:12px;
+  font-weight:800;
+  color:rgba(71,85,105,0.9);
+  line-height:1.3;
+}
+
+/* Right bottom: version + logo */
+.more-card.is-meta .meta-right{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  justify-content:flex-end;
+  gap:6px;
+  flex:0 0 auto;
+  margin-left:10px;
+}
+.more-card.is-meta .meta-version{line-height:1}
+.more-card.is-meta .meta-logo{
+  display:block;
+  width:28px;
+  height:28px;
+  object-fit:contain;
+}
+
+.more-card.is-meta .copyright-text{
+  flex:1;
+  min-width:0;
+  white-space:normal;
+  overflow:visible;
+  text-overflow:unset;
+}
+
+.more-about p{margin:0;color:#334155;font-weight:600;line-height:1.5;font-size:14px}
+.more-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;color:rgba(71,85,105,0.85);font-size:12px;font-weight:800}
+.more-meta .meta-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.more-meta code{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-weight:900}
+
+/* Mobile: remove hamburger menu entirely */
+@media screen and (max-width: 991px){
+  .menu-toggle{display:none !important}
+  .nav-links{display:none !important}
+}
+
+/* Mobile header layout: logo / weather / language */
+@media screen and (max-width: 991px){
+  .nav-container{
+    display:grid !important;
+    grid-template-columns:auto 1fr auto;
+    align-items:center !important;
+    gap:10px;
+  }
+
+  .nav-container .logo{justify-self:start;white-space:nowrap}
+  .nav-container .lang-link-mobile{justify-self:end}
+
+  /* Meteoblue weather link wrapper */
+  .nav-container > a[href*="meteoblue.com"]{
+    justify-self:center;
+    max-width:100%;
+  }
+
+  .weather-icon-container{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    padding:4px 10px;
+    border-radius:999px;
+    background:rgba(241,245,249,0.7);
+    border:1px solid rgba(226, 232, 240, 0.9);
+  }
+}
+
+/* FINAL OVERRIDES (must be last): keep hamburger hidden on mobile */
+@media screen and (max-width: 991px){
+  #mobile-menu{display:none !important}
+  #nav-list{display:none !important}
+}
+
+/* Mobile: hide footer (content moved to More) */
+@media screen and (max-width: 991px){
+  footer.site-footer{display:none !important}
+}
+
 @media screen and (max-width: 991px){
   .bottom-nav{display:block}
   body{padding-bottom:calc(var(--bottom-nav-h) + env(safe-area-inset-bottom))}
@@ -58,6 +246,20 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:25px}
 .nav-links a{text-decoration:none;color:#2d5a27;font-weight:700;font-size:14px;transition:0.3s;padding:8px 12px;border-radius:12px}
 
 .nav-links a:hover{background:rgba(45, 90, 39, 0.05)}
+
+/* Desktop: keep topnav compact + aligned (Contact removed) */
+@media screen and (min-width: 992px){
+  .nav-container{justify-content:flex-start !important;gap:14px}
+  .logo{margin-right:6px}
+
+  /* Order items: logo -> nav -> weather */
+  .nav-container .logo{order:1}
+  .nav-container .nav-links{order:2;margin-left:auto;gap:18px}
+  .nav-container > a[href*="meteoblue.com"]{order:3;margin-left:12px}
+
+  /* Ensure we only show the desktop language switch */
+  .lang-link-mobile{display:none !important}
+}
 
 .hero-section{width:100%;height:65vh;min-height:400px;background-image:linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), url('villageoverview.jpg');background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;position:relative}
 
@@ -736,43 +938,6 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 @media screen and (max-width: 992px){body{background-color:#f8faf4 !important}body .business-card{width:92% !important;max-width:650px !important;margin:0 auto !important;float:none !important;display:block !important;box-sizing:border-box !important}html, body{overflow-x:hidden !important;width:100% !important;position:relative !important}body .business-container, body .results-container{display:flex !important;flex-direction:column !important;align-items:center !important;width:100% !important;padding:20px 10px !important;gap:30px !important;overflow-x:hidden !important}}
 
 @media all and (display-mode: standalone), (display-mode: fullscreen){ul#nav-list li#menu-install-item{display:none !important}}
-
-/* Mobile: bottom-nav is primary; hamburger keeps only utilities */
-@media screen and (max-width: 991px){
-  /* Hide duplicate primary routes in hamburger menu */
-  /* Preferred: remove the whole <li> so no empty gaps remain */
-  @supports selector(li:has(> a)){
-    ul#nav-list li:has(> a[href="index.html"]),
-    ul#nav-list li:has(> a[href="index-el.html"]),
-    ul#nav-list li:has(> a[href="wishlist.html"]),
-    ul#nav-list li:has(> a[href="wishlist-el.html"]),
-    ul#nav-list li:has(> a[href="t-form.html"]),
-    ul#nav-list li:has(> a[href="t-form-el.html"]),
-    ul#nav-list li:has(> a[href="c-form.html"]),
-    ul#nav-list li:has(> a[href="c-form-el.html"]){display:none !important}
-  }
-
-  /* Fallback: if :has isn't supported, hide only the links */
-  @supports not selector(li:has(> a)){
-    ul#nav-list li a[href="index.html"],
-    ul#nav-list li a[href="index-el.html"],
-    ul#nav-list li a[href="wishlist.html"],
-    ul#nav-list li a[href="wishlist-el.html"],
-    ul#nav-list li a[href="t-form.html"],
-    ul#nav-list li a[href="t-form-el.html"],
-    ul#nav-list li a[href="c-form.html"],
-    ul#nav-list li a[href="c-form-el.html"]{display:none !important}
-  }
-
-  /* Keep emergency + install as "More" utilities */
-  ul#nav-list li.nav-emergency-item,
-  ul#nav-list li#menu-install-item{display:block !important}
-
-  /* Tidy menu spacing when most items are hidden */
-  ul#nav-list{padding-top:6px !important}
-  ul#nav-list li.nav-emergency-item > a,
-  ul#nav-list li#menu-install-item > a{border-bottom:none !important}
-}
 
 /* Force media cards to stay "image on top" on mobile (overrides older !important rules) */
 @media screen and (max-width: 991px){
