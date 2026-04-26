@@ -1,4 +1,4 @@
-/* version 1.0.116 */
+/* version 1.0.117 */
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
 @keyframes slideDown{from{transform: translate(-50%, -100%); opacity: 0}to{transform: translate(-50%, 0); opacity: 1}}
@@ -239,6 +239,15 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:25px}
 .bus-page-title-row{display:inline-flex;align-items:center;gap:12px;flex-wrap:wrap}
 
 .bus-page-title-icon{color:#2d5a27;font-size:0.95em;line-height:1;opacity:0.95}
+
+/* Greek bus title: keep «Καλά Νερά» on its own line on narrow screens (no break between Καλά / Νερά) */
+.bus-page-title-row--el{align-items:flex-start}
+.bus-page-title-text--el{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0;max-width:100%}
+.bus-page-title-text--el .bus-page-title-place{white-space:nowrap}
+@media (min-width:520px){
+  .bus-page-title-text--el{flex-direction:row;flex-wrap:wrap;align-items:baseline;justify-content:center;text-align:left;gap:0.35em}
+  .bus-page-title-row--el{align-items:center}
+}
 
 .bus-page-deck{display:flex;flex-direction:column;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin:4px 0 14px;text-align:center}
 
