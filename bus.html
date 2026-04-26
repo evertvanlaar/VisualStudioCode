@@ -10,12 +10,17 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=1.0.108">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=1.0.112">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
 <body data-bus-view="full">
+
+<div id="offline-indicator" class="offline-banner" style="display: none;">
+    <i class="fa fa-plane"></i> You are currently browsing offline. Data is loaded from cache.
+</div>
+
 <header class="site-header">
     <nav class="main-nav">
         <div class="nav-container">
@@ -151,7 +156,7 @@
     </section>
 </div>
 
-<script src="app.js?v=1.0.108"></script>
+<script src="app.js?v=1.0.112"></script>
 
 <nav class="bottom-nav" aria-label="Primary">
     <div class="bottom-nav-inner">

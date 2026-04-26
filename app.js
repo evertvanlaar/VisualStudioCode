@@ -91,7 +91,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.108'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.112'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -1354,14 +1354,12 @@ function busRenderList(container, buses, { limit, routeDir } = {}) {
 async function busFetchSchedule(dir) {
     const url = new URL(N8N_BUS_WEBHOOK_URL);
     // Recommended query contract for n8n:
-    // ?from=Kala%20Nera&dir=volos|milies|argalasti&remaining=1
+    // ?from=Kala%20Nera&dir=volos|milies|argalasti&remaining=0|1
     url.searchParams.set('from', 'Kala Nera');
     url.searchParams.set('dir', dir || BUS_DEFAULT_DIR);
-    // remaining=1 for homepage (only upcoming), remaining=0 for full timetable pages
-    const viewMode = document.body && document.body.getAttribute('data-bus-view')
-        ? document.body.getAttribute('data-bus-view')
-        : 'compact';
-    url.searchParams.set('remaining', viewMode === 'full' ? '0' : '1');
+    // Always request full-day rows: compact views filter with busFilterRemainingToday client-side.
+    // One shape in cache → offline works for every destination + bus.html + index widget.
+    url.searchParams.set('remaining', '0');
 
     const res = await fetch(url.toString(), {
         method: 'GET',
@@ -1389,9 +1387,22 @@ function busReadCache(dir) {
 
 function busWriteCache(dir, data) {
     try {
-        const existing = busReadCache(dir) || { savedAt: new Date().toISOString(), byDir: {} };
-        existing.savedAt = new Date().toISOString();
-        existing.byDir = existing.byDir || {};
+        /** Merge into existing storage. Never use busReadCache(dir) as base: it returns null
+         *  when `dir` was not cached yet, which used to wipe all other directions — breaking offline. */
+        let byDir = {};
+        const raw = localStorage.getItem(BUS_STORAGE_KEY);
+        if (raw) {
+            try {
+                const parsed = JSON.parse(raw);
+                if (parsed && typeof parsed === 'object' && parsed.byDir && typeof parsed.byDir === 'object') {
+                    byDir = { ...parsed.byDir };
+                }
+            } catch (e) { /* ignore */ }
+        }
+        const existing = {
+            savedAt: new Date().toISOString(),
+            byDir,
+        };
         existing.byDir[dir] = Array.isArray(data) ? data : [];
         localStorage.setItem(BUS_STORAGE_KEY, JSON.stringify(existing));
     } catch (e) {}
@@ -1402,6 +1413,38 @@ function busCacheFresh(savedAtIso) {
     const ms = new Date(savedAtIso).getTime();
     if (Number.isNaN(ms)) return false;
     return (Date.now() - ms) <= BUS_CACHE_TTL_MS;
+}
+
+/** `byDir` object from localStorage, or null. */
+function busGetByDirFromStorage() {
+    try {
+        const raw = localStorage.getItem(BUS_STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object' || !parsed.byDir || typeof parsed.byDir !== 'object') return null;
+        return parsed.byDir;
+    } catch (e) {
+        return null;
+    }
+}
+
+/**
+ * When online, fetch every destination not yet present in cache (background, paced).
+ * Same pattern as business list: one session fills localStorage for offline use.
+ */
+async function busPrefetchMissingDirs() {
+    if (!navigator.onLine) return;
+    const byDir = busGetByDirFromStorage() || {};
+    const missing = BUS_VALID_DIRS.filter((d) => !Array.isArray(byDir[d]));
+    if (!missing.length) return;
+    for (const dir of missing) {
+        try {
+            const data = await busFetchSchedule(dir);
+            const list = Array.isArray(data) ? data : (data && data.items ? data.items : []);
+            busWriteCache(dir, list);
+        } catch (e) { /* skip dir */ }
+        await new Promise((r) => setTimeout(r, 150));
+    }
 }
 
 /** KTEL Pelion / Magnesia map in <dialog> (bus full pages only). */
@@ -1495,6 +1538,7 @@ function initBusSchedule() {
 
         if (!force && canUseCache) {
             renderFromCacheIfAny();
+            void busPrefetchMissingDirs();
             return;
         }
 
@@ -1524,6 +1568,7 @@ function initBusSchedule() {
 
             const normalized = list.map(busNormalizeItem);
             renderFromNormalized(normalized, new Date().toISOString());
+            void busPrefetchMissingDirs();
         } catch (e) {
             // Fall back to cache if present
             if (!renderFromCacheIfAny()) {
@@ -1557,6 +1602,10 @@ function initBusSchedule() {
     });
 
     if (retryBtn) retryBtn.addEventListener('click', () => load({ force: true }));
+
+    window.addEventListener('online', () => {
+        void busPrefetchMissingDirs();
+    });
 
     // Initial
     load({ force: false });
