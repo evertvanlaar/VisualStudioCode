@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Kala Nera | Bus Timetable</title>
+    <title>Bus timetable Kala Nera</title>
     <link rel="canonical" href="https://www.kalanera.gr/bus.html">
     <meta name="description" content="Bus timetable from Kala Nera to Volos, Afissos, Milies, Vyzitsa, Pinakates, Argalasti, Siki, Promiri, Katigiorgis, Milina, Platanias and Trikeri (Pelion, Greece).">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -10,7 +10,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=1.0.112">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=1.0.116">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -25,19 +25,59 @@
     <nav class="main-nav">
         <div class="nav-container">
             <a href="index.html" class="logo">Kala <span>Nera</span></a>
+
             <a href="bus-el.html" class="lang-link-mobile">
                 <img src="https://flagcdn.com/w20/gr.png" alt="Ελληνικά">
             </a>
+
+            <a href="https://www.meteoblue.com/en/weather/forecast/week/kal%c3%a1-ner%c3%a1_greece_261556"
+                target="_blank"
+                rel="noopener"
+                style="text-decoration: none; color: inherit;">
+            <div class="weather-icon-container">
+                <span id="weather-icon"></span>
+                <span id="weather-temp">--°C</span>
+            </div>
+            </a>
+
+            <button class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
             <ul class="nav-links" id="nav-list">
                 <li><a href="index.html">Home</a></li>
+                <li><a href="bus.html" class="active"><i class="fa-solid fa-bus"></i> Bus (Kala Nera) / KTEL</a></li>
                 <li><a href="wishlist.html"><i class="fa-solid fa-heart menu-heart"></i> Favorites</a></li>
                 <li><a href="t-form.html">Add your Business</a></li>
+
+                <li class="nav-emergency-item">
+                    <a href="#" onclick="toggleNavEmergency(event)" class="sos-trigger">
+                         <i class="fa-solid fa-phone" style="color: #3498db;"></i>Useful Numbers
+                    </a>
+                    <div id="navEmergencyMenu" class="nav-sos-dropdown">
+                        <div class="nav-sos-header"> </div>
+                        <a href="tel:+302423086222"><i class="fa-solid fa-shield"></i> Police Office Milies <span class="phone-no">(+30 24230 86222)</span></a>
+                        <a href="tel:+302423022385"><i class="fa-solid fa-pills"></i> Pharmacy Kala Nera <span class="phone-no">(+30 24230 22385)</span></a>
+                        <a href="tel:+302423022160"><i class="fa-solid fa-pills"></i> Pharmacy Kato Gatzea <span class="phone-no">(+30 24230 22160)</span></a>
+                        <a href="tel:+302423086666"><i class="fa-solid fa-user-doctor"></i> Doctor Kala Nera <span class="phone-no">(+30 24230 86666)</span></a>
+                    </div>
+                </li>
+
+                <li id="menu-install-item" class="mobile-only-item">
+                    <a href="#" onclick="triggerManualInstall(event)">
+                        <i class="fa fa-download" style="color: var(--install-color) !important;"></i> Install App
+                    </a>
+                </li>
                 <li>
                     <a href="bus-el.html" class="lang-link">
                         <img src="https://flagcdn.com/w20/gr.png" alt="Ελληνικά" style="width: 20px; vertical-align: middle; margin-right: 5px;">
                     </a>
                 </li>
             </ul>
+
         </div>
     </nav>
 </header>
@@ -47,7 +87,7 @@
         <h1 class="bus-page-title">
             <span class="bus-page-title-row">
                 <i class="fa-solid fa-bus bus-page-title-icon" aria-hidden="true"></i>
-                <span>Bus timetable</span>
+                <span>Bus timetable Kala Nera</span>
             </span>
         </h1>
         <div class="bus-page-deck">
@@ -58,10 +98,10 @@
         </div>
     </header>
 
-    <section class="bus-section" aria-label="Bus timetable">
+    <section class="bus-section" aria-label="Bus timetable Kala Nera">
         <div class="bus-header">
             <div class="bus-title">
-                <h2>Today</h2>
+                <h2>TODAY</h2>
                 <div class="bus-subtitle">
                     <span>From Kala Nera</span>
                     <span id="bus-route" class="bus-subtitle-route"></span>
@@ -156,7 +196,7 @@
     </section>
 </div>
 
-<script src="app.js?v=1.0.112"></script>
+<script src="app.js?v=1.0.116"></script>
 
 <nav class="bottom-nav" aria-label="Primary">
     <div class="bottom-nav-inner">

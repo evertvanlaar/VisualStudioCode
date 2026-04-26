@@ -32,7 +32,7 @@ const BUS_DIR_LABELS = {
   volos: { en: 'Volos', el: 'Βόλος' },
   milies: { en: 'Milies', el: 'Μηλιές' },
   argalasti: { en: 'Argalasti', el: 'Αργαλαστή' },
-  afissos: { en: 'Afissos', el: 'Αφήσσος' },
+  afissos: { en: 'Afissos', el: 'Άφησσος' },
   vyzitsa: { en: 'Vyzitsa', el: 'Βυζίτσα' },
   pinakates: { en: 'Pinakates', el: 'Πινακάτες' },
   siki: { en: 'Siki', el: 'Σήκι' },
