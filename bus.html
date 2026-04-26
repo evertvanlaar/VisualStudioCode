@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kala Nera | Bus Timetable</title>
+    <link rel="canonical" href="https://www.kalanera.gr/bus.html">
+    <meta name="description" content="Bus timetable from Kala Nera to Volos, Afissos, Milies, Vyzitsa, Pinakates, Argalasti, Siki, Promiri, Katigiorgis, Milina, Platanias and Trikeri (Pelion, Greece).">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#4a6c4a">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=1.0.108">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+</head>
+<body data-bus-view="full">
+<header class="site-header">
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Kala <span>Nera</span></a>
+            <a href="bus-el.html" class="lang-link-mobile">
+                <img src="https://flagcdn.com/w20/gr.png" alt="Ελληνικά">
+            </a>
+            <ul class="nav-links" id="nav-list">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="wishlist.html"><i class="fa-solid fa-heart menu-heart"></i> Favorites</a></li>
+                <li><a href="t-form.html">Add your Business</a></li>
+                <li>
+                    <a href="bus-el.html" class="lang-link">
+                        <img src="https://flagcdn.com/w20/gr.png" alt="Ελληνικά" style="width: 20px; vertical-align: middle; margin-right: 5px;">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<div class="main-container">
+    <header class="bus-page-heading">
+        <h1 class="bus-page-title">
+            <span class="bus-page-title-row">
+                <i class="fa-solid fa-bus bus-page-title-icon" aria-hidden="true"></i>
+                <span>Bus timetable</span>
+            </span>
+        </h1>
+        <div class="bus-page-deck">
+            <a class="bus-ktel-glossy" href="https://ktelvolou.gr/en/routes/list/" target="_blank" rel="noopener noreferrer" title="KTEL Volos — official route list" aria-label="KTEL Volos — official route list (opens in new tab)">
+                <img class="bus-ktel-logo" src="pix/ktel-logo.jpg" alt="KTEL Volos" width="120" height="36" loading="lazy" decoding="async">
+            </a>
+            <span class="bus-page-deck-hint">Regional bus operator (Magnesia)</span>
+        </div>
+    </header>
+
+    <section class="bus-section" aria-label="Bus timetable">
+        <div class="bus-header">
+            <div class="bus-title">
+                <h2>Today</h2>
+                <div class="bus-subtitle">
+                    <span>From Kala Nera</span>
+                    <span id="bus-route" class="bus-subtitle-route"></span>
+                    <span id="bus-line-hint" class="bus-line-hint" hidden></span>
+                </div>
+            </div>
+            <div class="bus-controls bus-controls--select">
+                <label for="bus-dir-select" class="bus-dest-label">Where to?</label>
+                <div class="bus-picker-strip" role="group" aria-label="Destination and regional map">
+                    <div class="bus-picker-stack">
+                        <select id="bus-dir-select" class="bus-dir-select" aria-label="Choose destination from Kala Nera">
+                            <optgroup label="Main">
+                                <option value="volos" selected>Volos</option>
+                                <option value="afissos">Afissos</option>
+                            </optgroup>
+                            <optgroup label="Mountain line">
+                                <option value="milies">Milies</option>
+                                <option value="vyzitsa">Vyzitsa</option>
+                                <option value="pinakates">Pinakates</option>
+                            </optgroup>
+                            <optgroup label="South (A)">
+                                <option value="argalasti">Argalasti</option>
+                                <option value="siki">Siki</option>
+                                <option value="promiri">Promiri</option>
+                                <option value="katigiorgis">Katigiorgis</option>
+                            </optgroup>
+                            <optgroup label="South (B)">
+                                <option value="milina">Milina</option>
+                                <option value="platanias">Platanias</option>
+                                <option value="trikeri">Trikeri</option>
+                            </optgroup>
+                        </select>
+                        <button type="button" class="bus-map-open" id="bus-pelion-map-open" aria-haspopup="dialog" aria-controls="bus-pelion-map-dialog">
+                            <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
+                            <span class="bus-map-open__text bus-map-open__text--full">Pelion &amp; Magnesia map</span>
+                            <span class="bus-map-open__text bus-map-open__text--short">Map</span>
+                        </button>
+                    </div>
+                    <button type="button" class="bus-map-preview" data-open-pelion-map aria-label="Open full map: Pelion and Magnesia (KTEL)">
+                        <img src="pix/map_magnesia_en.gif" alt="" width="140" height="90" loading="lazy" decoding="async" class="bus-map-preview__img">
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <dialog id="bus-pelion-map-dialog" class="bus-pelion-dialog" aria-labelledby="bus-pelion-map-title">
+            <div class="bus-pelion-dialog__shell">
+                <header class="bus-pelion-dialog__head">
+                    <h3 id="bus-pelion-map-title" class="bus-pelion-dialog__title">Pelion &amp; Magnesia — bus map</h3>
+                    <button type="button" class="bus-pelion-dialog__close" aria-label="Close map">
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    </button>
+                </header>
+                <div class="bus-pelion-dialog__body">
+                    <img id="bus-pelion-map-img" class="bus-pelion-dialog__img" alt="Regional bus map of Magnesia and Pelion with place names, as on the KTEL website." data-map-src="pix/map_magnesia_en.gif" width="900" height="600" decoding="async">
+                </div>
+                <p class="bus-pelion-dialog__note">Place names and network as shown by KTEL online. For orientation when choosing a destination — not an official KTEL document.</p>
+            </div>
+        </dialog>
+
+        <div class="bus-meta">
+            <div id="bus-last-updated" class="bus-last-updated" aria-live="polite"></div>
+            <button type="button" id="bus-retry" class="bus-retry" hidden>Retry</button>
+        </div>
+
+        <div class="bus-next-highlight">
+            <div class="bus-subsection-title bus-subsection-title--next"><i class="fa-solid fa-bus bus-subsection-icon" aria-hidden="true"></i> Next bus</div>
+            <div id="bus-next-container" class="bus-container bus-container--next" aria-live="polite">
+                <div class="bus-skeleton" aria-hidden="true"></div>
+            </div>
+        </div>
+
+        <div class="bus-full-section">
+            <div class="bus-subsection-title bus-subsection-title--full">Full timetable today</div>
+            <div id="bus-full-container" class="bus-container bus-container--full" aria-live="polite">
+                <div class="bus-skeleton" aria-hidden="true"></div>
+                <div class="bus-skeleton" aria-hidden="true"></div>
+                <div class="bus-skeleton" aria-hidden="true"></div>
+            </div>
+        </div>
+
+        <div class="bus-disclaimer-block" role="note" aria-label="About these times">
+            <p class="bus-disclaimer"><strong>Times</strong> for the main-road bus stop (bakery) = <strong>Volos KTEL</strong> timetable <strong>+ ~30 min</strong> to Kala Nera.</p>
+            <p class="bus-disclaimer"><strong>Not</strong> an official timetable for this stop.</p>
+            <p class="bus-disclaimer-tip">Tip: be at the stop 10 minutes early.</p>
+            <p class="bus-disclaimer-offline">If you are offline, this page shows the last cached timetable: <a class="bus-ktel-link" href="https://ktelvolou.gr/en/routes/list/" target="_blank" rel="noopener">Official KTEL timetables</a></p>
+        </div>
+        <div class="bus-service-info" aria-label="Volos station and KTEL contact">
+            <p><strong>Volos:</strong> Buses depart from the main KTEL Magnesia bus station at <a class="bus-ktel-link" href="https://www.google.com/maps/search/?api=1&amp;query=KTEL%20Magnesia%20Zachou%205%20Volos%20Greece" target="_blank" rel="noopener noreferrer" title="Open in Google Maps">Zachou Street 5, Volos</a>.</p>
+            <p><strong>Contact:</strong> Tourists can call <a class="bus-ktel-link" href="tel:+302421033254" title="Call KTEL information">+30&nbsp;24210&nbsp;33254</a> for current schedule changes.</p>
+        </div>
+    </section>
+</div>
+
+<script src="app.js?v=1.0.108"></script>
+
+<nav class="bottom-nav" aria-label="Primary">
+    <div class="bottom-nav-inner">
+        <a href="index.html"><i class="fa-solid fa-house"></i><span>Home</span></a>
+        <a href="wishlist.html"><i class="fa-solid fa-heart"></i><span>Favorites</span></a>
+        <a href="t-form.html"><i class="fa-solid fa-circle-plus"></i><span>Add</span></a>
+        <a href="#" data-more><i class="fa-solid fa-ellipsis"></i><span>More</span></a>
+    </div>
+</nav>
+</body>
+</html>
+

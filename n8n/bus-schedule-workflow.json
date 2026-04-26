@@ -1,0 +1,172 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "path": "bus-schedule",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook (GET) bus-schedule",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        80
+      ],
+      "id": "2bc5c0f1-8059-46e3-a250-d8dcc7045d68",
+      "webhookId": "d84a6904-9e22-43d6-b4e5-6cc21458c5ef"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1DGtUvOvJ35MzXsZBZOPR1xzkyb0V_sMttOKcv1JBuig",
+          "mode": "list",
+          "cachedResultName": "localbusinesses-kalanera",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DGtUvOvJ35MzXsZBZOPR1xzkyb0V_sMttOKcv1JBuig/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 681885468,
+          "mode": "list",
+          "cachedResultName": "Bus_Schedule",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DGtUvOvJ35MzXsZBZOPR1xzkyb0V_sMttOKcv1JBuig/edit#gid=681885468"
+        },
+        "options": {}
+      },
+      "name": "Read Google Sheet (Bus_Schedule)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [
+        -272,
+        80
+      ],
+      "id": "6f5914d0-0f9a-4bf9-bf41-a32f5c98ba01",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "dt65031NC2CKh6xA",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "language": "javaScript",
+        "mode": "runOnceForAllItems",
+        "jsCode": "const q = $('Webhook (GET) bus-schedule').first().json.query || {};\nreturn $input.all().map((item) => ({\n  json: {\n    ...item.json,\n    _busQuery: q,\n  },\n}));"
+      },
+      "name": "Attach request query",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -152,
+        80
+      ],
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    },
+    {
+      "parameters": {
+        "functionCode": "const tz = 'Europe/Athens';\r\n\r\nconst VALID_DIRS = [\r\n  'volos', 'milies', 'argalasti', 'afissos',\r\n  'vyzitsa', 'pinakates', 'siki', 'promiri', 'katigiorgis', 'milina', 'platanias', 'trikeri',\r\n];\r\n\r\nconst BUS_DIR_LABELS = {\r\n  volos: { en: 'Volos', el: 'Βόλος' },\r\n  milies: { en: 'Milies', el: 'Μηλιές' },\r\n  argalasti: { en: 'Argalasti', el: 'Αργαλαστή' },\r\n  afissos: { en: 'Afissos', el: 'Αφήσσος' },\r\n  vyzitsa: { en: 'Vyzitsa', el: 'Βυζίτσα' },\r\n  pinakates: { en: 'Pinakates', el: 'Πινακάτες' },\r\n  siki: { en: 'Siki', el: 'Σήκι' },\r\n  promiri: { en: 'Promiri', el: 'Προμήρι' },\r\n  katigiorgis: { en: 'Katigiorgis', el: 'Κατηγιώργης' },\r\n  milina: { en: 'Milina', el: 'Μηλίνα' },\r\n  platanias: { en: 'Platanias', el: 'Πλατανιάς' },\r\n  trikeri: { en: 'Trikeri', el: 'Τρίκερι' },\r\n};\r\n\r\nconst TYPO = { vizitsa: 'vyzitsa', pinakes: 'pinakates' };\r\n\r\nfunction normSheetKey(k) {\r\n  return String(k || '')\r\n    .replace(/^\\ufeff/, '')\r\n    .trim()\r\n    .toLowerCase()\r\n    .replace(/\\s+/g, '_');\r\n}\r\n\r\n/** Kolom vinden ongeacht casing, spaties rond header, BOM (Sheets / n8n-export). */\r\nfunction sheetField(row, aliases) {\r\n  if (!row || typeof row !== 'object') return undefined;\r\n  const wanted = new Set(aliases.map((a) => normSheetKey(a)));\r\n  for (const key of Object.keys(row)) {\r\n    if (key === '_busQuery') continue;\r\n    if (wanted.has(normSheetKey(key))) return row[key];\r\n  }\r\n  return undefined;\r\n}\r\n\r\n/** Query zit op elk item via Set-node `_busQuery` (geen $node in Function). */\r\nfunction getQuery(items) {\r\n  const j0 = items[0] && items[0].json;\r\n  const q = (j0 && (j0._busQuery ?? j0.busQuery)) || {};\r\n  const dirRaw = (q.dir || 'volos').toString().toLowerCase().trim();\r\n  const dir = VALID_DIRS.includes(dirRaw) ? dirRaw : 'volos';\r\n  return {\r\n    from: (q.from || 'Kala Nera').toString(),\r\n    dir,\r\n    remaining: (q.remaining || '1').toString() !== '0',\r\n    minutesEarly: Number(q.minutesEarly ?? 10) || 10,\r\n    apiKey: (q.key || '').toString(),\r\n  };\r\n}\r\n\r\nfunction fold(s) {\r\n  return String(s || '')\r\n    .trim()\r\n    .toLowerCase()\r\n    .normalize('NFD')\r\n    .replace(/[\\u0300-\\u036f]/g, '');\r\n}\r\n\r\nfunction tokenToSlug(token) {\r\n  const raw = String(token || '').trim();\r\n  if (!raw) return '';\r\n  const lower = raw.toLowerCase();\r\n  if (VALID_DIRS.includes(lower)) return lower;\r\n  const f = fold(raw);\r\n  if (TYPO[f] && VALID_DIRS.includes(TYPO[f])) return TYPO[f];\r\n  for (const slug of VALID_DIRS) {\r\n    if (fold(slug) === f) return slug;\r\n    const row = BUS_DIR_LABELS[slug];\r\n    if (row && (fold(row.en) === f || fold(row.el) === f)) return slug;\r\n  }\r\n  return '';\r\n}\r\n\r\n/** Curly quotes uit Sheets / copy-paste breken JSON.parse — eerst naar ASCII quotes. */\r\nfunction normalizeJsonQuotes(s) {\r\n  return String(s || '')\r\n    .replace(/\\u201c|\\u201d/g, '\"')\r\n    .replace(/\\u2018|\\u2019/g, \"'\");\r\n}\r\n\r\n/** Sheet kan dirs_served als JSON-string in cel zetten: [\"milies\",\"vyzitsa\",\"pinakates\"] */\r\nfunction parseRawToSlugs(raw) {\r\n  if (raw == null) return [];\r\n  if (Array.isArray(raw)) {\r\n    return [...new Set(raw.map((t) => tokenToSlug(String(t))).filter(Boolean))];\r\n  }\r\n  const s = String(raw).trim();\r\n  if (!s) return [];\r\n  if (s.startsWith('[')) {\r\n    try {\r\n      const arr = JSON.parse(normalizeJsonQuotes(s));\r\n      if (Array.isArray(arr)) {\r\n        return [...new Set(arr.map((t) => tokenToSlug(String(t))).filter(Boolean))];\r\n      }\r\n    } catch (e) { /* val terug op CSV */ }\r\n  }\r\n  return [...new Set(s.split(/[,;|]/).map((p) => tokenToSlug(p.trim())).filter(Boolean))];\r\n}\r\n\r\nfunction parseDirsServed(row) {\r\n  const slugCol = sheetField(row, ['dirs_served', 'Dirs_Served', 'dirsserved']) ?? row.dirs_served ?? row.Dirs_Served;\r\n  const nameCol = sheetField(row, ['destinations_served', 'Destinations_Served']) ?? row.Destinations_Served ?? row.destinations_served;\r\n  const slugStr = slugCol != null ? String(slugCol).trim() : '';\r\n  const nameStr = nameCol != null ? String(nameCol).trim() : '';\r\n  let slugs = slugStr ? parseRawToSlugs(slugCol) : [];\r\n  if (!slugs.length && nameStr) slugs = parseRawToSlugs(nameCol);\r\n  return slugs;\r\n}\r\n\r\nfunction rowMatchesDirLegacy(row, dir) {\r\n  const d = String(\r\n    sheetField(row, ['dir', 'direction', 'route']) ?? row.dir ?? row.Direction ?? row.Route ?? '',\r\n  ).toLowerCase().trim();\r\n  if (d && VALID_DIRS.includes(d)) return d === dir;\r\n  const dest = String(sheetField(row, ['destination', 'Destination']) ?? row.destination ?? row.Destination ?? '').toLowerCase();\r\n  const labels = BUS_DIR_LABELS[dir];\r\n  if (!labels) return false;\r\n  if (dest.includes(labels.en.toLowerCase())) return true;\r\n  if (dest.includes(fold(labels.el))) return true;\r\n  const fe = fold(labels.en);\r\n  const fel = fold(labels.el);\r\n  const routeName = fold(sheetField(row, ['route_name', 'Route_Name']) ?? row.Route_Name ?? row.route_name ?? '');\r\n  if (routeName && (routeName.includes(fe) || routeName.includes(fel))) return true;\r\n  const destServed = fold(sheetField(row, ['destinations_served']) ?? row.Destinations_Served ?? row.destinations_served ?? '');\r\n  if (destServed && (destServed.includes(fe) || destServed.includes(fel))) return true;\r\n  return false;\r\n}\r\n\r\nfunction rowMatchesDir(row, dir) {\r\n  const slugs = parseDirsServed(row);\r\n  if (slugs.length > 0) return slugs.includes(dir);\r\n  return rowMatchesDirLegacy(row, dir);\r\n}\r\n\r\nfunction depTime(row) {\r\n  return sheetField(row, ['time_kalanera', 'Time_KalaNera', 'departure', 'Departure', 'Time'])\r\n    ?? row.Time_KalaNera ?? row.departure ?? row.Departure ?? row.Time ?? '';\r\n}\r\n\r\nfunction stripBusQuery(row) {\r\n  const o = { ...row };\r\n  delete o._busQuery;\r\n  return o;\r\n}\r\n\r\nfunction athensNowParts(date = new Date()) {\r\n  const parts = new Intl.DateTimeFormat('en-GB', {\r\n    timeZone: tz,\r\n    year: 'numeric',\r\n    month: '2-digit',\r\n    day: '2-digit',\r\n    hour: '2-digit',\r\n    minute: '2-digit',\r\n    hour12: false,\r\n    weekday: 'short',\r\n  }).formatToParts(date);\r\n  const map = {};\r\n  for (const p of parts) if (p.type !== 'literal') map[p.type] = p.value;\r\n  const wd = (map.weekday || '').toLowerCase();\r\n  const wdMap = { mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6, sun: 7 };\r\n  return {\r\n    ymd: `${map.year}-${map.month}-${map.day}`,\r\n    hm: `${map.hour}:${map.minute}`,\r\n    todayNum: wdMap[wd.slice(0, 3)] || null,\r\n  };\r\n}\r\n\r\nfunction parseHHMMToMinutes(hhmm) {\r\n  const m = String(hhmm || '').trim().match(/^(\\d{1,2}):(\\d{2})$/);\r\n  if (!m) return null;\r\n  const h = Number(m[1]);\r\n  const min = Number(m[2]);\r\n  if (!Number.isFinite(h) || !Number.isFinite(min) || h < 0 || h > 23 || min < 0 || min > 59) return null;\r\n  return h * 60 + min;\r\n}\r\n\r\nfunction matchesDays(daysValue, todayNum) {\r\n  const raw = String(daysValue || '').trim();\r\n  if (!raw) return true;\r\n  if (!todayNum) return true;\r\n  const days = raw.toLowerCase();\r\n  // Sheet model (Engels): weekdays | daily | weekend\r\n  if (days === 'daily') return true;\r\n  if (days === 'weekdays') return todayNum >= 1 && todayNum <= 5;\r\n  if (days === 'weekend') return todayNum === 6 || todayNum === 7;\r\n  // Legacy numeriek\r\n  if (days === '1-7') return true;\r\n  if (days === '1-5') return todayNum <= 5;\r\n  if (days === '1-6') return todayNum <= 6;\r\n  if (days === '7') return todayNum === 7;\r\n  if (/^[1-7]$/.test(days)) return Number(days) === todayNum;\r\n  return true;\r\n}\r\n\r\nconst q = getQuery(items);\r\nconst now = athensNowParts();\r\nconst nowMin = parseHHMMToMinutes(now.hm);\r\nconst cutoff = nowMin == null ? null : Math.max(0, nowMin - q.minutesEarly);\r\n\r\nconst rawRows = items.map((i) => stripBusQuery(i.json));\r\n\r\nconst filtered = rawRows\r\n  .filter((raw) => {\r\n    const daysVal = sheetField(raw, ['days', 'Days']) ?? raw.Days ?? raw.days;\r\n    if (!matchesDays(daysVal, now.todayNum)) return false;\r\n    if (!rowMatchesDir(raw, q.dir)) return false;\r\n    if (q.remaining && cutoff != null) {\r\n      const depMin = parseHHMMToMinutes(String(depTime(raw)).trim());\r\n      if (depMin == null) return false;\r\n      if (depMin < cutoff) return false;\r\n    }\r\n    return true;\r\n  })\r\n  .sort((a, b) => {\r\n    const am = parseHHMMToMinutes(String(depTime(a)).trim());\r\n    const bm = parseHHMMToMinutes(String(depTime(b)).trim());\r\n    if (am == null && bm == null) return 0;\r\n    if (am == null) return 1;\r\n    if (bm == null) return -1;\r\n    return am - bm;\r\n  });\r\n\r\nreturn [\r\n  {\r\n    json: {\r\n      meta: {\r\n        tz,\r\n        now: { ymd: now.ymd, hm: now.hm, todayNum: now.todayNum },\r\n        query: {\r\n          from: q.from,\r\n          dir: q.dir,\r\n          remaining: q.remaining,\r\n          minutesEarly: q.minutesEarly,\r\n        },\r\n        generatedAt: new Date().toISOString(),\r\n      },\r\n      items: filtered,\r\n    },\r\n  },\r\n];\r\n"
+      },
+      "name": "Filter + Normalize + Sort (Athens)",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        32,
+        80
+      ],
+      "id": "a4db2d6d-6cb2-4e33-a06d-5e5cd3f02c59"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "GET, OPTIONS"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, X-API-Key"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "public, max-age=60"
+              }
+            ]
+          }
+        }
+      },
+      "name": "Respond (JSON + CORS)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        224,
+        80
+      ],
+      "id": "343b849d-5b4e-451a-b66c-e2426b652632"
+    }
+  ],
+  "connections": {
+    "Webhook (GET) bus-schedule": {
+      "main": [
+        [
+          {
+            "node": "Read Google Sheet (Bus_Schedule)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Google Sheet (Bus_Schedule)": {
+      "main": [
+        [
+          {
+            "node": "Attach request query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attach request query": {
+      "main": [
+        [
+          {
+            "node": "Filter + Normalize + Sort (Athens)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter + Normalize + Sort (Athens)": {
+      "main": [
+        [
+          {
+            "node": "Respond (JSON + CORS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8a056dda650f196038a1bda699419085e220ce6f0fa9607c4ea76c82ef8a8dd1"
+  }
+}

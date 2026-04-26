@@ -49,7 +49,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
     
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=1.0.77">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=1.0.108">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -90,6 +90,7 @@
 
             <ul class="nav-links" id="nav-list">
                 <li><a href="index.html">Home</a></li>
+                <li><a href="bus.html"><i class="fa-solid fa-bus"></i> Bus / KTEL</a></li>
                 <li><a href="wishlist.html"><i class="fa-solid fa-heart menu-heart"></i> Favorites</a></li>
                 <li><a href="t-form.html">Add your Business</a></li>
 
@@ -266,16 +267,6 @@
 <script data-goatcounter="https://evertvanlaar.cloud/count"
         async src="//gc.zgo.at/count.js"></script>
 
-<script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then(reg => console.log('PWA Service Worker registered.'))
-                .catch(err => console.log('SW registration failed: ', err));
-        });
-    }
-</script>
-
 <a href="https://www.google.com/maps/search/?api=1&query=Kala+Nera" 
    target="_blank" 
    class="map-fab-fixed">
@@ -288,7 +279,7 @@
 
 <!-- N8N_SEO_END -->
  
-<script src="app.js"></script>
+<script src="app.js?v=1.0.108"></script>
 
 <nav class="bottom-nav" aria-label="Primary">
     <div class="bottom-nav-inner">

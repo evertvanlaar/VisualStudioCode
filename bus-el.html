@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <title>Καλά Νερά | Πρόγραμμα Λεωφορείων</title>
+    <link rel="canonical" href="https://www.kalanera.gr/bus-el.html">
+    <meta name="description" content="Πρόγραμμα λεωφορείων από τα Καλά Νερά προς Βόλο, Αφήσσο, Μηλιές, Βυζίτσα, Πινακάτες, Αργαλαστή, Σήκι, Προμήρι, Κατηγιώργη, Μηλίνα, Πλατανιά και Τρίκερι (Πήλιο).">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#4a6c4a">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=1.0.108">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+</head>
+<body data-bus-view="full">
+<header class="site-header">
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index-el.html" class="logo">Καλά <span>Νερά</span></a>
+            <a href="bus.html" class="lang-link-mobile">
+                <img src="https://flagcdn.com/w20/gb.png" alt="English">
+            </a>
+            <ul class="nav-links" id="nav-list">
+                <li><a href="index-el.html">Αρχική</a></li>
+                <li><a href="wishlist-el.html"><i class="fa-solid fa-heart menu-heart"></i> Αγαπημένα</a></li>
+                <li><a href="t-form-el.html">Προσθήκη επιχείρησης</a></li>
+                <li>
+                    <a href="bus.html" class="lang-link">
+                        <img src="https://flagcdn.com/w20/gb.png" alt="English" style="width: 20px; vertical-align: middle; margin-right: 5px;">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<div class="main-container">
+    <header class="bus-page-heading">
+        <h1 class="bus-page-title">
+            <span class="bus-page-title-row">
+                <i class="fa-solid fa-bus bus-page-title-icon" aria-hidden="true"></i>
+                <span>Πρόγραμμα λεωφορείων</span>
+            </span>
+        </h1>
+        <div class="bus-page-deck">
+            <a class="bus-ktel-glossy" href="https://ktelvolou.gr/el/routes/list/" target="_blank" rel="noopener noreferrer" title="ΚΤΕΛ Ν. Μαγνησίας — επίσημη λίστα δρομολογίων" aria-label="ΚΤΕΛ Νομού Μαγνησίας — επίσημη λίστα δρομολογίων (ανοίγει σε νέα καρτέλα)">
+                <img class="bus-ktel-logo" src="pix/ktel-logo.jpg" alt="ΚΤΕΛ Ν. Μαγνησίας" width="120" height="36" loading="lazy" decoding="async">
+            </a>
+            <span class="bus-page-deck-hint">Επίσημος περιφερειακός μεταφορέας (Μαγνησία)</span>
+        </div>
+    </header>
+
+    <section class="bus-section" aria-label="Δρομολόγια λεωφορείου">
+        <div class="bus-header">
+            <div class="bus-title">
+                <h2>Σήμερα</h2>
+                <div class="bus-subtitle">
+                    <span>Από Καλά Νερά</span>
+                    <span id="bus-route" class="bus-subtitle-route"></span>
+                    <span id="bus-line-hint" class="bus-line-hint" hidden></span>
+                </div>
+            </div>
+            <div class="bus-controls bus-controls--select">
+                <label for="bus-dir-select" class="bus-dest-label">Πού θέλετε να πάτε;</label>
+                <div class="bus-picker-strip" role="group" aria-label="Προορισμός και χάρτης">
+                    <div class="bus-picker-stack">
+                        <select id="bus-dir-select" class="bus-dir-select" aria-label="Επιλέξτε προορισμό από Καλά Νερά">
+                            <optgroup label="Κύριες">
+                                <option value="volos" selected>Βόλος</option>
+                                <option value="afissos">Αφήσσος</option>
+                            </optgroup>
+                            <optgroup label="Ορεινή γραμμή">
+                                <option value="milies">Μηλιές</option>
+                                <option value="vyzitsa">Βυζίτσα</option>
+                                <option value="pinakates">Πινακάτες</option>
+                            </optgroup>
+                            <optgroup label="Νότος (Α)">
+                                <option value="argalasti">Αργαλαστή</option>
+                                <option value="siki">Σήκι</option>
+                                <option value="promiri">Προμήρι</option>
+                                <option value="katigiorgis">Κατηγιώργης</option>
+                            </optgroup>
+                            <optgroup label="Νότος (Β)">
+                                <option value="milina">Μηλίνα</option>
+                                <option value="platanias">Πλατανιάς</option>
+                                <option value="trikeri">Τρίκερι</option>
+                            </optgroup>
+                        </select>
+                        <button type="button" class="bus-map-open" id="bus-pelion-map-open" aria-haspopup="dialog" aria-controls="bus-pelion-map-dialog">
+                            <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
+                            <span class="bus-map-open__text bus-map-open__text--full">Χάρτης Πηλίου &amp; Μαγνησίας</span>
+                            <span class="bus-map-open__text bus-map-open__text--short">Χάρτης</span>
+                        </button>
+                    </div>
+                    <button type="button" class="bus-map-preview" data-open-pelion-map aria-label="Άνοιγμα πλήρους χάρτη Πηλίου και Μαγνησίας (ΚΤΕΛ)">
+                        <img src="pix/map_magnesia_el.gif" alt="" width="140" height="90" loading="lazy" decoding="async" class="bus-map-preview__img">
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <dialog id="bus-pelion-map-dialog" class="bus-pelion-dialog" aria-labelledby="bus-pelion-map-title">
+            <div class="bus-pelion-dialog__shell">
+                <header class="bus-pelion-dialog__head">
+                    <h3 id="bus-pelion-map-title" class="bus-pelion-dialog__title">Πήλιο &amp; Μαγνησία — χάρτης λεωφορείων</h3>
+                    <button type="button" class="bus-pelion-dialog__close" aria-label="Κλείσιμο χάρτη">
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    </button>
+                </header>
+                <div class="bus-pelion-dialog__body">
+                    <img id="bus-pelion-map-img" class="bus-pelion-dialog__img" alt="Περιφερειακός χάρτης λεωφορείων Μαγνησίας και Πηλίου με ονόματα τοποθεσιών, όπως στον ιστότοπο του ΚΤΕΛ." data-map-src="pix/map_magnesia_el.gif" width="900" height="600" decoding="async">
+                </div>
+                <p class="bus-pelion-dialog__note">Ονομασίες και δίκτυο όπως εμφανίζονται online από το ΚΤΕΛ. Για προσανατολισμό στην επιλογή προορισμού — όχι επίσημο έγγραφο ΚΤΕΛ.</p>
+            </div>
+        </dialog>
+
+        <div class="bus-meta">
+            <div id="bus-last-updated" class="bus-last-updated" aria-live="polite"></div>
+            <button type="button" id="bus-retry" class="bus-retry" hidden>Επανάληψη</button>
+        </div>
+
+        <div class="bus-next-highlight">
+            <div class="bus-subsection-title bus-subsection-title--next"><i class="fa-solid fa-bus bus-subsection-icon" aria-hidden="true"></i> Επόμενο λεωφορείο</div>
+            <div id="bus-next-container" class="bus-container bus-container--next" aria-live="polite">
+                <div class="bus-skeleton" aria-hidden="true"></div>
+            </div>
+        </div>
+
+        <div class="bus-full-section">
+            <div class="bus-subsection-title bus-subsection-title--full">Πλήρες πρόγραμμα σήμερα</div>
+            <div id="bus-full-container" class="bus-container bus-container--full" aria-live="polite">
+                <div class="bus-skeleton" aria-hidden="true"></div>
+                <div class="bus-skeleton" aria-hidden="true"></div>
+                <div class="bus-skeleton" aria-hidden="true"></div>
+            </div>
+        </div>
+
+        <div class="bus-disclaimer-block" role="note" aria-label="Σχετικά με τις ώρες">
+            <p class="bus-disclaimer"><strong>Εκτιμήσεις</strong> για τη στάση στον κεντρικό δρόμο (φούρνος): δημοσιευμένα <strong>δρομολόγια Βόλου ΚΤΕΛ</strong> <strong>+ ~30 λεπτά</strong> προς Καλά Νερά.</p>
+            <p class="bus-disclaimer"><strong>Όχι</strong> επίσημο πρόγραμμα για αυτή τη στάση.</p>
+            <p class="bus-disclaimer-tip">Συμβουλή: να είστε στη στάση 10 λεπτά νωρίτερα.</p>
+            <p class="bus-disclaimer-offline">Αν είστε offline, η σελίδα δείχνει το τελευταίο αποθηκευμένο πρόγραμμα: <a class="bus-ktel-link" href="https://ktelvolou.gr/el/routes/list/" target="_blank" rel="noopener">Επίσημα δρομολόγια KTEL</a></p>
+        </div>
+        <div class="bus-service-info" aria-label="Σταθμός Βόλου και επικοινωνία ΚΤΕΛ">
+            <p><strong>Βόλος:</strong> Τα λεωφορεία αναχωρούν από τον κεντρικό σταθμό ΚΤΕΛ Μαγνησίας, <a class="bus-ktel-link" href="https://www.google.com/maps/search/?api=1&amp;query=KTEL%20Magnesia%20Zachou%205%20Volos%20Greece" target="_blank" rel="noopener noreferrer" title="Άνοιγμα στο Google Maps">Ζάχου 5, Βόλος</a>.</p>
+            <p><strong>Επικοινωνία:</strong> Οι επισκέπτες μπορούν να καλέσουν το <a class="bus-ktel-link" href="tel:+302421033254" title="Κλήση πληροφοριών ΚΤΕΛ">+30&nbsp;24210&nbsp;33254</a> για τρέχουσες αλλαγές στο πρόγραμμα.</p>
+        </div>
+    </section>
+</div>
+
+<script src="app.js?v=1.0.108"></script>
+
+<nav class="bottom-nav" aria-label="Κύρια πλοήγηση">
+    <div class="bottom-nav-inner">
+        <a href="index-el.html"><i class="fa-solid fa-house"></i><span>Αρχική</span></a>
+        <a href="wishlist-el.html"><i class="fa-solid fa-heart"></i><span>Αγαπημένα</span></a>
+        <a href="t-form-el.html"><i class="fa-solid fa-circle-plus"></i><span>Προσθήκη</span></a>
+        <a href="#" data-more><i class="fa-solid fa-ellipsis"></i><span>Περισσότερα</span></a>
+    </div>
+</nav>
+</body>
+</html>
+
