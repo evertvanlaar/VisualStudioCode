@@ -91,7 +91,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.119'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.120'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -1283,22 +1283,28 @@ function busSortByDeparture(buses) {
     });
 }
 
-/** Label above departure time: Greek uses two lines so «Καλά Νερά» is not broken mid-word. */
+/** Label above departure time: always two short lines (stack) so card height matches across languages and avoids awkward wraps (e.g. «main-road») in narrow columns or after browser translation. */
 function busDepartureCaptionParts() {
+    let l1;
+    let l2;
     if (busLang() === 'el') {
-        const l1 = busT('bus_departure_el_l1', 'Αναχώρηση');
-        const l2 = busT('bus_departure_el_l2', 'Καλά Νερά');
-        const aria = busEscapeHtml(`${l1} ${l2}`);
-        const html = `<div class="bus-time-label bus-time-label--stack"><span class="bus-time-label-line">${busEscapeHtml(l1)}</span><span class="bus-time-label-line">${busEscapeHtml(l2)}</span></div>`;
-        return { aria, html };
+        l1 = busT('bus_departure_el_l1', 'Αναχώρηση');
+        l2 = busT('bus_departure_el_l2', 'Καλά Νερά');
+    } else {
+        l1 = busText('bus_departure_l1', {
+            en: 'Time at stop',
+            nl: 'Tijd bij halte',
+            el: '',
+        });
+        l2 = busText('bus_departure_l2', {
+            en: 'Kala Nera',
+            nl: 'Kala Nera',
+            el: '',
+        });
     }
-    const text = busText('bus_departure_caption', {
-        en: 'Expected at main-road stop',
-        nl: 'Verwacht op halte hoofdweg',
-        el: '',
-    });
-    const esc = busEscapeHtml(text);
-    return { aria: esc, html: `<div class="bus-time-label">${esc}</div>` };
+    const aria = busEscapeHtml(`${l1} ${l2}`);
+    const html = `<div class="bus-time-label bus-time-label--stack"><span class="bus-time-label-line">${busEscapeHtml(l1)}</span><span class="bus-time-label-line">${busEscapeHtml(l2)}</span></div>`;
+    return { aria, html };
 }
 
 function busRenderList(container, buses, { limit, routeDir } = {}) {
