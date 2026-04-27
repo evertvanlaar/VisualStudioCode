@@ -91,7 +91,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.120'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.0.3'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -236,6 +236,14 @@ function getColor(str) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
     return `hsl(${Math.abs(hash) % 360}, 60%, 45%)`;
+}
+
+/** Stabiele id voor ankers / #fragment (alleen a-z, 0-9, hyphen). */
+function categorySectionSlug(cat) {
+    return String(cat || 'other')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '') || 'other';
 }
 
 function generateCategoryButtons(data) {
@@ -424,27 +432,9 @@ grid.innerHTML += `
             <a class="media-link" href="business/${bizId}${currentLang === 'el' ? '-el' : ''}.html" onclick="gtag('event', 'click_image', {'biz_name': '${safeBizName}'})">
                 <img src="${finalImageUrl}" onerror="this.src='pix/nophoto.jpg'" alt="${displayName}">
             </a>
-            <div class="media-overlay" aria-hidden="true">
+            <div class="media-overlay">
                 <div class="media-title">${displayName}</div>
-            </div>
-            <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeBizName}', this)" aria-label="Toggle favorite">
-                <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
-            </button>
-        </div>
-        <p class="media-location-caption" title="${locDisplaySafe}"><span class="media-location-inner"><i class="fa fa-map-marker-alt" aria-hidden="true"></i><span class="media-location-txt">${locDisplaySafe}</span></span></p>
-        <div class="mini-content">
-            <div class="mini-row-top">
-                <h2 class="biz-name">
-                    <a href="business/${bizId}${currentLang === 'el' ? '-el' : ''}.html" style="text-decoration:none; color:inherit;">
-                        ${displayName}
-                    </a>
-                </h2>
-                <span class="biz-location">
-                    <i class="fa fa-map-marker-alt"></i> ${locDisplaySafe}
-                </span>
-            </div>
-            
-            <div class="mini-actions mini-actions-media">
+                <div class="mini-actions mini-actions-media">
                 ${(biz.Phone && biz.Phone.trim() !== "" && biz.Phone !== "-")
                     ? `<a href="tel:${biz.Phone}" class="btn-icon phone-btn is-media-icon" title="${escapeHtml(biz.Phone)}" onclick="gtag('event', 'click_phone', {'biz_name': '${safeBizName}'})"><i class="fa fa-phone"></i></a>`
                     : ''
@@ -452,15 +442,20 @@ grid.innerHTML += `
                 <div class="action-right">
                     ${webHtml}
                     ${emailHtml}
-                    <a href="${reviewUrl}" target="_blank" rel="noopener" class="btn-icon review-btn" style="width: 28px;" onclick="gtag('event', 'click_reviews', {'biz_name': '${safeBizName}'})">
+                    <a href="${reviewUrl}" target="_blank" rel="noopener" class="btn-icon review-btn" onclick="gtag('event', 'click_reviews', {'biz_name': '${safeBizName}'})">
                         <i class="fa fa-star"></i>
                     </a>
-                    <a href="${mapsUrl}" target="_blank" rel="noopener" class="btn-icon nav-btn-action" style="width: 28px;" onclick="gtag('event', 'open_maps', {'biz_name': '${safeBizName}'})">
+                    <a href="${mapsUrl}" target="_blank" rel="noopener" class="btn-icon nav-btn-action" onclick="gtag('event', 'open_maps', {'biz_name': '${safeBizName}'})">
                         <i class="fa fa-location-dot"></i>
                     </a>
                 </div>
+                </div>
             </div>
+            <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeBizName}', this)" aria-label="Toggle favorite">
+                <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+            </button>
         </div>
+        <p class="media-location-caption" title="${locDisplaySafe}"><span class="media-location-inner"><i class="fa fa-map-marker-alt" aria-hidden="true"></i><span class="media-location-txt">${locDisplaySafe}</span></span></p>
     </div>`;
     };
 
@@ -473,18 +468,41 @@ grid.innerHTML += `
             return acc;
         }, {});
 
-        Object.keys(grouped).sort().forEach(category => {
-            const header = document.createElement('div');
-            header.className = 'category-section-header';
-            header.innerHTML = `<span>${getIcon(category)} ${t(category)} <small>(${grouped[category].length})</small></span>`;
-            container.appendChild(header);
+        Object.keys(grouped).sort().forEach((category, catIndex) => {
+            const details = document.createElement('details');
+            details.className = 'category-disclosure';
+            details.id = `section-${categorySectionSlug(category)}`;
+            if (catIndex === 0) {
+                details.setAttribute('open', '');
+            }
+
+            const summary = document.createElement('summary');
+            summary.className = 'category-section-summary';
+            const accent = getColor(category);
+            summary.style.setProperty('--cat-accent', accent);
+            const iconWrap = document.createElement('span');
+            iconWrap.className = 'category-summary-icon';
+            iconWrap.innerHTML = getIcon(category);
+            const labelEl = document.createElement('span');
+            labelEl.className = 'category-summary-label';
+            labelEl.textContent = t(category);
+            const countEl = document.createElement('span');
+            countEl.className = 'category-summary-count';
+            countEl.textContent = String(grouped[category].length);
+            const chev = document.createElement('i');
+            chev.className = 'fa-solid fa-chevron-down category-summary-chevron';
+            chev.setAttribute('aria-hidden', 'true');
+            summary.append(iconWrap, labelEl, countEl, chev);
 
             const grid = document.createElement('div');
-            grid.className = 'business-grid';
+            grid.className = 'business-grid category-section-grid';
             grouped[category]
                 .sort((a, b) => (a.Name || "").localeCompare(b.Name || ""))
                 .forEach(biz => renderCardInto(grid, biz, category));
-            container.appendChild(grid);
+
+            details.appendChild(summary);
+            details.appendChild(grid);
+            container.appendChild(details);
         });
     } else {
         // Mode B: global A–Z list (best for alpha index)
@@ -1695,7 +1713,7 @@ function renderMoreSheetContent() {
     const isEl = (document.documentElement.lang || 'en') === 'el';
     const brandName = isEl ? 'ΚάντεΚλικ' : 'KanteKlik';
     const labels = {
-        bus: isEl ? 'Λεωφορεία / KTEL' : 'Bus / KTEL',
+        bus: isEl ? 'Λεωφορείο (Καλά Νερά) / KTEL' : 'Bus (Kala Nera) / KTEL',
         useful: isEl ? 'Χρήσιμα τηλέφωνα' : 'Useful numbers',
         install: isEl ? 'Εγκατάσταση εφαρμογής' : 'Install App',
         about: isEl ? 'Σχετικά με εμάς' : 'About us',
