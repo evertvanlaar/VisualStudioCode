@@ -91,7 +91,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '1.0.118'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '1.0.119'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -412,7 +412,10 @@ function renderBusinesses(data) {
             // 2. Unieke ID voor deep-linking en AI-vindbaarheid
             const bizId = biz.Name.toLowerCase()
                 .replace(/[^a-z0-9]+/g, '-')
-                .replace(/(^-|-$)/g, '');    
+                .replace(/(^-|-$)/g, '');
+
+            const locDisplay = t(biz.Location) || t('Kala Nera');
+            const locDisplaySafe = escapeHtml(locDisplay);
 
   // 3. De Grid HTML
 grid.innerHTML += `
@@ -428,6 +431,7 @@ grid.innerHTML += `
                 <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
             </button>
         </div>
+        <p class="media-location-caption" title="${locDisplaySafe}"><span class="media-location-inner"><i class="fa fa-map-marker-alt" aria-hidden="true"></i><span class="media-location-txt">${locDisplaySafe}</span></span></p>
         <div class="mini-content">
             <div class="mini-row-top">
                 <h2 class="biz-name">
@@ -436,22 +440,16 @@ grid.innerHTML += `
                     </a>
                 </h2>
                 <span class="biz-location">
-                    <i class="fa fa-map-marker-alt"></i> ${t(biz.Location) || t('Kala Nera')}
+                    <i class="fa fa-map-marker-alt"></i> ${locDisplaySafe}
                 </span>
             </div>
             
-            <div class="mini-actions mini-actions-media" style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px; margin-top: 10px;">
-                ${(biz.Phone && biz.Phone.trim() !== "" && biz.Phone !== "-") 
-                    ? `<div class="phone-group" style="display: flex; align-items: center; width: 155px; min-width: 155px; background: rgba(0,0,0,0.05); border-radius: 20px; padding: 2px 4px 2px 6px; gap: 6px;">
-                            <a href="tel:${biz.Phone}" class="btn-icon phone-btn" style="background:none; box-shadow:none; width:auto; height:auto; padding:0; margin:0;" onclick="gtag('event', 'click_phone', {'biz_name': '${safeBizName}'})">
-                                <i class="fa fa-phone" style="color: #4A6C4A; font-size: 0.8rem;"></i>
-                            </a>
-                            <span class="phone-txt" style="font-size: 0.85rem; color: #3c4043; font-weight: 600; white-space: nowrap;">${biz.Phone}</span>
-                    </div>` 
-                    : `<div class="phone-group" style="width: 155px; min-width: 155px; visibility: hidden;"></div>`
+            <div class="mini-actions mini-actions-media">
+                ${(biz.Phone && biz.Phone.trim() !== "" && biz.Phone !== "-")
+                    ? `<a href="tel:${biz.Phone}" class="btn-icon phone-btn is-media-icon" title="${escapeHtml(biz.Phone)}" onclick="gtag('event', 'click_phone', {'biz_name': '${safeBizName}'})"><i class="fa fa-phone"></i></a>`
+                    : ''
                 }
-                <span class="below-location-chip"><i class="fa fa-map-marker-alt"></i> ${t(biz.Location) || t('Kala Nera')}</span>
-                <div class="action-right" style="display: flex; gap: 6px; flex-shrink: 0; justify-content: flex-end;">
+                <div class="action-right">
                     ${webHtml}
                     ${emailHtml}
                     <a href="${reviewUrl}" target="_blank" rel="noopener" class="btn-icon review-btn" style="width: 28px;" onclick="gtag('event', 'click_reviews', {'biz_name': '${safeBizName}'})">
