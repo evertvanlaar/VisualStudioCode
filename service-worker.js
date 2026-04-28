@@ -1,7 +1,7 @@
 // service-worker.js
-const VERSION = '2.0.3'; // Dit sturen we naar de Sheet
-const CACHE_NAME = 'kalanera-cache-v2.0.3'; // Dit dwingt de code-update af
-const IMAGE_CACHE = 'kalanera-images-v2.0.3'; // Afbeeldingen apart cachen voor snelheid
+const VERSION = '2.0.5'; // Dit sturen we naar de Sheet
+const CACHE_NAME = 'kalanera-cache-v2.0.5'; // Dit dwingt de code-update af
+const IMAGE_CACHE = 'kalanera-images-v2.0.5'; // Afbeeldingen apart cachen voor snelheid
 
 // VOEG DIT TOE: Luister naar vragen van de app
 self.addEventListener('message', (event) => {
@@ -19,9 +19,9 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(clients.claim());
 });
 
+// manifest.json niet pre-cachen: oude background_color bleef anders "vast" in splash/PWA-metadata
 const STATIC_ASSETS = [
   '/',
-  '/manifest.json',
   '/icon-512.png'
 ];
 
@@ -52,6 +52,38 @@ self.addEventListener('fetch', event => {
   // Dit voorkomt problemen met Google Maps, Tally en GoatCounter
   if (!url.origin.includes(self.location.hostname)) return;
 
+  // Manifest: network-first zodat background_color / icons altijd actueel zijn (geen witte splash uit oude cache)
+  if (url.pathname === '/manifest.json') {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse.status === 200) {
+            const copy = networkResponse.clone();
+            event.waitUntil(
+              copy
+                .arrayBuffer()
+                .then((body) =>
+                  caches.open(CACHE_NAME).then((cache) =>
+                    cache.put(
+                      event.request,
+                      new Response(body, {
+                        status: networkResponse.status,
+                        statusText: networkResponse.statusText,
+                        headers: networkResponse.headers
+                      })
+                    )
+                  )
+                )
+                .catch(() => {})
+            );
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
   // 1. AFBEELDINGEN: Cache First, then Network
   if (event.request.destination === 'image' || url.pathname.match(/\.(jpg|jpeg|png|gif|webp)$/)) {
     event.respondWith(
@@ -59,7 +91,24 @@ self.addEventListener('fetch', event => {
         return cache.match(event.request).then(cachedResponse => {
           if (cachedResponse) return cachedResponse;
           return fetch(event.request).then(networkResponse => {
-            if (networkResponse.status === 200) cache.put(event.request, networkResponse.clone());
+            if (networkResponse.status === 200) {
+              const copy = networkResponse.clone();
+              event.waitUntil(
+                copy
+                  .arrayBuffer()
+                  .then((body) =>
+                    cache.put(
+                      event.request,
+                      new Response(body, {
+                        status: networkResponse.status,
+                        statusText: networkResponse.statusText,
+                        headers: networkResponse.headers
+                      })
+                    )
+                  )
+                  .catch(() => {})
+              );
+            }
             return networkResponse;
           }).catch(() => caches.match('/icon-512.png'));
         });
@@ -71,15 +120,51 @@ self.addEventListener('fetch', event => {
   // 2. CSS, JS & HTML: Cache First (voor snelheid) en op de achtergrond updaten
   event.respondWith(
     caches.match(event.request).then(cachedResponse => {
-      const fetchPromise = fetch(event.request).then(networkResponse => {
-        if (networkResponse.status === 200) {
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, networkResponse.clone()));
-        }
+      if (cachedResponse) {
+        event.waitUntil(
+          fetch(event.request)
+            .then((networkResponse) => {
+              if (networkResponse.status !== 200) return;
+              const copy = networkResponse.clone();
+              return copy.arrayBuffer().then((body) =>
+                caches.open(CACHE_NAME).then((cache) =>
+                  cache.put(
+                    event.request,
+                    new Response(body, {
+                      status: networkResponse.status,
+                      statusText: networkResponse.statusText,
+                      headers: networkResponse.headers
+                    })
+                  )
+                )
+              );
+            })
+            .catch(() => {})
+        );
+        return cachedResponse;
+      }
+      return fetch(event.request).then((networkResponse) => {
+        if (networkResponse.status !== 200) return networkResponse;
+        const copy = networkResponse.clone();
+        event.waitUntil(
+          copy
+            .arrayBuffer()
+            .then((body) =>
+              caches.open(CACHE_NAME).then((cache) =>
+                cache.put(
+                  event.request,
+                  new Response(body, {
+                    status: networkResponse.status,
+                    statusText: networkResponse.statusText,
+                    headers: networkResponse.headers
+                  })
+                )
+              )
+            )
+            .catch(() => {})
+        );
         return networkResponse;
       });
-
-      // Geef direct uit cache als het er is, anders wacht op netwerk
-      return cachedResponse || fetchPromise;
     })
   );
 });
