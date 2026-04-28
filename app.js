@@ -76,8 +76,8 @@ function t(text) {
 }
 
 let allBusinesses = []; 
-let activeCategory = 'all';
-let activeLocation = 'all';
+/** Geselecteerde gebieden (Sheet-waarden Location). Leeg, of alles uit SITE_LOCATION_FILTERS aangevinkt = geen filter. */
+let activeLocations = new Set();
 let deferredPrompt; // Global variabele voor PWA
 let listMode = (localStorage.getItem('kalanera_list_mode') || 'categories'); // 'categories' | 'az'
 
@@ -91,7 +91,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.0.5'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.0.30'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -200,10 +200,8 @@ async function init() {
 
 // --- UI RENDERING & FILTERS ---
 function renderEverything() {
-    generateCategoryButtons(allBusinesses);
-    generateLocationButtons(allBusinesses);
+    generateLocationButtons();
     renderBusinesses(allBusinesses);
-    updateFilterBadge();
 }
 
 function updateOnlineStatus() {
@@ -227,10 +225,8 @@ window.addEventListener('offline', updateOnlineStatus);
 // Voer het ook direct uit als de pagina laadt
 document.addEventListener('DOMContentLoaded', updateOnlineStatus);
 
-function getIcon(cat) {
-    const key = Object.keys(iconMap).find(k => (cat || "").toLowerCase().includes(k.toLowerCase()));
-    return `<i class="fa ${key ? iconMap[key] : 'fa-tag'}"></i>`;
-}
+/** Vaste gebieden in de UI (matcht Sheet-waarden Location). Uitbreiden: array aanpassen. */
+const SITE_LOCATION_FILTERS = ['Kala Nera', 'Kato Gatzea', 'Koropi'];
 
 function getColor(str) {
     let hash = 0;
@@ -246,123 +242,61 @@ function categorySectionSlug(cat) {
         .replace(/(^-|-$)/g, '') || 'other';
 }
 
-function generateCategoryButtons(data) {
-    const container = document.getElementById('filter-buttons');
-    if (!container) return;
-    const categories = [...new Set(data.map(biz => biz.Category).filter(cat => cat))].sort();
-    
-    // Vertaal "All"
-    let html = `<button class="filter-btn ${activeCategory === 'all' ? 'active' : ''}" data-category="all"><i class="fa fa-th-large"></i> <span>${t('all')}</span></button>`;
-    
-    categories.forEach(cat => {
-        // We tonen t(cat) aan de gebruiker, maar houden cat in data-category
-        html += `<button class="filter-btn ${activeCategory === cat ? 'active' : ''}" data-category="${cat}">${getIcon(cat)} <span>${t(cat)}</span></button>`;
-    });
-    container.innerHTML = html;
-    container.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.onclick = (e) => {
-            const targetBtn = e.target.closest('.filter-btn');
-            activeCategory = targetBtn.getAttribute('data-category');
-            container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            targetBtn.classList.add('active');
-            applyFilters();
-        };
-    });
+function locationFilterShowsAllBusinesses() {
+    if (activeLocations.size === 0) return true;
+    if (SITE_LOCATION_FILTERS.length === 0) return true;
+    return SITE_LOCATION_FILTERS.every((loc) => activeLocations.has(loc));
 }
 
-function generateLocationButtons(data) {
+function generateLocationButtons() {
     const container = document.getElementById('location-buttons');
     if (!container) return;
-    const locations = [...new Set(data.map(biz => biz.Location).filter(loc => loc))].sort();
-    
-    // Vertaal "All Locations"
-    let html = `<button class="filter-btn ${activeLocation === 'all' ? 'active' : ''}" data-location="all"><i class="fa fa-map-marker-alt"></i> <span>${t('all_locations')}</span></button>`;
-    
-    locations.forEach(loc => {
-        html += `<button class="filter-btn ${activeLocation === loc ? 'active' : ''}" data-location="${loc}"><span>${t(loc)}</span></button>`;
+
+    let html = '';
+    SITE_LOCATION_FILTERS.forEach((loc) => {
+        const label = escapeHtml(t(loc));
+        const isOn = activeLocations.has(loc);
+        html += `<button type="button" class="loc-btn${isOn ? ' active' : ''}" data-location="${escapeHtml(loc)}" aria-pressed="${isOn ? 'true' : 'false'}" title="${label}"><span class="loc-btn__text">${label}</span></button>`;
     });
+
     container.innerHTML = html;
-    container.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.onclick = (e) => {
-            const targetBtn = e.target.closest('.filter-btn');
-            activeLocation = targetBtn.getAttribute('data-location');
-            container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            targetBtn.classList.add('active');
+    container.querySelectorAll('.loc-btn').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+            const targetBtn = e.target.closest('.loc-btn');
+            if (!targetBtn) return;
+            const loc = targetBtn.getAttribute('data-location');
+            if (!loc) return;
+            if (activeLocations.has(loc)) activeLocations.delete(loc);
+            else activeLocations.add(loc);
+            const on = activeLocations.has(loc);
+            targetBtn.classList.toggle('active', on);
+            targetBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+            if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) {
+                targetBtn.blur();
+            }
             applyFilters();
-        };
+        });
     });
 }
 
 function applyFilters() {
     const searchInput = document.getElementById('search-input');
     const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
-    
-    const filtered = allBusinesses.filter(biz => {
-        // Check of de zoekterm voorkomt in Naam, de Engelse categorie, OF de Griekse vertaling daarvan
-        const matchesSearch = 
-            (biz.Name || "").toLowerCase().includes(searchTerm) || 
-            (biz.Name_EL || "").toLowerCase().includes(searchTerm) || // VOEG DEZE REGEL TOE
-            (biz.Category || "").toLowerCase().includes(searchTerm) ||
-            (t(biz.Category).toLowerCase().includes(searchTerm)) || // Zoek in vertaalde categorie
-            (t(biz.Location).toLowerCase().includes(searchTerm));   // Zoek in vertaalde locatie
 
-        const matchesCategory = activeCategory === 'all' || biz.Category === activeCategory;
-        const matchesLocation = activeLocation === 'all' || biz.Location === activeLocation;
-        
-        return matchesSearch && matchesCategory && matchesLocation;
+    const filtered = allBusinesses.filter((biz) => {
+        const matchesSearch =
+            (biz.Name || "").toLowerCase().includes(searchTerm) ||
+            (biz.Name_EL || "").toLowerCase().includes(searchTerm) ||
+            (biz.Category || "").toLowerCase().includes(searchTerm) ||
+            t(biz.Category).toLowerCase().includes(searchTerm) ||
+            t(biz.Location).toLowerCase().includes(searchTerm);
+
+        const matchesLocation =
+            locationFilterShowsAllBusinesses() || activeLocations.has(biz.Location);
+
+        return matchesSearch && matchesLocation;
     });
     renderBusinesses(filtered);
-    updateFilterBadge();
-}
-
-function updateFilterBadge() {
-    const badge = document.getElementById('filter-badge');
-    if (!badge) return;
-    const count = (activeCategory !== 'all' ? 1 : 0) + (activeLocation !== 'all' ? 1 : 0);
-    badge.textContent = String(count);
-    badge.style.display = count > 0 ? 'grid' : 'none';
-}
-
-function openFilterSheet() {
-    const sheet = document.getElementById('filter-sheet');
-    const backdrop = document.getElementById('filter-sheet-backdrop');
-    if (!sheet || !backdrop) return;
-    sheet.hidden = false;
-    backdrop.hidden = false;
-    document.body.classList.add('sheet-open');
-
-    // Desktop: position sheet near the filter button
-    const openBtn = document.getElementById('open-filters');
-    if (openBtn && window.innerWidth >= 992) {
-        const rect = openBtn.getBoundingClientRect();
-        const margin = 10;
-        const sheetWidth = Math.min(520, Math.floor(window.innerWidth * 0.92));
-        let left = Math.round(rect.right - sheetWidth);
-        left = Math.max(margin, Math.min(left, window.innerWidth - sheetWidth - margin));
-        const top = Math.round(rect.bottom + 10);
-        sheet.style.setProperty('--sheet-left', `${left}px`);
-        sheet.style.setProperty('--sheet-top', `${top}px`);
-    }
-}
-
-function closeFilterSheet() {
-    const sheet = document.getElementById('filter-sheet');
-    const backdrop = document.getElementById('filter-sheet-backdrop');
-    if (!sheet || !backdrop) return;
-    sheet.hidden = true;
-    backdrop.hidden = true;
-    document.body.classList.remove('sheet-open');
-}
-
-function resetFilters() {
-    activeCategory = 'all';
-    activeLocation = 'all';
-    const searchInput = document.getElementById('search-input');
-    if (searchInput) searchInput.value = '';
-    // Re-render filter buttons to mark "All" active
-    generateCategoryButtons(allBusinesses);
-    generateLocationButtons(allBusinesses);
-    applyFilters();
 }
 
 // --- DE HOOFDLIJST RENDEREN ---
@@ -554,7 +488,7 @@ function buildAlphaIndex() {
 
     // Only on the directory page (not wishlist/forms) and only in A–Z mode
     if (listMode !== 'az') return;
-    if (!document.getElementById('filter-buttons')) return;
+    if (!document.getElementById('business-list')) return;
 
     const cards = Array.from(document.querySelectorAll('#business-list .biz-card-mini'));
     if (cards.length < 15) return; // avoid clutter on short lists
@@ -723,20 +657,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-input');
     if (searchInput) searchInput.addEventListener('input', applyFilters);
 
-    // 2a. Filter sheet open/close
-    const openBtn = document.getElementById('open-filters');
-    const closeBtn = document.getElementById('close-filters');
-    const resetBtn = document.getElementById('reset-filters');
-    const backdrop = document.getElementById('filter-sheet-backdrop');
-    if (openBtn) openBtn.addEventListener('click', openFilterSheet);
-    if (closeBtn) closeBtn.addEventListener('click', closeFilterSheet);
-    if (resetBtn) resetBtn.addEventListener('click', () => { resetFilters(); });
-    if (backdrop) backdrop.addEventListener('click', closeFilterSheet);
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeFilterSheet();
-    });
-
-    // 2b. View mode toggle (Categories / A-Z)
+    // 2a. View mode toggle (Categories / A-Z)
     const btnCat = document.getElementById('view-mode-categories');
     const btnAz = document.getElementById('view-mode-az');
     if (btnCat && btnAz) {

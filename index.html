@@ -50,7 +50,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
     
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.0.5">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.0.30">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -162,55 +162,34 @@
     </div>
 
         <div class="directory-toolbar">
-            <div class="search-row">
-                <div class="search-container">
-                    <i class="fa fa-search search-icon"></i>
-                    <input 
-                        type="search" 
-                        class="search-input" 
-                        id="search-input" 
-                        placeholder="Search by name or category..."
-                        inputmode="search"
-                        enterkeyhint="search"
-                        autocomplete="off"
-                    >
+            <div class="directory-toolbar-stack">
+                <div class="directory-toolbar-search">
+                    <div class="search-row">
+                        <div class="search-container">
+                            <i class="fa fa-search search-icon"></i>
+                            <input
+                                type="search"
+                                class="search-input"
+                                id="search-input"
+                                placeholder="Search by name or category..."
+                                inputmode="search"
+                                enterkeyhint="search"
+                                autocomplete="off"
+                            >
+                        </div>
+                    </div>
                 </div>
-
-                <button type="button" class="filter-fab" id="open-filters" aria-haspopup="dialog" aria-controls="filter-sheet" aria-label="Open filters">
-                    <i class="fa-solid fa-sliders"></i>
-                    <span class="filter-badge" id="filter-badge" aria-hidden="true" style="display:none;">0</span>
-                </button>
-            </div>
-
-            <div class="view-toggle view-toggle-inline" role="tablist" aria-label="View mode">
-                <button type="button" class="view-toggle-btn" id="view-mode-categories" role="tab" aria-selected="true">Categories</button>
-                <button type="button" class="view-toggle-btn" id="view-mode-az" role="tab" aria-selected="false">A–Z</button>
+                <div class="directory-toolbar-filters">
+                    <div class="directory-location-row directory-location-row--scroll">
+                        <div class="location-quick" id="location-buttons" role="group" aria-label="Areas, multiple selection"></div>
+                    </div>
+                    <div class="view-toggle view-toggle-inline view-toggle--segment" role="tablist" aria-label="View mode">
+                        <button type="button" class="view-toggle-btn" id="view-mode-categories" role="tab" aria-selected="true">Categories</button>
+                        <button type="button" class="view-toggle-btn" id="view-mode-az" role="tab" aria-selected="false">A–Z</button>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <div class="sheet-backdrop" id="filter-sheet-backdrop" hidden></div>
-        <section class="sheet" id="filter-sheet" role="dialog" aria-modal="true" aria-label="Filters" hidden>
-            <div class="sheet-handle" aria-hidden="true"></div>
-            <header class="sheet-header">
-                <div class="sheet-title">Filters</div>
-                <div class="sheet-actions">
-                    <button type="button" class="sheet-btn" id="reset-filters">Reset</button>
-                    <button type="button" class="sheet-close" id="close-filters" aria-label="Close filters">✕</button>
-                </div>
-            </header>
-
-            <div class="sheet-content">
-                <div class="filter-group" aria-label="Category filters">
-                    <div class="filter-label">Category</div>
-                    <div class="filter-container" id="filter-buttons"></div>
-                </div>
-
-                <div class="filter-group" aria-label="Location filters">
-                    <div class="filter-label">Location</div>
-                    <div class="filter-container" id="location-buttons"></div>
-                </div>
-            </div>
-        </section>
 
         <div id="business-list">
             <p class="status-msg">Data is loading...</p>
@@ -274,7 +253,7 @@
 
 <!-- N8N_SEO_END -->
  
-<script src="app.js?v=2.0.5"></script>
+<script src="app.js?v=2.0.30"></script>
 
 <nav class="bottom-nav" aria-label="Primary">
     <div class="bottom-nav-inner">
