@@ -1,4 +1,4 @@
-/* version 2.0.31 */
+/* version 2.0.74 */
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
 @keyframes slideDown{from{transform: translate(-50%, -100%); opacity: 0}to{transform: translate(-50%, 0); opacity: 1}}
@@ -30,7 +30,7 @@ body{font-family:'Inter', sans-serif;background:var(--bg);margin:0;padding:0;col
 
 .bottom-nav .bottom-nav-inner{max-width:900px;margin:0 auto;height:100%;display:grid;grid-template-columns:repeat(4, 1fr);align-items:center}
 
-.bottom-nav a{text-decoration:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-weight:800;font-size:11px;height:100%;-webkit-tap-highlight-color:transparent}
+.bottom-nav a{text-decoration:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-weight:800;font-size:10px;letter-spacing:-0.02em;line-height:1.12;height:100%;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;text-size-adjust:100%}
 
 .bottom-nav a i{font-size:18px;color:inherit}
 
@@ -62,39 +62,55 @@ body{font-family:'Inter', sans-serif;background:var(--bg);margin:0;padding:0;col
 
 .more-links{display:flex;flex-direction:column;gap:6px}
 
-.more-links a, .more-links button, .more-card{appearance:none;-webkit-appearance:none;width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 12px;border-radius:14px;border:1px solid rgba(15, 23, 42, 0.10);background:rgba(255,255,255,0.78);color:#0f172a;text-decoration:none;font-weight:900;font-size:14px;cursor:pointer;box-sizing:border-box;min-width:0}
+.more-links a,.more-links button,.more-card{appearance:none;-webkit-appearance:none;width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 10px;border-radius:14px;border:1px solid rgba(15, 23, 42, 0.10);background:rgba(255,255,255,0.78);color:#0f172a;text-decoration:none;font-weight:800;font-size:12px;line-height:1.2;letter-spacing:-0.02em;cursor:pointer;box-sizing:border-box;min-width:0;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;text-size-adjust:100%}
 
 .more-links a i, .more-links button i{color:#2d5a27}
 
 .more-links a:active, .more-links button:active{transform:scale(0.99)}
 
-.more-links small{color:rgba(71,85,105,0.85);font-weight:800}
+.more-links small{color:rgba(71,85,105,0.85);font-weight:800;font-size:11px}
 
-.more-links a > span, .more-links button > span{display:flex;align-items:center;gap:10px;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.more-link-leading{display:flex;align-items:center;gap:8px;min-width:0;flex:1 1 auto}
+.more-link-leading > i{flex-shrink:0;width:1.1em;text-align:center}
+.more-link-label{display:block;min-width:0;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.more-links a > small,.more-links button > small{flex:0 0 auto;margin-left:4px;white-space:nowrap}
 
-.more-links a > small, .more-links button > small{flex:0 0 auto;margin-left:10px;white-space:nowrap}
-
-.more-card > span{display:flex;align-items:center;gap:10px;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-.more-card > small{flex:0 0 auto;margin-left:10px;white-space:nowrap}
+.more-card > small{flex:0 0 auto;margin-left:4px;white-space:nowrap}
 
 .more-card.is-meta{flex-direction:column;align-items:stretch;justify-content:flex-start;gap:6px;cursor:default}
 
 .more-card.is-meta .meta-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
 
-.more-card.is-meta .meta-row > span{display:flex;align-items:center;gap:10px;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.more-card.is-meta .meta-row > .more-link-label{flex:1 1 auto;min-width:0}
 
-.more-card.is-meta .meta-row > small{flex:0 0 auto;margin-left:10px;white-space:nowrap}
-
-.more-card.is-meta .copyright-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;font-size:12px;font-weight:800;color:rgba(71,85,105,0.9);line-height:1.3}
+.more-card.is-meta .copyright-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;font-size:11px;font-weight:800;color:rgba(71,85,105,0.9);line-height:1.22;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;text-size-adjust:100%}
 
 .more-card.is-meta .meta-right{display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-end;gap:6px;flex:0 0 auto;margin-left:10px}
 
 .more-card.is-meta .meta-version{line-height:1}
 
-.more-card.is-meta .meta-logo{display:block;width:28px;height:28px;object-fit:contain}
+.more-card.is-meta .meta-logo{display:block;width:26px;height:26px;flex-shrink:0;object-fit:contain}
 
 .more-card.is-meta .copyright-text{flex:1;min-width:0;white-space:normal;overflow:visible;text-overflow:unset}
+
+@supports (-moz-appearance:none){
+  @media (max-width:768px){
+    html:lang(el) .more-sheet .more-links a,
+    html:lang(el) .more-sheet .more-links button,
+    html:lang(el) .more-sheet .more-card:not(.is-meta){
+      font-size:11px;
+      letter-spacing:-0.04em;
+      padding:9px 7px;
+      gap:5px;
+      line-height:1.18
+    }
+    html:lang(el) .more-sheet .more-links small{font-size:10px;letter-spacing:-0.035em}
+    html:lang(el) .more-sheet .more-link-leading{gap:5px}
+    html .more-sheet .more-card.is-meta .copyright-row{font-size:10px;line-height:1.18;letter-spacing:-0.035em;gap:6px}
+    html .more-sheet .more-card.is-meta .copyright-text{font-weight:750}
+    html .more-sheet .more-card.is-meta .meta-logo{width:24px;height:24px}
+  }
+}
 
 .more-about p{margin:0;color:#334155;font-weight:600;line-height:1.5;font-size:14px}
 
@@ -223,7 +239,19 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
 
 .bus-dir-btn:active{transform:scale(0.99)}
 
-.bus-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px}
+.bus-meta{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:10px}
+
+.bus-sched-legend{padding:10px 12px;margin:12px 0 0;border-radius:12px;background:rgba(74,108,74,0.06);border:1px solid rgba(74,108,74,0.18);font-size:11.5px;font-weight:650;color:rgba(30,41,59,0.92);line-height:1.45;max-width:min(52rem,100%);box-sizing:border-box}
+.bus-sched-legend__title{margin:0 0 8px;font-size:10.5px;font-weight:900;letter-spacing:0.07em;text-transform:uppercase;color:rgba(71,85,105,0.85);display:flex;align-items:center;gap:7px}
+.bus-sched-legend__title .fa-solid{color:#2d5a27;opacity:0.88;font-size:1.05em}
+.bus-sched-legend__list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+@media (min-width:640px){
+  .bus-sched-legend__list{flex-direction:row;flex-wrap:wrap;column-gap:18px;row-gap:6px;align-items:flex-start}
+}
+.bus-sched-legend__item{display:flex;align-items:flex-start;gap:8px;min-width:0;max-width:100%}
+.bus-sched-legend__ic{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:999px;background:rgba(74,108,74,0.11);border:1px solid rgba(74,108,74,0.22);color:#2d5a27;font-size:12px;line-height:1;box-sizing:border-box}
+.bus-sched-legend__text{min-width:0;font-weight:650}
+.bus-sched-legend__text strong{font-weight:900;color:rgba(15,23,42,0.88)}
 
 .bus-last-updated{font-size:11px;font-weight:900;color:rgba(71,85,105,0.9)}
 
@@ -287,8 +315,17 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
 
 .bus-next-highlight .bus-card{border-left-width:6px;border-left-color:#2d5a27;box-shadow:0 8px 20px rgba(74,108,74,0.14)}
 
-.bus-full-section{margin-top:22px;padding-top:20px;border-top:2px solid rgba(15,23,42,0.08);background:linear-gradient(180deg,rgba(248,250,252,0.5) 0%,transparent 12px)}
+.bus-full-section{margin-top:22px;padding:0;border:none;background:transparent}
 
+.bus-full-panel{
+  width:100%;
+  box-sizing:border-box;
+  padding:8px 10px 10px;
+  border-radius:16px;
+  background:linear-gradient(165deg,rgba(74,108,74,0.16) 0%,rgba(74,108,74,0.10) 45%,rgba(255,255,255,0.72) 100%);
+  border:1px solid rgba(74,108,74,0.35);
+  box-shadow:0 10px 28px rgba(45,90,39,0.08),inset 0 1px 0 rgba(255,255,255,0.7)
+}
 .bus-full-heading-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:2px}
 
 .bus-full-origin-note{margin:6px 0 6px;padding:0;font-size:12px;font-weight:680;color:rgba(71,85,105,0.92);line-height:1.4;max-width:min(48rem,100%)}
@@ -309,6 +346,41 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
 
 .bus-full-section .bus-container--full{margin-top:12px}
 
+.bus-after-full{width:100%;box-sizing:border-box;margin-top:14px;padding:0;display:flex;flex-direction:column;align-items:stretch;gap:14px;border:0;border-top:0}
+
+.bus-full-divider{display:flex;flex-direction:row;align-items:center;width:100%;margin:4px 0 2px;padding:0 2px;box-sizing:border-box}
+
+.bus-full-divider__line{flex:1 1 auto;min-width:20px;height:1px;background:rgba(15,23,42,0.13);margin:0;border-radius:2px}
+
+.bus-last-updated--divider{
+  flex:0 1 auto;margin:0;padding:4px 12px;font-size:10.5px;font-weight:750;line-height:1.35;color:rgba(71,85,105,0.88);
+  text-align:center;max-width:min(94%,460px);box-sizing:border-box;
+  background:linear-gradient(180deg,#fff 0%,#f8fafc 50%,#f1f5f9 100%);
+  border:1px solid rgba(148,163,184,0.48);border-radius:999px;
+  box-shadow:0 0 0 5px #f8fafc,inset 0 1px 0 rgba(255,255,255,0.95)
+}
+.bus-last-updated.bus-last-updated--divider{font-weight:750}
+
+.bus-sched-legend--panel{width:100%;max-width:none!important;margin:0!important;box-sizing:border-box;padding:8px 10px 10px!important;border-radius:16px!important;
+  background:linear-gradient(165deg,rgba(74,108,74,0.16) 0%,rgba(74,108,74,0.10) 45%,rgba(255,255,255,0.72) 100%)!important;
+  border:1px solid rgba(74,108,74,0.35)!important;
+  box-shadow:0 10px 28px rgba(45,90,39,0.08),inset 0 1px 0 rgba(255,255,255,0.7)!important}
+
+.bus-sched-legend--panel .bus-sched-legend__title{width:100%;justify-content:flex-start}
+.bus-sched-legend--panel .bus-sched-legend__list{
+  width:100%;
+  margin:4px 0 0!important;
+  flex-direction:row!important;
+  flex-wrap:wrap!important;
+  justify-content:center!important;
+  align-items:center!important;
+  gap:10px 14px!important
+}
+.bus-sched-legend--panel .bus-sched-legend__item{justify-content:flex-start!important}
+@media (min-width:640px){
+  .bus-sched-legend--panel .bus-sched-legend__list{gap:14px 22px!important}
+}
+
 /* Full timetable — timeline alternative to cards */
 .bus-timeline{display:flex;flex-direction:column;margin:0;padding:0;list-style:none;gap:0}
 
@@ -316,22 +388,55 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
 
 .bus-timeline__item:last-child{border-bottom:0;padding-bottom:4px}
 
+.bus-timeline__item--next .bus-timeline__dot{
+  background:linear-gradient(165deg,#4f9f44 0%,#36722f 100%);
+  border-color:#fff;
+  box-shadow:0 0 0 1px rgba(53,132,52,0.55)
+}
+
 .bus-timeline__axis{display:flex;flex-direction:column;align-items:center;padding-top:3px;width:22px;min-height:100%}
 
 .bus-timeline__dot{width:11px;height:11px;border-radius:50%;background:#0b5fc7;border:2px solid #fff;box-shadow:0 0 0 1px rgba(11,95,199,0.35);flex-shrink:0}
 
 .bus-timeline__stem{flex:1;align-self:center;width:3px;margin-top:3px;margin-bottom:-2px;min-height:16px;background:linear-gradient(180deg,rgba(11,95,199,0.52) 0%,rgba(11,95,199,0.09) 100%);border-radius:2px}
 
-.bus-timeline__time-col{font-variant-numeric:tabular-nums;padding-top:1px;text-align:right}
+.bus-timeline__time-col{font-variant-numeric:tabular-nums;padding-top:1px;text-align:right;width:100%;min-width:0}
 
-.bus-timeline__time{font-size:17px;font-weight:800;color:#0f172a;letter-spacing:-0.03em;line-height:1.15;display:block}
+.bus-timeline__time-row{display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-end;gap:6px;width:100%;min-width:0;line-height:1.15}
+
+.bus-timeline__time-bus{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;color:#64748b;font-size:14px;line-height:1;opacity:0.88}
+
+.bus-timeline__item--next .bus-timeline__time-bus{color:#2d5a27;opacity:0.95}
+.bus-timeline__time{font-size:17px;font-weight:800;color:#0f172a;letter-spacing:-0.03em;line-height:1.15;display:block;flex-shrink:0}
 
 .bus-timeline__body{display:flex;flex-direction:column;align-items:flex-end;gap:3px;text-align:right;min-width:0;padding-top:0}
 
 .bus-route-stops{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:baseline;gap:0;max-width:100%;margin:0;padding:0;font-size:13px;font-weight:650;color:#0f172a;line-height:1.35;text-align:right}
 .bus-route-item{display:inline-flex;flex-wrap:nowrap;align-items:baseline;flex:0 1 auto;max-width:100%;min-width:0}
-.bus-route-stop{white-space:nowrap}
+.bus-route-stop{display:inline-flex;flex-wrap:wrap;align-items:stretch;justify-content:flex-end;max-width:100%;min-width:0;line-height:1.35;text-align:inherit;vertical-align:baseline}
+.bus-route-stop__block{
+  display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px 12px;
+  max-width:100%;margin:0;padding:5px 11px 5px 12px;border-radius:10px;
+  border:1px solid rgba(74,108,74,0.28);
+  border-left:3px solid rgba(74,108,74,0.42);
+  background:linear-gradient(118deg,rgba(74,108,74,0.08) 0%,rgba(255,255,255,0.55) 58%,rgba(248,250,252,0.85) 100%);
+  box-shadow:0 1px 3px rgba(15,23,42,0.06);
+  box-sizing:border-box
+}
+.bus-route-stop__dest{font-weight:800;color:#0f172a;min-width:0;letter-spacing:-0.02em;line-height:1.25;text-align:right;word-break:normal;overflow-wrap:normal;hyphens:none;-webkit-hyphens:none;-moz-hyphens:none}
+.bus-route-stop__sched{
+  display:inline-flex;align-items:center;flex-shrink:0;line-height:1;gap:6px;margin:0;padding:0;
+  border:0;background:transparent!important
+}
+.bus-route-stop__sched::before{content:none}
 .bus-route-sep{color:rgba(71,85,105,0.55);font-weight:inherit;flex-shrink:0}
+
+.bus-runs-caption{display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:6px;margin:0;vertical-align:baseline;text-align:inherit}
+.bus-sched-icon{display:inline-flex;flex-shrink:0;align-items:center;justify-content:center;width:26px;height:26px;margin:0 1px 0 0;border-radius:999px;background:rgba(74,108,74,0.11);border:1px solid rgba(74,108,74,0.24);color:#2d5a27;font-size:12.5px;box-sizing:border-box;line-height:1}
+.bus-sched-icon .fa-solid{opacity:0.95}
+.bus-runs-caption__text{font-weight:780;color:rgba(15,23,42,0.88);letter-spacing:-0.01em}
+.bus-runs-caption__extra{font-weight:650;color:rgba(71,85,105,0.88)}
+.bus-runs-caption__sep{font-weight:inherit;opacity:0.5}
 
 .bus-timeline__note{font-size:11px;color:rgba(71,85,105,0.92);font-style:italic;line-height:1.3;max-width:100%;word-wrap:break-word;overflow-wrap:anywhere}
 
@@ -360,33 +465,208 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
 
 .bus-stop{font-size:11px;color:rgba(71,85,105,0.95);font-weight:900;line-height:1.25;max-width:100%;word-wrap:break-word;overflow-wrap:anywhere}
 
-@media (max-width:480px){
-  .bus-card{padding:10px 10px;gap:8px;border-radius:12px}
-  .bus-time-wrap{gap:2px}
+@media (max-width:640px){
+  /* Ritten: tijd links, bestemmingen rechts (zelfde idee als desktop) + maximaal breedte voor pill-grid */
+  .bus-card{
+    flex-direction:row;
+    flex-wrap:wrap;
+    align-items:flex-start;
+    justify-content:flex-start;
+    padding:7px 9px 8px;
+    gap:6px 10px;
+    border-radius:12px;
+    border-left-width:5px;
+    border-left-color:#36722f
+  }
+  .bus-card > .bus-note--lowfreq{
+    flex-basis:100%;
+    margin-top:0
+  }
+  .bus-time-wrap{
+    flex:0 0 auto;
+    width:auto;
+    max-width:min(9rem,38vw);
+    min-width:0;
+    gap:1px;
+    align-self:flex-start
+  }
+  /* Blok rechts: standaard vult hij de kaart … */
+  .bus-info{
+    flex:1 1 0;
+    align-items:flex-start;
+    align-self:flex-start;
+    width:auto;
+    min-width:0
+  }
+  /* Next bus: kaart als zelfde 3‑koloms‑grid als .bus-timeline__item ⇒ pillen op één verticale lijn met tijdlijnpills */
+  .bus-next-highlight .bus-card{
+    display:grid;
+    grid-template-columns:20px minmax(5.5rem,5.5rem) minmax(0,1fr);
+    gap:6px 8px;
+    align-items:start;
+    flex-wrap:nowrap;
+    margin-left:-13px;
+    width:calc(100% + 13px);
+    max-width:none;
+    box-sizing:border-box
+  }
+  .bus-next-highlight .bus-card::before{
+    content:"";
+    grid-column:1;
+    grid-row:1
+  }
+  .bus-next-highlight .bus-time-wrap{
+    max-width:none;
+    min-width:0
+  }
+  .bus-next-highlight .bus-card > .bus-note--lowfreq{
+    grid-column:1 / -1
+  }
   .bus-time-label{font-size:9.5px;font-weight:600}
   .bus-time-label.bus-time-label--stack{max-width:min(118px,50vw);gap:0}
   .bus-time{font-size:16px;font-weight:700;letter-spacing:-0.03em}
-  .bus-route-stops{
-    flex-direction:column;
-    flex-wrap:nowrap;
-    align-items:flex-end;
-    gap:4px;
-    font-size:11.75px;
-    font-weight:650;
-    line-height:1.28
+  .bus-route-stops{font-size:11px;font-weight:600;line-height:1.25}
+  /* Eén kolom ⇒ volle breedte van het routevak (= langere Griekse namen zichtbaar, geen …) */
+  .bus-card .bus-route-stops,.bus-timeline .bus-route-stops{
+    width:100%;
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:6px;
+    align-content:start;
+    justify-items:stretch;
+    justify-content:stretch
   }
-  .bus-route-item{width:100%;justify-content:flex-end;box-sizing:border-box}
+  .bus-card .bus-route-item,.bus-timeline .bus-route-item{
+    width:100%;
+    min-width:0;
+    align-self:stretch;
+    justify-self:stretch;
+    display:flex;
+    justify-content:stretch
+  }
+  .bus-card .bus-route-stop,.bus-timeline .bus-route-stop{
+    flex:1 1 0;
+    width:100%;
+    min-width:0;
+    display:flex;
+    justify-content:stretch;
+    align-items:stretch
+  }
+  .bus-card .bus-route-stop__block,.bus-timeline .bus-route-stop__block{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:start;
+    gap:6px;
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    box-sizing:border-box;
+    padding:4px 8px 4px 10px;
+    border-radius:8px;
+    line-height:1.2
+  }
+  .bus-card .bus-route-stop__dest,.bus-timeline .bus-route-stop__dest{
+    min-width:0;
+    text-align:left;
+    font-size:11px;
+    font-weight:650;
+    letter-spacing:-0.015em;
+    line-height:1.3;
+    color:rgba(15,23,42,0.9);
+    white-space:normal;
+    overflow:visible;
+    word-break:normal;
+    overflow-wrap:normal;
+    hyphens:none;
+    -webkit-hyphens:none;
+    -moz-hyphens:none
+  }
+  .bus-card .bus-route-stop__sched,.bus-timeline .bus-route-stop__sched{
+    display:inline-flex;
+    align-items:center;
+    justify-content:flex-end;
+    flex-shrink:0
+  }
+  .bus-card .bus-route-stop__sched .bus-runs-caption,
+  .bus-timeline .bus-route-stop__sched .bus-runs-caption{
+    display:inline-flex;
+    flex-direction:row-reverse;
+    align-items:center;
+    gap:4px;
+    justify-content:flex-end
+  }
+  .bus-runs-caption__extra{font-size:10px;font-weight:620;line-height:1.2;white-space:normal;text-align:right;color:rgba(71,85,105,0.9)}
   .bus-route-sep{display:none}
   .bus-stop{font-size:10.5px;font-weight:600}
   .bus-arrival,.bus-note{font-size:10px}
-  .bus-next-highlight{padding:6px 8px 8px;gap:4px;margin-top:10px;border-radius:14px}
+  /* Horizontaal gelijk aan .bus-full-panel (12px) zodat negatieve marge klopt voor grid‑uitlijning */
+  .bus-next-highlight{padding:8px 12px 10px;gap:4px;margin-top:10px;border-radius:14px}
+  .bus-full-panel{padding:10px 12px 12px;border-radius:14px}
   .bus-next-highlight .bus-subsection-title--next{font-size:11px;letter-spacing:0.08em}
   .bus-full-heading-row{gap:10px}
   .bus-full-origin-note{font-size:11px;line-height:1.35}
   .bus-full-view-btn{padding:7px 10px;font-size:10.8px;font-weight:830}
+  .bus-sched-legend{padding:8px 10px;font-size:10.8px}
+  .bus-sched-legend--panel{padding:8px 10px 10px!important;border-radius:14px!important}
+  .bus-last-updated--divider{font-size:10px;padding:3px 10px!important;max-width:96%!important}
+  .bus-sched-legend__ic{width:23px;height:23px;font-size:11px}
+  /* Tijd + statusicoon + vaste tijdkolom voor verticale kolom‑uitlijning */
+  .bus-timeline__time-col{
+    text-align:left;
+    min-width:0;
+    max-width:100%;
+    overflow:hidden;
+    box-sizing:border-box
+  }
+  .bus-timeline__time-row{justify-content:flex-start;align-items:center;gap:4px}
+  .bus-timeline__item:not(.bus-timeline__item--next) .bus-timeline__time-row::after{
+    content:"";
+    width:22px;
+    height:1px;
+    flex-shrink:0
+  }
+  .bus-timeline__body{
+    align-items:flex-start;
+    text-align:left;
+    width:100%;
+    min-width:0;
+    box-sizing:border-box
+  }
   .bus-timeline__time{font-size:15px;font-weight:800}
+  .bus-timeline__time-bus{font-size:13px}
   .bus-timeline__note,.bus-timeline__meta,.bus-timeline__arrival{font-size:10px}
-  .bus-timeline__item{grid-template-columns:20px auto minmax(0,1fr);gap:7px 8px;padding:9px 0 11px}
+  /* Tijdlijn: groen ipv blauw (desktop blijft KTEL-blauw) — rustiger bij de groene accenten hierboven */
+  .bus-timeline__item:not(.bus-timeline__item--next) .bus-timeline__dot{
+    background:linear-gradient(165deg,#6a9b62 0%,#4a7543 100%);
+    box-shadow:0 0 0 1px rgba(74,108,74,0.42)
+  }
+  .bus-timeline__stem{
+    width:2px;
+    background:linear-gradient(180deg,rgba(74,108,74,0.46) 0%,rgba(74,108,74,0.09) 100%)
+  }
+  .bus-timeline__axis{width:20px;min-width:0;align-items:center}
+  .bus-timeline__dot{width:10px;height:10px}
+  .bus-timeline__item{
+    grid-template-columns:20px minmax(5.5rem,5.5rem) minmax(0,1fr);
+    gap:6px 8px;
+    padding:8px 0 12px;
+    border-bottom-color:rgba(15,23,42,0.045)
+  }
+  /* Patroon‑iconen in pills: iets compacter op smal scherm, wel zichtbaar (legenda verkort; symbolen blijven in de ritregels) */
+  .bus-route-stop__block .bus-sched-icon{
+    width:22px;
+    height:22px;
+    font-size:10.5px;
+    margin:0;
+    flex-shrink:0
+  }
+  @supports (-moz-appearance:none){
+    .bus-timeline__item,
+    .bus-next-highlight .bus-card{
+      grid-template-columns:20px minmax(4.875rem,5.125rem) minmax(0,1fr)
+    }
+    .bus-card .bus-route-stop__block,.bus-timeline .bus-route-stop__block{padding:4px 5px 4px 10px}
+  }
 }
 
 .bus-empty, .bus-error{background:rgba(148,163,184,0.08);border:1px dashed rgba(15,23,42,0.16);color:rgba(71,85,105,0.95);border-radius:14px;padding:12px;font-weight:900;font-size:13px}

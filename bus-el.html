@@ -28,7 +28,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.0.38">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.0.74">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -184,7 +184,6 @@
         </dialog>
 
         <div class="bus-meta">
-            <div id="bus-last-updated" class="bus-last-updated" aria-live="polite"></div>
             <button type="button" id="bus-retry" class="bus-retry" hidden>Επανάληψη</button>
         </div>
 
@@ -196,6 +195,7 @@
         </div>
 
         <div class="bus-full-section">
+            <div class="bus-full-panel">
             <div class="bus-full-heading-row">
                 <div class="bus-subsection-title bus-subsection-title--full">Πλήρες πρόγραμμα σήμερα</div>
                 <div class="bus-full-view-toggle" role="group">
@@ -215,6 +215,35 @@
                 <div class="bus-skeleton" aria-hidden="true"></div>
                 <div class="bus-skeleton" aria-hidden="true"></div>
             </div>
+            </div>
+
+            <div class="bus-after-full">
+                <div class="bus-full-divider" role="presentation">
+                    <span class="bus-full-divider__line" aria-hidden="true"></span>
+                    <div id="bus-last-updated" class="bus-last-updated bus-last-updated--divider" aria-live="polite"></div>
+                    <span class="bus-full-divider__line" aria-hidden="true"></span>
+                </div>
+                <div class="bus-sched-legend bus-sched-legend--panel" role="note" aria-labelledby="bus-sched-legend-title">
+                    <p id="bus-sched-legend-title" class="bus-sched-legend__title">
+                        <i class="fa-solid fa-tags" aria-hidden="true"></i>
+                        <span>Σύμβολα στο πρόγραμμα</span>
+                    </p>
+                    <ul class="bus-sched-legend__list">
+                        <li class="bus-sched-legend__item">
+                            <span class="bus-sched-legend__ic" aria-hidden="true"><i class="fa-solid fa-arrows-rotate"></i></span>
+                            <span class="bus-sched-legend__text" title="Όλη την εβδομάδα"><strong>Καθημερινά</strong></span>
+                        </li>
+                        <li class="bus-sched-legend__item">
+                            <span class="bus-sched-legend__ic" aria-hidden="true"><i class="fa-solid fa-briefcase"></i></span>
+                            <span class="bus-sched-legend__text" title="Μόνο καθημερινές"><strong>Δευ–Παρ</strong></span>
+                        </li>
+                        <li class="bus-sched-legend__item">
+                            <span class="bus-sched-legend__ic" aria-hidden="true"><i class="fa-solid fa-umbrella-beach"></i></span>
+                            <span class="bus-sched-legend__text" title="Μόνο Σαββατοκύριακο"><strong>Σαβ–Κυρ</strong></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
 
         <div class="bus-disclaimer-block" role="note" aria-label="Σχετικά με τις ώρες">
@@ -230,7 +259,7 @@
     </section>
 </div>
 
-<script src="app.js?v=2.0.38"></script>
+<script src="app.js?v=2.0.74"></script>
 
 <nav class="bottom-nav" aria-label="Κύρια πλοήγηση">
     <div class="bottom-nav-inner">

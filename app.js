@@ -111,7 +111,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.0.38'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.0.74'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -808,6 +808,135 @@ function busFrequencyLabel(freqValue) {
     return raw;
 }
 
+/** Font Awesome (solid) icoon voor patronen uit de sheet — Daily / Mon–Fri / weekend (legenda bus.html · bus-el.html). */
+function busScheduleFaIconClass(pattern) {
+    const p = String(pattern || '').toLowerCase();
+    if (p === 'daily') return 'fa-arrows-rotate';
+    if (p === 'weekdays') return 'fa-briefcase';
+    if (p === 'weekend') return 'fa-umbrella-beach';
+    return '';
+}
+
+function busScheduleGlyphIconHtml(pattern) {
+    const cls = busScheduleFaIconClass(pattern);
+    if (!cls) return '';
+    return `<span class="bus-sched-icon" aria-hidden="true"><i class="fa-solid ${cls}" aria-hidden="true"></i></span>`;
+}
+
+/** Normalises sheet `days` to a badge pattern slug, or '' when unknown/custom. */
+function busNormalizeSchedulePattern(daysRaw) {
+    const raw = String(daysRaw || '').trim();
+    const key = raw.toLowerCase();
+    if (key === 'daily' || raw === '1-7') return 'daily';
+    if (key === 'weekdays' || raw === '1-5') return 'weekdays';
+    if (key === 'weekend') return 'weekend';
+    if (raw === '1-6') return 'mon_sat';
+    if (raw === '7') return 'sun';
+    return '';
+}
+
+function busScheduleShortLabel(pattern) {
+    switch (pattern) {
+        case 'daily':
+            return busText('runs_short_daily', { en: 'Daily', nl: 'Dagelijks', el: 'Καθημερινά' });
+        case 'weekdays':
+            return busText('runs_short_weekdays', { en: 'Mon–Fri', nl: 'Ma–vr', el: 'Δευ–Παρ' });
+        case 'weekend':
+            return busText('runs_short_weekend', { en: 'Sat–Sun', nl: 'Za–zo', el: 'Σαβ–Κυρ' });
+        case 'mon_sat':
+            return busText('runs_short_mon_sat', { en: 'Mon–Sat', nl: 'Ma–za', el: 'Δευ–Σαβ' });
+        case 'sun':
+            return busText('runs_short_sun', { en: 'Sundays', nl: 'Alleen zo', el: 'Κυριακές' });
+        default:
+            return '';
+    }
+}
+
+function busScheduleLongPlain(pattern) {
+    switch (pattern) {
+        case 'daily':
+            return busText('sched_plain_daily', {
+                en: 'Every day',
+                nl: 'Elke dag',
+                el: 'Κάθε μέρα',
+            });
+        case 'weekdays':
+            return busText('sched_plain_weekdays', {
+                en: 'Monday to Friday',
+                nl: 'Maandag t/m vrijdag',
+                el: 'Δευτέρα έως Παρασκευή',
+            });
+        case 'weekend':
+            return busText('sched_plain_weekend', {
+                en: 'Saturday and Sunday',
+                nl: 'Zaterdag en zondag',
+                el: 'Σάββατο και Κυριακή',
+            });
+        case 'mon_sat':
+            return busText('sched_plain_mon_sat', {
+                en: 'Monday to Saturday',
+                nl: 'Maandag t/m zaterdag',
+                el: 'Δευτέρα έως Σάββατο',
+            });
+        case 'sun':
+            return busText('sched_plain_sun', {
+                en: 'Sundays only',
+                nl: 'Alleen op zondag',
+                el: 'Μόνο τις Κυριακές',
+            });
+        default:
+            return '';
+    }
+}
+
+/** Extra kolom frequency alleen als het geen dubbel is van dagpatroon. */
+function busScheduleFqAddsInfo(pattern, daysRaw, frequency, longPlain) {
+    const fqDisp = String(busFrequencyLabel(frequency) || '').trim();
+    if (!fqDisp) return '';
+    const short = busScheduleShortLabel(pattern);
+    if (short && busFold(fqDisp) === busFold(short)) return '';
+    if (longPlain && busFold(fqDisp) === busFold(longPlain)) return '';
+    const dayL = String(busDaysLabel(daysRaw) || '').trim();
+    if (dayL && busFold(fqDisp) === busFold(dayL)) return '';
+    return fqDisp;
+}
+
+/** Platte beschrijving (aria, kopiëren): volledige zin waar mogelijk. */
+function busScheduleDetailPlain(days, frequency) {
+    const pattern = busNormalizeSchedulePattern(days);
+    if (!pattern) {
+        const dayL = busDaysLabel(days);
+        const fqL = busFrequencyLabel(frequency);
+        return [dayL, fqL].filter(Boolean).join(' · ') || '—';
+    }
+    const long = busScheduleLongPlain(pattern);
+    const extra = busScheduleFqAddsInfo(pattern, days, frequency, long);
+    return extra ? `${long} · ${extra}` : long;
+}
+
+/** Visueel: alleen pictogram bij de bestemming; legenda verklaart. Optioneel · extra kolom frequency. */
+function busScheduleDetailHtml(days, frequency) {
+    const pattern = busNormalizeSchedulePattern(days);
+    if (!pattern) {
+        return busEscapeHtml(busScheduleDetailPlain(days, frequency));
+    }
+    const tooltip = busScheduleDetailPlain(days, frequency);
+    const extraFq = busScheduleFqAddsInfo(pattern, days, frequency, busScheduleLongPlain(pattern));
+    const glyph = busScheduleGlyphIconHtml(pattern);
+    let inner = glyph;
+    if (extraFq) {
+        if (glyph) {
+            inner += `<span class="bus-runs-caption__sep" aria-hidden="true">\u00A0·\u00A0</span>`;
+        }
+        inner += `<span class="bus-runs-caption__extra">${busEscapeHtml(extraFq)}</span>`;
+    }
+    if (!inner) {
+        return busEscapeHtml(busScheduleDetailPlain(days, frequency));
+    }
+    const titleEscaped = busEscapeHtml(tooltip);
+    return `<span class="bus-runs-caption" aria-hidden="true" title="${titleEscaped}">${inner}</span>`;
+}
+
 function busShowingPrefix() {
     return busText('showing', {
         en: 'Showing',
@@ -972,11 +1101,10 @@ function busComputeRunsMeta(rows, routeDirKey) {
     const segments = rows.map((r) => {
         const d = String(r.dir || '').trim().toLowerCase();
         const label = String(r.destination || '').trim() || busDirLabel(d) || '';
-        const dayL = busDaysLabel(r.days);
-        const fqL = busFrequencyLabel(r.frequency);
-        const detail = [dayL, fqL].filter(Boolean).join(' · ');
+        const detailPlain = busScheduleDetailPlain(r.days, r.frequency);
+        const detailHtml = busScheduleDetailHtml(r.days, r.frequency);
         const sortPri = d === routeDir ? 0 : (d ? 1 : 2);
-        return { label: label || '—', detail, sortPri, d };
+        return { label: label || '—', detailPlain, detailHtml, sortPri, d };
     }).sort((a, b) => {
         if (a.sortPri !== b.sortPri) return a.sortPri - b.sortPri;
         return String(a.label).localeCompare(String(b.label), undefined, { sensitivity: 'base' });
@@ -993,14 +1121,15 @@ function busExpandRunsMetaWithAlsoStops(bus, meta) {
     const alsoRaw = String(bus.destination_also || '').trim();
     if (!alsoRaw) return meta;
 
-    const firstDetailNorm = String(meta.segments[0].detail || '').trim();
+    const firstDetailNorm = String(meta.segments[0].detailPlain || '').trim();
     const allSegmentsSameFreq = meta.segments.every(
-        (s) => String(s.detail || '').trim() === firstDetailNorm
+        (s) => String(s.detailPlain || '').trim() === firstDetailNorm
     );
     if (!(meta.segments.length === 1 || allSegmentsSameFreq)) return meta;
 
-    const templateSrc = meta.segments[0].detail;
-    const detailTemplate = templateSrc ? String(templateSrc).trim() : '—';
+    const templatePlain = meta.segments[0].detailPlain;
+    const detailTemplate = templatePlain ? String(templatePlain).trim() : '—';
+    const templateHtml = meta.segments[0].detailHtml;
 
     const seenLabels = new Set();
     meta.segments.forEach((s) => {
@@ -1016,7 +1145,13 @@ function busExpandRunsMetaWithAlsoStops(bus, meta) {
         const fk = busFold(lab);
         if (!fk || seenLabels.has(fk)) return;
         seenLabels.add(fk);
-        extraSegs.push({ label: lab, detail: detailTemplate, sortPri: 3, d: '' });
+        extraSegs.push({
+            label: lab,
+            detailPlain: detailTemplate,
+            detailHtml: templateHtml != null ? templateHtml : busEscapeHtml(detailTemplate),
+            sortPri: 3,
+            d: '',
+        });
     });
 
     if (!extraSegs.length) return meta;
@@ -1035,7 +1170,7 @@ function busResolveRunsMeta(bus, routeDirKey) {
 }
 
 /**
- * Elk {label, detail} uit sheet-segmenten + Also-uitbreiding; dedupe op genormaliseerde naam.
+ * Elk {label, detailPlain, detailHtml} uit sheet-segmenten + Also-uitbreiding; dedupe op genormaliseerde naam.
  */
 function busUnifiedDestinationsList(bus, routeDirKey) {
     const meta = busResolveRunsMeta(bus, routeDirKey);
@@ -1046,17 +1181,17 @@ function busUnifiedDestinationsList(bus, routeDirKey) {
         const lab = String(s.label || '').trim();
         const fk = busFold(lab);
         if (!fk) continue;
-        const detail = String(s.detail || '').trim() || '—';
-        if (!map.has(fk)) map.set(fk, { label: lab, detail });
+        const detailPlain = String(s.detailPlain || s.detail || '').trim() || '—';
+        const detailHtml = s.detailHtml != null ? s.detailHtml : busEscapeHtml(detailPlain);
+        if (!map.has(fk)) map.set(fk, { label: lab, detailPlain, detailHtml });
     }
 
     let list = [...map.values()];
     if (!list.length) {
         const p = String(busTripDestinationLine(bus)).trim();
-        const day = busDaysLabel(bus.days);
-        const fq = busFrequencyLabel(bus.frequency);
-        const detail = [day, fq].filter(Boolean).join(' · ') || '—';
-        list = [{ label: p || '—', detail }];
+        const detailPlain = busScheduleDetailPlain(bus.days, bus.frequency);
+        const detailHtml = busScheduleDetailHtml(bus.days, bus.frequency);
+        list = [{ label: p || '—', detailPlain, detailHtml }];
     }
 
     return list;
@@ -1065,7 +1200,13 @@ function busUnifiedDestinationsList(bus, routeDirKey) {
 /** Platte tekst (aria-label, kopie); zonder HTML. */
 function busUnifiedDestinationsPlain(bus, routeDirKey) {
     const list = busUnifiedDestinationsList(bus, routeDirKey);
-    return list.map(({ label, detail }) => `${label} (${detail})`).join(' · ');
+    return list
+        .map(({ label, detailPlain }) => {
+            const d = String(detailPlain || '').trim();
+            if (!d || d === '—') return label;
+            return `${label} · ${d}`;
+        })
+        .join(' · ');
 }
 
 /** Per bestemming als flex-item: scheiding zit vóór nr. 2+, dus nooit een losse «·» aan regel-einde. */
@@ -1073,8 +1214,12 @@ function busUnifiedDestinationsHtml(bus, routeDirKey) {
     const list = busUnifiedDestinationsList(bus, routeDirKey);
     if (!list.length) return '';
     return list
-        .map(({ label, detail }, idx) => {
-            const stop = `<span class="bus-route-stop">${busEscapeHtml(label)}\u00A0(${busEscapeHtml(detail)})</span>`;
+        .map(({ label, detailHtml, detailPlain }, idx) => {
+            const d = String(detailPlain || '').trim();
+            const hasSched = d && d !== '—';
+            const stop = hasSched
+                ? `<span class="bus-route-stop"><span class="bus-route-stop__block"><span class="bus-route-stop__dest">${busEscapeHtml(label)}</span><span class="bus-route-stop__sched">${detailHtml}</span></span></span>`
+                : `<span class="bus-route-stop">${busEscapeHtml(label)}</span>`;
             if (idx === 0) return `<span class="bus-route-item">${stop}</span>`;
             return `<span class="bus-route-item"><span class="bus-route-sep" aria-hidden="true">\u00A0·\u00A0</span>${stop}</span>`;
         })
@@ -1385,6 +1530,20 @@ function busFilterRemainingToday(buses, minMinutesNow) {
     });
 }
 
+/** Index van de eerste bus die nog niet gepasseerd is (zelfde buffer als „Next bus“). */
+function busNextDepartureIndex(sortedBuses, minMinutesNow) {
+    const nowParts = busNowAthensParts();
+    const nowMin = busParseHHMMToMinutes(nowParts.hm);
+    if (nowMin === null) return -1;
+    const cutoff = Math.max(0, nowMin - (minMinutesNow || 0));
+    for (let i = 0; i < sortedBuses.length; i++) {
+        const depMin = busParseHHMMToMinutes(sortedBuses[i].departure);
+        if (depMin === null) continue;
+        if (depMin >= cutoff) return i;
+    }
+    return -1;
+}
+
 function busSortByDeparture(buses) {
     return buses.sort((a, b) => {
         const am = busParseHHMMToMinutes(a.departure);
@@ -1476,27 +1635,40 @@ function busRenderTimelineList(container, buses, { limit, routeDir } = {}) {
         el: busT('bus_timeline_list_aria', 'Σημερινές αναχωρήσεις σε χρονική σειρά'),
     }));
 
+    const nextIdx = busNextDepartureIndex(buses, 10);
+    const nextLblPlain = busText('bus_timeline_next_badge', {
+        en: 'Next bus',
+        nl: 'Volgende bus',
+        el: busT('bus_timeline_next_badge', 'Επόμενο'),
+    });
+
     const itemsHtml = buses.slice(0, Math.max(0, max)).map((bus, idx, list) => {
         const dep = busEscapeHtml(bus.departure);
         const stopsPlain = busUnifiedDestinationsPlain(bus, dirKey);
         const stopsHtml = busUnifiedDestinationsHtml(bus, dirKey);
-        const itemAria = busEscapeHtml(`${String(bus.departure || '').trim()}: ${stopsPlain}`);
+        const isLast = idx === list.length - 1;
+        const isNext = nextIdx >= 0 && idx === nextIdx;
+        const itemAria = busEscapeHtml(
+            `${isNext ? `${nextLblPlain}: ` : ''}${String(bus.departure || '').trim()}: ${stopsPlain}`
+        );
         const note = bus.note ? busEscapeHtml(bus.note) : '';
         const arrivalLine = bus.arrival ? busEscapeHtml(`${arrivalPrefix}: ${bus.arrival}`) : '';
         const stopText = busStopLabel(bus.stop_kalanera);
         const stopLabel = stopText
             ? busEscapeHtml(`${busText('stop_label', { en: 'Stop', nl: 'Halte', el: busT('bus_stop_label', 'Στάση') })}: ${stopText}`)
             : '';
-        const isLast = idx === list.length - 1;
         const metaLine = stopLabel || '';
         return `
-            <li class="bus-timeline__item${isLast ? ' bus-timeline__item--last' : ''}" aria-label="${itemAria}">
+            <li class="bus-timeline__item${isNext ? ' bus-timeline__item--next' : ''}${isLast ? ' bus-timeline__item--last' : ''}" aria-label="${itemAria}">
                 <div class="bus-timeline__axis" aria-hidden="true">
                     <span class="bus-timeline__dot"></span>
                     ${isLast ? '' : '<span class="bus-timeline__stem"></span>'}
                 </div>
                 <div class="bus-timeline__time-col">
-                    <span class="bus-timeline__time">${dep}</span>
+                    <div class="bus-timeline__time-row">
+                        <span class="bus-timeline__time">${dep}</span>
+                        ${isNext ? `<span class="bus-timeline__time-bus" aria-hidden="true"><i class="fa-solid fa-bus"></i></span>` : ''}
+                    </div>
                 </div>
                 <div class="bus-timeline__body">
                     <div class="bus-route-stops">${stopsHtml}</div>
@@ -1932,15 +2104,19 @@ function renderMoreSheetContent() {
     const statsHref = (gc && gc.href) ? gc.href : 'http://www.goatcounter.com';
     const statsLabel = (gc && gc.label) ? gc.label : labels.stats;
 
-    const copyright = getFooterCopyrightText();
+    const year = new Date().getFullYear();
+    const footerCopyright = getFooterCopyrightText();
+    const copyrightFallback = isEl
+        ? `${year} Κατάλογος Επιχειρήσεων Καλά Νερά. E-Project όλα τα δικαιώματα διατηρούνται.`
+        : `${year} Kala Nera Business Directory. E-Project all rights reserved.`;
+    const copyrightRaw = (footerCopyright && footerCopyright.trim()) ? footerCopyright.trim() : copyrightFallback;
+
     const version = (typeof APP_VERSION !== 'undefined') ? APP_VERSION : '';
     const busHref = isEl ? 'bus-el.html' : 'bus.html';
 
     const formattedCopyright = (() => {
-        if (!copyright) return '';
         // Avoid double copyright symbol (some pages already include "©")
-        const withoutLeading = copyright.replace(/^\s*©+\s*/g, '').trim();
-        // Render "E-Project..." on the next line for readability
+        const withoutLeading = copyrightRaw.replace(/^\s*©+\s*/g, '').trim();
         const escaped = escapeHtml(withoutLeading);
         return escaped.replace(/\sE-Project\b/g, '<br>E-Project');
     })();
@@ -1950,7 +2126,7 @@ function renderMoreSheetContent() {
             <h3>${labels.bus}</h3>
             <div class="more-links">
                 <a href="${busHref}">
-                    <span><i class="fa-solid fa-bus"></i> ${labels.bus}</span>
+                    <span class="more-link-leading"><i class="fa-solid fa-bus"></i><span class="more-link-label">${labels.bus}</span></span>
                     <small>${isEl ? 'ΣΗΜΕΡΑ' : 'TODAY'}</small>
                 </a>
             </div>
@@ -1959,10 +2135,10 @@ function renderMoreSheetContent() {
         <section class="more-section">
             <h3>${labels.useful}</h3>
             <div class="more-links">
-                <a href="tel:+302423086222"><span><i class="fa-solid fa-shield"></i> ${isEl ? 'Αστυνομία Μηλιές' : 'Police Office Milies'}</span><small>+30 24230 86222</small></a>
-                <a href="tel:+302423022385"><span><i class="fa-solid fa-pills"></i> ${isEl ? 'Φαρμακείο Καλά Νερά' : 'Pharmacy Kala Nera'}</span><small>+30 24230 22385</small></a>
-                <a href="tel:+302423022160"><span><i class="fa-solid fa-pills"></i> ${isEl ? 'Φαρμακείο Κάτω Γατζέα' : 'Pharmacy Kato Gatzea'}</span><small>+30 24230 22160</small></a>
-                <a href="tel:+302423086666"><span><i class="fa-solid fa-user-doctor"></i> ${isEl ? 'Ιατρός Καλά Νερά' : 'Doctor Kala Nera'}</span><small>+30 24230 86666</small></a>
+                <a href="tel:+302423086222"><span class="more-link-leading"><i class="fa-solid fa-shield"></i><span class="more-link-label">${isEl ? 'Αστυνομία Μηλιές' : 'Police Office Milies'}</span></span><small>+30 24230 86222</small></a>
+                <a href="tel:+302423022385"><span class="more-link-leading"><i class="fa-solid fa-pills"></i><span class="more-link-label">${isEl ? 'Φαρμακείο Καλά Νερά' : 'Pharmacy Kala Nera'}</span></span><small>+30 24230 22385</small></a>
+                <a href="tel:+302423022160"><span class="more-link-leading"><i class="fa-solid fa-pills"></i><span class="more-link-label">${isEl ? 'Φαρμακείο Κάτω Γατζέα' : 'Pharmacy Kato Gatzea'}</span></span><small>+30 24230 22160</small></a>
+                <a href="tel:+302423086666"><span class="more-link-leading"><i class="fa-solid fa-user-doctor"></i><span class="more-link-label">${isEl ? 'Ιατρός Καλά Νερά' : 'Doctor Kala Nera'}</span></span><small>+30 24230 86666</small></a>
             </div>
         </section>
 
@@ -1970,7 +2146,7 @@ function renderMoreSheetContent() {
             <h3>${labels.install}</h3>
             <div class="more-links">
                 <button type="button" onclick="if(typeof triggerManualInstall === 'function'){ triggerManualInstall(event); }">
-                    <span><i class="fa fa-download"></i> ${isEl ? 'Εγκατάσταση' : 'Install'}</span>
+                    <span class="more-link-leading"><i class="fa fa-download"></i><span class="more-link-label">${isEl ? 'Εγκατάσταση' : 'Install'}</span></span>
                     <small>${isEl ? 'PWA' : 'PWA'}</small>
                 </button>
             </div>
@@ -1981,22 +2157,22 @@ function renderMoreSheetContent() {
             <p>${escapeHtml(aboutText)}</p>
             <div class="more-links" style="margin-top:10px;">
                 <a href="${fbHref}" target="_blank" rel="noopener">
-                    <span><i class="fab fa-facebook-f"></i> ${fbLabel}</span>
+                    <span class="more-link-leading"><i class="fab fa-facebook-f"></i><span class="more-link-label">${fbLabel}</span></span>
                     <small>Facebook</small>
                 </a>
                 <a href="mailto:info@spiti.tech?">
-                    <span><i class="fa-solid fa-envelope"></i> ${labels.contact}</span>
+                    <span class="more-link-leading"><i class="fa-solid fa-envelope"></i><span class="more-link-label">${labels.contact}</span></span>
                     <small>info@spiti.tech</small>
                 </a>
                 <a href="${statsHref}" target="_blank" rel="noopener">
-                    <span><i class="fa-solid fa-chart-line"></i> ${statsLabel}</span>
+                    <span class="more-link-leading"><i class="fa-solid fa-chart-line"></i><span class="more-link-label">${statsLabel}</span></span>
                     <small>GoatCounter</small>
                 </a>
             </div>
             <div class="more-links" style="margin-top:10px;">
                 <div class="more-card is-meta">
                     <div class="meta-row">
-                        <span>${labels.developer}: ${brandName}</span>
+                        <span class="more-link-label">${labels.developer}: ${brandName}</span>
                         <div class="meta-right" aria-label="Version and developer logo">
                             <div class="meta-version"><code>v${version}</code></div>
                         </div>
