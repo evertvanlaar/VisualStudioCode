@@ -28,7 +28,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.0.30">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.0.38">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -67,7 +67,7 @@
 
             <ul class="nav-links" id="nav-list">
                 <li><a href="index.html">Home</a></li>
-                <li><a href="bus.html" class="active"><i class="fa-solid fa-bus"></i> Bus (Kala Nera) / KTEL</a></li>
+                <li><a href="bus.html" class="active"><i class="fa-solid fa-bus"></i> Bus (Kala Nera)</a></li>
                 <li><a href="wishlist.html"><i class="fa-solid fa-heart menu-heart"></i> Favorites</a></li>
                 <li><a href="t-form.html">Add your Business</a></li>
 
@@ -193,7 +193,20 @@
         </div>
 
         <div class="bus-full-section">
-            <div class="bus-subsection-title bus-subsection-title--full">Full timetable today</div>
+            <div class="bus-full-heading-row">
+                <div class="bus-subsection-title bus-subsection-title--full">Full timetable today</div>
+                <div class="bus-full-view-toggle" role="group">
+                    <button type="button" class="bus-full-view-btn" data-bus-full-view="timeline" aria-pressed="false">
+                        <i class="fa-solid fa-grip-lines-vertical" aria-hidden="true"></i>
+                        <span class="bus-full-view-btn__text">Timeline</span>
+                    </button>
+                    <button type="button" class="bus-full-view-btn" data-bus-full-view="cards" aria-pressed="false">
+                        <i class="fa-solid fa-table-cells" aria-hidden="true"></i>
+                        <span class="bus-full-view-btn__text">Cards</span>
+                    </button>
+                </div>
+            </div>
+            <p id="bus-full-origin-note" class="bus-full-origin-note" role="note"></p>
             <div id="bus-full-container" class="bus-container bus-container--full" aria-live="polite">
                 <div class="bus-skeleton" aria-hidden="true"></div>
                 <div class="bus-skeleton" aria-hidden="true"></div>
@@ -214,7 +227,7 @@
     </section>
 </div>
 
-<script src="app.js?v=2.0.30"></script>
+<script src="app.js?v=2.0.38"></script>
 
 <nav class="bottom-nav" aria-label="Primary">
     <div class="bottom-nav-inner">

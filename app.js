@@ -15,7 +15,27 @@ const BUS_VALID_DIRS = [
 ];
 /** Toon chauffeur-waarschuwing (lage frequentie) voor deze bestemmingen — uitbreidbaar. */
 const BUS_LOW_FREQ_DIRS = new Set(['trikeri', 'katigiorgis', 'platanias']);
+/** localStorage key: `timeline` | `cards` — full timetable layout on bus pages. */
+const BUS_FULL_VIEW_KEY = 'kalanera_bus_full_view';
+const BUS_FULL_VIEW_TIMELINE = 'timeline';
+const BUS_FULL_VIEW_CARDS = 'cards';
+
 const STORAGE_KEY = 'kalanera_offline_data';
+
+function busGetFullViewMode() {
+    try {
+        const v = localStorage.getItem(BUS_FULL_VIEW_KEY);
+        if (v === BUS_FULL_VIEW_TIMELINE || v === BUS_FULL_VIEW_CARDS) return v;
+    } catch (e) { /* ignore */ }
+    return BUS_FULL_VIEW_TIMELINE;
+}
+
+function busSetFullViewMode(mode) {
+    if (mode !== BUS_FULL_VIEW_TIMELINE && mode !== BUS_FULL_VIEW_CARDS) return;
+    try {
+        localStorage.setItem(BUS_FULL_VIEW_KEY, mode);
+    } catch (e) { /* ignore */ }
+}
 
 // Check de taal van de huidige pagina
 const currentLang = document.documentElement.lang || 'en'; // Nu is Engels de fallback
@@ -91,7 +111,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.0.30'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.0.38'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -911,6 +931,156 @@ function busFold(s) {
         .replace(/[\u0300-\u036f]/g, '');
 }
 
+/**
+ * Sheet «origin» is usually the stop in Kala Nera — treat as repeated so we can show destination only.
+ * Latin / Greek spellings; empty origin → default stop.
+ */
+function busIsKalaNeraOrigin(bus) {
+    const raw = String(bus && bus.origin || '').trim();
+    if (!raw) return true;
+    const compact = busFold(raw).replace(/\s+/g, '');
+    if (compact === 'kalanera' || (compact.includes('kala') && compact.includes('nera'))) return true;
+    if (/καλ/.test(raw) && /νερ/.test(raw)) return true;
+    return false;
+}
+
+/**
+ * Primary direction line for timetable rows — destination only when origin is the Kala Nera stop.
+ */
+function busTripDestinationLine(bus) {
+    const dest = String(bus && bus.destination || '').trim();
+    const origin = String(bus && bus.origin || '').trim();
+    if (busIsKalaNeraOrigin(bus)) {
+        return dest || origin || '—';
+    }
+    if (origin && dest) return `${origin} ➔ ${dest}`;
+    return dest || origin || '—';
+}
+
+function busFullTimetableOriginNoteText() {
+    return busText('bus_full_timetable_origin', {
+        en: 'Departures · Kala Nera stop',
+        nl: 'Vertrek · halte Kala Nera',
+        el: busT('bus_full_timetable_origin', 'Από στάση Καλά Νερά'),
+    });
+}
+
+/** Per sheet-row: weekdays label + frequency label; merged splits when these differ between destinations */
+function busComputeRunsMeta(rows, routeDirKey) {
+    if (!rows || rows.length === 0) return null;
+    const routeDir = String(routeDirKey || '').toLowerCase();
+    const segments = rows.map((r) => {
+        const d = String(r.dir || '').trim().toLowerCase();
+        const label = String(r.destination || '').trim() || busDirLabel(d) || '';
+        const dayL = busDaysLabel(r.days);
+        const fqL = busFrequencyLabel(r.frequency);
+        const detail = [dayL, fqL].filter(Boolean).join(' · ');
+        const sortPri = d === routeDir ? 0 : (d ? 1 : 2);
+        return { label: label || '—', detail, sortPri, d };
+    }).sort((a, b) => {
+        if (a.sortPri !== b.sortPri) return a.sortPri - b.sortPri;
+        return String(a.label).localeCompare(String(b.label), undefined, { sensitivity: 'base' });
+    });
+    return { segments };
+}
+
+/**
+ * destination_also (Also: …) lists extra passenger stops served on the same departure as the primary row —
+ * repeat the same Runs detail for each listed place (sheet seldom has separate rows per Via-stop).
+ */
+function busExpandRunsMetaWithAlsoStops(bus, meta) {
+    if (!meta || !meta.segments || !meta.segments.length) return meta;
+    const alsoRaw = String(bus.destination_also || '').trim();
+    if (!alsoRaw) return meta;
+
+    const firstDetailNorm = String(meta.segments[0].detail || '').trim();
+    const allSegmentsSameFreq = meta.segments.every(
+        (s) => String(s.detail || '').trim() === firstDetailNorm
+    );
+    if (!(meta.segments.length === 1 || allSegmentsSameFreq)) return meta;
+
+    const templateSrc = meta.segments[0].detail;
+    const detailTemplate = templateSrc ? String(templateSrc).trim() : '—';
+
+    const seenLabels = new Set();
+    meta.segments.forEach((s) => {
+        seenLabels.add(busFold(s.label || ''));
+    });
+    seenLabels.add(busFold(busTripDestinationLine(bus)));
+
+    const extraSegs = [];
+    alsoRaw.split(/[,;|]/).forEach((chunk) => {
+        let lab = chunk.trim().replace(/^also\s*[:\uff1a]/i, '').trim();
+        if (!lab) return;
+        lab = lab.replace(/^επίσης\s*[:\uff1a]\s*/i, '').trim();
+        const fk = busFold(lab);
+        if (!fk || seenLabels.has(fk)) return;
+        seenLabels.add(fk);
+        extraSegs.push({ label: lab, detail: detailTemplate, sortPri: 3, d: '' });
+    });
+
+    if (!extraSegs.length) return meta;
+
+    const segments = [...meta.segments, ...extraSegs].sort((a, b) => {
+        if ((a.sortPri ?? 99) !== (b.sortPri ?? 99)) return (a.sortPri ?? 99) - (b.sortPri ?? 99);
+        return String(a.label).localeCompare(String(b.label), undefined, { sensitivity: 'base' });
+    });
+
+    return { segments };
+}
+
+function busResolveRunsMeta(bus, routeDirKey) {
+    let meta = bus.runs_meta || busComputeRunsMeta([bus], routeDirKey);
+    return busExpandRunsMetaWithAlsoStops(bus, meta);
+}
+
+/**
+ * Elk {label, detail} uit sheet-segmenten + Also-uitbreiding; dedupe op genormaliseerde naam.
+ */
+function busUnifiedDestinationsList(bus, routeDirKey) {
+    const meta = busResolveRunsMeta(bus, routeDirKey);
+    const segs = meta && meta.segments && meta.segments.length ? meta.segments : [];
+
+    const map = new Map();
+    for (const s of segs) {
+        const lab = String(s.label || '').trim();
+        const fk = busFold(lab);
+        if (!fk) continue;
+        const detail = String(s.detail || '').trim() || '—';
+        if (!map.has(fk)) map.set(fk, { label: lab, detail });
+    }
+
+    let list = [...map.values()];
+    if (!list.length) {
+        const p = String(busTripDestinationLine(bus)).trim();
+        const day = busDaysLabel(bus.days);
+        const fq = busFrequencyLabel(bus.frequency);
+        const detail = [day, fq].filter(Boolean).join(' · ') || '—';
+        list = [{ label: p || '—', detail }];
+    }
+
+    return list;
+}
+
+/** Platte tekst (aria-label, kopie); zonder HTML. */
+function busUnifiedDestinationsPlain(bus, routeDirKey) {
+    const list = busUnifiedDestinationsList(bus, routeDirKey);
+    return list.map(({ label, detail }) => `${label} (${detail})`).join(' · ');
+}
+
+/** Per bestemming als flex-item: scheiding zit vóór nr. 2+, dus nooit een losse «·» aan regel-einde. */
+function busUnifiedDestinationsHtml(bus, routeDirKey) {
+    const list = busUnifiedDestinationsList(bus, routeDirKey);
+    if (!list.length) return '';
+    return list
+        .map(({ label, detail }, idx) => {
+            const stop = `<span class="bus-route-stop">${busEscapeHtml(label)}\u00A0(${busEscapeHtml(detail)})</span>`;
+            if (idx === 0) return `<span class="bus-route-item">${stop}</span>`;
+            return `<span class="bus-route-item"><span class="bus-route-sep" aria-hidden="true">\u00A0·\u00A0</span>${stop}</span>`;
+        })
+        .join('');
+}
+
 function busNormSheetKey(k) {
     return String(k || '')
         .replace(/^\ufeff/, '')
@@ -1132,7 +1302,8 @@ function busMergeTripGroup(rows, dirKey) {
     if (!rows || rows.length === 0) return {};
     if (rows.length === 1) {
         const one = rows[0];
-        return { ...one, destination_also: one.destination_also || '' };
+        const runs_meta = busComputeRunsMeta(rows, dirKey);
+        return { ...one, destination_also: one.destination_also || '', runs_meta };
     }
 
     const sortedForPrimary = [...rows].sort((a, b) => {
@@ -1184,6 +1355,8 @@ function busMergeTripGroup(rows, dirKey) {
     const noteParts = [...new Set(rows.map(r => String(r.note || '').trim()).filter(Boolean))];
     const note = noteParts.join(' · ');
 
+    const runs_meta = busComputeRunsMeta(rows, dirKey);
+
     return {
         departure,
         origin: primary.origin,
@@ -1196,6 +1369,7 @@ function busMergeTripGroup(rows, dirKey) {
         days,
         frequency: primary.frequency,
         trip_id: primary.trip_id,
+        runs_meta,
     };
 }
 
@@ -1260,20 +1434,13 @@ function busRenderList(container, buses, { limit, routeDir } = {}) {
         : '';
     container.innerHTML = buses.slice(0, Math.max(0, max)).map(bus => {
         const dep = busEscapeHtml(bus.departure);
-        const dest = busEscapeHtml(`${bus.origin} ➔ ${bus.destination}`.trim());
+        const stopsHtml = busUnifiedDestinationsHtml(bus, dirKey);
         const note = busEscapeHtml(bus.note);
         const arr = bus.arrival ? busEscapeHtml(`${arrivalPrefix}: ${bus.arrival}`) : '';
         const stopText = busStopLabel(bus.stop_kalanera);
         const stopLabel = stopText
             ? busEscapeHtml(`${busText('stop_label', { en: 'Stop', nl: 'Halte', el: busT('bus_stop_label', 'Στάση') })}: ${stopText}`)
             : '';
-        const daysText = busDaysLabel(bus.days);
-        const daysLabel = daysText
-            ? busEscapeHtml(`${busText('runs_label', { en: 'Runs', nl: 'Rijdt', el: busT('bus_runs', 'Δρομολόγια') })}: ${daysText}`)
-            : '';
-        const alsoPrefix = busText('bus_also_prefix', { en: 'Also:', nl: 'Ook:', el: busT('bus_also_prefix', 'Επίσης:') });
-        const destAlsoRaw = bus.destination_also ? `${alsoPrefix} ${bus.destination_also}` : '';
-        const destAlso = destAlsoRaw ? busEscapeHtml(destAlsoRaw) : '';
         return `
             <div class="bus-card">
                 <div class="bus-time-wrap" role="group" aria-label="${depCap.aria}">
@@ -1281,17 +1448,92 @@ function busRenderList(container, buses, { limit, routeDir } = {}) {
                     <div class="bus-time">${dep}</div>
                 </div>
                 <div class="bus-info">
-                    <div class="bus-dest">${dest}</div>
-                    ${destAlso ? `<div class="bus-dest-also">${destAlso}</div>` : ``}
+                    <div class="bus-route-stops">${stopsHtml}</div>
                     ${note ? `<div class="bus-note">${note}</div>` : ``}
                     ${stopLabel ? `<div class="bus-stop">${stopLabel}</div>` : ``}
-                    ${daysLabel ? `<div class="bus-days">${daysLabel}</div>` : ``}
                     ${arr ? `<div class="bus-arrival">${arr}</div>` : ``}
                 </div>
                 ${lowFreqHtml}
             </div>
         `;
     }).join('');
+}
+
+function busRenderTimelineList(container, buses, { limit, routeDir } = {}) {
+    if (!container) return;
+    if (!buses || buses.length === 0) return busRenderEmpty(container);
+
+    const arrivalPrefix = busT('bus_arrival_prefix', 'Est. arrival');
+    const max = (typeof limit === 'number') ? limit : 8;
+    const dirKey = String(routeDir || '').toLowerCase();
+    const showLowFreq = BUS_LOW_FREQ_DIRS.has(dirKey);
+    const lowFreqHtml = showLowFreq
+        ? `<div class="bus-note bus-note--lowfreq bus-note--lowfreq--timeline" role="note"><i class="fa-solid fa-circle-info bus-note--lowfreq-icon" aria-hidden="true"></i><span class="bus-note--lowfreq-text">${busEscapeHtml(busLowFreqNoticeText())}</span></div>`
+        : '';
+    const listAria = busEscapeHtml(busText('bus_timeline_list_aria', {
+        en: 'Today\'s departures in time order',
+        nl: 'Vertrektijden van vandaag op volgorde',
+        el: busT('bus_timeline_list_aria', 'Σημερινές αναχωρήσεις σε χρονική σειρά'),
+    }));
+
+    const itemsHtml = buses.slice(0, Math.max(0, max)).map((bus, idx, list) => {
+        const dep = busEscapeHtml(bus.departure);
+        const stopsPlain = busUnifiedDestinationsPlain(bus, dirKey);
+        const stopsHtml = busUnifiedDestinationsHtml(bus, dirKey);
+        const itemAria = busEscapeHtml(`${String(bus.departure || '').trim()}: ${stopsPlain}`);
+        const note = bus.note ? busEscapeHtml(bus.note) : '';
+        const arrivalLine = bus.arrival ? busEscapeHtml(`${arrivalPrefix}: ${bus.arrival}`) : '';
+        const stopText = busStopLabel(bus.stop_kalanera);
+        const stopLabel = stopText
+            ? busEscapeHtml(`${busText('stop_label', { en: 'Stop', nl: 'Halte', el: busT('bus_stop_label', 'Στάση') })}: ${stopText}`)
+            : '';
+        const isLast = idx === list.length - 1;
+        const metaLine = stopLabel || '';
+        return `
+            <li class="bus-timeline__item${isLast ? ' bus-timeline__item--last' : ''}" aria-label="${itemAria}">
+                <div class="bus-timeline__axis" aria-hidden="true">
+                    <span class="bus-timeline__dot"></span>
+                    ${isLast ? '' : '<span class="bus-timeline__stem"></span>'}
+                </div>
+                <div class="bus-timeline__time-col">
+                    <span class="bus-timeline__time">${dep}</span>
+                </div>
+                <div class="bus-timeline__body">
+                    <div class="bus-route-stops">${stopsHtml}</div>
+                    ${note ? `<div class="bus-timeline__note">${note}</div>` : ``}
+                    ${metaLine ? `<div class="bus-timeline__meta">${metaLine}</div>` : ``}
+                    ${arrivalLine ? `<div class="bus-timeline__arrival">${arrivalLine}</div>` : ``}
+                </div>
+            </li>
+        `;
+    }).join('');
+
+    container.innerHTML = `
+        <ol class="bus-timeline" aria-label="${listAria}">${itemsHtml}</ol>
+        ${lowFreqHtml}
+    `;
+}
+
+function busRenderFullTimetable(container, buses, routeDir) {
+    if (!container) return;
+    const mode = busGetFullViewMode();
+    if (mode === BUS_FULL_VIEW_TIMELINE) {
+        return busRenderTimelineList(container, buses, { limit: 500, routeDir });
+    }
+    return busRenderList(container, buses, { limit: 500, routeDir });
+}
+
+function busSyncFullViewToggle(root) {
+    const base = root && root.querySelector ? root : document;
+    const group = base.querySelector('.bus-full-view-toggle');
+    if (!group) return;
+    const mode = busGetFullViewMode();
+    group.querySelectorAll('[data-bus-full-view]').forEach((btn) => {
+        const v = btn.getAttribute('data-bus-full-view');
+        const on = v === mode;
+        btn.classList.toggle('is-active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
 }
 
 async function busFetchSchedule(dir) {
@@ -1426,12 +1668,28 @@ function initBusSchedule() {
     const dirSelect = document.getElementById('bus-dir-select');
     const dirBtns = Array.from(document.querySelectorAll('[data-bus-dir]'));
     const viewMode = document.body && document.body.getAttribute('data-bus-view') ? document.body.getAttribute('data-bus-view') : 'compact'; // 'compact' | 'full'
+    /** Last merged + sorted buses for combined full timetable (timeline/cards toggle). */
+    let lastFullSortedAll = [];
 
     busInitPelionMapDialog();
 
     // Only run on pages that include the section
     const isCombinedBusPage = !!(nextContainer || fullContainer);
     if (!container && !isCombinedBusPage) return;
+
+    const fullViewToggle = document.querySelector('.bus-full-view-toggle');
+    if (fullViewToggle) {
+        fullViewToggle.setAttribute('aria-label', busText('bus_full_view_toggle_aria', {
+            en: 'Layout for the full timetable',
+            nl: 'Weergave van het volledige schema',
+            el: busT('bus_full_view_toggle_aria', 'Εμφάνιση πλήρους προγράμματος'),
+        }));
+    }
+
+    const fullOriginNoteEl = document.getElementById('bus-full-origin-note');
+    if (fullOriginNoteEl) {
+        fullOriginNoteEl.textContent = busFullTimetableOriginNoteText();
+    }
 
     let activeDir = (localStorage.getItem('kalanera_bus_dir') || BUS_DEFAULT_DIR);
     if (!BUS_VALID_DIRS.includes(activeDir)) activeDir = BUS_DEFAULT_DIR;
@@ -1453,7 +1711,11 @@ function initBusSchedule() {
             const sortedAll = busSortByDeparture([...merged]);
             const upcoming = busSortByDeparture(busFilterRemainingToday([...merged], 10));
             if (nextContainer) busRenderList(nextContainer, upcoming, { limit: 1, routeDir: activeDir });
-            if (fullContainer) busRenderList(fullContainer, sortedAll, { limit: 500, routeDir: activeDir });
+            if (fullContainer) {
+                lastFullSortedAll = sortedAll;
+                busRenderFullTimetable(fullContainer, sortedAll, activeDir);
+                busSyncFullViewToggle();
+            }
         } else {
             const filtered = (viewMode === 'full') ? merged : busFilterRemainingToday(merged, 10);
             busRenderList(container, busSortByDeparture(filtered), { limit: viewMode === 'full' ? 500 : 8, routeDir: activeDir });
@@ -1546,6 +1808,19 @@ function initBusSchedule() {
 
     if (retryBtn) retryBtn.addEventListener('click', () => load({ force: true }));
 
+    document.querySelectorAll('[data-bus-full-view]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const v = btn.getAttribute('data-bus-full-view');
+            if (!v || v === busGetFullViewMode()) return;
+            busSetFullViewMode(v);
+            busSyncFullViewToggle();
+            if (fullContainer && Array.isArray(lastFullSortedAll)) {
+                busRenderFullTimetable(fullContainer, lastFullSortedAll, activeDir);
+            }
+        });
+    });
+    busSyncFullViewToggle();
+
     window.addEventListener('online', () => {
         void busPrefetchMissingDirs();
     });
@@ -1634,7 +1909,7 @@ function renderMoreSheetContent() {
     const isEl = (document.documentElement.lang || 'en') === 'el';
     const brandName = isEl ? 'ΚάντεΚλικ' : 'KanteKlik';
     const labels = {
-        bus: isEl ? 'Λεωφορείο (Καλά Νερά) / KTEL' : 'Bus (Kala Nera) / KTEL',
+        bus: isEl ? 'Λεωφορείο (Καλά Νερά)' : 'Bus (Kala Nera)',
         useful: isEl ? 'Χρήσιμα τηλέφωνα' : 'Useful numbers',
         install: isEl ? 'Εγκατάσταση εφαρμογής' : 'Install App',
         about: isEl ? 'Σχετικά με εμάς' : 'About us',
