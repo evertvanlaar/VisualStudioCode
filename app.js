@@ -18,27 +18,7 @@ const BUS_VALID_DIRS = [
 ];
 /** Toon chauffeur-waarschuwing (lage frequentie) voor deze bestemmingen — uitbreidbaar. */
 const BUS_LOW_FREQ_DIRS = new Set(['trikeri', 'katigiorgis', 'platanias']);
-/** localStorage key: `timeline` | `cards` — full timetable layout on bus pages. */
-const BUS_FULL_VIEW_KEY = 'kalanera_bus_full_view';
-const BUS_FULL_VIEW_TIMELINE = 'timeline';
-const BUS_FULL_VIEW_CARDS = 'cards';
-
 const STORAGE_KEY = 'kalanera_offline_data';
-
-function busGetFullViewMode() {
-    try {
-        const v = localStorage.getItem(BUS_FULL_VIEW_KEY);
-        if (v === BUS_FULL_VIEW_TIMELINE || v === BUS_FULL_VIEW_CARDS) return v;
-    } catch (e) { /* ignore */ }
-    return BUS_FULL_VIEW_TIMELINE;
-}
-
-function busSetFullViewMode(mode) {
-    if (mode !== BUS_FULL_VIEW_TIMELINE && mode !== BUS_FULL_VIEW_CARDS) return;
-    try {
-        localStorage.setItem(BUS_FULL_VIEW_KEY, mode);
-    } catch (e) { /* ignore */ }
-}
 
 // Check de taal van de huidige pagina
 const currentLang = document.documentElement.lang || 'en'; // Nu is Engels de fallback
@@ -126,7 +106,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.0.82'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.0.83'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -1802,24 +1782,7 @@ function busRenderTimelineList(container, buses, { limit, routeDir, dayOffset } 
 
 function busRenderFullTimetable(container, buses, { routeDir, dayOffset } = {}) {
     if (!container) return;
-    const mode = busGetFullViewMode();
-    if (mode === BUS_FULL_VIEW_TIMELINE) {
-        return busRenderTimelineList(container, buses, { limit: 500, routeDir, dayOffset });
-    }
-    return busRenderList(container, buses, { limit: 500, routeDir, dayOffset });
-}
-
-function busSyncFullViewToggle(root) {
-    const base = root && root.querySelector ? root : document;
-    const group = base.querySelector('.bus-full-view-toggle');
-    if (!group) return;
-    const mode = busGetFullViewMode();
-    group.querySelectorAll('[data-bus-full-view]').forEach((btn) => {
-        const v = btn.getAttribute('data-bus-full-view');
-        const on = v === mode;
-        btn.classList.toggle('is-active', on);
-        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-    });
+    busRenderTimelineList(container, buses, { limit: 500, routeDir, dayOffset });
 }
 
 async function busFetchSchedule(dir, dayOffset) {
@@ -1971,23 +1934,11 @@ function initBusSchedule() {
     const fullTitleEl = document.getElementById('bus-full-title');
     const nextTitleEl = document.getElementById('bus-next-section-title');
     const stripHintEl = document.getElementById('bus-day-strip-hint');
-    /** Last merged + sorted buses for combined full timetable (timeline/cards toggle). */
-    let lastFullSortedAll = [];
-
     busInitPelionMapDialog();
 
     // Only run on pages that include the section
     const isCombinedBusPage = !!(nextContainer || fullContainer);
     if (!container && !isCombinedBusPage) return;
-
-    const fullViewToggle = document.querySelector('.bus-full-view-toggle');
-    if (fullViewToggle) {
-        fullViewToggle.setAttribute('aria-label', busText('bus_full_view_toggle_aria', {
-            en: 'Layout for the full timetable',
-            nl: 'Weergave van het volledige schema',
-            el: busT('bus_full_view_toggle_aria', 'Εμφάνιση πλήρους προγράμματος'),
-        }));
-    }
 
     const fullOriginNoteEl = document.getElementById('bus-full-origin-note');
     if (fullOriginNoteEl) {
@@ -2109,9 +2060,7 @@ function initBusSchedule() {
                 busRenderList(nextContainer, upcoming, { limit: 1, routeDir: activeDir, dayOffset: off });
             }
             if (fullContainer) {
-                lastFullSortedAll = sortedAll;
                 busRenderFullTimetable(fullContainer, sortedAll, { routeDir: activeDir, dayOffset: off });
-                busSyncFullViewToggle();
             }
         } else {
             const filtered = (viewMode === 'full')
@@ -2208,22 +2157,6 @@ function initBusSchedule() {
     });
 
     if (retryBtn) retryBtn.addEventListener('click', () => load({ force: true }));
-
-    document.querySelectorAll('[data-bus-full-view]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-            const v = btn.getAttribute('data-bus-full-view');
-            if (!v || v === busGetFullViewMode()) return;
-            busSetFullViewMode(v);
-            busSyncFullViewToggle();
-            if (fullContainer && Array.isArray(lastFullSortedAll)) {
-                busRenderFullTimetable(fullContainer, lastFullSortedAll, {
-                    routeDir: activeDir,
-                    dayOffset: activeDayOffset,
-                });
-            }
-        });
-    });
-    busSyncFullViewToggle();
 
     window.addEventListener('online', () => {
         void busPrefetchMissingDirs();

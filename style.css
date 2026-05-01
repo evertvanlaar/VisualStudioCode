@@ -1,4 +1,4 @@
-/* version 2.0.74 */
+/* version 2.0.83 */
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
 @keyframes slideDown{from{transform: translate(-50%, -100%); opacity: 0}to{transform: translate(-50%, 0); opacity: 1}}
@@ -336,23 +336,9 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
   border:1px solid rgba(74,108,74,0.35);
   box-shadow:0 10px 28px rgba(45,90,39,0.08),inset 0 1px 0 rgba(255,255,255,0.7)
 }
-.bus-full-heading-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:2px}
-
 .bus-full-origin-note{margin:6px 0 6px;padding:0;font-size:12px;font-weight:680;color:rgba(71,85,105,0.92);line-height:1.4;max-width:min(48rem,100%)}
 
 .bus-full-section .bus-subsection-title--full{margin-top:0;margin-bottom:0;color:rgba(71,85,105,0.72);font-weight:900;letter-spacing:0.07em}
-
-.bus-full-view-toggle{display:inline-flex;align-items:center;gap:4px;padding:4px;border-radius:999px;border:1px solid rgba(15,23,42,0.09);background:rgba(255,255,255,0.85);box-shadow:0 2px 8px rgba(2,6,23,0.04)}
-
-.bus-full-view-btn{display:inline-flex;align-items:center;gap:7px;margin:0;padding:8px 12px;border:0;border-radius:999px;background:transparent;color:rgba(71,85,105,0.92);font-family:inherit;font-size:11.5px;font-weight:850;letter-spacing:0.04em;line-height:1;cursor:pointer;transition:background 0.15s,color 0.15s}
-
-.bus-full-view-btn i{font-size:13px;opacity:0.9}
-
-.bus-full-view-btn:hover{color:#0f172a;background:rgba(148,163,184,0.12)}
-
-.bus-full-view-btn.is-active{background:rgba(74,108,74,0.18);color:#23401f;box-shadow:0 1px 0 rgba(255,255,255,0.75) inset}
-
-.bus-full-view-btn:focus-visible{outline:2px solid rgba(74,108,74,0.45);outline-offset:2px}
 
 .bus-full-section .bus-container--full{margin-top:12px}
 
@@ -613,9 +599,7 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
   .bus-next-highlight{padding:8px 12px 10px;gap:4px;margin-top:10px;border-radius:14px}
   .bus-full-panel{padding:10px 12px 12px;border-radius:14px}
   .bus-next-highlight .bus-subsection-title--next{font-size:11px;letter-spacing:0.08em}
-  .bus-full-heading-row{gap:10px}
   .bus-full-origin-note{font-size:11px;line-height:1.35}
-  .bus-full-view-btn{padding:7px 10px;font-size:10.8px;font-weight:830}
   .bus-sched-legend{padding:8px 10px;font-size:10.8px}
   .bus-sched-legend--panel{padding:8px 10px 10px!important;border-radius:14px!important}
   .bus-last-updated--divider{font-size:10px;padding:3px 10px!important;max-width:96%!important}
