@@ -128,6 +128,17 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
 
 .bus-header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
 
+.bus-day-strip-wrap{margin:10px 0 0;width:100%;max-width:100%}
+.bus-day-strip-hint{margin:0 0 6px;font-size:10.5px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:rgba(71,85,105,0.82)}
+.bus-day-strip{display:flex;flex-flow:row nowrap;gap:6px;overflow-x:auto;padding:4px 2px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.bus-day-btn{flex:0 0 auto;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:3.35rem;padding:8px 10px;border-radius:12px;border:1px solid rgba(15,23,42,0.12);background:rgba(255,255,255,0.88);font-family:inherit;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,0.85) inset;line-height:1.15;transition:background 0.15s ease,border-color 0.15s ease}
+.bus-day-btn__dow{font-size:10px;font-weight:900;letter-spacing:0.04em;text-transform:uppercase;color:rgba(71,85,105,0.88)}
+.bus-day-btn__dm{font-size:12px;font-weight:1000;color:#0f172a}
+.bus-day-btn:hover{background:rgba(74,108,74,0.08);border-color:rgba(74,108,74,0.22)}
+.bus-day-btn:focus-visible{outline:2px solid rgba(74,108,74,0.45);outline-offset:2px}
+.bus-day-btn.is-active{background:rgba(74,108,74,0.18);border-color:rgba(74,108,74,0.35);box-shadow:0 2px 8px rgba(45,90,39,0.12)}
+.bus-day-btn.is-active .bus-day-btn__dow{color:#2d5a27}
+
 .bus-title{display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:6px 12px;flex:1 1 200px;min-width:0}
 
 .bus-title h2{margin:0;font-size:16px;font-weight:1000;letter-spacing:-0.01em;text-align:left;flex:0 0 auto;line-height:1.2}
@@ -147,10 +158,10 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
 
 .bus-picker-strip{display:flex;flex-flow:row wrap;align-items:center;gap:8px 10px;min-width:0;width:100%}
 
-/* Mobiel: select + map-knop op één lijn; desktop ≥720px: kolom links, miniatuur rechts */
-.bus-picker-stack{display:flex;flex-flow:row wrap;align-items:center;gap:8px;flex:1 1 auto;min-width:0}
+/* Mobiel: select + map-knop één regel (nowrap: Firefox geeft select grotere min-breedte dan Chromium) */
+.bus-picker-stack{display:flex;flex-flow:row nowrap;align-items:center;gap:8px;flex:1 1 auto;min-width:0}
 
-.bus-dir-select{flex:1 1 auto;min-width:0;min-height:44px;width:auto;max-width:min(288px,100%);box-sizing:border-box;font-family:inherit;font-size:14px;font-weight:800;color:#0f172a;padding:10px 12px;border-radius:12px;border:1px solid rgba(15,23,42,0.12);background:rgba(255,255,255,0.92);cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,0.85) inset}
+.bus-dir-select{flex:1 1 0%;min-width:0;min-height:44px;width:auto;max-width:min(288px,100%);box-sizing:border-box;font-family:inherit;font-size:14px;font-weight:800;color:#0f172a;padding:10px 12px;border-radius:12px;border:1px solid rgba(15,23,42,0.12);background:rgba(255,255,255,0.92);cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,0.85) inset}
 
 .bus-dir-select:focus{outline:2px solid rgba(74,108,74,0.45);outline-offset:2px}
 
@@ -193,10 +204,9 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
 }
 
 @media screen and (max-width: 380px){
-.bus-picker-strip{flex-direction:column;align-items:stretch}
-.bus-picker-stack{flex-direction:column;align-items:stretch}
-.bus-dir-select{max-width:none;width:100%}
-.bus-map-open{align-self:flex-start}
+.bus-picker-stack{flex-flow:row nowrap;align-items:center}
+.bus-dir-select{max-width:none;flex:1 1 0%;min-width:0}
+.bus-map-open{align-self:center}
 }
 
 .bus-map-preview{display:none;align-items:stretch;padding:0;border:none;border-radius:14px;overflow:hidden;cursor:pointer;background:rgba(15,23,42,0.06);box-shadow:0 4px 18px rgba(2,6,23,0.12),0 0 0 1px rgba(15,23,42,0.08) inset;transition:transform 0.12s ease,box-shadow 0.15s ease}

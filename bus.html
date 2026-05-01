@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <title>Bus timetable Kala Nera</title>
     <link rel="canonical" href="https://www.kalanera.gr/bus.html">
-    <meta name="description" content="Bus timetable from Kala Nera to Volos, Afissos, Milies, Vyzitsa, Pinakates, Argalasti, Siki, Promiri, Katigiorgis, Milina, Platanias and Trikeri (Pelion, Greece).">
+    <meta name="description" content="Bus timetable from Kala Nera to Volos, Afissos, Milies, Vyzitsa, Pinakates, Neochori, Argalasti, Siki, Promiri, Katigiorgis, Milina, Platanias and Trikeri (Pelion, Greece).">
     <link rel="alternate" hreflang="en" href="https://www.kalanera.gr/bus.html" />
     <link rel="alternate" hreflang="el" href="https://www.kalanera.gr/bus-el.html" />
     <link rel="alternate" hreflang="x-default" href="https://www.kalanera.gr/bus.html" />
 
     <meta property="og:title" content="Bus timetable Kala Nera">
-    <meta property="og:description" content="Bus timetable from Kala Nera to Volos, Afissos, Milies, Vyzitsa, Pinakates, Argalasti, Siki, Promiri, Katigiorgis, Milina, Platanias and Trikeri (Pelion, Greece).">
+    <meta property="og:description" content="Bus timetable from Kala Nera to Volos, Afissos, Milies, Vyzitsa, Pinakates, Neochori, Argalasti, Siki, Promiri, Katigiorgis, Milina, Platanias and Trikeri (Pelion, Greece).">
     <meta property="og:image" content="https://www.kalanera.gr/villageoverview.jpg">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.kalanera.gr/bus.html">
@@ -20,7 +20,7 @@
     <meta name="twitter:url" content="https://www.kalanera.gr/bus.html">
     <meta name="twitter:image" content="https://www.kalanera.gr/villageoverview.jpg">
     <meta name="twitter:title" content="Bus timetable Kala Nera">
-    <meta name="twitter:description" content="Bus timetable from Kala Nera to Volos, Afissos, Milies, Vyzitsa, Pinakates, Argalasti, Siki, Promiri, Katigiorgis, Milina, Platanias and Trikeri (Pelion, Greece).">
+    <meta name="twitter:description" content="Bus timetable from Kala Nera to Volos, Afissos, Milies, Vyzitsa, Pinakates, Neochori, Argalasti, Siki, Promiri, Katigiorgis, Milina, Platanias and Trikeri (Pelion, Greece).">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#4a6c4a">
     <meta name="mobile-web-app-capable" content="yes">
@@ -28,7 +28,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.0.74">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.0.82">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -119,7 +119,7 @@
     <section class="bus-section" aria-label="Bus timetable Kala Nera">
         <div class="bus-header">
             <div class="bus-title">
-                <h2>TODAY</h2>
+                <h2 id="bus-heading-day">TODAY</h2>
                 <div class="bus-subtitle">
                     <span>From Kala Nera</span>
                     <span id="bus-route" class="bus-subtitle-route"></span>
@@ -139,6 +139,7 @@
                                 <option value="milies">Milies</option>
                                 <option value="vyzitsa">Vyzitsa</option>
                                 <option value="pinakates">Pinakates</option>
+                                <option value="neochori">Neochori</option>
                             </optgroup>
                             <optgroup label="South (A)">
                                 <option value="argalasti">Argalasti</option>
@@ -165,6 +166,11 @@
             </div>
         </div>
 
+        <div class="bus-day-strip-wrap" id="bus-day-strip-wrap">
+            <p class="bus-day-strip-hint" id="bus-day-strip-hint"></p>
+            <div class="bus-day-strip" id="bus-day-strip"></div>
+        </div>
+
         <dialog id="bus-pelion-map-dialog" class="bus-pelion-dialog" aria-labelledby="bus-pelion-map-title">
             <div class="bus-pelion-dialog__shell">
                 <header class="bus-pelion-dialog__head">
@@ -185,7 +191,7 @@
         </div>
 
         <div class="bus-next-highlight">
-            <div class="bus-subsection-title bus-subsection-title--next"><i class="fa-solid fa-bus bus-subsection-icon" aria-hidden="true"></i> Next bus</div>
+            <div class="bus-subsection-title bus-subsection-title--next" id="bus-next-section-title"><i class="fa-solid fa-bus bus-subsection-icon" aria-hidden="true"></i> Next bus</div>
             <div id="bus-next-container" class="bus-container bus-container--next" aria-live="polite">
                 <div class="bus-skeleton" aria-hidden="true"></div>
             </div>
@@ -194,7 +200,7 @@
         <div class="bus-full-section">
             <div class="bus-full-panel">
             <div class="bus-full-heading-row">
-                <div class="bus-subsection-title bus-subsection-title--full">Full timetable today</div>
+                <div class="bus-subsection-title bus-subsection-title--full" id="bus-full-title">Full timetable today</div>
                 <div class="bus-full-view-toggle" role="group">
                     <button type="button" class="bus-full-view-btn" data-bus-full-view="timeline" aria-pressed="false">
                         <i class="fa-solid fa-grip-lines-vertical" aria-hidden="true"></i>
@@ -256,7 +262,7 @@
     </section>
 </div>
 
-<script src="app.js?v=2.0.74"></script>
+<script src="app.js?v=2.0.82"></script>
 
 <nav class="bottom-nav" aria-label="Primary">
     <div class="bottom-nav-inner">

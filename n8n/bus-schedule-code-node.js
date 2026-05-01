@@ -10,7 +10,7 @@
  *   const query = $('Webhook').first().json.query || {};
  *
  * Webhook query params (zoals frontend):
- *   - dir     — verplicht door browser; slug: volos|milies|argalasti|afissos|vyzitsa|pinakates|siki|promiri|katigiorgis|milina|platanias|trikeri
+ *   - dir     — verplicht door browser; slug: volos|milies|argalasti|afissos|neochori|vyzitsa|…
  *   - from    — optioneel (browser stuurt "Kala Nera")
  *   - remaining — "1" = alleen rijen met tijd >= nu vandaag (Europe/Athens); "0" of leeg = volledige lijst voor die dir
  *
@@ -25,7 +25,7 @@ const WEBHOOK_NODE_NAME = 'Webhook';
 // Zelfde bestemmingen als app.js BUS_VALID_DIRS
 const VALID_DIRS = [
   'volos', 'milies', 'argalasti', 'afissos',
-  'vyzitsa', 'pinakates', 'siki', 'promiri', 'katigiorgis', 'milina', 'platanias', 'trikeri',
+  'vyzitsa', 'pinakates', 'neochori', 'siki', 'promiri', 'katigiorgis', 'milina', 'platanias', 'trikeri',
 ];
 
 const BUS_DIR_LABELS = {
@@ -35,6 +35,7 @@ const BUS_DIR_LABELS = {
   afissos: { en: 'Afissos', el: 'Άφησσος' },
   vyzitsa: { en: 'Vyzitsa', el: 'Βυζίτσα' },
   pinakates: { en: 'Pinakates', el: 'Πινακάτες' },
+  neochori: { en: 'Neochori', el: 'Νεοχώρι' },
   siki: { en: 'Siki', el: 'Σήκι' },
   promiri: { en: 'Promiri', el: 'Προμήρι' },
   katigiorgis: { en: 'Katigiorgis', el: 'Κατηγιώργης' },

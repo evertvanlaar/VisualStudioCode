@@ -2,7 +2,7 @@ const tz = 'Europe/Athens';
 
 const VALID_DIRS = [
   'volos', 'milies', 'argalasti', 'afissos',
-  'vyzitsa', 'pinakates', 'siki', 'promiri', 'katigiorgis', 'milina', 'platanias', 'trikeri',
+  'vyzitsa', 'pinakates', 'neochori', 'siki', 'promiri', 'katigiorgis', 'milina', 'platanias', 'trikeri',
 ];
 
 const BUS_DIR_LABELS = {
@@ -12,6 +12,7 @@ const BUS_DIR_LABELS = {
   afissos: { en: 'Afissos', el: 'Άφησσος' },
   vyzitsa: { en: 'Vyzitsa', el: 'Βυζίτσα' },
   pinakates: { en: 'Pinakates', el: 'Πινακάτες' },
+  neochori: { en: 'Neochori', el: 'Νεοχώρι' },
   siki: { en: 'Siki', el: 'Σήκι' },
   promiri: { en: 'Promiri', el: 'Προμήρι' },
   katigiorgis: { en: 'Katigiorgis', el: 'Κατηγιώργης' },
@@ -47,12 +48,15 @@ function getQuery(items) {
   const q = (j0 && (j0._busQuery ?? j0.busQuery)) || {};
   const dirRaw = (q.dir || 'volos').toString().toLowerCase().trim();
   const dir = VALID_DIRS.includes(dirRaw) ? dirRaw : 'volos';
+  const dayOffRaw = Number(q.dayOffset ?? q.day_offset ?? 0);
+  const dayOffset = Math.max(0, Math.min(6, Math.floor(Number.isFinite(dayOffRaw) ? dayOffRaw : 0)));
   return {
     from: (q.from || 'Kala Nera').toString(),
     dir,
     remaining: (q.remaining || '1').toString() !== '0',
     minutesEarly: Number(q.minutesEarly ?? 10) || 10,
     apiKey: (q.key || '').toString(),
+    dayOffset,
   };
 }
 
@@ -202,17 +206,28 @@ function matchesDays(daysValue, todayNum) {
 
 const q = getQuery(items);
 const now = athensNowParts();
+
+/** Kalenderdag in Athene voor deze request: vandaag + dayOffset (0–6). */
+let ref = now;
+if (q.dayOffset > 0) {
+  const [y, mo, d] = now.ymd.split('-').map(Number);
+  const ms = Date.UTC(y, mo - 1, d, 12, 0, 0) + q.dayOffset * 86400000;
+  ref = athensNowParts(new Date(ms));
+}
+
 const nowMin = parseHHMMToMinutes(now.hm);
 const cutoff = nowMin == null ? null : Math.max(0, nowMin - q.minutesEarly);
+/** “Alleen nog te gaan”-filter alleen op de echte kalenderdag “vandaag”, niet op toekomstige dagen. */
+const applyRemainingTime = q.remaining && cutoff != null && ref.ymd === now.ymd;
 
 const rawRows = items.map((i) => stripBusQuery(i.json));
 
 const filtered = rawRows
   .filter((raw) => {
     const daysVal = sheetField(raw, ['days', 'Days']) ?? raw.Days ?? raw.days;
-    if (!matchesDays(daysVal, now.todayNum)) return false;
+    if (!matchesDays(daysVal, ref.todayNum)) return false;
     if (!rowMatchesDir(raw, q.dir)) return false;
-    if (q.remaining && cutoff != null) {
+    if (applyRemainingTime) {
       const depMin = parseHHMMToMinutes(String(depTime(raw)).trim());
       if (depMin == null) return false;
       if (depMin < cutoff) return false;
@@ -234,11 +249,13 @@ return [
       meta: {
         tz,
         now: { ymd: now.ymd, hm: now.hm, todayNum: now.todayNum },
+        ref: { ymd: ref.ymd, todayNum: ref.todayNum, dayOffset: q.dayOffset },
         query: {
           from: q.from,
           dir: q.dir,
           remaining: q.remaining,
           minutesEarly: q.minutesEarly,
+          dayOffset: q.dayOffset,
         },
         generatedAt: new Date().toISOString(),
       },
