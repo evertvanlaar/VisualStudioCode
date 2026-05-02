@@ -6,7 +6,9 @@ const N8N_WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/local-businesses';
 // Bus timetable (n8n path bus-schedule-next). Query: from, dir, remaining=0|1, dayOffset=0..6 (Athens calendar).
 // Legacy webhook /webhook/bus-schedule blijft in n8n actief voor oudere app.js die nog niet via service worker is bijgewerkt.
 const N8N_WEBHOOK_URL_BUS_SCHEDULE_NEXT = 'https://n8n.vanlaar.cloud/webhook/bus-schedule-next';
-const BUS_STORAGE_KEY = 'kalanera_bus_schedule_cache_v2';
+// Server-side cache (Sheet-regels): zie n8n/bus-schedule-next-cached-workflow.example.json (+ build-bus-schedule-next-cached-example.mjs).
+/** client-side slots: sleutel dir + Athens kalenderdatum doeldag (niet alleen offset), sync met n8n dayOffset-filter. */
+const BUS_STORAGE_KEY = 'kalanera_bus_schedule_cache_v3';
 const BUS_CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes
 /** Today + 6 days: seven consecutive Athens calendar days */
 const BUS_DAY_OFFSET_MAX = 6;
@@ -134,7 +136,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.0.86'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.0.88'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -209,7 +211,29 @@ async function init() {
                 bodySnippet.slice(0, 400)
             );
         } else {
-            let payload = await response.json();
+            const bodyText = await response.text();
+            const trimmed = bodyText.trim();
+            let payload;
+            if (!trimmed) {
+                console.warn(
+                    'Businesses webhook: lege response body (HTTP',
+                    response.status,
+                    ') — meestal n8n Respond zonder body of $json.rows undefined. Check workflow / cache branch.'
+                );
+                payload = [];
+            } else {
+                try {
+                    payload = JSON.parse(trimmed);
+                } catch (parseErr) {
+                    console.warn(
+                        'Businesses webhook: body is geen geldige JSON',
+                        parseErr,
+                        '| snippet:',
+                        trimmed.slice(0, 400)
+                    );
+                    throw parseErr;
+                }
+            }
             if (typeof payload === 'string') {
                 try {
                     payload = JSON.parse(payload);
@@ -1091,6 +1115,22 @@ function busClampDayOffset(n) {
     return Math.max(0, Math.min(BUS_DAY_OFFSET_MAX, Math.floor(x)));
 }
 
+/** Athens kalenderdatum YYYY-MM-DD voor strip-offset — zelfde civil-logica als n8n (addDaysToGregorianYmd). */
+function busScheduleTargetYmd(dayOffset) {
+    const off = busClampDayOffset(dayOffset);
+    const today = busNowAthensParts();
+    const [y, m, d] = today.ymd.split('-').map(Number);
+    const x = new Date(Date.UTC(y, m - 1, d + off));
+    const ys = x.getUTCFullYear();
+    const ms = String(x.getUTCMonth() + 1).padStart(2, '0');
+    const ds = String(x.getUTCDate()).padStart(2, '0');
+    return `${ys}-${ms}-${ds}`;
+}
+
+function busScheduleSlotKey(dir, dayOffset) {
+    return `${dir}:${busScheduleTargetYmd(dayOffset)}`;
+}
+
 /** Instant for Athens calendar day = today + offset (0..6), from today's Athens ymd. */
 function busAthensTargetInstant(dayOffset) {
     const off = busClampDayOffset(dayOffset);
@@ -1880,8 +1920,8 @@ function busReadCacheSlot(dir, dayOffset) {
         if (!raw) return null;
         const parsed = JSON.parse(raw);
         if (!parsed || typeof parsed !== 'object') return null;
-        if (parsed.version !== 2 || !parsed.slots || typeof parsed.slots !== 'object') return null;
-        const key = `${dir}:${busClampDayOffset(dayOffset)}`;
+        if (parsed.version !== 3 || !parsed.slots || typeof parsed.slots !== 'object') return null;
+        const key = busScheduleSlotKey(dir, dayOffset);
         const slot = parsed.slots[key];
         if (!slot || !Array.isArray(slot.items)) return null;
         return { savedAt: slot.savedAt, items: slot.items };
@@ -1897,17 +1937,17 @@ function busWriteCacheSlot(dir, dayOffset, items) {
         if (raw) {
             try {
                 const parsed = JSON.parse(raw);
-                if (parsed && parsed.version === 2 && parsed.slots && typeof parsed.slots === 'object') {
+                if (parsed && parsed.version === 3 && parsed.slots && typeof parsed.slots === 'object') {
                     slots = { ...parsed.slots };
                 }
             } catch (e) { /* ignore */ }
         }
-        const key = `${dir}:${busClampDayOffset(dayOffset)}`;
+        const key = busScheduleSlotKey(dir, dayOffset);
         slots[key] = {
             savedAt: new Date().toISOString(),
             items: Array.isArray(items) ? items : [],
         };
-        localStorage.setItem(BUS_STORAGE_KEY, JSON.stringify({ version: 2, slots }));
+        localStorage.setItem(BUS_STORAGE_KEY, JSON.stringify({ version: 3, slots }));
     } catch (e) { /* ignore */ }
 }
 
@@ -1917,7 +1957,7 @@ function busGetSlotsFromStorage() {
         const raw = localStorage.getItem(BUS_STORAGE_KEY);
         if (!raw) return null;
         const parsed = JSON.parse(raw);
-        if (!parsed || parsed.version !== 2 || !parsed.slots || typeof parsed.slots !== 'object') return null;
+        if (!parsed || parsed.version !== 3 || !parsed.slots || typeof parsed.slots !== 'object') return null;
         return parsed.slots;
     } catch (e) {
         return null;
@@ -1950,7 +1990,7 @@ async function busPrefetchMissingDirs() {
     if (!navigator.onLine) return;
     const slots = busGetSlotsFromStorage() || {};
     const missing = BUS_VALID_DIRS.filter((d) => {
-        const slot = slots[`${d}:0`];
+        const slot = slots[busScheduleSlotKey(d, 0)];
         return !slot || !Array.isArray(slot.items);
     });
     if (!missing.length) return;
