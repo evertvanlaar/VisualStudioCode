@@ -136,7 +136,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.1.4'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.1.6'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -2439,7 +2439,7 @@ function renderMoreSheetContent() {
                     <small>info@spiti.tech</small>
                 </a>
                 <a href="${privacyHref}">
-                    <span class="more-link-leading"><i class="fa-solid fa-shield-halved"></i><span class="more-link-label">${labels.privacy}</span></span>
+                    <span class="more-link-leading"><i class="fa-solid fa-user-shield"></i><span class="more-link-label">${labels.privacy}</span></span>
                     <small>kalanera.gr</small>
                 </a>
             </div>
