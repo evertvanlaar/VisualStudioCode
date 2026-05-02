@@ -1,7 +1,7 @@
 // service-worker.js
-const VERSION = '2.1.6'; // Dit sturen we naar de Sheet
-const CACHE_NAME = 'kalanera-cache-v2.1.6'; // Dit dwingt de code-update af
-const IMAGE_CACHE = 'kalanera-images-v2.1.6'; // Afbeeldingen apart cachen voor snelheid
+const VERSION = '2.1.7'; // Dit sturen we naar de Sheet
+const CACHE_NAME = 'kalanera-cache-v2.1.7'; // Dit dwingt de code-update af
+const IMAGE_CACHE = 'kalanera-images-v2.1.7'; // Afbeeldingen apart cachen voor snelheid
 
 // VOEG DIT TOE: Luister naar vragen van de app
 self.addEventListener('message', (event) => {
@@ -117,7 +117,40 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // 2. CSS, JS & HTML: Cache First (voor snelheid) en op de achtergrond updaten
+  // 2. HTML-documenten: Network-first zodat ingesloten app.js?v= / style.css?v= niet vast blijven
+  //    hangen aan oude cache van index*.html (typisch na deploy); offline → nog steeds cached pagina.
+  if (event.request.destination === 'document') {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse.status === 200) {
+            const copy = networkResponse.clone();
+            event.waitUntil(
+              copy
+                .arrayBuffer()
+                .then((body) =>
+                  caches.open(CACHE_NAME).then((cache) =>
+                    cache.put(
+                      event.request,
+                      new Response(body, {
+                        status: networkResponse.status,
+                        statusText: networkResponse.statusText,
+                        headers: networkResponse.headers,
+                      }),
+                    ),
+                  ),
+                )
+                .catch(() => {}),
+            );
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request)),
+    );
+    return;
+  }
+
+  // 3. CSS, JS & overige: Cache First (voor snelheid) en op de achtergrond updaten
   event.respondWith(
     caches.match(event.request).then(cachedResponse => {
       if (cachedResponse) {
