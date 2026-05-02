@@ -85,7 +85,7 @@ Respond (JSON + CORS)
 
      gelijk aan `={{ $env.BUS_API_KEY }}`, of IF v2 met twee regels en **Any/OR**.
 
-4. **Frontend (`app.js`):** zodra dit live staat, bij `fetch` naar `N8N_BUS_WEBHOOK_URL` dezelfde key meesturen (header en/of query).  
+4. **Frontend (`app.js`):** zodra dit live staat, bij `fetch` naar `N8N_WEBHOOK_URL_BUS_SCHEDULE_NEXT` dezelfde key meesturen (header en/of query).  
    **Let op:** key in statische frontend is **niet echt geheim**; dit filtert vooral simpele misbruikers. Echte bescherming = **rate limit + cache**.
 
 ### CORS / OPTIONS

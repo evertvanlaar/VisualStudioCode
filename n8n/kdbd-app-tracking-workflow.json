@@ -1,0 +1,343 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "app-stats",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://www.kalanera.gr,https://kalanera.gr,http://localhost:5500,http://localhost:5501"
+        }
+      },
+      "id": "1cdb5d23-230c-4993-a063-11a8baea2135",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [-528, -48],
+      "webhookId": "424e5aa5-22e8-4539-8950-9fb5df7e2e92"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const item = $input.first().json;\nconst body = item.body;\nconst errors = [];\n\nif (body === null || body === undefined || typeof body !== 'object' || Array.isArray(body)) {\n  errors.push('body must be a JSON object');\n} else {\n  const maxLen = (k, n) => {\n    if (!(k in body)) {\n      errors.push(`missing ${k}`);\n      return '';\n    }\n    const s = body[k] == null ? '' : String(body[k]);\n    if (s.length > n) errors.push(`${k} too long (max ${n})`);\n    return s;\n  };\n\n  const optLen = (k, n) => {\n    if (!(k in body)) return;\n    const s = body[k] == null ? '' : String(body[k]);\n    if (s.length > n) errors.push(`${k} too long (max ${n})`);\n  };\n\n  const allowedEvents = new Set(['app_open', 'installatie', 'update']);\n  const allowedSources = new Set(['App (PWA)', 'Website (Browser)']);\n\n  const event = maxLen('event', 80);\n  const source = maxLen('source', 40);\n  maxLen('version', 80);\n  maxLen('css_version', 80);\n  maxLen('os', 40);\n  maxLen('device', 40);\n  maxLen('screen', 32);\n  optLen('referrer', 2048);\n  optLen('theme', 20);\n  optLen('datum', 80);\n\n  if (event && !allowedEvents.has(event)) errors.push('invalid event');\n  if (source && !allowedSources.has(source)) errors.push('invalid source');\n\n  try {\n    if (JSON.stringify(body).length > 8192) errors.push('payload too large');\n  } catch (e) {\n    errors.push('body not serializable');\n  }\n}\n\nconst valid = errors.length === 0;\n\nreturn [\n  {\n    json: {\n      ...item,\n      _validation: { valid, errors },\n    },\n  },\n];"
+      },
+      "id": "f8a3c901-7e42-4c18-a91f-000000000001",
+      "name": "Validate app-stats body",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-368, -48]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "body-valid-check-001",
+              "leftValue": "={{ String($json._validation.valid) }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f8a3c902-7e42-4c18-a91f-000000000002",
+      "name": "Body valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [-208, -48]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: 'invalid_payload', details: $json._validation.errors }) }}",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "={{ (() => { const h = $('Webhook').first().json.headers || {}; const o = String(h.origin ?? h.Origin ?? '').trim(); const allowed = new Set(['https://www.kalanera.gr','https://kalanera.gr','http://localhost:5500','http://localhost:5501']); return allowed.has(o) ? o : 'https://www.kalanera.gr'; })() }}"
+              },
+              {
+                "name": "Vary",
+                "value": "Origin"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "POST, OPTIONS"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              }
+            ]
+          }
+        }
+      },
+      "id": "f8a3c903-7e42-4c18-a91f-000000000003",
+      "name": "Respond 400 invalid body",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [-208, 140]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'http://ip-api.com/json/' + $node[\"Webhook\"].json[\"headers\"][\"x-forwarded-for\"].split(',')[0] }}",
+        "options": {}
+      },
+      "id": "e99489c1-a13b-4473-bc12-7626185ac71e",
+      "name": "Get Country from IP",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [-48, -48]
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [112, -48],
+      "id": "742d041d-78c8-4de4-9429-53c886d18d09",
+      "name": "Wait",
+      "webhookId": "6f9b5a61-9a39-48b2-a124-3a4c8bc18936"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5c8764b5-fda6-4a92-8f67-602b989de25b",
+              "leftValue": "={{ $('Webhook').item.json.headers['x-real-ip'] }}",
+              "rightValue": "145.53.105.134",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [272, -48],
+      "id": "6a9a1121-6411-411c-9ec0-529951fecd6d",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1DGtUvOvJ35MzXsZBZOPR1xzkyb0V_sMttOKcv1JBuig",
+          "mode": "list",
+          "cachedResultName": "localbusinesses-kalanera",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DGtUvOvJ35MzXsZBZOPR1xzkyb0V_sMttOKcv1JBuig/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 71324981,
+          "mode": "list",
+          "cachedResultName": "APPTRACE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DGtUvOvJ35MzXsZBZOPR1xzkyb0V_sMttOKcv1JBuig/edit#gid=71324981"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Datum": "={{ $now.format('M/d/yyyy') }}",
+            "Event": "={{ $node[\"Webhook\"].json[\"body\"][\"event\"] }}",
+            "OS": "={{ $node[\"Webhook\"].json[\"body\"][\"os\"] }}",
+            "Device": "={{ $node[\"Webhook\"].json[\"body\"][\"device\"] }}",
+            "Land": "={{ $node[\"Get Country from IP\"].json[\"country\"] }}",
+            "Version": "={{ $node[\"Webhook\"].json[\"body\"][\"version\"] }}",
+            "Scherm": "={{ $node[\"Webhook\"].json[\"body\"][\"screen\"] }}",
+            "CSS-Version": "={{ $node[\"Webhook\"].json[\"body\"][\"css_version\"] }}",
+            "Source": "={{ $node[\"Webhook\"].json[\"body\"][\"source\"] }}",
+            "timezone": "={{ $('Get Country from IP').item.json.timezone }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {"id": "Datum", "displayName": "Datum", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "Event", "displayName": "Event", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "OS", "displayName": "OS", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "Device", "displayName": "Device", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "Land", "displayName": "Land", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "Version", "displayName": "Version", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "Scherm", "displayName": "Scherm", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "CSS-Version", "displayName": "CSS-Version", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "Source", "displayName": "Source", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "timezone", "displayName": "timezone", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true}
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "c5e8d00a-064f-4b61-9601-aa5e85b28931",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [464, -48],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "dt65031NC2CKh6xA",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "bfd42b77-afaf-4602-ab62-c2d147e3fa51",
+              "leftValue": "={{ $json.Source }}",
+              "rightValue": "App (PWA)",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [672, -48],
+      "id": "24814ebd-4903-430d-a22f-106229a93e71",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "1574140555",
+        "text": "=Datum: {{ $json.Datum }}\nLand: {{ $json.Land }}\nTimezone: {{ $json.timezone }}\n\nSource: {{ $json.Source }}\nEvent: {{ $json.Event }}\n\nOS: {{ $json.OS }} / Device: {{ $json.Device }}\nScherm: {{ $json.Scherm }}\n\nVersion / CSS: {{ $json.Version }} / {{ $json['CSS-Version'] }}\n",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [880, -48],
+      "id": "858d1829-dd81-4bd5-997a-797cb9a939ef",
+      "name": "Send a text message",
+      "webhookId": "71d97581-80e1-40db-8f26-337e733cd073",
+      "credentials": {
+        "telegramApi": {
+          "id": "StxxLcKLDtCGCSL2",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({}) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "={{ (() => { const h = $('Webhook').first().json.headers || {}; const o = String(h.origin ?? h.Origin ?? '').trim(); const allowed = new Set(['https://www.kalanera.gr','https://kalanera.gr','http://localhost:5500','http://localhost:5501']); return allowed.has(o) ? o : 'https://www.kalanera.gr'; })() }}"
+              },
+              {
+                "name": "Vary",
+                "value": "Origin"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "POST, OPTIONS"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              }
+            ]
+          }
+        }
+      },
+      "id": "f8a3c904-7e42-4c18-a91f-000000000004",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1088, -48]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Validate app-stats body", "type": "main", "index": 0}]]
+    },
+    "Validate app-stats body": {
+      "main": [[{"node": "Body valid?", "type": "main", "index": 0}]]
+    },
+    "Body valid?": {
+      "main": [
+        [{"node": "Get Country from IP", "type": "main", "index": 0}],
+        [{"node": "Respond 400 invalid body", "type": "main", "index": 0}]
+      ]
+    },
+    "Get Country from IP": {
+      "main": [[{"node": "Wait", "type": "main", "index": 0}]]
+    },
+    "Wait": {
+      "main": [[{"node": "Filter", "type": "main", "index": 0}]]
+    },
+    "Filter": {
+      "main": [[{"node": "Google Sheets", "type": "main", "index": 0}]]
+    },
+    "Google Sheets": {
+      "main": [[{"node": "If", "type": "main", "index": 0}]]
+    },
+    "If": {
+      "main": [
+        [{"node": "Send a text message", "type": "main", "index": 0}],
+        [{"node": "Respond OK", "type": "main", "index": 0}]
+      ]
+    },
+    "Send a text message": {
+      "main": [[{"node": "Respond OK", "type": "main", "index": 0}]]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8a056dda650f196038a1bda699419085e220ce6f0fa9607c4ea76c82ef8a8dd1"
+  }
+}

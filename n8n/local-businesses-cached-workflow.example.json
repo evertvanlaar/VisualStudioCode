@@ -1,0 +1,381 @@
+{
+  "name": "kalanera-localbusiness (cached example)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger-clear",
+      "name": "Manual — reset cache",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-600, 340]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Geen webhook-context nodig. Na Execute: eerstvolgende hit op local-businesses haalt Sheets.\nconst sd = $getWorkflowStaticData('global');\ndelete sd.lbCacheRows;\ndelete sd.lbCacheExpires;\nreturn [\n  {\n    json: {\n      cleared: true,\n      hint: 'Roep nu /webhook/local-businesses aan (of ververs de site) voor verse Sheet-data.',\n    },\n  },\n];"
+      },
+      "id": "code-clear-manual",
+      "name": "Clear cache (manual)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-360, 340]
+    },
+    {
+      "parameters": {
+        "path": "local-businesses-reset-cache",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://www.kalanera.gr,https://kalanera.gr,http://localhost:5500,http://localhost:5501"
+        }
+      },
+      "id": "wb-reset-cache",
+      "name": "Webhook reset cache",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [-600, -260],
+      "webhookId": "local-businesses-reset-cache"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Zelfde env als cache-bypass (of alleen deze): LB_CACHE_BYPASS_SECRET\n// Aanroep: GET .../webhook/local-businesses-reset-cache?token=JOUW_GEHEIM\n// Of header: X-Cache-Reset-Token: JOUW_GEHEIM\n\nconst item = $input.first().json;\nconst q = item.query || {};\nconst h = item.headers || {};\nconst secret = String($env.LB_CACHE_BYPASS_SECRET || '').trim();\nconst token = String(\n  q.token ?? q.secret ?? h['x-cache-reset-token'] ?? h['X-Cache-Reset-Token'] ?? '',\n).trim();\n\nif (!secret) {\n  return [{ json: { resetAllowed: false, reason: 'LB_CACHE_BYPASS_SECRET niet gezet op n8n' } }];\n}\n\nif (token !== secret) {\n  return [{ json: { resetAllowed: false, reason: 'forbidden' } }];\n}\n\nconst sd = $getWorkflowStaticData('global');\ndelete sd.lbCacheRows;\ndelete sd.lbCacheExpires;\n\nreturn [{ json: { resetAllowed: true } }];"
+      },
+      "id": "code-reset-api",
+      "name": "Validate + clear cache (API)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-360, -260]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "reset-allowed-if",
+              "leftValue": "={{ String($json.resetAllowed) }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-reset-ok",
+      "name": "Reset allowed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [-120, -260]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ cleared: true, hint: 'Volgende GET local-businesses haalt Sheets opnieuw.' }) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "={{ (() => { const h = $('Webhook reset cache').first().json.headers || {}; const o = String(h.origin ?? h.Origin ?? '').trim(); const allowed = new Set(['https://www.kalanera.gr','https://kalanera.gr','http://localhost:5500','http://localhost:5501']); return allowed.has(o) ? o : 'https://www.kalanera.gr'; })() }}"
+              },
+              {
+                "name": "Vary",
+                "value": "Origin"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "GET, OPTIONS"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, X-LB-Cache-Bypass, X-Cache-Reset-Token"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-reset-200",
+      "name": "Respond reset OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [140, -340]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: 'forbidden', detail: $json.reason || undefined }) }}",
+        "options": {
+          "responseCode": 403,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "={{ (() => { const h = $('Webhook reset cache').first().json.headers || {}; const o = String(h.origin ?? h.Origin ?? '').trim(); const allowed = new Set(['https://www.kalanera.gr','https://kalanera.gr','http://localhost:5500','http://localhost:5501']); return allowed.has(o) ? o : 'https://www.kalanera.gr'; })() }}"
+              },
+              {
+                "name": "Vary",
+                "value": "Origin"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "GET, OPTIONS"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, X-Cache-Reset-Token"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-reset-403",
+      "name": "Respond reset forbidden",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [140, -160]
+    },
+    {
+      "parameters": {
+        "path": "local-businesses",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://www.kalanera.gr,https://kalanera.gr,http://localhost:5500,http://localhost:5501"
+        }
+      },
+      "id": "wb-local-biz-001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [-600, 0],
+      "webhookId": "local-businesses"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// BELANGRIJK: $('Webhook') moet exact de naam zijn van je Webhook-node (bv. Webhook2).\n// Cache bypass (optioneel): env LB_CACHE_BYPASS_SECRET + header X-LB-Cache-Bypass of ?refresh=\n\nconst sd = $getWorkflowStaticData('global');\nconst h = $('Webhook').first().json.headers || {};\nconst q = $('Webhook').first().json.query || {};\nconst secret = String($env.LB_CACHE_BYPASS_SECRET || '').trim();\n\nconst headerVal = String(\n  h['x-lb-cache-bypass'] ?? h['X-LB-Cache-Bypass'] ?? '',\n).trim();\nconst qRefresh = q.refresh != null ? String(q.refresh).trim() : '';\n\nconst bypass =\n  secret.length > 0 &&\n  (headerVal === secret || qRefresh === secret);\n\nif (bypass) {\n  delete sd.lbCacheRows;\n  delete sd.lbCacheExpires;\n}\n\nconst now = Date.now();\n\nif (\n  sd.lbCacheRows &&\n  typeof sd.lbCacheExpires === 'number' &&\n  now < sd.lbCacheExpires &&\n  Array.isArray(sd.lbCacheRows)\n) {\n  return [{ json: { cacheHit: true, rows: sd.lbCacheRows } }];\n}\n\nreturn [{ json: { cacheHit: false } }];"
+      },
+      "id": "code-cache-read-002",
+      "name": "Read cache (static data)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-360, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "cache-hit-if",
+              "leftValue": "={{ String($json.cacheHit) }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-cache-hit-003",
+      "name": "Cache hit?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [-120, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.rows }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "={{ (() => { const h = $('Webhook').first().json.headers || {}; const o = String(h.origin ?? h.Origin ?? '').trim(); const allowed = new Set(['https://www.kalanera.gr','https://kalanera.gr','http://localhost:5500','http://localhost:5501']); return allowed.has(o) ? o : 'https://www.kalanera.gr'; })() }}"
+              },
+              {
+                "name": "Vary",
+                "value": "Origin"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "GET, OPTIONS"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, X-LB-Cache-Bypass"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "public, max-age=60"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-cache-004",
+      "name": "Respond (from cache)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [140, -140]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "YOUR_SHEET_GID_OR_NAME",
+          "mode": "list"
+        },
+        "options": {
+          "outputFormatting": {
+            "values": {
+              "general": "UNFORMATTED_VALUE",
+              "date": "FORMATTED_STRING"
+            }
+          }
+        }
+      },
+      "id": "sheets-read-005",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [140, 120],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// TTL alleen hier aanpassen (ms). Voorbeelden: 10 min = 10 * 60 * 1000 ; 30 min = 30 * 60 * 1000\nconst TTL_MS = 5 * 60 * 1000;\n\nconst rows = $input.all().map((i) => i.json);\nconst sd = $getWorkflowStaticData('global');\n\nsd.lbCacheRows = rows;\nsd.lbCacheExpires = Date.now() + TTL_MS;\n\nreturn [{ json: { rows } }];"
+      },
+      "id": "code-cache-write-006",
+      "name": "Write cache + pack rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 120]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.rows }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "={{ (() => { const h = $('Webhook').first().json.headers || {}; const o = String(h.origin ?? h.Origin ?? '').trim(); const allowed = new Set(['https://www.kalanera.gr','https://kalanera.gr','http://localhost:5500','http://localhost:5501']); return allowed.has(o) ? o : 'https://www.kalanera.gr'; })() }}"
+              },
+              {
+                "name": "Vary",
+                "value": "Origin"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "GET, OPTIONS"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, X-LB-Cache-Bypass"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "public, max-age=60"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-fresh-007",
+      "name": "Respond (fresh from Sheet)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [640, 120]
+    }
+  ],
+  "connections": {
+    "Manual — reset cache": {
+      "main": [[{ "node": "Clear cache (manual)", "type": "main", "index": 0 }]]
+    },
+    "Webhook reset cache": {
+      "main": [[{ "node": "Validate + clear cache (API)", "type": "main", "index": 0 }]]
+    },
+    "Validate + clear cache (API)": {
+      "main": [[{ "node": "Reset allowed?", "type": "main", "index": 0 }]]
+    },
+    "Reset allowed?": {
+      "main": [
+        [{ "node": "Respond reset OK", "type": "main", "index": 0 }],
+        [{ "node": "Respond reset forbidden", "type": "main", "index": 0 }]
+      ]
+    },
+    "Webhook": {
+      "main": [[{ "node": "Read cache (static data)", "type": "main", "index": 0 }]]
+    },
+    "Read cache (static data)": {
+      "main": [[{ "node": "Cache hit?", "type": "main", "index": 0 }]]
+    },
+    "Cache hit?": {
+      "main": [
+        [{ "node": "Respond (from cache)", "type": "main", "index": 0 }],
+        [{ "node": "Google Sheets", "type": "main", "index": 0 }]
+      ]
+    },
+    "Google Sheets": {
+      "main": [[{ "node": "Write cache + pack rows", "type": "main", "index": 0 }]]
+    },
+    "Write cache + pack rows": {
+      "main": [[{ "node": "Respond (fresh from Sheet)", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

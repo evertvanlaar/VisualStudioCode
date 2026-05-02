@@ -3,8 +3,9 @@
  */
 
 const N8N_WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/local-businesses';
-// Bus schedule endpoint (n8n). Query: from, dir, remaining=0|1, dayOffset=0..6 (Athens calendar; n8n must filter by that day’s weekday).
-const N8N_BUS_WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/bus-schedule-next';
+// Bus timetable (n8n path bus-schedule-next). Query: from, dir, remaining=0|1, dayOffset=0..6 (Athens calendar).
+// Legacy webhook /webhook/bus-schedule blijft in n8n actief voor oudere app.js die nog niet via service worker is bijgewerkt.
+const N8N_WEBHOOK_URL_BUS_SCHEDULE_NEXT = 'https://n8n.vanlaar.cloud/webhook/bus-schedule-next';
 const BUS_STORAGE_KEY = 'kalanera_bus_schedule_cache_v2';
 const BUS_CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes
 /** Today + 6 days: seven consecutive Athens calendar days */
@@ -106,7 +107,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.0.83'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.0.85'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -142,7 +143,10 @@ async function init() {
     const isWishlistPage = document.getElementById('empty-wishlist') !== null;
 
     // Functie om de juiste weergave te kiezen
+    /** Voorkom eeuwig “loading…” als fetch faalt zonder geldige cache of bij alleen !response.ok */
+    let directoryUiRendered = false;
     const showData = () => {
+        if (!isWishlistPage) directoryUiRendered = true;
         if (isWishlistPage) {
             renderWishlist(); 
         } else {
@@ -170,8 +174,32 @@ async function init() {
 // --- STAP 3: Haal verse data op via n8n ---
     try {
         const response = await fetch(N8N_WEBHOOK_URL);
-        if (response.ok) {
-            const rawData = await response.json();
+        if (!response.ok) {
+            const bodySnippet = await response.text().catch(() => '');
+            console.warn(
+                'Businesses webhook niet OK:',
+                response.status,
+                bodySnippet.slice(0, 400)
+            );
+        } else {
+            let rawData = await response.json();
+            // n8n Respond (JSON): JSON.stringify(...) + nogmaals serializeren kan een JSON-string opleveren i.p.v. array
+            if (typeof rawData === 'string') {
+                try {
+                    rawData = JSON.parse(rawData);
+                } catch (parseErr) {
+                    console.warn('Businesses webhook: body is string maar geen JSON-array JSON', parseErr);
+                    throw new Error('Invalid businesses payload shape');
+                }
+            }
+            if (!Array.isArray(rawData)) {
+                console.warn(
+                    'Businesses webhook: verwacht JSON-array, ontving:',
+                    typeof rawData,
+                    rawData && typeof rawData === 'object' ? Object.keys(rawData).slice(0, 12) : rawData
+                );
+                throw new Error('Invalid businesses payload shape');
+            }
             const freshData = rawData.filter(biz => biz.Status === 'Active');
            
             const now = new Date();
@@ -195,7 +223,11 @@ async function init() {
             showData(); 
         }
     } catch (error) {
-        console.warn("Offline mode.");
+        console.warn('Offline mode.', error?.message || error);
+    }
+
+    if (!isWishlistPage && businessList && !directoryUiRendered) {
+        showData();
     }
 
     // --- STAP 4: Overige extra's ---
@@ -1786,7 +1818,7 @@ function busRenderFullTimetable(container, buses, { routeDir, dayOffset } = {}) 
 }
 
 async function busFetchSchedule(dir, dayOffset) {
-    const url = new URL(N8N_BUS_WEBHOOK_URL);
+    const url = new URL(N8N_WEBHOOK_URL_BUS_SCHEDULE_NEXT);
     // ?from=Kala%20Nera&dir=…&remaining=0|1&dayOffset=0..6 (Athens calendar day; n8n filters days column for that weekday)
     url.searchParams.set('from', 'Kala Nera');
     url.searchParams.set('dir', dir || BUS_DEFAULT_DIR);
