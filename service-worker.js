@@ -1,7 +1,7 @@
 // service-worker.js
-const VERSION = '2.0.90'; // Dit sturen we naar de Sheet
-const CACHE_NAME = 'kalanera-cache-v2.0.90'; // Dit dwingt de code-update af
-const IMAGE_CACHE = 'kalanera-images-v2.0.90'; // Afbeeldingen apart cachen voor snelheid
+const VERSION = '2.1.4'; // Dit sturen we naar de Sheet
+const CACHE_NAME = 'kalanera-cache-v2.1.4'; // Dit dwingt de code-update af
+const IMAGE_CACHE = 'kalanera-images-v2.1.4'; // Afbeeldingen apart cachen voor snelheid
 
 // VOEG DIT TOE: Luister naar vragen van de app
 self.addEventListener('message', (event) => {
@@ -49,7 +49,7 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
   // KRUCIAL: Alleen verzoeken naar onze EIGEN domein cachen
-  // Dit voorkomt problemen met Google Maps, Tally en GoatCounter
+  // Dit voorkomt problemen met externe origins (Google Maps, ingesloten formulieren, enz.)
   if (!url.origin.includes(self.location.hostname)) return;
 
   // Manifest: network-first zodat background_color / icons altijd actueel zijn (geen witte splash uit oude cache)

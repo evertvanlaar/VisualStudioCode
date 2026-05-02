@@ -136,7 +136,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.0.90'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.1.4'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -2364,7 +2364,7 @@ function renderMoreSheetContent() {
         about: isEl ? 'Σχετικά με εμάς' : 'About us',
         follow: isEl ? 'Ακολουθήστε μας' : 'Follow us',
         contact: isEl ? 'Επικοινωνία' : 'Contact',
-        stats: isEl ? 'Στατιστικά' : 'Statistics',
+        privacy: isEl ? 'Πολιτική απορρήτου' : 'Privacy policy',
         developer: isEl ? 'Με την υποστήριξη' : 'Powered by'
     };
 
@@ -2377,10 +2377,6 @@ function renderMoreSheetContent() {
     const fbHref = (fb && fb.href) ? fb.href : 'https://www.facebook.com/kalanera.info';
     const fbLabel = (fb && fb.label) ? fb.label : labels.follow;
 
-    const gc = getFooterGoatcounterLink();
-    const statsHref = (gc && gc.href) ? gc.href : 'http://www.goatcounter.com';
-    const statsLabel = (gc && gc.label) ? gc.label : labels.stats;
-
     const year = new Date().getFullYear();
     const footerCopyright = getFooterCopyrightText();
     const copyrightFallback = isEl
@@ -2390,6 +2386,7 @@ function renderMoreSheetContent() {
 
     const version = (typeof APP_VERSION !== 'undefined') ? APP_VERSION : '';
     const busHref = isEl ? 'bus-el.html' : 'bus.html';
+    const privacyHref = isEl ? 'privacy-el.html' : 'privacy.html';
 
     const formattedCopyright = (() => {
         // Avoid double copyright symbol (some pages already include "©")
@@ -2441,9 +2438,9 @@ function renderMoreSheetContent() {
                     <span class="more-link-leading"><i class="fa-solid fa-envelope"></i><span class="more-link-label">${labels.contact}</span></span>
                     <small>info@spiti.tech</small>
                 </a>
-                <a href="${statsHref}" target="_blank" rel="noopener">
-                    <span class="more-link-leading"><i class="fa-solid fa-chart-line"></i><span class="more-link-label">${statsLabel}</span></span>
-                    <small>GoatCounter</small>
+                <a href="${privacyHref}">
+                    <span class="more-link-leading"><i class="fa-solid fa-shield-halved"></i><span class="more-link-label">${labels.privacy}</span></span>
+                    <small>kalanera.gr</small>
                 </a>
             </div>
             <div class="more-links" style="margin-top:10px;">
@@ -2464,7 +2461,7 @@ function renderMoreSheetContent() {
 function getFooterAboutText() {
     const footer = document.querySelector('footer.site-footer');
     if (!footer) return '';
-    const col = footer.querySelector('.footer-container .footer-column p');
+    const col = footer.querySelector('.footer-container .footer-lead') || footer.querySelector('.footer-container .footer-column p');
     return col && col.textContent ? col.textContent.trim() : '';
 }
 
@@ -2480,22 +2477,11 @@ function getFooterFacebookLink() {
     if (!footer) return null;
     const link = footer.querySelector('.social-icons a[href*="facebook.com"]');
     if (!link) return null;
+    const socialCol = link.closest('.footer-column');
+    const heading = socialCol && socialCol.querySelector('h3');
     return {
         href: link.getAttribute('href'),
-        label: (footer.querySelector('.footer-column h3') && footer.querySelectorAll('.footer-column h3')[2])
-            ? footer.querySelectorAll('.footer-column h3')[2].textContent.trim()
-            : ''
-    };
-}
-
-function getFooterGoatcounterLink() {
-    const footer = document.querySelector('footer.site-footer');
-    if (!footer) return null;
-    const link = footer.querySelector('a[href*="goatcounter"]');
-    if (!link) return null;
-    return {
-        href: link.getAttribute('href'),
-        label: link.textContent ? link.textContent.trim() : ''
+        label: heading ? heading.textContent.trim() : ''
     };
 }
 
@@ -2743,6 +2729,9 @@ window.addEventListener('appinstalled', () => {
 
 // Trace app versie, OS, Device, Scherm, Referrer, Theme, Install/Update en SOURCE (Web vs App)
 (function() {
+    if (/privacy(?:-el)?\.html$/i.test(window.location.pathname || '')) {
+        return;
+    }
     const WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/app-stats';
 
     function checkStatusAndSend() {
