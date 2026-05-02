@@ -97,6 +97,33 @@ let activeLocations = new Set();
 let deferredPrompt; // Global variabele voor PWA
 let listMode = (localStorage.getItem('kalanera_list_mode') || 'categories'); // 'categories' | 'az'
 
+/** Webhook: platte array óf `{ rows|data|items: [...] }` (cache-/Respond-node verschillen). */
+function normalizeBusinessWebhookPayload(parsed) {
+    if (parsed == null) return [];
+    if (typeof parsed === 'string') return null;
+    if (Array.isArray(parsed)) return parsed;
+    if (typeof parsed === 'object') {
+        if (Array.isArray(parsed.rows)) return parsed.rows;
+        if (Array.isArray(parsed.data)) return parsed.data;
+        if (Array.isArray(parsed.items)) return parsed.items;
+    }
+    return null;
+}
+
+function sheetLikeStatusValue(biz) {
+    if (!biz || typeof biz !== 'object') return '';
+    let s = biz.Status ?? biz.status ?? biz.STATUS;
+    if (s != null && String(s).trim() !== '') return s;
+    const key = Object.keys(biz).find(
+        (k) => String(k).replace(/^\ufeff/, '').trim().toLowerCase() === 'status'
+    );
+    return key ? biz[key] : '';
+}
+
+function businessRowIsActive(biz) {
+    return String(sheetLikeStatusValue(biz) ?? '').trim().toLowerCase() === 'active';
+}
+
 // Icon Map voor categorieën
 const iconMap = {
     'Bakery': 'fa-bread-slice', 'Bakker': 'fa-bread-slice', 'Coffee': 'fa-coffee', 'Koffie': 'fa-coffee',
@@ -107,7 +134,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.0.85'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.0.86'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -182,25 +209,37 @@ async function init() {
                 bodySnippet.slice(0, 400)
             );
         } else {
-            let rawData = await response.json();
-            // n8n Respond (JSON): JSON.stringify(...) + nogmaals serializeren kan een JSON-string opleveren i.p.v. array
-            if (typeof rawData === 'string') {
+            let payload = await response.json();
+            if (typeof payload === 'string') {
                 try {
-                    rawData = JSON.parse(rawData);
+                    payload = JSON.parse(payload);
                 } catch (parseErr) {
-                    console.warn('Businesses webhook: body is string maar geen JSON-array JSON', parseErr);
+                    console.warn('Businesses webhook: body is string maar geen geldige JSON', parseErr);
                     throw new Error('Invalid businesses payload shape');
                 }
             }
+            const rawData = normalizeBusinessWebhookPayload(payload);
             if (!Array.isArray(rawData)) {
                 console.warn(
-                    'Businesses webhook: verwacht JSON-array, ontving:',
-                    typeof rawData,
-                    rawData && typeof rawData === 'object' ? Object.keys(rawData).slice(0, 12) : rawData
+                    'Businesses webhook: verwacht array of object.rows[], ontving:',
+                    typeof payload,
+                    payload && typeof payload === 'object' ? Object.keys(payload).slice(0, 15) : payload
                 );
                 throw new Error('Invalid businesses payload shape');
             }
-            const freshData = rawData.filter(biz => biz.Status === 'Active');
+            const freshData = rawData.filter(businessRowIsActive);
+            if (rawData.length > 0 && freshData.length === 0) {
+                const sample = rawData[0];
+                console.warn(
+                    'Businesses webhook: alle rijen uitgefilterd op Status≠Active. Voorbeeld Status-waarde:',
+                    sheetLikeStatusValue(sample),
+                    '| sleutels:',
+                    sample && typeof sample === 'object' ? Object.keys(sample).slice(0, 20) : sample
+                );
+            }
+            if (rawData.length === 0) {
+                console.warn('Businesses webhook: lege array — check n8n Google Sheets bereik/tab en workflow.');
+            }
            
             const now = new Date();
             
