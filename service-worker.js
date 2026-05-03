@@ -1,7 +1,7 @@
 // service-worker.js
-const VERSION = '2.1.7'; // Dit sturen we naar de Sheet
-const CACHE_NAME = 'kalanera-cache-v2.1.7'; // Dit dwingt de code-update af
-const IMAGE_CACHE = 'kalanera-images-v2.1.7'; // Afbeeldingen apart cachen voor snelheid
+const VERSION = '2.1.65'; // Dit sturen we naar de Sheet
+const CACHE_NAME = 'kalanera-cache-v2.1.65'; // Dit dwingt de code-update af
+const IMAGE_CACHE = 'kalanera-images-v2.1.65'; // Afbeeldingen apart cachen voor snelheid
 
 // VOEG DIT TOE: Luister naar vragen van de app
 self.addEventListener('message', (event) => {
@@ -113,6 +113,42 @@ self.addEventListener('fetch', event => {
           }).catch(() => caches.match('/icon-512.png'));
         });
       })
+    );
+    return;
+  }
+
+  // Gefingerprinte CSS/JS (?v=): network-first zodat cache-first hier geen oude style/app na deploy serveert (PWA).
+  const pathname = url.pathname || '';
+  if (
+    /[?&]v=/.test(url.search) &&
+    /\.(css|js)$/i.test(pathname || '')
+  ) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse.status === 200) {
+            const copy = networkResponse.clone();
+            event.waitUntil(
+              copy
+                .arrayBuffer()
+                .then((body) =>
+                  caches.open(CACHE_NAME).then((cache) =>
+                    cache.put(
+                      event.request,
+                      new Response(body, {
+                        status: networkResponse.status,
+                        statusText: networkResponse.statusText,
+                        headers: networkResponse.headers,
+                      }),
+                    ),
+                  ),
+                )
+                .catch(() => {}),
+            );
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request)),
     );
     return;
   }

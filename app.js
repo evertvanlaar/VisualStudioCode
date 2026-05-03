@@ -12,6 +12,7 @@ const BUS_STORAGE_KEY = 'kalanera_bus_schedule_cache_v3';
 const BUS_CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes
 /** Today + 6 days: seven consecutive Athens calendar days */
 const BUS_DAY_OFFSET_MAX = 6;
+const BUS_NEXT_ETA_MAX_MINUTES = 90;
 const BUS_DAY_OFFSET_STORAGE_KEY = 'kalanera_bus_day_offset';
 const BUS_DEFAULT_DIR = 'volos';
 /** All `dir` slugs accepted from UI + n8n (must match Google Sheet Direction values). */
@@ -21,6 +22,56 @@ const BUS_VALID_DIRS = [
 ];
 /** Toon chauffeur-waarschuwing (lage frequentie) voor deze bestemmingen — uitbreidbaar. */
 const BUS_LOW_FREQ_DIRS = new Set(['trikeri', 'katigiorgis', 'platanias']);
+
+// <sync-bus-ui-strings>
+const BUS_UI_STRINGS_EMBEDDED = {
+  "en": {
+    "tipBeEarly": "Tip: Be 10 min early at the stop",
+    "trustStopDetail": "Departures listed are for the main-road stop (bakery).",
+    "trustOfflineCached": "If you are offline, this page shows the last timetable cached from your last successful load.",
+    "trustPrimary": "Times are estimates (Volos KTEL + ~30 min to this stop). Not an official timetable.",
+    "trustUltraCompact": "Est. from Volos KTEL (+~30 min). Not official.",
+    "linkOfficialKtelShort": "Official KTEL",
+    "linkOfficialKtelLong": "Open official KTEL timetables",
+    "chipMoreStops": "+{n} stops",
+    "chipMoreSuffix": "+{n} more",
+    "ariaAdditionalDestinations": "{n} additional destinations on this departure",
+    "sheetTitleDeparture": "This departure · {time}",
+    "sheetTitleWhereBusGoes": "Where this bus goes · {time}",
+    "sheetSubtitleStopFull": "From the main-road stop · Kala Nera · estimates only",
+    "sheetSubtitleStopShort": "Kala Nera stop · estimates",
+    "btnAllStops": "All stops",
+    "btnClose": "Close",
+    "btnDone": "Done",
+    "sheetFooterPlansChange": "Plans change — double-check before you travel.",
+    "nextDepartMinutes": "In about {n} min",
+    "nextDepartSoon": "Due soon"
+  },
+  "el": {
+    "tipBeEarly": "Συμβουλή: 10 λεπτά νωρίτερα στη στάση",
+    "trustStopDetail": "Οι ώρες αφορούν τη στάση στον κεντρικό δρόμο (φούρνος).",
+    "trustOfflineCached": "Αν είστε offline, η σελίδα δείχνει το τελευταίο αποθηκευμένο πρόγραμμα από την τελευταία επιτυχή φόρτωση.",
+    "trustPrimary": "Οι ώρες είναι εκτιμώμενες (δρομολόγιο ΚΤΕΛ Βόλου + ~30 λεπτά για τη στάση). Δεν είναι επίσημο πρόγραμμα.",
+    "trustUltraCompact": "Εκτίμηση από ΚΤΕΛ Βόλου (+~30 λεπτά). Όχι επίσημο.",
+    "linkOfficialKtelShort": "Επίσημο ΚΤΕΛ",
+    "linkOfficialKtelLong": "Άνοιγμα επίσημων δρομολογίων ΚΤΕΛ",
+    "chipMoreStops": "+{n} στάσεις",
+    "chipMoreSuffix": "+{n} ακόμη",
+    "ariaAdditionalDestinations": "{n} επιπλέον προορισμοί σε αυτή την αναχώρηση",
+    "sheetTitleDeparture": "Αυτή η αναχώρηση · {time}",
+    "sheetTitleWhereBusGoes": "Πού πάει αυτό το λεωφορείο · {time}",
+    "sheetSubtitleStopFull": "Από τη στάση στον κεντρικό δρόμο · Καλά Νερά · μόνο εκτιμήσεις",
+    "sheetSubtitleStopShort": "Στάση Καλά Νερά · εκτιμήσεις",
+    "btnAllStops": "Όλες οι στάσεις",
+    "btnClose": "Κλείσιμο",
+    "btnDone": "Έτοιμο",
+    "sheetFooterPlansChange": "Τα δρομολόγια αλλάζουν — επιβεβαιώστε πριν ταξιδέψετε.",
+    "nextDepartMinutes": "Σε ~{n} λ.",
+    "nextDepartSoon": "Σύντομα"
+  }
+};
+// </sync-bus-ui-strings>
+
 const STORAGE_KEY = 'kalanera_offline_data';
 
 // Check de taal van de huidige pagina
@@ -68,8 +119,8 @@ const translations = {
         'bus_also_prefix': 'Επίσης:',
         'bus_line_berg': 'Ορεινή γραμμή — καθημερινά, στάση στο κέντρο του χωριού.',
         'bus_line_coast': 'Παράκτια γραμμή — καθημερινά, ιδανική για παραλίες.',
-        'bus_line_south': 'Νότια γραμμή — καθημερινά, μόνο κεντρικός δρόμος.',
-        'bus_line_south_east': 'Νότια γραμμή (ανατολικά) — Δευ–Παρ, μόνο κεντρικός δρόμος.',
+        'bus_line_south': 'Νότια γραμμή — καθημερινά.',
+        'bus_line_south_east': 'Νότια γραμμή (ανατολικά) — Δευ–Παρ.',
         'bus_heading_today': 'ΣΗΜΕΡΑ',
         'bus_heading_tomorrow_upper': 'ΑΎΡΙΟ',
         'bus_heading_tomorrow': 'Αύριο',
@@ -77,11 +128,20 @@ const translations = {
         'bus_full_title_date': 'Πλήρες πρόγραμμα · {date}',
         'bus_full_title_today': 'Πλήρες πρόγραμμα σήμερα',
         'bus_timeline_list_aria_date': 'Αναχωρήσεις {date} σε χρονική σειρά',
-        'bus_first_departure_title': 'Πρώτο δρομολόγιο',
+        'bus_first_departure_title': 'ΠΡΩΤΟ',
         'bus_day_none': 'Δεν υπάρχουν δρομολόγια αυτή την ημέρα.',
         'bus_day_strip_aria': 'Επιλογή ημέρας (Αθήνα, έως 7 ημέρες)',
-        'bus_day_strip_hint': 'Επόμενες 7 ημέρες (τοπική ώρα Πηλίου)',
-        'bus_next_heading': 'Επόμενο λεωφορείο'
+        'bus_day_strip_hint': '7 ημέρες · τοπικά',
+        'bus_pick_day': 'Επιλογή ημέρας',
+        'bus_day_input_aria': 'Επιλογή ημέρας για το πρόγραμμα — σήμερα έως έξι ημέρες μπροστά (τοπικό ημερολόγιο Πηλίου)',
+        'bus_trust_about_times': 'Για τις ώρες',
+        'bus_trust_sheet_title': 'Σχετικά με τις εκτιμήσεις ωρών',
+        'bus_trust_dialog_close': 'Κλείσιμο',
+        'bus_trust_open_sheet_hint': 'Ανοίγει λεπτομέρειες και επίσημο σύνδεσμο ΚΤΕΛ.',
+        'bus_next_heading': 'ΕΠΟΜΕΝΟ',
+        'bus_origin_kala_nera': 'Καλά Νερά',
+        'bus_route_from_to': 'Από: {origin} προς: {dest}',
+        'bus_route_origin_only': 'Από {origin}'
     }
 };
 
@@ -136,7 +196,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.1.7'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.1.65'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -799,7 +859,7 @@ document.addEventListener('DOMContentLoaded', () => {
     init();
 
     // 5b. Bus schedule (optional section on homepage)
-    initBusSchedule();
+    void initBusSchedule();
 
     // 6. EXTRA: Google Maps Button logica (optioneel, voor analytics of effect)
     const mapFab = document.querySelector('.map-fab');
@@ -828,6 +888,139 @@ function busText(key, { en, nl, el }) {
     if (lang === 'el') return (el || en || '');
     if (lang === 'nl') return (nl || en || '');
     return (en || '');
+}
+
+/** Officiële KTEL-routelijst — zelfde pad als bus.html / bus-el.html (fase 0.3). */
+const BUS_KTEL_TIMETABLE_URL_EN = 'https://ktelvolou.gr/en/routes/list/';
+const BUS_KTEL_TIMETABLE_URL_EL = 'https://ktelvolou.gr/el/routes/list/';
+
+function busKtelTimetableUrl() {
+    return busLang() === 'el' ? BUS_KTEL_TIMETABLE_URL_EL : BUS_KTEL_TIMETABLE_URL_EN;
+}
+
+/**
+ * Fase 0.2 — trustteksten in locales/bus-strings.json (+ embedded fallback).
+ * Zichtbaar: dialoog = trustPrimary; ⓘ title-tooltip = trustUltraCompact.
+ */
+
+let busUiStringsResolved = null;
+
+async function ensureBusUiStrings() {
+    if (busUiStringsResolved) return busUiStringsResolved;
+    try {
+        const res = await fetch('/locales/bus-strings.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error(String(res.status));
+        const data = await res.json();
+        if (!data.busStrings || !data.busStrings.en) throw new Error('bad busStrings shape');
+        busUiStringsResolved = data.busStrings;
+    } catch {
+        busUiStringsResolved = BUS_UI_STRINGS_EMBEDDED;
+    }
+    return busUiStringsResolved;
+}
+
+function busUiString(key, repl = {}) {
+    const lang = busLang() === 'el' ? 'el' : 'en';
+    const table = busUiStringsResolved || BUS_UI_STRINGS_EMBEDDED;
+    const pack = (table && table[lang]) || {};
+    let s = pack[key];
+    if (s == null || s === '') {
+        const fb = (BUS_UI_STRINGS_EMBEDDED && BUS_UI_STRINGS_EMBEDDED.en) || {};
+        s = fb[key] != null ? fb[key] : key;
+    }
+    if (repl.n != null) s = String(s).replace(/\{n\}/g, String(repl.n));
+    if (repl.time != null) s = String(s).replace(/\{time\}/g, String(repl.time));
+    if (repl.destination != null) s = String(s).replace(/\{destination\}/g, String(repl.destination));
+    return s;
+}
+
+/**
+ * Fase 1 trust: dialoog + ⓘ-knop (volledige trustPrimary + KTEL); tooltip via title (trustUltraCompact).
+ */
+function refreshBusTrustUi() {
+    const dialogCopy = document.getElementById('bus-trust-dialog-copy');
+    const dialogLink = document.getElementById('bus-trust-dialog-ktel');
+    const dialogTitle = document.getElementById('bus-trust-dialog-title');
+    const btn = document.getElementById('bus-trust-info-open');
+    const btnTxt = btn && btn.querySelector ? btn.querySelector('.bus-trust-info-btn__txt') : null;
+    const tip = busUiString('trustUltraCompact');
+    const openHint = busText('bus_trust_open_sheet_hint', {
+        en: 'Opens details and official KTEL link.',
+        nl: 'Opent details en officiële KTEL-link.',
+        el: busT('bus_trust_open_sheet_hint', 'Ανοίγει λεπτομέρειες και επίσημο σύνδεσμο ΚΤΕΛ.'),
+    });
+
+    const primary = busUiString('trustPrimary');
+
+    const tipEl = document.getElementById('bus-next-tip');
+    if (tipEl) tipEl.textContent = busUiString('tipBeEarly');
+
+    const stopEl = document.getElementById('bus-trust-dialog-stop');
+    if (stopEl) stopEl.textContent = busUiString('trustStopDetail');
+
+    const offlineEl = document.getElementById('bus-trust-dialog-offline');
+    if (offlineEl) offlineEl.textContent = busUiString('trustOfflineCached');
+
+    if (dialogCopy) dialogCopy.textContent = primary;
+    if (dialogLink) {
+        dialogLink.href = busKtelTimetableUrl();
+        dialogLink.textContent = busUiString('linkOfficialKtelLong');
+        dialogLink.setAttribute('title', busUiString('linkOfficialKtelLong'));
+        dialogLink.setAttribute('aria-label', busUiString('linkOfficialKtelLong'));
+    }
+    if (dialogTitle) {
+        dialogTitle.textContent = busText('bus_trust_sheet_title', {
+            en: 'About these times',
+            nl: 'Over deze tijden',
+            el: busT('bus_trust_sheet_title', 'Σχετικά με τις εκτιμήσεις ωρών'),
+        });
+    }
+    if (btnTxt) {
+        btnTxt.textContent = busText('bus_trust_about_times', {
+            en: 'About times',
+            nl: 'Over de tijden',
+            el: busT('bus_trust_about_times', 'Για τις ώρες'),
+        });
+    }
+    if (btn) {
+        btn.title = tip;
+        btn.setAttribute('aria-label', `${tip} ${openHint}`);
+    }
+
+    const doneBtn = document.getElementById('bus-trust-dialog-done');
+    if (doneBtn) doneBtn.textContent = busUiString('btnDone');
+
+    document.querySelectorAll('.bus-trust-dialog__close').forEach((el) => {
+        el.setAttribute('aria-label', busText('bus_trust_dialog_close', {
+            en: 'Close',
+            nl: 'Sluiten',
+            el: busT('bus_trust_dialog_close', 'Κλείσιμο'),
+        }));
+    });
+}
+
+function refreshBusTrustBanner() {
+    refreshBusTrustUi();
+}
+
+function busInitTrustInfoDialog() {
+    const dialog = document.getElementById('bus-trust-info-dialog');
+    const btn = document.getElementById('bus-trust-info-open');
+    if (!dialog || !btn) return;
+    const close = () => {
+        if (typeof dialog.close === 'function') dialog.close();
+    };
+    const open = () => {
+        refreshBusTrustUi();
+        if (typeof dialog.showModal === 'function') dialog.showModal();
+    };
+    btn.addEventListener('click', open);
+    dialog.querySelectorAll('.bus-trust-dialog__close, .bus-trust-dialog__done').forEach((b) => {
+        b.addEventListener('click', close);
+    });
+    dialog.addEventListener('click', (e) => {
+        if (e.target === dialog) close();
+    });
 }
 
 function busStopLabel(stopKey) {
@@ -952,7 +1145,7 @@ function busScheduleLongPlain(pattern) {
             });
         case 'weekdays':
             return busText('sched_plain_weekdays', {
-                en: 'Monday to Friday',
+                en: 'Mon to Fri',
                 nl: 'Maandag t/m vrijdag',
                 el: 'Δευτέρα έως Παρασκευή',
             });
@@ -1027,12 +1220,22 @@ function busScheduleDetailHtml(days, frequency) {
     return `<span class="bus-runs-caption" aria-hidden="true" title="${titleEscaped}">${inner}</span>`;
 }
 
-function busShowingPrefix() {
-    return busText('showing', {
-        en: 'Showing',
-        nl: 'Toont',
-        el: busT('bus_showing', 'Εμφάνιση'),
+function busOriginKalaNera() {
+    return busText('bus_origin_kala_nera', {
+        en: 'Kala Nera',
+        nl: 'Kala Nera',
+        el: busT('bus_origin_kala_nera', 'Καλά Νερά'),
     });
+}
+
+/** Regel naast TODAY: alleen vertrekplaats — bestemming staat al in picker + hero (geen dubbele «naar …»). */
+function busRouteSummaryLine(_dir) {
+    const tpl = busText('bus_route_origin_only', {
+        en: 'From {origin}',
+        nl: 'Van {origin}',
+        el: busT('bus_route_origin_only', 'Από {origin}'),
+    });
+    return tpl.replace('{origin}', busOriginKalaNera());
 }
 
 /** Welke lijnbeschrijving hoort bij gekozen bestemming (Volos = geen extra hint). */
@@ -1060,13 +1263,13 @@ function busLineHintText(dir) {
             el: '',
         },
         south: {
-            en: 'South line — daily, main road only.',
-            nl: 'Zuidlijn — dagelijks, alleen hoofdweg.',
+            en: 'South line — daily.',
+            nl: 'Zuidlijn — dagelijks.',
             el: '',
         },
         south_east: {
-            en: 'South line (east) — Mon–Fri, main road only.',
-            nl: 'Zuidlijn (oost) — ma–vr, alleen hoofdweg.',
+            en: 'South line (east) — Mon–Fri.',
+            nl: 'Zuidlijn (oost) — ma–vr.',
             el: '',
         },
     };
@@ -1078,10 +1281,7 @@ function busLineHintText(dir) {
 
 function busUpdateRouteSubtitle(dir) {
     const el = document.getElementById('bus-route');
-    if (el) {
-        const label = busDirLabel(dir);
-        el.textContent = `${busShowingPrefix()}: ${label}`;
-    }
+    if (el) el.textContent = busRouteSummaryLine(dir);
     const hintEl = document.getElementById('bus-line-hint');
     if (hintEl) {
         const hint = busLineHintText(dir);
@@ -1129,6 +1329,27 @@ function busScheduleTargetYmd(dayOffset) {
 
 function busScheduleSlotKey(dir, dayOffset) {
     return `${dir}:${busScheduleTargetYmd(dayOffset)}`;
+}
+
+/** Verschil in kalenderdagen tussen twee YYYY-MM-DD (Gregoriaans, UTC-middag niet nodig — alleen datum). */
+function busGregorianYmdDiffDays(fromYmd, toYmd) {
+    const parse = (ymd) => {
+        const p = String(ymd || '').split('-').map(Number);
+        if (p.length !== 3 || p.some((n) => !Number.isFinite(n))) return NaN;
+        return Date.UTC(p[0], p[1] - 1, p[2]);
+    };
+    const a = parse(fromYmd);
+    const b = parse(toYmd);
+    if (!Number.isFinite(a) || !Number.isFinite(b)) return NaN;
+    return Math.round((b - a) / 86400000);
+}
+
+/** Offset 0..6 van gekozen datum t.o.v. Athene-vandaag (zelfde referentie als day strip). */
+function busDayOffsetFromPickedYmd(pickedYmd) {
+    const today = busNowAthensParts().ymd;
+    const diff = busGregorianYmdDiffDays(today, pickedYmd);
+    if (!Number.isFinite(diff)) return 0;
+    return busClampDayOffset(diff);
 }
 
 /** Instant for Athens calendar day = today + offset (0..6), from today's Athens ymd. */
@@ -1383,31 +1604,21 @@ function busUnifiedDestinationsList(bus, routeDirKey) {
     return list;
 }
 
-/** Platte tekst (aria-label, kopie); zonder HTML. */
+/** Platte tekst (aria-label, kopie): alleen bestemmingsnamen; rooster is al gefilterd op gekozen dag. */
 function busUnifiedDestinationsPlain(bus, routeDirKey) {
     const list = busUnifiedDestinationsList(bus, routeDirKey);
-    return list
-        .map(({ label, detailPlain }) => {
-            const d = String(detailPlain || '').trim();
-            if (!d || d === '—') return label;
-            return `${label} · ${d}`;
-        })
-        .join(' · ');
+    return list.map(({ label }) => String(label || '').trim()).filter(Boolean).join(' · ');
 }
 
-/** Per bestemming als flex-item: scheiding zit vóór nr. 2+, dus nooit een losse «·» aan regel-einde. */
+/** Bestemmingen als doorlopende tekst (geen pills, geen frequentie — dagfilter dekt dat al). */
 function busUnifiedDestinationsHtml(bus, routeDirKey) {
     const list = busUnifiedDestinationsList(bus, routeDirKey);
     if (!list.length) return '';
-    return list
-        .map(({ label, detailHtml, detailPlain }, idx) => {
-            const d = String(detailPlain || '').trim();
-            const hasSched = d && d !== '—';
-            const stop = hasSched
-                ? `<span class="bus-route-stop"><span class="bus-route-stop__block"><span class="bus-route-stop__dest">${busEscapeHtml(label)}</span><span class="bus-route-stop__sched">${detailHtml}</span></span></span>`
-                : `<span class="bus-route-stop">${busEscapeHtml(label)}</span>`;
-            if (idx === 0) return `<span class="bus-route-item">${stop}</span>`;
-            return `<span class="bus-route-item"><span class="bus-route-sep" aria-hidden="true">\u00A0·\u00A0</span>${stop}</span>`;
+    const labels = list.map(({ label }) => busEscapeHtml(label));
+    return labels
+        .map((esc, i) => {
+            if (i === labels.length - 1) return `<span class="bus-route-compact-unit">${esc}</span>`;
+            return `<span class="bus-route-compact-unit">${esc}<span class="bus-route-compact-sep" aria-hidden="true">\u00A0· </span></span>`;
         })
         .join('');
 }
@@ -1738,6 +1949,66 @@ function busNextDepartureIndex(sortedBuses, minMinutesNow) {
     return -1;
 }
 
+/** Minutes until departure (Athens "now" vs row time). Only meaningful when the picked day is today (`dayOffset === 0`). */
+function busMinutesUntilDepartureToday(departureHHMM, dayOffset) {
+    const off = busClampDayOffset(dayOffset);
+    if (off !== 0) return null;
+    const depMin = busParseHHMMToMinutes(departureHHMM);
+    if (depMin === null) return null;
+    const nowParts = busNowAthensParts();
+    const nowMin = busParseHHMMToMinutes(nowParts.hm);
+    if (nowMin === null) return null;
+    const delta = depMin - nowMin;
+    return delta >= 0 ? delta : null;
+}
+
+function busNextDepartEtaPlain(departureHHMM, dayOffset) {
+    const mins = busMinutesUntilDepartureToday(departureHHMM, dayOffset);
+    if (mins === null || mins > BUS_NEXT_ETA_MAX_MINUTES) return '';
+    if (mins <= 10) return busUiString('nextDepartSoon');
+    return busUiString('nextDepartMinutes', { n: mins });
+}
+
+function busRefreshNextEtaDom() {
+    document.querySelectorAll('.bus-next-eta[data-bus-departure]').forEach((el) => {
+        const raw = el.getAttribute('data-bus-departure') || '';
+        const offStr = el.getAttribute('data-bus-off');
+        const parsed = parseInt(offStr, 10);
+        const off = Number.isFinite(parsed) ? parsed : 0;
+        const plain = busNextDepartEtaPlain(raw, off);
+        if (!plain) {
+            el.textContent = '';
+            el.setAttribute('hidden', '');
+            return;
+        }
+        el.removeAttribute('hidden');
+        el.textContent = plain;
+    });
+}
+
+let busEtaTickerId = null;
+let busEtaHooksInstalled = false;
+
+function busInitEtaDomHooks() {
+    if (busEtaHooksInstalled) return;
+    busEtaHooksInstalled = true;
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) busRefreshNextEtaDom();
+    });
+}
+
+function busClearEtaTicker() {
+    if (busEtaTickerId != null) {
+        clearInterval(busEtaTickerId);
+        busEtaTickerId = null;
+    }
+}
+
+function busStartEtaTicker() {
+    busClearEtaTicker();
+    busEtaTickerId = setInterval(busRefreshNextEtaDom, 60000);
+}
+
 function busSortByDeparture(buses) {
     return buses.sort((a, b) => {
         const am = busParseHHMMToMinutes(a.departure);
@@ -1779,7 +2050,7 @@ function busRenderList(container, buses, { limit, routeDir, dayOffset } = {}) {
     if (!buses || buses.length === 0) return busRenderEmpty(container, off);
 
     const arrivalPrefix = busT('bus_arrival_prefix', 'Est. arrival');
-    const depCap = busDepartureCaptionParts();
+    const depCaption = busDepartureCaptionParts();
     const max = (typeof limit === 'number') ? limit : 8;
     const dirKey = String(routeDir || '').toLowerCase();
     const showLowFreq = BUS_LOW_FREQ_DIRS.has(dirKey);
@@ -1788,6 +2059,16 @@ function busRenderList(container, buses, { limit, routeDir, dayOffset } = {}) {
         : '';
     container.innerHTML = buses.slice(0, Math.max(0, max)).map(bus => {
         const dep = busEscapeHtml(bus.departure);
+        const rawDep = String(bus.departure || '').trim();
+        const minsUntilToday = max === 1 && off === 0 && rawDep ? busMinutesUntilDepartureToday(rawDep, off) : null;
+        const capAria = max === 1 ? dep : depCaption.aria;
+        const capHtml = max === 1 ? '' : depCaption.html;
+        const showEtaSlot = minsUntilToday !== null;
+        const etaPlainInit = showEtaSlot ? busNextDepartEtaPlain(rawDep, off) : '';
+        const etaHiddenAttr = showEtaSlot && !etaPlainInit ? ' hidden' : '';
+        const etaHtml = showEtaSlot
+            ? `<span class="bus-next-eta" aria-live="polite"${etaHiddenAttr} data-bus-departure="${busEscapeHtml(rawDep)}" data-bus-off="${off}">${busEscapeHtml(etaPlainInit)}</span>`
+            : '';
         const stopsHtml = busUnifiedDestinationsHtml(bus, dirKey);
         const note = busEscapeHtml(bus.note);
         const arr = bus.arrival ? busEscapeHtml(`${arrivalPrefix}: ${bus.arrival}`) : '';
@@ -1797,12 +2078,13 @@ function busRenderList(container, buses, { limit, routeDir, dayOffset } = {}) {
             : '';
         return `
             <div class="bus-card">
-                <div class="bus-time-wrap" role="group" aria-label="${depCap.aria}">
-                    ${depCap.html}
+                <div class="bus-time-wrap" role="group" aria-label="${capAria}">
+                    ${capHtml}
                     <div class="bus-time">${dep}</div>
+                    ${etaHtml}
                 </div>
                 <div class="bus-info">
-                    <div class="bus-route-stops">${stopsHtml}</div>
+                    <div class="bus-route-stops${stopsHtml ? ' bus-route-stops--compact bus-route-stops--clamp' : ''}">${stopsHtml}</div>
                     ${note ? `<div class="bus-note">${note}</div>` : ``}
                     ${stopLabel ? `<div class="bus-stop">${stopLabel}</div>` : ``}
                     ${arr ? `<div class="bus-arrival">${arr}</div>` : ``}
@@ -1813,7 +2095,13 @@ function busRenderList(container, buses, { limit, routeDir, dayOffset } = {}) {
     }).join('');
 }
 
-function busRenderTimelineList(container, buses, { limit, routeDir, dayOffset } = {}) {
+function busRenderTimelineList(container, buses, {
+    limit, routeDir, dayOffset,
+    /** Live ETA span under time column (combined NEXT slot with limit 1) */
+    showNextEta,
+    /** Ol label + spacing for single NEXT row – same visuals as full timetable rows */
+    nextPreview,
+} = {}) {
     if (!container) return;
     const off = busClampDayOffset(dayOffset);
     if (!buses || buses.length === 0) return busRenderEmpty(container, off);
@@ -1825,36 +2113,61 @@ function busRenderTimelineList(container, buses, { limit, routeDir, dayOffset } 
     const lowFreqHtml = showLowFreq
         ? `<div class="bus-note bus-note--lowfreq bus-note--lowfreq--timeline" role="note"><i class="fa-solid fa-circle-info bus-note--lowfreq-icon" aria-hidden="true"></i><span class="bus-note--lowfreq-text">${busEscapeHtml(busLowFreqNoticeText())}</span></div>`
         : '';
-    const { weekday, dayMonthTitle } = busAthensTargetLabels(off);
-    const dateStr = `${weekday} ${dayMonthTitle}`;
-    const listAriaPlain = off === 0
-        ? busText('bus_timeline_list_aria', {
-            en: 'Today\'s departures in time order',
-            nl: 'Vertrektijden van vandaag op volgorde',
-            el: busT('bus_timeline_list_aria', 'Σημερινές αναχωρήσεις σε χρονική σειρά'),
-        })
-        : busText('bus_timeline_list_aria_date', {
-            en: `Departures on ${dateStr} in time order`,
-            nl: `Vertrektijden op ${dateStr} op volgorde`,
-            el: busT('bus_timeline_list_aria_date', 'Αναχωρήσεις {date} σε χρονική σειρά').replace('{date}', dateStr),
-        });
+    let listAriaPlain;
+    if (nextPreview) {
+        listAriaPlain = off === 0
+            ? busText('bus_next_heading_verbose', {
+                en: 'Next bus',
+                nl: 'Volgende bus',
+                el: 'Επόμενο λεωφορείο',
+            })
+            : busText('bus_first_departure_verbose', {
+                en: 'First departure',
+                nl: 'Eerste vertrek',
+                el: 'Πρώτο δρομολόγιο',
+            });
+    } else {
+        const { weekday, dayMonthTitle } = busAthensTargetLabels(off);
+        const dateStr = `${weekday} ${dayMonthTitle}`;
+        listAriaPlain = off === 0
+            ? busText('bus_timeline_list_aria', {
+                en: 'Today\'s departures in time order',
+                nl: 'Vertrektijden van vandaag op volgorde',
+                el: busT('bus_timeline_list_aria', 'Σημερινές αναχωρήσεις σε χρονική σειρά'),
+            })
+            : busText('bus_timeline_list_aria_date', {
+                en: `Departures on ${dateStr} in time order`,
+                nl: `Vertrektijden op ${dateStr} op volgorde`,
+                el: busT('bus_timeline_list_aria_date', 'Αναχωρήσεις {date} σε χρονική σειρά').replace('{date}', dateStr),
+            });
+    }
     const listAria = busEscapeHtml(listAriaPlain);
 
-    const nextIdx = off === 0 ? busNextDepartureIndex(buses, 10) : -1;
+    /** Vandaag: eerstvolgende rit; andere gekozen dag: eerste rit (zelfde als ΠΡΩΤΟ/FIRST). */
+    const nextIdx = off === 0
+        ? busNextDepartureIndex(buses, 10)
+        : (buses.length > 0 ? 0 : -1);
     const nextLblPlain = busText('bus_timeline_next_badge', {
         en: 'Next bus',
         nl: 'Volgende bus',
         el: busT('bus_timeline_next_badge', 'Επόμενο'),
     });
+    const firstDepartureAria = busText('bus_first_departure_verbose', {
+        en: 'First departure',
+        nl: 'Eerste vertrek',
+        el: busT('bus_first_departure_verbose', 'Πρώτο δρομολόγιο'),
+    });
 
     const itemsHtml = buses.slice(0, Math.max(0, max)).map((bus, idx, list) => {
+        const rawDep = String(bus.departure || '').trim();
         const dep = busEscapeHtml(bus.departure);
         const stopsPlain = busUnifiedDestinationsPlain(bus, dirKey);
         const stopsHtml = busUnifiedDestinationsHtml(bus, dirKey);
         const isLast = idx === list.length - 1;
         const isNext = nextIdx >= 0 && idx === nextIdx;
+        const highlightAria = off === 0 ? nextLblPlain : firstDepartureAria;
         const itemAria = busEscapeHtml(
-            `${isNext ? `${nextLblPlain}: ` : ''}${String(bus.departure || '').trim()}: ${stopsPlain}`
+            `${isNext ? `${highlightAria}: ` : ''}${rawDep}: ${stopsPlain}`
         );
         const note = bus.note ? busEscapeHtml(bus.note) : '';
         const arrivalLine = bus.arrival ? busEscapeHtml(`${arrivalPrefix}: ${bus.arrival}`) : '';
@@ -1863,6 +2176,15 @@ function busRenderTimelineList(container, buses, { limit, routeDir, dayOffset } 
             ? busEscapeHtml(`${busText('stop_label', { en: 'Stop', nl: 'Halte', el: busT('bus_stop_label', 'Στάση') })}: ${stopText}`)
             : '';
         const metaLine = stopLabel || '';
+        let etaTimelineHtml = '';
+        if (showNextEta && off === 0 && isNext && rawDep) {
+            const minsUntilToday = busMinutesUntilDepartureToday(rawDep, off);
+            if (minsUntilToday !== null) {
+                const etaPlainInit = busNextDepartEtaPlain(rawDep, off);
+                const etaHiddenAttr = !etaPlainInit ? ' hidden' : '';
+                etaTimelineHtml = `<span class="bus-next-eta bus-next-eta--timeline" aria-live="polite"${etaHiddenAttr} data-bus-departure="${busEscapeHtml(rawDep)}" data-bus-off="${off}">${busEscapeHtml(etaPlainInit)}</span>`;
+            }
+        }
         return `
             <li class="bus-timeline__item${isNext ? ' bus-timeline__item--next' : ''}${isLast ? ' bus-timeline__item--last' : ''}" aria-label="${itemAria}">
                 <div class="bus-timeline__axis" aria-hidden="true">
@@ -1874,9 +2196,10 @@ function busRenderTimelineList(container, buses, { limit, routeDir, dayOffset } 
                         <span class="bus-timeline__time">${dep}</span>
                         ${isNext ? `<span class="bus-timeline__time-bus" aria-hidden="true"><i class="fa-solid fa-bus"></i></span>` : ''}
                     </div>
+                    ${etaTimelineHtml}
                 </div>
                 <div class="bus-timeline__body">
-                    <div class="bus-route-stops">${stopsHtml}</div>
+                    <div class="bus-route-stops${stopsHtml ? ' bus-route-stops--compact bus-route-stops--clamp' : ''}">${stopsHtml}</div>
                     ${note ? `<div class="bus-timeline__note">${note}</div>` : ``}
                     ${metaLine ? `<div class="bus-timeline__meta">${metaLine}</div>` : ``}
                     ${arrivalLine ? `<div class="bus-timeline__arrival">${arrivalLine}</div>` : ``}
@@ -1886,8 +2209,10 @@ function busRenderTimelineList(container, buses, { limit, routeDir, dayOffset } 
     }).join('');
 
     container.innerHTML = `
-        <ol class="bus-timeline" aria-label="${listAria}">${itemsHtml}</ol>
-        ${lowFreqHtml}
+        <div class="bus-timeline-wrap">
+            <ol class="bus-timeline${nextPreview ? ' bus-timeline--next-preview' : ''}" aria-label="${listAria}">${itemsHtml}</ol>
+            ${lowFreqHtml}
+        </div>
     `;
 }
 
@@ -2031,7 +2356,7 @@ function busInitPelionMapDialog() {
     });
 }
 
-function initBusSchedule() {
+async function initBusSchedule() {
     const container = document.getElementById('bus-container'); // legacy single-container pages
     const nextContainer = document.getElementById('bus-next-container');
     const fullContainer = document.getElementById('bus-full-container');
@@ -2040,16 +2365,18 @@ function initBusSchedule() {
     const dirSelect = document.getElementById('bus-dir-select');
     const dirBtns = Array.from(document.querySelectorAll('[data-bus-dir]'));
     const viewMode = document.body && document.body.getAttribute('data-bus-view') ? document.body.getAttribute('data-bus-view') : 'compact'; // 'compact' | 'full'
-    const dayStripEl = document.getElementById('bus-day-strip');
-    const headingDayEl = document.getElementById('bus-heading-day');
     const fullTitleEl = document.getElementById('bus-full-title');
     const nextTitleEl = document.getElementById('bus-next-section-title');
-    const stripHintEl = document.getElementById('bus-day-strip-hint');
     busInitPelionMapDialog();
+    busInitTrustInfoDialog();
 
     // Only run on pages that include the section
     const isCombinedBusPage = !!(nextContainer || fullContainer);
     if (!container && !isCombinedBusPage) return;
+
+    await ensureBusUiStrings();
+
+    refreshBusTrustBanner();
 
     const fullOriginNoteEl = document.getElementById('bus-full-origin-note');
     if (fullOriginNoteEl) {
@@ -2059,93 +2386,88 @@ function initBusSchedule() {
     let activeDir = (localStorage.getItem('kalanera_bus_dir') || BUS_DEFAULT_DIR);
     if (!BUS_VALID_DIRS.includes(activeDir)) activeDir = BUS_DEFAULT_DIR;
 
-    let activeDayOffset = 0;
-    if (dayStripEl) {
-        const s = parseInt(localStorage.getItem(BUS_DAY_OFFSET_STORAGE_KEY) || '0', 10);
-        activeDayOffset = busClampDayOffset(s);
+    const dayInputEl = document.getElementById('bus-day-input');
+    let activeDayOffset = busClampDayOffset(parseInt(localStorage.getItem(BUS_DAY_OFFSET_STORAGE_KEY) || '0', 10));
+
+    const pickLab = document.getElementById('bus-day-input-label');
+    if (pickLab) {
+        pickLab.textContent = busText('bus_pick_day', {
+            en: 'Pick day',
+            nl: 'Kies dag',
+            el: busT('bus_pick_day', 'Επιλογή ημέρας'),
+        });
     }
 
-    const syncDayStripActive = () => {
-        if (!dayStripEl) return;
-        dayStripEl.querySelectorAll('[data-bus-day-offset]').forEach((btn) => {
-            const v = busClampDayOffset(btn.getAttribute('data-bus-day-offset'));
-            const on = v === activeDayOffset;
-            btn.classList.toggle('is-active', on);
-            btn.setAttribute('aria-selected', on ? 'true' : 'false');
-        });
+    const syncDayPickerFromOffset = () => {
+        if (!dayInputEl) return;
+        dayInputEl.min = busScheduleTargetYmd(0);
+        dayInputEl.max = busScheduleTargetYmd(BUS_DAY_OFFSET_MAX);
+        dayInputEl.value = busScheduleTargetYmd(activeDayOffset);
     };
 
-    const mountDayStrip = () => {
-        if (!dayStripEl || dayStripEl.dataset.mounted === '1') return;
-        dayStripEl.dataset.mounted = '1';
-        dayStripEl.setAttribute('role', 'tablist');
-        dayStripEl.setAttribute('aria-label', busText('bus_day_strip_aria', {
-            en: 'Choose day (seven days from today, Pelion local time)',
-            nl: 'Kies dag (7 dagen vanaf vandaag, lokale tijd)',
-            el: busT('bus_day_strip_aria', 'Επιλογή ημέρας (Αθήνα, έως 7 ημέρες)'),
+    const mountDayPicker = () => {
+        if (!dayInputEl || dayInputEl.dataset.mounted === '1') return;
+        dayInputEl.dataset.mounted = '1';
+        dayInputEl.setAttribute('aria-label', busText('bus_day_input_aria', {
+            en: 'Choose timetable day — today through six days ahead (Pelion local calendar)',
+            nl: 'Kies dag voor het schema — vandaag tot en met zes dagen vooruit (lokale datum Pelion)',
+            el: busT('bus_day_input_aria', 'Επιλογή ημέρας για το πρόγραμμα — σήμερα έως έξι ημέρες μπροστά (τοπικό ημερολόγιο Πηλίου)'),
         }));
-        const frag = document.createDocumentFragment();
-        for (let off = 0; off <= BUS_DAY_OFFSET_MAX; off++) {
-            const { weekday, dayMonthCompact } = busAthensTargetLabels(off);
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'bus-day-btn';
-            btn.setAttribute('role', 'tab');
-            btn.setAttribute('data-bus-day-offset', String(off));
-            const d1 = document.createElement('span');
-            d1.className = 'bus-day-btn__dow';
-            d1.textContent = weekday;
-            const d2 = document.createElement('span');
-            d2.className = 'bus-day-btn__dm';
-            d2.textContent = dayMonthCompact;
-            btn.appendChild(d1);
-            btn.appendChild(d2);
-            frag.appendChild(btn);
-        }
-        dayStripEl.appendChild(frag);
-        dayStripEl.addEventListener('click', (e) => {
-            const btn = e.target && e.target.closest ? e.target.closest('[data-bus-day-offset]') : null;
-            if (!btn) return;
-            const v = busClampDayOffset(btn.getAttribute('data-bus-day-offset'));
-            if (v === activeDayOffset) return;
-            activeDayOffset = v;
+        syncDayPickerFromOffset();
+        dayInputEl.addEventListener('change', () => {
+            const raw = dayInputEl.value;
+            if (!raw) {
+                syncDayPickerFromOffset();
+                return;
+            }
+            const off = busDayOffsetFromPickedYmd(raw);
+            if (off === activeDayOffset) return;
+            activeDayOffset = off;
             try {
                 localStorage.setItem(BUS_DAY_OFFSET_STORAGE_KEY, String(activeDayOffset));
             } catch (err) { /* ignore */ }
-            syncDayStripActive();
+            syncDayPickerFromOffset();
             updateDayChrome();
             load({ force: false });
         });
     };
 
-    mountDayStrip();
-    if (stripHintEl) {
-        stripHintEl.textContent = busText('bus_day_strip_hint', {
-            en: 'Next 7 days (local time · Pelion)',
-            nl: 'Komende 7 dagen (lokale tijd)',
-            el: busT('bus_day_strip_hint', 'Επόμενες 7 ημέρες (τοπική ώρα Πηλίου)'),
-        });
+    mountDayPicker();
+
+    if (nextContainer) {
+        busInitEtaDomHooks();
+        busStartEtaTicker();
     }
 
     const updateDayChrome = () => {
-        if (headingDayEl) headingDayEl.textContent = busHeadingPrimaryLine(activeDayOffset);
         if (fullTitleEl) fullTitleEl.textContent = busFullTimetableTitle(activeDayOffset);
         if (nextTitleEl) {
-            const icon = '<i class="fa-solid fa-bus bus-subsection-icon" aria-hidden="true"></i> ';
             const plain = activeDayOffset === 0
                 ? busText('bus_next_heading', {
-                    en: 'Next bus',
-                    nl: 'Volgende bus',
-                    el: busT('bus_next_heading', 'Επόμενο λεωφορείο'),
+                    en: 'NEXT',
+                    nl: 'VOLGENDE',
+                    el: busT('bus_next_heading', 'ΕΠΟΜΕΝΟ'),
                 })
                 : busText('bus_first_departure_title', {
+                    en: 'FIRST',
+                    nl: 'EERSTE',
+                    el: busT('bus_first_departure_title', 'ΠΡΩΤΟ'),
+                });
+            const ariaVerbose = activeDayOffset === 0
+                ? busText('bus_next_heading_verbose', {
+                    en: 'Next bus',
+                    nl: 'Volgende bus',
+                    el: 'Επόμενο λεωφορείο',
+                })
+                : busText('bus_first_departure_verbose', {
                     en: 'First departure',
                     nl: 'Eerste vertrek',
-                    el: busT('bus_first_departure_title', 'Πρώτο δρομολόγιο'),
+                    el: 'Πρώτο δρομολόγιο',
                 });
-            nextTitleEl.innerHTML = icon + busEscapeHtml(plain);
+            nextTitleEl.setAttribute('aria-label', ariaVerbose);
+            nextTitleEl.innerHTML = `<span class="bus-next-heading-label">${busEscapeHtml(plain)}</span><i class="fa-solid fa-bus bus-subsection-icon" aria-hidden="true"></i>`;
         }
-        syncDayStripActive();
+        syncDayPickerFromOffset();
     };
 
     const setActiveDirUi = (dir) => {
@@ -2158,7 +2480,12 @@ function initBusSchedule() {
         });
     };
 
+    let lastNormalizedForRerender = null;
+    let lastSavedAtForRerender = null;
+
     const renderFromNormalized = (normalized, savedAtIso) => {
+        lastNormalizedForRerender = normalized;
+        lastSavedAtForRerender = savedAtIso || null;
         const forDir = busApplyConsolidatedList(normalized, activeDir);
         const merged = busMergeTripsByTripId(forDir, activeDir);
         const off = busClampDayOffset(activeDayOffset);
@@ -2168,7 +2495,13 @@ function initBusSchedule() {
                 ? busSortByDeparture(busFilterRemainingToday([...merged], 10))
                 : sortedAll;
             if (nextContainer) {
-                busRenderList(nextContainer, upcoming, { limit: 1, routeDir: activeDir, dayOffset: off });
+                busRenderTimelineList(nextContainer, upcoming, {
+                    limit: 1,
+                    routeDir: activeDir,
+                    dayOffset: off,
+                    showNextEta: true,
+                    nextPreview: true,
+                });
             }
             if (fullContainer) {
                 busRenderFullTimetable(fullContainer, sortedAll, { routeDir: activeDir, dayOffset: off });
@@ -2185,6 +2518,7 @@ function initBusSchedule() {
         }
         if (lastUpdatedEl && savedAtIso) lastUpdatedEl.textContent = busFormatLastUpdated(savedAtIso);
         updateDayChrome();
+        busRefreshNextEtaDom();
     };
 
     const renderFromCacheIfAny = () => {
@@ -2274,7 +2608,6 @@ function initBusSchedule() {
     });
 
     updateDayChrome();
-    // Initial
     load({ force: false });
 }
 

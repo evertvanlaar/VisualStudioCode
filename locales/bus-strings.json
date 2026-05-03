@@ -1,0 +1,48 @@
+{
+  "busStrings": {
+    "en": {
+      "tipBeEarly": "Tip: Be 10 min early at the stop",
+      "trustStopDetail": "Departures listed are for the main-road stop (bakery).",
+      "trustOfflineCached": "If you are offline, this page shows the last timetable cached from your last successful load.",
+      "trustPrimary": "Times are estimates (Volos KTEL + ~30 min to this stop). Not an official timetable.",
+      "trustUltraCompact": "Est. from Volos KTEL (+~30 min). Not official.",
+      "linkOfficialKtelShort": "Official KTEL",
+      "linkOfficialKtelLong": "Open official KTEL timetables",
+      "chipMoreStops": "+{n} stops",
+      "chipMoreSuffix": "+{n} more",
+      "ariaAdditionalDestinations": "{n} additional destinations on this departure",
+      "sheetTitleDeparture": "This departure · {time}",
+      "sheetTitleWhereBusGoes": "Where this bus goes · {time}",
+      "sheetSubtitleStopFull": "From the main-road stop · Kala Nera · estimates only",
+      "sheetSubtitleStopShort": "Kala Nera stop · estimates",
+      "btnAllStops": "All stops",
+      "btnClose": "Close",
+      "btnDone": "Done",
+      "sheetFooterPlansChange": "Plans change — double-check before you travel.",
+      "nextDepartMinutes": "In about {n} min",
+      "nextDepartSoon": "Due soon"
+    },
+    "el": {
+      "tipBeEarly": "Συμβουλή: 10 λεπτά νωρίτερα στη στάση",
+      "trustStopDetail": "Οι ώρες αφορούν τη στάση στον κεντρικό δρόμο (φούρνος).",
+      "trustOfflineCached": "Αν είστε offline, η σελίδα δείχνει το τελευταίο αποθηκευμένο πρόγραμμα από την τελευταία επιτυχή φόρτωση.",
+      "trustPrimary": "Οι ώρες είναι εκτιμώμενες (δρομολόγιο ΚΤΕΛ Βόλου + ~30 λεπτά για τη στάση). Δεν είναι επίσημο πρόγραμμα.",
+      "trustUltraCompact": "Εκτίμηση από ΚΤΕΛ Βόλου (+~30 λεπτά). Όχι επίσημο.",
+      "linkOfficialKtelShort": "Επίσημο ΚΤΕΛ",
+      "linkOfficialKtelLong": "Άνοιγμα επίσημων δρομολογίων ΚΤΕΛ",
+      "chipMoreStops": "+{n} στάσεις",
+      "chipMoreSuffix": "+{n} ακόμη",
+      "ariaAdditionalDestinations": "{n} επιπλέον προορισμοί σε αυτή την αναχώρηση",
+      "sheetTitleDeparture": "Αυτή η αναχώρηση · {time}",
+      "sheetTitleWhereBusGoes": "Πού πάει αυτό το λεωφορείο · {time}",
+      "sheetSubtitleStopFull": "Από τη στάση στον κεντρικό δρόμο · Καλά Νερά · μόνο εκτιμήσεις",
+      "sheetSubtitleStopShort": "Στάση Καλά Νερά · εκτιμήσεις",
+      "btnAllStops": "Όλες οι στάσεις",
+      "btnClose": "Κλείσιμο",
+      "btnDone": "Έτοιμο",
+      "sheetFooterPlansChange": "Τα δρομολόγια αλλάζουν — επιβεβαιώστε πριν ταξιδέψετε.",
+      "nextDepartMinutes": "Σε ~{n} λ.",
+      "nextDepartSoon": "Σύντομα"
+    }
+  }
+}

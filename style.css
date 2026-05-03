@@ -1,4 +1,4 @@
-/* version 2.1.7 */
+/* version 2.1.65 */
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
 @keyframes slideDown{from{transform: translate(-50%, -100%); opacity: 0}to{transform: translate(-50%, 0); opacity: 1}}
@@ -120,24 +120,216 @@ body{font-family:'Inter', sans-serif;background:var(--bg);margin:0;padding:0;col
 
 .more-meta code{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-weight:900}
 
-.main-container{width:100%;max-width:1100px;margin:40px auto;padding:0 20px;box-sizing:border-box}
+.main-container{width:100%;max-width:1140px;margin:40px auto;padding:0 20px;box-sizing:border-box}
 
 h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-height:1.2}
 
-.bus-section{margin:16px auto 18px auto;max-width:980px;background:rgba(255,255,255,0.78);border:1px solid rgba(15,23,42,0.08);border-radius:18px;padding:14px;box-shadow:0 10px 30px rgba(2,6,23,0.06);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.bus-section{margin:16px auto 18px auto;max-width:1040px;background:rgba(255,255,255,0.78);border:1px solid rgba(15,23,42,0.08);border-radius:18px;padding:20px 12px 14px;box-shadow:0 10px 30px rgba(2,6,23,0.06);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow:visible}
+
+/* Kop staat in .bus-section → één paneel met het schema (minder dubbele kaart/rand op mobiel) */
+.bus-section > .bus-page-heading:first-child{margin-top:0;margin-bottom:0}
+@media (min-width:768px){
+  body[data-bus-view="full"] .bus-section > .bus-page-heading:first-child{margin-bottom:14px}
+}
 
 .bus-header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
 
-.bus-day-strip-wrap{margin:10px 0 0;width:100%;max-width:100%}
-.bus-day-strip-hint{margin:0 0 6px;font-size:10.5px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:rgba(71,85,105,0.82)}
-.bus-day-strip{display:flex;flex-flow:row nowrap;gap:6px;overflow-x:auto;padding:4px 2px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
-.bus-day-btn{flex:0 0 auto;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:3.35rem;padding:8px 10px;border-radius:12px;border:1px solid rgba(15,23,42,0.12);background:rgba(255,255,255,0.88);font-family:inherit;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,0.85) inset;line-height:1.15;transition:background 0.15s ease,border-color 0.15s ease}
-.bus-day-btn__dow{font-size:10px;font-weight:900;letter-spacing:0.04em;text-transform:uppercase;color:rgba(71,85,105,0.88)}
-.bus-day-btn__dm{font-size:12px;font-weight:1000;color:#0f172a}
-.bus-day-btn:hover{background:rgba(74,108,74,0.08);border-color:rgba(74,108,74,0.22)}
-.bus-day-btn:focus-visible{outline:2px solid rgba(74,108,74,0.45);outline-offset:2px}
-.bus-day-btn.is-active{background:rgba(74,108,74,0.18);border-color:rgba(74,108,74,0.35);box-shadow:0 2px 8px rgba(45,90,39,0.12)}
-.bus-day-btn.is-active .bus-day-btn__dow{color:#2d5a27}
+.bus-input-cluster{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  width:100%;
+  max-width:100%;
+  box-sizing:border-box;
+}
+
+.bus-input-panel{
+  padding:8px 10px;
+  border-radius:13px;
+  border:1px solid rgba(15,23,42,0.09);
+  background:rgba(248,250,252,0.82);
+  box-sizing:border-box;
+}
+
+.bus-input-panel--destination{
+  background:rgba(246,248,251,0.88);
+  border-color:rgba(15,23,42,0.08);
+}
+
+.bus-input-panel--when{
+  background:rgba(74,108,74,0.055);
+  border-color:rgba(74,108,74,0.18);
+}
+
+.bus-input-inline-row{
+  display:flex;
+  flex-flow:row wrap;
+  align-items:center;
+  gap:8px 10px;
+  width:100%;
+  min-width:0;
+}
+
+.bus-input-inline-row > .bus-picker-strip{
+  flex:1 1 0;
+  min-width:0;
+  width:auto;
+}
+
+.bus-day-input-label{
+  flex:0 0 auto;
+  margin:0;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:-0.02em;
+  color:rgba(71,85,105,0.95)
+}
+
+@media screen and (max-width:719px){
+  html[lang="el"] .bus-input-panel--destination .bus-input-inline-row > .bus-day-input-label{
+    flex:0 1 auto;
+    max-width:min(10rem,36vw);
+    line-height:1.2;
+  }
+}
+
+.bus-day-input{
+  flex:1 1 160px;
+  min-width:0;
+  min-height:40px;
+  padding:7px 11px;
+  border-radius:12px;
+  border:1px solid rgba(15,23,42,0.12);
+  background:rgba(255,255,255,0.92);
+  font-family:inherit;
+  font-size:14px;
+  font-weight:800;
+  line-height:1.35;
+  color:#0f172a;
+  box-sizing:border-box;
+  box-shadow:0 1px 0 rgba(255,255,255,0.85) inset;
+}
+
+.bus-day-input:focus{outline:2px solid rgba(74,108,74,0.45);outline-offset:2px}
+
+.bus-trust-info-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  flex-shrink:0;
+  margin-left:auto;
+  padding:8px 11px;
+  border-radius:12px;
+  border:1px solid rgba(74,108,74,0.35);
+  background:rgba(74,108,74,0.08);
+  font:inherit;
+  font-size:12px;
+  font-weight:800;
+  color:#2d5a27;
+  cursor:pointer;
+  box-shadow:0 1px 0 rgba(255,255,255,0.65) inset;
+}
+
+.bus-trust-info-btn:hover{background:rgba(74,108,74,0.12)}
+.bus-trust-info-btn:focus-visible{outline:2px solid rgba(74,108,74,0.45);outline-offset:2px}
+
+.bus-trust-info-btn__ico{font-size:15px;line-height:1;font-weight:900}
+
+.bus-trust-info-btn__txt{white-space:nowrap}
+
+/* Bus fase 1: controls + trust + Next bus gegroepeerd in .bus-sticky-zone (layout; geen sticky). */
+.bus-sticky-zone{display:block}
+
+.bus-sticky-zone .bus-meta{margin-top:6px}
+
+.bus-sticky-zone .bus-next-highlight{margin-top:10px}
+
+@media (max-width:767px){
+  .bus-sticky-zone .bus-next-highlight{margin-top:8px}
+}
+
+/* Buspagina mobiel: minder verticale ruimte vóór de eerste ritinfo */
+@media (max-width:767px){
+  body[data-bus-view="full"] .main-container{margin-top:20px;padding-left:10px;padding-right:10px}
+  body[data-bus-view="full"] .bus-section > .bus-page-heading:first-child{margin-bottom:2px;padding-bottom:0}
+  body[data-bus-view="full"] .bus-page-title.bus-page-title--border-pill{
+    margin-top:clamp(-26px,-6.5vw,-19px);
+    margin-bottom:8px;
+    font-size:clamp(0.88rem,3.75vw,1.12rem);
+    line-height:1.14;
+    letter-spacing:-0.03em;
+    padding:5px 12px;
+  }
+  body[data-bus-view="full"] .bus-page-title-row{gap:8px}
+  html[lang="el"] body[data-bus-view="full"] .bus-page-title.bus-page-title--border-pill{
+    font-size:clamp(0.78rem,3.25vw,1.02rem);
+    letter-spacing:-0.035em
+  }
+  body[data-bus-view="full"] .bus-page-deck{display:none}
+  body[data-bus-view="full"] .bus-section{
+    margin-top:8px;
+    padding:17px 8px 10px;
+    border-radius:14px;
+    background:rgba(255,255,255,0.93);
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+    overflow:visible;
+  }
+  body[data-bus-view="full"] .bus-input-cluster{gap:8px}
+  body[data-bus-view="full"] .bus-input-panel{padding:8px 9px;border-radius:12px}
+  body[data-bus-view="full"] .bus-line-hint.bus-line-hint--below-controls{font-size:10px;line-height:1.4;margin-top:9px}
+  body[data-bus-view="full"] .bus-input-inline-row{gap:6px 8px}
+  body[data-bus-view="full"] .bus-day-input-label{font-size:11px}
+  body[data-bus-view="full"] .bus-day-input{min-height:38px;padding:6px 10px;font-size:13px;line-height:1.35;flex:1 1 130px}
+  body[data-bus-view="full"] .bus-trust-info-btn{padding:7px 9px;font-size:11px;margin-left:auto}
+  html[lang="el"] body[data-bus-view="full"] .bus-input-panel--when .bus-input-inline-row{flex-wrap:nowrap;gap:6px}
+  html[lang="el"] body[data-bus-view="full"] .bus-day-input-label{font-size:10px;letter-spacing:-0.03em}
+  html[lang="el"] body[data-bus-view="full"] .bus-day-input{flex:1 1 0;min-width:0}
+  html[lang="el"] body[data-bus-view="full"] .bus-trust-info-btn{padding:6px 7px;font-size:10.5px;gap:4px}
+  body[data-bus-view="full"] .bus-trust-info-btn__txt{display:inline}
+  body[data-bus-view="full"] .bus-dir-select{min-height:38px;padding:6px 10px;font-size:13px;line-height:1.35}
+  /* Gelijk aan .bus-next-highlight / .bus-full-panel horizontaal */
+  body[data-bus-view="full"] .bus-sticky-zone .bus-next-highlight{padding:8px 14px 10px;gap:4px}
+}
+
+.bus-trust-dialog{max-width:min(96vw,440px);width:100%;padding:0;border:none;border-radius:18px;background:transparent;box-shadow:none}
+
+.bus-trust-dialog::backdrop{background:rgba(15,23,42,0.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+
+.bus-trust-dialog__shell{background:#f8fafc;border:1px solid rgba(15,23,42,0.1);border-radius:18px;box-shadow:0 24px 60px rgba(2,6,23,0.25);overflow:hidden}
+
+.bus-trust-dialog__head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px 16px;background:linear-gradient(180deg,rgba(74,108,74,0.12) 0%,rgba(255,255,255,0.96) 100%);border-bottom:1px solid rgba(15,23,42,0.08)}
+
+.bus-trust-dialog__title{margin:0;font-size:15px;font-weight:1000;color:#0f172a;letter-spacing:-0.02em;line-height:1.25;flex:1;min-width:0}
+
+.bus-trust-dialog__close{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;margin:-6px -6px -6px 0;padding:0;border:none;border-radius:12px;background:rgba(15,23,42,0.06);color:#0f172a;font-size:18px;cursor:pointer;flex-shrink:0}
+
+.bus-trust-dialog__close:hover{background:rgba(15,23,42,0.1)}
+
+.bus-trust-dialog__body{padding:14px 16px 16px;background:#fff}
+
+.bus-trust-dialog__copy{margin:0 0 12px;font-size:13px;font-weight:650;line-height:1.5;color:rgba(30,41,59,0.94)}
+
+.bus-trust-dialog__extra{margin:0 0 12px;font-size:13px;font-weight:620;line-height:1.5;color:rgba(30,41,59,0.9)}
+
+.bus-trust-dialog__linkwrap{margin:0 0 16px}
+
+.bus-trust-dialog__ktel{font-weight:800}
+
+.bus-trust-dialog__done{
+  width:100%;
+  padding:11px 14px;
+  border:none;
+  border-radius:12px;
+  background:rgba(74,108,74,0.2);
+  color:#1e293b;
+  font:inherit;
+  font-size:14px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.bus-trust-dialog__done:hover{background:rgba(74,108,74,0.28)}
 
 .bus-title{display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:6px 12px;flex:1 1 200px;min-width:0}
 
@@ -149,19 +341,19 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
 
 .bus-line-hint{display:block;margin-top:3px;font-size:11px;font-weight:750;line-height:1.3;color:rgba(71,85,105,0.78);max-width:42ch}
 
+.bus-line-hint.bus-line-hint--below-controls{margin-top:10px;max-width:none;width:100%;text-align:left}
+
 .bus-controls{display:flex;gap:6px;flex-wrap:wrap}
 
-/* Picker: label, then row [ select | map ] */
-.bus-controls--select{flex-direction:column;align-items:stretch;gap:6px;flex:1 1 220px;min-width:min(100%,180px);max-width:100%}
-
-.bus-dest-label{margin:0;font-size:12px;font-weight:1000;color:rgba(71,85,105,0.95);letter-spacing:-0.01em;line-height:1.25;flex:0 1 auto;max-width:min(100%,14rem)}
+/* Picker: label, then row [ select | map ]. Geen flex-grow — voorkomt lege verticale ruimte onder stack-layout. */
+.bus-controls--select{flex-direction:column;align-items:stretch;gap:4px;flex:0 1 auto;width:100%;max-width:100%;min-width:min(100%,180px)}
 
 .bus-picker-strip{display:flex;flex-flow:row wrap;align-items:center;gap:8px 10px;min-width:0;width:100%}
 
 /* Mobiel: select + map-knop één regel (nowrap: Firefox geeft select grotere min-breedte dan Chromium) */
 .bus-picker-stack{display:flex;flex-flow:row nowrap;align-items:center;gap:8px;flex:1 1 auto;min-width:0}
 
-.bus-dir-select{flex:1 1 0%;min-width:0;min-height:44px;width:auto;max-width:min(288px,100%);box-sizing:border-box;font-family:inherit;font-size:14px;font-weight:800;color:#0f172a;padding:10px 12px;border-radius:12px;border:1px solid rgba(15,23,42,0.12);background:rgba(255,255,255,0.92);cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,0.85) inset}
+.bus-dir-select{flex:1 1 0%;min-width:0;min-height:40px;width:auto;max-width:min(288px,100%);box-sizing:border-box;font-family:inherit;font-size:14px;font-weight:800;line-height:1.35;color:#0f172a;padding:7px 11px;border-radius:12px;border:1px solid rgba(15,23,42,0.12);background:rgba(255,255,255,0.92);cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,0.85) inset}
 
 .bus-dir-select:focus{outline:2px solid rgba(74,108,74,0.45);outline-offset:2px}
 
@@ -172,9 +364,23 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
 }
 
 @media screen and (min-width: 720px){
-/* Geen lege “kolom”: controls zo smal als inhoud, rechts in de header */
-.bus-controls--select{flex:0 1 auto;width:fit-content;max-width:100%;align-self:flex-end}
-.bus-dest-label{max-width:none;width:100%;text-align:left}
+.bus-input-panel--destination .bus-controls--select{width:100%;max-width:100%;flex:1 1 auto;align-self:stretch}
+.bus-input-panel--destination .bus-input-inline-row{
+  flex-wrap:wrap;
+  align-items:flex-start;
+}
+.bus-input-panel--destination .bus-input-inline-row > .bus-day-input-label{
+  flex:1 1 100%;
+  max-width:none;
+  width:100%;
+}
+.bus-input-panel--destination .bus-input-inline-row > .bus-picker-strip{
+  flex:1 1 100%;
+  width:100%;
+  align-items:flex-start;
+  justify-content:flex-start;
+  gap:12px 14px;
+}
 .bus-picker-strip{align-items:flex-start;justify-content:flex-start;width:auto;gap:12px 14px}
 .bus-picker-stack{flex-direction:column;align-items:stretch;flex:0 1 auto;gap:8px}
 .bus-dir-select{align-self:stretch;max-width:min(280px,36vw);width:100%}
@@ -281,14 +487,8 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
 
 .bus-page-title-icon{color:#2d5a27;font-size:0.95em;line-height:1;opacity:0.95}
 
-/* Greek bus title: keep «Καλά Νερά» on its own line on narrow screens (no break between Καλά / Νερά) */
-.bus-page-title-row--el{align-items:flex-start}
-.bus-page-title-text--el{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0;max-width:100%}
-.bus-page-title-text--el .bus-page-title-place{white-space:nowrap}
-@media (min-width:520px){
-  .bus-page-title-text--el{flex-direction:row;flex-wrap:wrap;align-items:baseline;justify-content:center;text-align:left;gap:0.35em}
-  .bus-page-title-row--el{align-items:center}
-}
+/* Pill heading: heading text stays one logical line (ellipsis if viewport is extreme) */
+.bus-page-title-plain{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 .bus-page-deck{display:flex;flex-direction:column;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin:4px 0 14px;text-align:center}
 
@@ -312,25 +512,60 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
   display:flex;
   flex-direction:column;
   gap:6px;
-  padding:8px 10px 10px;
+  padding:8px 14px 10px;
   border-radius:16px;
   background:linear-gradient(165deg,rgba(74,108,74,0.16) 0%,rgba(74,108,74,0.10) 45%,rgba(255,255,255,0.72) 100%);
   border:1px solid rgba(74,108,74,0.35);
   box-shadow:0 10px 28px rgba(45,90,39,0.08),inset 0 1px 0 rgba(255,255,255,0.7);
 }
 
-.bus-next-highlight .bus-subsection-title--next{margin:0;color:#2d5a27;letter-spacing:0.1em;text-shadow:0 1px 0 rgba(255,255,255,0.85);display:flex;align-items:center;flex-wrap:wrap;gap:0;line-height:1.2}
+.bus-next-highlight .bus-next-heading-row{display:flex;flex-flow:row wrap;align-items:center;justify-content:space-between;gap:6px 12px;width:100%;min-width:0}
+
+.bus-next-highlight .bus-next-heading-row .bus-subsection-title--next{margin:0;color:#2d5a27;letter-spacing:0.12em;text-shadow:0 1px 0 rgba(255,255,255,0.85);display:inline-flex;align-items:center;flex-wrap:nowrap;gap:6px;line-height:1.2;flex:0 1 auto}
+
+.bus-next-highlight .bus-next-heading-row .bus-next-heading-label{font-weight:1000}
+
+.bus-next-highlight .bus-next-heading-row .bus-subsection-icon{margin:0 0 0 4px;color:#ea580c;font-size:1.08em;opacity:0.95;vertical-align:0}
+
+.bus-next-highlight .bus-next-heading-row .bus-next-tip{flex:1 1 9rem;margin:0;text-align:right;font-size:11px;line-height:1.35;font-weight:750;color:rgba(51,65,85,0.92);min-width:min(11rem,42%)}
+
+@media screen and (max-width:520px){
+  html[lang="el"] .bus-next-highlight .bus-next-heading-row .bus-next-tip{font-size:10px;line-height:1.25}
+}
+
+@media (max-width:380px){
+  .bus-next-highlight .bus-next-heading-row{justify-content:flex-start}
+  .bus-next-highlight .bus-next-heading-row .bus-next-tip{flex:1 1 100%;min-width:0;text-align:left}
+}
 
 .bus-next-highlight .bus-container--next{margin-top:0}
 
-.bus-next-highlight .bus-card{border-left-width:6px;border-left-color:#2d5a27;box-shadow:0 8px 20px rgba(74,108,74,0.14)}
+/* NEXT: zelfde tijdlijns‑rij als full timetable — geen aparte witte „card“. */
+.bus-next-highlight .bus-timeline-wrap{margin-top:4px}
+.bus-next-highlight .bus-timeline--next-preview{margin:0;padding:0;width:100%;box-sizing:border-box}
+.bus-next-highlight .bus-timeline--next-preview > .bus-timeline__item{border-bottom:0}
+
+/* Timeline-ETA: géén max-width/max-content (anders krimpt het blok en valt “Due soon” links onder de dot i.p.v. onder de klok). */
+.bus-next-eta.bus-next-eta--timeline{
+  display:block;
+  margin-top:3px;
+  width:100%;
+  max-width:none;
+  text-align:left;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  font-size:11px;
+  font-weight:750;
+  line-height:1.25;
+  box-sizing:border-box
+}
 
 .bus-full-section{margin-top:22px;padding:0;border:none;background:transparent}
 
 .bus-full-panel{
   width:100%;
   box-sizing:border-box;
-  padding:8px 10px 10px;
+  padding:8px 14px 10px;
   border-radius:16px;
   background:linear-gradient(165deg,rgba(74,108,74,0.16) 0%,rgba(74,108,74,0.10) 45%,rgba(255,255,255,0.72) 100%);
   border:1px solid rgba(74,108,74,0.35);
@@ -347,6 +582,41 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
 .bus-full-divider{display:flex;flex-direction:row;align-items:center;width:100%;margin:4px 0 2px;padding:0 2px;box-sizing:border-box}
 
 .bus-full-divider__line{flex:1 1 auto;min-width:20px;height:1px;background:rgba(15,23,42,0.13);margin:0;border-radius:2px}
+
+/* Paginatitel-pil ligt op/over de bovenrand v.h. blok (zelfde pil-stijl als Last updated; géén divider-lijnen). */
+.bus-page-heading--top-pill{display:flex;flex-direction:column;align-items:center;margin-bottom:2px;text-align:center}
+
+.bus-page-title.bus-page-title--border-pill{
+  flex:0 1 auto;
+  margin:clamp(-20px,-3.9vw,-14px) 0 10px 0;
+  min-width:0;
+  position:relative;
+  z-index:2;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:6px 16px;
+  font-size:clamp(0.95rem,3.5vw,1.32rem);
+  font-weight:1000;
+  line-height:1.2;
+  letter-spacing:-0.02em;
+  color:#0f172a;
+  text-align:center;
+  max-width:min(94%,560px);
+  box-sizing:border-box;
+  background:linear-gradient(180deg,#fff 0%,#f8fafc 50%,#f1f5f9 100%);
+  border:1px solid rgba(148,163,184,0.48);
+  border-radius:999px;
+  box-shadow:0 0 0 4px rgba(255,255,255,0.78), inset 0 1px 0 rgba(255,255,255,0.95)
+}
+
+/* Griekse titel is langer: iets kleinere pil-tekst, nog steeds één regel (nowrap + ellipsis elders) */
+html[lang="el"] .bus-page-title.bus-page-title--border-pill{
+  font-size:clamp(0.88rem,3.2vw,1.24rem);
+  letter-spacing:-0.028em
+}
+
+.bus-page-title--border-pill .bus-page-title-row{justify-content:center;text-align:center;flex-wrap:nowrap}
 
 .bus-last-updated--divider{
   flex:0 1 auto;margin:0;padding:4px 12px;font-size:10.5px;font-weight:750;line-height:1.35;color:rgba(71,85,105,0.88);
@@ -378,17 +648,37 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
 }
 
 /* Full timetable — timeline alternative to cards */
+.bus-timeline-wrap{width:100%;box-sizing:border-box;padding-inline:clamp(10px,3.6vw,20px)}
 .bus-timeline{display:flex;flex-direction:column;margin:0;padding:0;list-style:none;gap:0}
 
-.bus-timeline__item{display:grid;grid-template-columns:22px auto minmax(0,1fr);gap:8px 12px;padding:11px 0 13px;margin:0;align-items:start;border-bottom:1px solid rgba(15,23,42,0.06);min-width:0}
+/* Vaste tijdkolom (geen `auto`): aparte <ol> voor NEXT vs volledige lijst kregen anders verschillende kolombreedtes → tijd en as vallen niet op één lijn. */
+.bus-timeline__item{display:grid;grid-template-columns:22px minmax(3.5rem,5.5rem) minmax(0,1fr);gap:5px 8px;padding:7px clamp(7px,2vw,12px) 8px;margin:0;align-items:start;border-bottom:1px solid rgba(15,23,42,0.06);min-width:0}
 
-.bus-timeline__item:last-child{border-bottom:0;padding-bottom:4px}
+.bus-timeline__item:last-child{border-bottom:0;padding-bottom:2px}
 
 .bus-timeline__item--next .bus-timeline__dot{
-  background:linear-gradient(165deg,#4f9f44 0%,#36722f 100%);
+  background:linear-gradient(165deg,#fb923c 0%,#ea580c 100%);
   border-color:#fff;
-  box-shadow:0 0 0 1px rgba(53,132,52,0.55)
+  box-shadow:0 0 0 1px rgba(234,88,12,0.5)
 }
+
+/* Highlight over volle rijbreedte; inhoud heeft horizontale padding via .bus-timeline__item (alle rijen gelijk − geen verschuiving NEXT ↔ lijst). */
+.bus-timeline__item--next{
+  position:relative;
+  isolation:isolate;
+  border-bottom-color:rgba(15,23,42,0.06)
+}
+.bus-timeline__item--next::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:14px;
+  background:rgba(74,108,74,0.075);
+  box-shadow:inset 0 0 0 1px rgba(74,108,74,0.13);
+  z-index:0;
+  pointer-events:none
+}
+.bus-timeline__item--next > *{position:relative;z-index:1}
 
 .bus-timeline__axis{display:flex;flex-direction:column;align-items:center;padding-top:3px;width:22px;min-height:100%}
 
@@ -396,18 +686,38 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
 
 .bus-timeline__stem{flex:1;align-self:center;width:3px;margin-top:3px;margin-bottom:-2px;min-height:16px;background:linear-gradient(180deg,rgba(11,95,199,0.52) 0%,rgba(11,95,199,0.09) 100%);border-radius:2px}
 
-.bus-timeline__time-col{font-variant-numeric:tabular-nums;padding-top:1px;text-align:right;width:100%;min-width:0}
+.bus-timeline__time-col{font-variant-numeric:tabular-nums;padding-top:1px;text-align:left;width:100%;min-width:0}
 
-.bus-timeline__time-row{display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-end;gap:6px;width:100%;min-width:0;line-height:1.15}
+/* Links uitlijning zoals mobiel: icoon rechts naast de tijd verschuift de klok niet (NEXT vs overige rijen één rechte kolom). */
+.bus-timeline__time-row{display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-start;gap:6px;width:100%;min-width:0;line-height:1.15}
 
 .bus-timeline__time-bus{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;color:#64748b;font-size:14px;line-height:1;opacity:0.88}
 
-.bus-timeline__item--next .bus-timeline__time-bus{color:#2d5a27;opacity:0.95}
+.bus-timeline__item--next .bus-timeline__time-bus{color:#c2410c;opacity:0.95}
 .bus-timeline__time{font-size:17px;font-weight:800;color:#0f172a;letter-spacing:-0.03em;line-height:1.15;display:block;flex-shrink:0}
 
-.bus-timeline__body{display:flex;flex-direction:column;align-items:flex-end;gap:3px;text-align:right;min-width:0;padding-top:0}
+.bus-timeline__body{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;min-width:0;padding-top:0}
 
 .bus-route-stops{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:baseline;gap:0;max-width:100%;margin:0;padding:0;font-size:13px;font-weight:650;color:#0f172a;line-height:1.35;text-align:right}
+/* Compacte doorlopende tekst i.p.v. pills (tijdlijn + kaarten) */
+.bus-route-stops--compact{
+  display:block;
+  text-align:left;
+  line-height:1.28;
+  overflow-wrap:anywhere;
+  word-break:normal
+}
+/* Tijdlijn + kaarten: max. 2 regels — vaste, compacte rijhoogte */
+.bus-route-stops--compact.bus-route-stops--clamp{
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+  overflow:hidden
+}
+/* Eén bestemming + optioneel «· » aan het eind; volgende unit start op nieuwe regel zonder leidend scheidingsteken */
+.bus-route-compact-unit{font-weight:780;color:#0f172a;letter-spacing:-0.02em}
+.bus-route-compact-sep{font-weight:650;color:rgba(71,85,105,0.5)}
 .bus-route-item{display:inline-flex;flex-wrap:nowrap;align-items:baseline;flex:0 1 auto;max-width:100%;min-width:0}
 .bus-route-stop{display:inline-flex;flex-wrap:wrap;align-items:stretch;justify-content:flex-end;max-width:100%;min-width:0;line-height:1.35;text-align:inherit;vertical-align:baseline}
 .bus-route-stop__block{
@@ -451,6 +761,9 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
 .bus-time-label.bus-time-label--stack{display:flex;flex-direction:column;align-items:flex-start;gap:1px;line-height:1.1;max-width:min(132px,48vw);-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;text-size-adjust:100%}
 .bus-time-label.bus-time-label--stack .bus-time-label-line{display:block;white-space:nowrap;hyphens:none;line-height:1.15}
 .bus-time{font-size:18px;font-weight:800;color:#0f172a;letter-spacing:-0.02em;line-height:1}
+.bus-next-eta{display:block;font-size:11.5px;font-weight:750;color:rgba(194,65,12,0.95);line-height:1.25;white-space:nowrap;max-width:max-content}
+
+.bus-next-highlight .bus-next-eta{color:rgba(194,65,12,0.98)}
 
 .bus-info{display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;flex:1 1 auto;align-self:flex-start}
 
@@ -494,111 +807,26 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
     width:auto;
     min-width:0
   }
-  /* Next bus: kaart als zelfde 3‑koloms‑grid als .bus-timeline__item ⇒ pillen op één verticale lijn met tijdlijnpills */
-  .bus-next-highlight .bus-card{
-    display:grid;
-    grid-template-columns:20px minmax(5.5rem,5.5rem) minmax(0,1fr);
-    gap:6px 8px;
-    align-items:start;
-    flex-wrap:nowrap;
-    margin-left:-13px;
-    width:calc(100% + 13px);
-    max-width:none;
-    box-sizing:border-box
-  }
-  .bus-next-highlight .bus-card::before{
-    content:"";
-    grid-column:1;
-    grid-row:1
-  }
-  .bus-next-highlight .bus-time-wrap{
-    max-width:none;
-    min-width:0
-  }
-  .bus-next-highlight .bus-card > .bus-note--lowfreq{
-    grid-column:1 / -1
-  }
   .bus-time-label{font-size:9.5px;font-weight:600}
   .bus-time-label.bus-time-label--stack{max-width:min(118px,50vw);gap:0}
   .bus-time{font-size:16px;font-weight:700;letter-spacing:-0.03em}
+  .bus-next-eta,.bus-next-eta--timeline{font-size:10px;font-weight:720;line-height:1.2}
   .bus-route-stops{font-size:11px;font-weight:600;line-height:1.25}
-  /* Eén kolom ⇒ volle breedte van het routevak (= langere Griekse namen zichtbaar, geen …) */
-  .bus-card .bus-route-stops,.bus-timeline .bus-route-stops{
+  .bus-card .bus-route-stops--compact,.bus-timeline .bus-route-stops--compact{
     width:100%;
-    display:grid;
-    grid-template-columns:minmax(0,1fr);
-    gap:6px;
-    align-content:start;
-    justify-items:stretch;
-    justify-content:stretch
-  }
-  .bus-card .bus-route-item,.bus-timeline .bus-route-item{
-    width:100%;
-    min-width:0;
-    align-self:stretch;
-    justify-self:stretch;
-    display:flex;
-    justify-content:stretch
-  }
-  .bus-card .bus-route-stop,.bus-timeline .bus-route-stop{
-    flex:1 1 0;
-    width:100%;
-    min-width:0;
-    display:flex;
-    justify-content:stretch;
-    align-items:stretch
-  }
-  .bus-card .bus-route-stop__block,.bus-timeline .bus-route-stop__block{
-    display:grid;
-    grid-template-columns:minmax(0,1fr) auto;
-    align-items:start;
-    gap:6px;
-    width:100%;
-    max-width:100%;
-    min-width:0;
-    box-sizing:border-box;
-    padding:4px 8px 4px 10px;
-    border-radius:8px;
-    line-height:1.2
-  }
-  .bus-card .bus-route-stop__dest,.bus-timeline .bus-route-stop__dest{
-    min-width:0;
     text-align:left;
-    font-size:11px;
-    font-weight:650;
-    letter-spacing:-0.015em;
-    line-height:1.3;
-    color:rgba(15,23,42,0.9);
-    white-space:normal;
-    overflow:visible;
-    word-break:normal;
-    overflow-wrap:normal;
-    hyphens:none;
-    -webkit-hyphens:none;
-    -moz-hyphens:none
+    line-height:1.3
   }
-  .bus-card .bus-route-stop__sched,.bus-timeline .bus-route-stop__sched{
-    display:inline-flex;
-    align-items:center;
-    justify-content:flex-end;
-    flex-shrink:0
-  }
-  .bus-card .bus-route-stop__sched .bus-runs-caption,
-  .bus-timeline .bus-route-stop__sched .bus-runs-caption{
-    display:inline-flex;
-    flex-direction:row-reverse;
-    align-items:center;
-    gap:4px;
-    justify-content:flex-end
-  }
+  .bus-timeline .bus-timeline__body .bus-route-stops--compact{text-align:left}
+  .bus-route-stops--compact .bus-route-compact-unit{font-size:11px;font-weight:700}
   .bus-runs-caption__extra{font-size:10px;font-weight:620;line-height:1.2;white-space:normal;text-align:right;color:rgba(71,85,105,0.9)}
-  .bus-route-sep{display:none}
   .bus-stop{font-size:10.5px;font-weight:600}
   .bus-arrival,.bus-note{font-size:10px}
-  /* Horizontaal gelijk aan .bus-full-panel (12px) zodat negatieve marge klopt voor grid‑uitlijning */
-  .bus-next-highlight{padding:8px 12px 10px;gap:4px;margin-top:10px;border-radius:14px}
-  .bus-full-panel{padding:10px 12px 12px;border-radius:14px}
-  .bus-next-highlight .bus-subsection-title--next{font-size:11px;letter-spacing:0.08em}
+  /* Horizontaal gelijk tussen NEXT-paneel en tijdlijn */
+  .bus-next-highlight{padding:8px 16px 10px;gap:4px;margin-top:10px;border-radius:14px}
+  .bus-full-panel{padding:10px 16px 12px;border-radius:14px}
+  body[data-bus-view="full"] .bus-sticky-zone .bus-next-highlight{padding:8px 16px 10px;gap:4px}
+  .bus-next-highlight .bus-next-heading-row .bus-subsection-title--next{font-size:11px;letter-spacing:0.08em}
   .bus-full-origin-note{font-size:11px;line-height:1.35}
   .bus-sched-legend{padding:8px 10px;font-size:10.8px}
   .bus-sched-legend--panel{padding:8px 10px 10px!important;border-radius:14px!important}
@@ -609,16 +837,10 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
     text-align:left;
     min-width:0;
     max-width:100%;
-    overflow:hidden;
+    overflow:visible;
     box-sizing:border-box
   }
   .bus-timeline__time-row{justify-content:flex-start;align-items:center;gap:4px}
-  .bus-timeline__item:not(.bus-timeline__item--next) .bus-timeline__time-row::after{
-    content:"";
-    width:22px;
-    height:1px;
-    flex-shrink:0
-  }
   .bus-timeline__body{
     align-items:flex-start;
     text-align:left;
@@ -629,10 +851,15 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
   .bus-timeline__time{font-size:15px;font-weight:800}
   .bus-timeline__time-bus{font-size:13px}
   .bus-timeline__note,.bus-timeline__meta,.bus-timeline__arrival{font-size:10px}
-  /* Tijdlijn: groen ipv blauw (desktop blijft KTEL-blauw) — rustiger bij de groene accenten hierboven */
+  /* Tijdlijn: groen ipv blauw; «volgende/eerste»-rij blijft oranje (zelfde als ΠΡΩΤΟ) */
   .bus-timeline__item:not(.bus-timeline__item--next) .bus-timeline__dot{
     background:linear-gradient(165deg,#6a9b62 0%,#4a7543 100%);
     box-shadow:0 0 0 1px rgba(74,108,74,0.42)
+  }
+  .bus-timeline__item--next .bus-timeline__dot{
+    background:linear-gradient(165deg,#fb923c 0%,#ea580c 100%);
+    border-color:#fff;
+    box-shadow:0 0 0 1px rgba(234,88,12,0.5)
   }
   .bus-timeline__stem{
     width:2px;
@@ -641,43 +868,21 @@ h1{font-size:28px;font-weight:800;text-align:center;margin-bottom:18px;line-heig
   .bus-timeline__axis{width:20px;min-width:0;align-items:center}
   .bus-timeline__dot{width:10px;height:10px}
   .bus-timeline__item{
-    grid-template-columns:20px minmax(5.5rem,5.5rem) minmax(0,1fr);
-    gap:6px 8px;
-    padding:8px 0 12px;
+    grid-template-columns:20px minmax(3.25rem,4.75rem) minmax(0,1fr);
+    gap:5px 5px;
+    padding:6px clamp(6px,2.5vw,12px) 7px;
     border-bottom-color:rgba(15,23,42,0.045)
   }
-  /* Patroon‑iconen in pills: iets compacter op smal scherm, wel zichtbaar (legenda verkort; symbolen blijven in de ritregels) */
-  .bus-route-stop__block .bus-sched-icon{
-    width:22px;
-    height:22px;
-    font-size:10.5px;
-    margin:0;
-    flex-shrink:0
-  }
   @supports (-moz-appearance:none){
-    .bus-timeline__item,
-    .bus-next-highlight .bus-card{
-      grid-template-columns:20px minmax(4.875rem,5.125rem) minmax(0,1fr)
+    .bus-timeline__item{
+      grid-template-columns:20px minmax(3.25rem,4.75rem) minmax(0,1fr)
     }
-    .bus-card .bus-route-stop__block,.bus-timeline .bus-route-stop__block{padding:4px 5px 4px 10px}
   }
 }
 
 .bus-empty, .bus-error{background:rgba(148,163,184,0.08);border:1px dashed rgba(15,23,42,0.16);color:rgba(71,85,105,0.95);border-radius:14px;padding:12px;font-weight:900;font-size:13px}
 
 .bus-skeleton{height:54px;border-radius:14px;border:1px solid rgba(15,23,42,0.06);background:linear-gradient(90deg, rgba(148,163,184,0.10) 0%, rgba(148,163,184,0.22) 50%, rgba(148,163,184,0.10) 100%);background-size:200% 100%;animation:busShimmer 1.2s ease-in-out infinite}
-
-.bus-disclaimer-block{margin:28px 0 0;padding-top:22px;border-top:2px solid rgba(15,23,42,0.08);max-width:100%;width:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:flex-start;gap:8px;font-size:11px;line-height:1.5;color:rgba(71,85,105,0.95)}
-
-.bus-disclaimer-block p{margin:0;max-width:70ch}
-
-.bus-disclaimer{font-weight:600}
-
-.bus-disclaimer strong{font-weight:800;color:rgba(30,41,59,0.95)}
-
-.bus-disclaimer-tip{font-weight:800;color:rgba(71,85,105,0.95)}
-
-.bus-disclaimer-offline{padding-top:8px;margin-top:2px;border-top:1px solid rgba(15,23,42,0.08);font-weight:650;color:rgba(71,85,105,0.82)}
 
 .bus-service-info{margin-top:14px;padding-top:12px;border-top:1px solid rgba(15,23,42,0.08);display:flex;flex-direction:column;gap:8px;max-width:70ch;font-size:11px;line-height:1.5;color:rgba(71,85,105,0.93);font-weight:650}
 
@@ -1539,7 +1744,7 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 
 @media all and (display-mode: standalone), (display-mode: fullscreen){.hero-section{min-height:260px;height:44vh}ul#nav-list li#menu-install-item{display:none !important}}
 
-@media screen and (min-width: 992px){.bus-section{padding:16px 16px 14px 16px}.nav-container{justify-content:flex-start !important;gap:14px}.logo{margin-right:6px}.lang-link-mobile{display:none !important}.sheet{left:var(--sheet-left, 50%);top:var(--sheet-top, 120px);right:auto;bottom:auto;transform:translateX(-0%);width:min(520px, 92vw);border-radius:18px;box-shadow:0 18px 60px rgba(0,0,0,0.28)}.sheet-handle{display:none}.biz-card-mini.is-media{height:auto !important;flex-direction:column !important;padding:0 !important;gap:0 !important;overflow:hidden !important}.menu-toggle{display:none !important}.biz-card-mini{opacity:1 !important;transform:none !important;transition:all 0.3s ease;display:flex !important;flex-direction:row !important;width:100% !important;height:130px !important;padding:12px !important;gap:12px !important;background:white !important;box-sizing:border-box !important;overflow:hidden !important}.biz-card-mini.show{opacity:1;transform:translateY(0)}.business-grid{display:grid !important;grid-template-columns:1fr 1fr !important;gap:20px !important;margin-bottom:30px !important;width:100% !important;padding:0 20px !important;box-sizing:border-box !important;align-items:stretch !important}.category-section-header{width:100% !important;margin:20px 0 8px 0 !important;padding:10px 18px !important;box-sizing:border-box !important}.mini-preview{width:110px !important;height:106px !important;flex-shrink:0 !important}.mini-content{flex:1 !important;display:flex !important;flex-direction:column !important;justify-content:space-between !important;min-width:0 !important}.mini-actions{display:flex !important;flex-direction:row !important;justify-content:flex-end !important;align-items:center !important;gap:10px !important;width:100% !important;margin-top:auto !important;padding-top:5px !important}.phone-group{margin-right:auto !important;display:flex !important;align-items:center !important;gap:8px !important;background:#f1f5f9 !important;padding:6px 14px !important;border-radius:20px !important;border:1px solid #e2e8f0 !important;flex-shrink:0 !important}.action-right{display:flex !important;gap:8px !important;margin:0 !important}.btn-icon{width:30px !important;height:30px !important;border-radius:50% !important;display:flex !important;align-items:center !important;justify-content:center !important;flex-shrink:0 !important;font-size:13px !important;box-shadow:0 2px 5px rgba(0,0,0,0.06) !important;border:none !important}.phone-txt{font-size:12.5px !important;font-weight:700 !important;color:#1e293b !important;margin-right:4px !important;white-space:nowrap !important}#menu-install-item{display:none !important}.alpha-index{display:flex;right:14px;padding:8px 6px;gap:3px}.alpha-letter{width:20px;height:16px;font-size:11px}.bus-title h2{font-size:18px}.nav-container .logo{order:1}.nav-container .nav-links{order:2;margin-left:auto;gap:18px}.biz-card-mini.is-media .mini-preview{height:200px !important;width:100% !important;border-radius:0 !important}.nav-links .lang-link{display:inline-block !important}.category-section-header small{background:rgba(255, 255, 255, 0.3) !important;backdrop-filter:blur(5px) !important;border:1px solid rgba(255, 255, 255, 0.2) !important;color:#475569 !important}.phone-group .btn-icon{width:26px !important;height:26px !important;font-size:11px !important;box-shadow:none !important}.nav-container > a[href*="meteoblue.com"]{order:3;margin-left:12px}}
+@media screen and (min-width: 992px){.bus-section{padding:22px 14px 14px}.nav-container{justify-content:flex-start !important;gap:14px}.logo{margin-right:6px}.lang-link-mobile{display:none !important}.sheet{left:var(--sheet-left, 50%);top:var(--sheet-top, 120px);right:auto;bottom:auto;transform:translateX(-0%);width:min(520px, 92vw);border-radius:18px;box-shadow:0 18px 60px rgba(0,0,0,0.28)}.sheet-handle{display:none}.biz-card-mini.is-media{height:auto !important;flex-direction:column !important;padding:0 !important;gap:0 !important;overflow:hidden !important}.menu-toggle{display:none !important}.biz-card-mini{opacity:1 !important;transform:none !important;transition:all 0.3s ease;display:flex !important;flex-direction:row !important;width:100% !important;height:130px !important;padding:12px !important;gap:12px !important;background:white !important;box-sizing:border-box !important;overflow:hidden !important}.biz-card-mini.show{opacity:1;transform:translateY(0)}.business-grid{display:grid !important;grid-template-columns:1fr 1fr !important;gap:20px !important;margin-bottom:30px !important;width:100% !important;padding:0 20px !important;box-sizing:border-box !important;align-items:stretch !important}.category-section-header{width:100% !important;margin:20px 0 8px 0 !important;padding:10px 18px !important;box-sizing:border-box !important}.mini-preview{width:110px !important;height:106px !important;flex-shrink:0 !important}.mini-content{flex:1 !important;display:flex !important;flex-direction:column !important;justify-content:space-between !important;min-width:0 !important}.mini-actions{display:flex !important;flex-direction:row !important;justify-content:flex-end !important;align-items:center !important;gap:10px !important;width:100% !important;margin-top:auto !important;padding-top:5px !important}.phone-group{margin-right:auto !important;display:flex !important;align-items:center !important;gap:8px !important;background:#f1f5f9 !important;padding:6px 14px !important;border-radius:20px !important;border:1px solid #e2e8f0 !important;flex-shrink:0 !important}.action-right{display:flex !important;gap:8px !important;margin:0 !important}.btn-icon{width:30px !important;height:30px !important;border-radius:50% !important;display:flex !important;align-items:center !important;justify-content:center !important;flex-shrink:0 !important;font-size:13px !important;box-shadow:0 2px 5px rgba(0,0,0,0.06) !important;border:none !important}.phone-txt{font-size:12.5px !important;font-weight:700 !important;color:#1e293b !important;margin-right:4px !important;white-space:nowrap !important}#menu-install-item{display:none !important}.alpha-index{display:flex;right:14px;padding:8px 6px;gap:3px}.alpha-letter{width:20px;height:16px;font-size:11px}.bus-title h2{font-size:18px}.nav-container .logo{order:1}.nav-container .nav-links{order:2;margin-left:auto;gap:18px}.biz-card-mini.is-media .mini-preview{height:200px !important;width:100% !important;border-radius:0 !important}.nav-links .lang-link{display:inline-block !important}.category-section-header small{background:rgba(255, 255, 255, 0.3) !important;backdrop-filter:blur(5px) !important;border:1px solid rgba(255, 255, 255, 0.2) !important;color:#475569 !important}.phone-group .btn-icon{width:26px !important;height:26px !important;font-size:11px !important;box-shadow:none !important}.nav-container > a[href*="meteoblue.com"]{order:3;margin-left:12px}}
 
 @media screen and (max-width: 480px){.biz-card-mini{width:100% !important;max-width:100% !important;margin:0 0 8px 0 !important;padding:8px !important;box-sizing:border-box !important}.mini-preview{width:65px !important;height:65px !important;flex-shrink:0 !important}.mini-content{padding-left:6px !important;flex:1 !important;min-width:0 !important}.biz-name{font-size:13px !important;margin-bottom:2px;font-weight:700 !important;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}.biz-card-mini.is-media .mini-actions-media{flex-wrap:nowrap !important;gap:4px !important}.biz-card-mini.is-media .media-overlay .action-right{flex-shrink:0;gap:4px !important}.biz-card-mini.is-media .media-overlay .action-right .btn-icon,.biz-card-mini.is-media .media-overlay .mini-actions-media > a.phone-btn.is-media-icon{width:28px !important;height:28px !important;font-size:12px !important;min-width:28px !important;max-width:28px !important}.biz-card-mini.is-media .mini-preview{height:136px !important}.biz-card-mini.is-media .media-location-caption{padding:var(--loc-gap) 10px 8px !important}#business-list, .business-grid{padding:0 6px !important;width:100% !important;display:flex !important;flex-direction:column !important;align-items:stretch !important;box-sizing:border-box !important}}
 
