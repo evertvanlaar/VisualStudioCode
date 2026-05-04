@@ -14,7 +14,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.65">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.94">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -99,7 +99,8 @@
     <p>You can clear site data via browser or installed-app settings.</p>
 
     <h2>9. Service worker (PWA)</h2>
-    <p>A service worker caches static assets and may serve an offline banner. It reports its version string to the page for display/diagnostics. It does not replace the analytics/telemetry statements above.</p>
+    <p>A service worker caches static assets for faster repeat visits and offline fallback. Separately, the frontend shows a <strong>sticky offline banner at the top of the screen</strong> when the browser reports that the network connection is unavailable (and keeps it visible for as long as you remain offline). While offline, the app may load previously cached data (for example the directory or bus timetable cache) and certain embeds (like maps) are disabled.</p>
+    <p>The service worker reports its version string to the page for display/diagnostics. It does not replace the analytics/telemetry statements above.</p>
 
     <h2>10. Fonts &amp; CDN</h2>
     <p>We load fonts from <strong>Google&nbsp;Fonts</strong> and icons from <strong>cdnjs</strong> (Font&nbsp;Awesome). Your browser connects to those CDNs; they may log IP and technical metadata under their policies.</p>
@@ -140,7 +141,7 @@
     </div>
 </footer>
 
-<script src="app.js?v=2.1.65"></script>
+<script src="app.js?v=2.1.94"></script>
 
 <nav class="bottom-nav" aria-label="Primary">
     <div class="bottom-nav-inner">

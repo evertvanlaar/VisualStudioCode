@@ -14,7 +14,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.65">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.94">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -99,7 +99,8 @@
     <p>Μπορείτε να διαγράψετε τα δεδομένα ιστότοπου από τις ρυθμίσεις του προγράμματος περιήγησης ή της εγκατεστημένης εφαρμογής.</p>
 
     <h2>9. Service worker (PWA)</h2>
-    <p>Διατηρεί στατικά assets και δείχνει κατάσταση offline· μεταφέρει έκδοση για εμφάνιση/διαγνωστικά.</p>
+    <p>Ο service worker διατηρεί στατικά assets για ταχύτερη φόρτωση και offline fallback. Ξεχωριστά, το frontend εμφανίζει <strong>sticky banner offline στην κορυφή της οθόνης</strong> όταν ο browser αναφέρει ότι δεν υπάρχει σύνδεση (και παραμένει ορατό όσο είστε offline). Σε offline κατάσταση η εφαρμογή μπορεί να εμφανίζει δεδομένα από cache (π.χ. κατάλογος ή δρομολόγια) και ορισμένα embeds (όπως χάρτες) απενεργοποιούνται.</p>
+    <p>Ο service worker μεταφέρει επίσης ένα string έκδοσης στη σελίδα για εμφάνιση/διαγνωστικά. Αυτό δεν αντικαθιστά τις δηλώσεις αναλυτικών/τηλεμετρίας παραπάνω.</p>
 
     <h2>10. Γραμματοσειρές &amp; CDN</h2>
     <p><strong>Google&nbsp;Fonts</strong> και <strong>cdnjs</strong> (Font&nbsp;Awesome)· η σύνδεση υπόκειται στις πολιτικές τους.</p>
@@ -140,7 +141,7 @@
     </div>
 </footer>
 
-<script src="app.js?v=2.1.65"></script>
+<script src="app.js?v=2.1.94"></script>
 
 <nav class="bottom-nav" aria-label="Κύρια πλοήγηση">
     <div class="bottom-nav-inner">

@@ -44,8 +44,16 @@ const BUS_UI_STRINGS_EMBEDDED = {
     "btnClose": "Close",
     "btnDone": "Done",
     "sheetFooterPlansChange": "Plans change — double-check before you travel.",
-    "nextDepartMinutes": "In about {n} min",
-    "nextDepartSoon": "Due soon"
+    "nextDepartMinutes": "In ~{n} min",
+    "nextDepartSoon": "Due soon",
+    "timeBandMorning": "Morning",
+    "timeBandMorningRange": "05:00–11:59",
+    "timeBandMidday": "Afternoon",
+    "timeBandMiddayRange": "12:00–17:59",
+    "timeBandEvening": "Evening",
+    "timeBandEveningRange": "18:00–23:59",
+    "timeBandNight": "Night",
+    "timeBandNightRange": "00:00–04:59"
   },
   "el": {
     "tipBeEarly": "Συμβουλή: 10 λεπτά νωρίτερα στη στάση",
@@ -67,7 +75,15 @@ const BUS_UI_STRINGS_EMBEDDED = {
     "btnDone": "Έτοιμο",
     "sheetFooterPlansChange": "Τα δρομολόγια αλλάζουν — επιβεβαιώστε πριν ταξιδέψετε.",
     "nextDepartMinutes": "Σε ~{n} λ.",
-    "nextDepartSoon": "Σύντομα"
+    "nextDepartSoon": "Σύντομα",
+    "timeBandMorning": "Πρωί",
+    "timeBandMorningRange": "05:00–11:59",
+    "timeBandMidday": "Απόγευμα",
+    "timeBandMiddayRange": "12:00–17:59",
+    "timeBandEvening": "Βράδυ",
+    "timeBandEveningRange": "18:00–23:59",
+    "timeBandNight": "Νύχτα",
+    "timeBandNightRange": "00:00–04:59"
   }
 };
 // </sync-bus-ui-strings>
@@ -125,8 +141,8 @@ const translations = {
         'bus_heading_tomorrow_upper': 'ΑΎΡΙΟ',
         'bus_heading_tomorrow': 'Αύριο',
         'bus_heading_weekday_date': '{weekday} {date}',
-        'bus_full_title_date': 'Πλήρες πρόγραμμα · {date}',
-        'bus_full_title_today': 'Πλήρες πρόγραμμα σήμερα',
+        'bus_full_title_date': 'Αναχωρήσεις · {date}',
+        'bus_full_title_today': 'Αναχωρήσεις σήμερα',
         'bus_timeline_list_aria_date': 'Αναχωρήσεις {date} σε χρονική σειρά',
         'bus_first_departure_title': 'ΠΡΩΤΟ',
         'bus_day_none': 'Δεν υπάρχουν δρομολόγια αυτή την ημέρα.',
@@ -196,7 +212,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.1.65'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.1.94'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -1011,6 +1027,7 @@ function busInitTrustInfoDialog() {
         if (typeof dialog.close === 'function') dialog.close();
     };
     const open = () => {
+        busCloseTripChooserDialog();
         refreshBusTrustUi();
         if (typeof dialog.showModal === 'function') dialog.showModal();
     };
@@ -1406,21 +1423,42 @@ function busHeadingPrimaryLine(dayOffset) {
     return tpl.replace('{weekday}', weekday).replace('{date}', dayMonthTitle);
 }
 
+/** Korte datumtekst voor de compacte filterbalk (niet in ALL CAPS). */
+function busFilterSummaryDatePhrase(dayOffset) {
+    const off = busClampDayOffset(dayOffset);
+    if (off === 0) {
+        return busText('bus_filter_summary_today', {
+            en: 'Today',
+            nl: 'Vandaag',
+            el: busT('bus_filter_summary_today', 'Σήμερα'),
+        });
+    }
+    if (off === 1) {
+        return busText('bus_filter_summary_tomorrow', {
+            en: 'Tomorrow',
+            nl: 'Morgen',
+            el: busT('bus_filter_summary_tomorrow', 'Αύριο'),
+        });
+    }
+    const { weekday, dayMonthTitle } = busAthensTargetLabels(off);
+    return `${weekday} ${dayMonthTitle}`;
+}
+
 function busFullTimetableTitle(dayOffset) {
     const off = busClampDayOffset(dayOffset);
     if (off === 0) {
         return busText('bus_full_title_today', {
-            en: 'Full timetable today',
-            nl: 'Volledig schema vandaag',
-            el: busT('bus_full_title_today', 'Πλήρες πρόγραμμα σήμερα'),
+            en: 'Departures today',
+            nl: 'Vertrektijden vandaag',
+            el: busT('bus_full_title_today', 'Αναχωρήσεις σήμερα'),
         });
     }
     const { weekday, dayMonthTitle } = busAthensTargetLabels(off);
     const dateStr = `${weekday} ${dayMonthTitle}`;
     const tpl = busText('bus_full_title_date', {
-        en: 'Full timetable · {date}',
-        nl: 'Volledig schema · {date}',
-        el: busT('bus_full_title_date', 'Πλήρες πρόγραμμα · {date}'),
+        en: 'Departures · {date}',
+        nl: 'Vertrektijden · {date}',
+        el: busT('bus_full_title_date', 'Αναχωρήσεις · {date}'),
     });
     return tpl.replace('{date}', dateStr);
 }
@@ -1433,6 +1471,106 @@ function busParseHHMMToMinutes(hhmm) {
     const min = Number(m[2]);
     if (!Number.isFinite(h) || !Number.isFinite(min) || h < 0 || h > 23 || min < 0 || min > 59) return null;
     return h * 60 + min;
+}
+
+/** Dagdeel voor tijdvak-koppen in de volledige tijdlijn. */
+function busTimeBandForDeparture(rawDep) {
+    const mins = busParseHHMMToMinutes(String(rawDep || '').trim());
+    if (mins === null) return 'morning';
+    if (mins < 5 * 60) return 'night';
+    if (mins < 12 * 60) return 'morning';
+    if (mins < 18 * 60) return 'midday';
+    return 'evening';
+}
+
+function busTimeBandForNowAthens() {
+    const nowParts = busNowAthensParts();
+    const hm = nowParts && nowParts.hm ? nowParts.hm : '';
+    if (!hm) return 'all';
+    return busTimeBandForDeparture(hm);
+}
+
+function busTimeBandAnchorId(bandKey) {
+    return `bus-timeband-${String(bandKey || '').toLowerCase()}`;
+}
+
+function busTimelineTimeSectionHtml(bandKey) {
+    const titles = { morning: 'timeBandMorning', midday: 'timeBandMidday', evening: 'timeBandEvening', night: 'timeBandNight' };
+    const ranges = { morning: 'timeBandMorningRange', midday: 'timeBandMiddayRange', evening: 'timeBandEveningRange', night: 'timeBandNightRange' };
+    const tk = titles[bandKey];
+    const rk = ranges[bandKey];
+    if (!tk || !rk) return '';
+    const anchorId = busEscapeHtml(busTimeBandAnchorId(bandKey));
+    const titlePlain = busUiString(tk);
+    const rangePlain = busUiString(rk);
+    const sectionAria = busEscapeHtml(`${titlePlain} · ${rangePlain}`);
+    const title = busEscapeHtml(titlePlain);
+    const range = busEscapeHtml(rangePlain);
+    return `<li class="bus-timeline__section" id="${anchorId}" aria-label="${sectionAria}"><div class="bus-timeline__section-head" aria-hidden="true"><span class="bus-timeline__section-title">${title}</span><span class="bus-timeline__section-range">${range}</span></div></li>`;
+}
+
+function busTimelineTimeBandAllLabel() {
+    return busText('bus_timeline_timeband_all', {
+        en: 'All',
+        nl: 'Alles',
+        el: busT('bus_timeline_timeband_all', 'Όλα'),
+    });
+}
+
+function busTimelineTimeBandNavLabel() {
+    return busText('bus_timeline_timeband_nav', {
+        en: 'Filter by time of day',
+        nl: 'Filter op dagdeel',
+        el: busT('bus_timeline_timeband_nav', 'Φίλτρο ανά ώρα ημέρας'),
+    });
+}
+
+function busTimelineBandDisabledTitle(bandKey) {
+    const titles = { morning: 'timeBandMorning', midday: 'timeBandMidday', evening: 'timeBandEvening', night: 'timeBandNight' };
+    const name = titles[bandKey] ? busUiString(titles[bandKey]) : String(bandKey || '');
+    return busText('bus_timeline_timeband_none', {
+        en: `No departures in ${name}`,
+        nl: `Geen ritten in ${name}`,
+        el: busT('bus_timeline_timeband_none', 'Δεν υπάρχουν δρομολόγια σε αυτό το διάστημα'),
+    });
+}
+
+function busTimelineJumpbarHtml(timeBandCounts, activeBandKey, { isAuto } = {}) {
+    const titles = { morning: 'timeBandMorning', midday: 'timeBandMidday', evening: 'timeBandEvening', night: 'timeBandNight' };
+    const allLabel = busEscapeHtml(busTimelineTimeBandAllLabel());
+    const aria = busEscapeHtml(busTimelineTimeBandNavLabel());
+    const active = String(activeBandKey || 'all');
+
+    const allActive = active === 'all';
+    const allPressed = allActive ? 'true' : 'false';
+    const allClass = `bus-timeline-jumpbar__btn${allActive ? ' is-active' : ''}`;
+
+    const counts = (timeBandCounts && typeof timeBandCounts === 'object') ? timeBandCounts : null;
+    const bandOrder = ['night', 'morning', 'midday', 'evening'];
+    const hasAnyBands = counts ? bandOrder.some((k) => (counts[k] || 0) > 0) : true;
+    if (!hasAnyBands) return '';
+
+    const buttons = [
+        `<button type="button" class="${allClass}" aria-pressed="${allPressed}" data-bus-band="all">${allLabel}</button>`,
+        ...bandOrder.map((bandKey) => {
+            const tk = titles[bandKey];
+            const labelPlain = tk ? busUiString(tk) : String(bandKey);
+            const label = busEscapeHtml(labelPlain);
+            const isActive = active === String(bandKey);
+            const pressed = isActive ? 'true' : 'false';
+            const cls = `bus-timeline-jumpbar__btn${isActive ? ' is-active' : ''}`;
+            const n = counts ? (counts[bandKey] || 0) : 1;
+            const disabled = n <= 0;
+            const disabledAttr = disabled ? ' disabled aria-disabled="true"' : '';
+            const disabledTitle = disabled ? ` title="${busEscapeHtml(busTimelineBandDisabledTitle(bandKey))}"` : '';
+            const autoIco = (isAuto && isActive) ? '<i class="fa-solid fa-clock bus-timeline-jumpbar__clock" aria-hidden="true"></i>' : '';
+            const autoTitle = (isAuto && isActive) ? ` title="${busEscapeHtml(busText('bus_timeline_timeband_auto', { en: 'Auto (based on current time)', nl: 'Auto (op basis van huidige tijd)', el: busT('bus_timeline_timeband_auto', 'Αυτόματα (με βάση την ώρα)') }))}"` : '';
+            const titleAttr = disabled ? disabledTitle : autoTitle;
+            return `<button type="button" class="${cls}" aria-pressed="${pressed}" data-bus-band="${busEscapeHtml(String(bandKey))}"${disabledAttr}${titleAttr}>${autoIco}${label}</button>`;
+        })
+    ].join('');
+
+    return `<div class="bus-timeline-jumpbar" role="group" aria-label="${aria}" data-bus-band-auto="${isAuto ? '1' : '0'}">${buttons}</div>`;
 }
 
 const BUS_DIR_LABELS = {
@@ -2101,10 +2239,50 @@ function busRenderTimelineList(container, buses, {
     showNextEta,
     /** Ol label + spacing for single NEXT row – same visuals as full timetable rows */
     nextPreview,
+    /** Sticky Morning / Midday / Evening (etc.) koppen in de volledige lijst */
+    timeSections = true,
+    /** 'all' | 'night' | 'morning' | 'midday' | 'evening' */
+    activeTimeBand = 'all',
+    /** When true, show clock icon on active band */
+    isAutoMode = false,
+    /** Optional counts from full list so buttons stay visible when filtered */
+    timeBandCounts,
 } = {}) {
     if (!container) return;
     const off = busClampDayOffset(dayOffset);
-    if (!buses || buses.length === 0) return busRenderEmpty(container, off);
+
+    const detachNextTipEl = () => {
+        if (!nextPreview) return null;
+        const el = document.getElementById('bus-next-tip');
+        if (el && el.parentNode) return el.parentNode.removeChild(el);
+        return null;
+    };
+    const restoreNextTipAfterNextSlot = (tip) => {
+        if (!nextPreview || !tip) return;
+        tip.classList.remove('bus-timeline__next-tip');
+        const host = document.querySelector('.bus-next-inline');
+        const slot = document.getElementById('bus-next-container');
+        if (host && slot) host.insertBefore(tip, slot.nextSibling);
+    };
+    const mountNextTipInPreviewRow = (tip) => {
+        if (!nextPreview || !tip) return;
+        const row = container.querySelector('.bus-timeline__item--next');
+        if (row) {
+            tip.classList.add('bus-timeline__next-tip');
+            row.appendChild(tip);
+        } else {
+            restoreNextTipAfterNextSlot(tip);
+        }
+    };
+
+    if (!buses || buses.length === 0) {
+        const tipDetachedEmpty = detachNextTipEl();
+        busRenderEmpty(container, off);
+        restoreNextTipAfterNextSlot(tipDetachedEmpty);
+        return;
+    }
+
+    const tipDetached = detachNextTipEl();
 
     const arrivalPrefix = busT('bus_arrival_prefix', 'Est. arrival');
     const max = (typeof limit === 'number') ? limit : 8;
@@ -2158,11 +2336,25 @@ function busRenderTimelineList(container, buses, {
         el: busT('bus_first_departure_verbose', 'Πρώτο δρομολόγιο'),
     });
 
-    const itemsHtml = buses.slice(0, Math.max(0, max)).map((bus, idx, list) => {
+    const list = buses.slice(0, Math.max(0, max));
+    const useTimeSections = timeSections !== false && !nextPreview && list.length > 1;
+    let lastBand = null;
+    const bandsSeen = [];
+    const itemFragments = [];
+    for (let idx = 0; idx < list.length; idx++) {
+        const bus = list[idx];
         const rawDep = String(bus.departure || '').trim();
+        if (useTimeSections) {
+            const band = busTimeBandForDeparture(rawDep);
+            if (band !== lastBand) {
+                bandsSeen.push(band);
+                itemFragments.push(busTimelineTimeSectionHtml(band));
+                lastBand = band;
+            }
+        }
         const dep = busEscapeHtml(bus.departure);
         const stopsPlain = busUnifiedDestinationsPlain(bus, dirKey);
-        const stopsHtml = busUnifiedDestinationsHtml(bus, dirKey);
+        const stopsHtml = nextPreview ? '' : busUnifiedDestinationsHtml(bus, dirKey);
         const isLast = idx === list.length - 1;
         const isNext = nextIdx >= 0 && idx === nextIdx;
         const highlightAria = off === 0 ? nextLblPlain : firstDepartureAria;
@@ -2182,10 +2374,20 @@ function busRenderTimelineList(container, buses, {
             if (minsUntilToday !== null) {
                 const etaPlainInit = busNextDepartEtaPlain(rawDep, off);
                 const etaHiddenAttr = !etaPlainInit ? ' hidden' : '';
-                etaTimelineHtml = `<span class="bus-next-eta bus-next-eta--timeline" aria-live="polite"${etaHiddenAttr} data-bus-departure="${busEscapeHtml(rawDep)}" data-bus-off="${off}">${busEscapeHtml(etaPlainInit)}</span>`;
+                const etaCls = nextPreview ? 'bus-next-eta bus-next-eta--inline' : 'bus-next-eta bus-next-eta--timeline';
+                etaTimelineHtml = `<span class="${etaCls}" aria-live="polite"${etaHiddenAttr} data-bus-departure="${busEscapeHtml(rawDep)}" data-bus-off="${off}">${busEscapeHtml(etaPlainInit)}</span>`;
             }
         }
-        return `
+        const nextBadgePlain = nextPreview && isNext
+            ? (off === 0 ? busText('bus_next_heading', { en: 'NEXT', nl: 'VOLGENDE', el: busT('bus_next_heading', 'ΕΠΟΜΕΝΟ') })
+                : busText('bus_first_departure_title', { en: 'FIRST', nl: 'EERSTE', el: busT('bus_first_departure_title', 'ΠΡΩΤΟ') }))
+            : '';
+        const nextBadgeHtml = nextBadgePlain ? `<span class="bus-timeline__badge" aria-hidden="true">${busEscapeHtml(nextBadgePlain)}</span>` : '';
+        const nextBadgeBodyHtml = nextBadgePlain ? `<span class="bus-timeline__badge bus-timeline__badge--col" aria-hidden="true">${busEscapeHtml(nextBadgePlain)}</span>` : '';
+        const nextBadgeRowHtml = nextPreview && nextBadgePlain
+            ? `<span class="bus-timeline__badge-row">${nextBadgeBodyHtml}${etaTimelineHtml}</span>`
+            : '';
+        itemFragments.push(`
             <li class="bus-timeline__item${isNext ? ' bus-timeline__item--next' : ''}${isLast ? ' bus-timeline__item--last' : ''}" aria-label="${itemAria}">
                 <div class="bus-timeline__axis" aria-hidden="true">
                     <span class="bus-timeline__dot"></span>
@@ -2195,25 +2397,57 @@ function busRenderTimelineList(container, buses, {
                     <div class="bus-timeline__time-row">
                         <span class="bus-timeline__time">${dep}</span>
                         ${isNext ? `<span class="bus-timeline__time-bus" aria-hidden="true"><i class="fa-solid fa-bus"></i></span>` : ''}
+                        ${nextPreview ? '' : nextBadgeHtml}
                     </div>
-                    ${etaTimelineHtml}
+                    ${nextPreview ? '' : etaTimelineHtml}
                 </div>
-                <div class="bus-timeline__body">
-                    <div class="bus-route-stops${stopsHtml ? ' bus-route-stops--compact bus-route-stops--clamp' : ''}">${stopsHtml}</div>
-                    ${note ? `<div class="bus-timeline__note">${note}</div>` : ``}
-                    ${metaLine ? `<div class="bus-timeline__meta">${metaLine}</div>` : ``}
-                    ${arrivalLine ? `<div class="bus-timeline__arrival">${arrivalLine}</div>` : ``}
+                <div class="bus-timeline__body${nextPreview ? ' bus-timeline__body--next-compact' : ''}">
+                    ${nextPreview ? nextBadgeRowHtml : `<div class="bus-route-stops${stopsHtml ? ' bus-route-stops--compact bus-route-stops--clamp' : ''}">${stopsHtml}</div>`}
+                    ${(!nextPreview && note) ? `<div class="bus-timeline__note">${note}</div>` : ``}
+                    ${(!nextPreview && metaLine) ? `<div class="bus-timeline__meta">${metaLine}</div>` : ``}
+                    ${(!nextPreview && arrivalLine) ? `<div class="bus-timeline__arrival">${arrivalLine}</div>` : ``}
                 </div>
             </li>
-        `;
-    }).join('');
+        `);
+    }
+    const itemsHtml = itemFragments.join('');
+    const timelineMod = `${nextPreview ? ' bus-timeline--next-preview' : ''}${useTimeSections ? ' bus-timeline--time-sections' : ''}`;
+    const jumpbarHtml = (!nextPreview) ? busTimelineJumpbarHtml(timeBandCounts, activeTimeBand, { isAuto: !!isAutoMode }) : '';
 
     container.innerHTML = `
         <div class="bus-timeline-wrap">
-            <ol class="bus-timeline${nextPreview ? ' bus-timeline--next-preview' : ''}" aria-label="${listAria}">${itemsHtml}</ol>
+            ${jumpbarHtml}
+            <ol class="bus-timeline${timelineMod}" aria-label="${listAria}">${itemsHtml}</ol>
             ${lowFreqHtml}
         </div>
     `;
+
+    if (!nextPreview) {
+        const bar = container.querySelector('.bus-timeline-jumpbar');
+        if (bar) {
+            const overflow = bar.scrollWidth > bar.clientWidth + 1;
+            bar.classList.toggle('is-scrollable', overflow);
+            // Ensure active button is fully visible (auto-picked band can be off-screen)
+            const activeBtn = bar.querySelector('.bus-timeline-jumpbar__btn.is-active');
+            if (activeBtn && typeof activeBtn.scrollIntoView === 'function') {
+                activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+    }
+
+    mountNextTipInPreviewRow(tipDetached);
+
+    if (!nextPreview && !container._busTimebandFilterBound) {
+        container._busTimebandFilterBound = true;
+        container.addEventListener('click', (e) => {
+            const btn = e.target && e.target.closest ? e.target.closest('.bus-timeline-jumpbar__btn') : null;
+            if (!btn) return;
+            if (btn.disabled || btn.getAttribute('aria-disabled') === 'true') return;
+            const band = btn.getAttribute('data-bus-band');
+            if (!band) return;
+            container.dispatchEvent(new CustomEvent('bus:timeband', { detail: { band } }));
+        });
+    }
 }
 
 function busRenderFullTimetable(container, buses, { routeDir, dayOffset } = {}) {
@@ -2329,6 +2563,36 @@ async function busPrefetchMissingDirs() {
     }
 }
 
+function busCloseTripChooserDialog() {
+    const dlg = document.getElementById('bus-trip-chooser-dialog');
+    if (!dlg || typeof dlg.close !== 'function') return;
+    try {
+        if (dlg.open) dlg.close();
+    } catch (err) { /* ignore */ }
+}
+
+function busInitTripChooserDialog() {
+    const dlg = document.getElementById('bus-trip-chooser-dialog');
+    const openBtn = document.getElementById('bus-trip-chooser-open');
+    const doneBtn = document.getElementById('bus-trip-chooser-done');
+    if (!dlg || !openBtn) return;
+    const setExpanded = (v) => {
+        openBtn.setAttribute('aria-expanded', v ? 'true' : 'false');
+    };
+    const close = () => busCloseTripChooserDialog();
+    const open = () => {
+        if (typeof dlg.showModal === 'function') dlg.showModal();
+        setExpanded(true);
+    };
+    openBtn.addEventListener('click', open);
+    doneBtn?.addEventListener('click', close);
+    dlg.querySelector('.bus-trip-chooser__close')?.addEventListener('click', close);
+    dlg.addEventListener('click', (e) => {
+        if (e.target === dlg) close();
+    });
+    dlg.addEventListener('close', () => setExpanded(false));
+}
+
 /** KTEL Pelion / Magnesia map in <dialog> (bus full pages only). */
 function busInitPelionMapDialog() {
     const dialog = document.getElementById('bus-pelion-map-dialog');
@@ -2339,6 +2603,7 @@ function busInitPelionMapDialog() {
         if (img && dataSrc && !img.getAttribute('src')) img.setAttribute('src', dataSrc);
     };
     const open = () => {
+        busCloseTripChooserDialog();
         ensureImgSrc();
         if (typeof dialog.showModal === 'function') dialog.showModal();
     };
@@ -2369,6 +2634,7 @@ async function initBusSchedule() {
     const nextTitleEl = document.getElementById('bus-next-section-title');
     busInitPelionMapDialog();
     busInitTrustInfoDialog();
+    busInitTripChooserDialog();
 
     // Only run on pages that include the section
     const isCombinedBusPage = !!(nextContainer || fullContainer);
@@ -2397,6 +2663,56 @@ async function initBusSchedule() {
             el: busT('bus_pick_day', 'Επιλογή ημέρας'),
         });
     }
+
+    const tripChooserTitleEl = document.getElementById('bus-trip-chooser-title');
+    const tripChooserDoneEl = document.getElementById('bus-trip-chooser-done');
+    const dirSelectLabEl = document.getElementById('bus-dir-select-label');
+    const filterBarEl = document.querySelector('.bus-filter-bar');
+    if (tripChooserTitleEl) {
+        tripChooserTitleEl.textContent = busText('bus_trip_chooser_title', {
+            en: 'Schedule options',
+            nl: 'Schema-opties',
+            el: busT('bus_trip_chooser_title', 'Επιλογές προγράμματος'),
+        });
+    }
+    if (tripChooserDoneEl) {
+        tripChooserDoneEl.textContent = busText('bus_trip_chooser_done', {
+            en: 'Done',
+            nl: 'Gereed',
+            el: busT('bus_trip_chooser_done', 'Έτοιμο'),
+        });
+    }
+    if (dirSelectLabEl) {
+        dirSelectLabEl.textContent = busText('bus_where_to', {
+            en: 'Where to?',
+            nl: 'Waarheen?',
+            el: busT('bus_where_to', 'Πού πάμε;'),
+        });
+    }
+    if (filterBarEl) {
+        filterBarEl.setAttribute('aria-label', busText('bus_filter_toolbar_aria', {
+            en: 'Timetable filters',
+            nl: 'Schemafilters',
+            el: busT('bus_filter_toolbar_aria', 'Φίλτρα δρομολογίων'),
+        }));
+    }
+
+    const filterSummaryEl = document.getElementById('bus-filter-summary');
+    const tripChooserOpenBtn = document.getElementById('bus-trip-chooser-open');
+    const refreshFilterSummary = () => {
+        if (!filterSummaryEl) return;
+        const dest = busDirLabel(activeDir);
+        const datePhrase = busFilterSummaryDatePhrase(activeDayOffset);
+        filterSummaryEl.textContent = `${dest} · ${datePhrase}`;
+        if (tripChooserOpenBtn) {
+            const ariaTpl = busText('bus_filter_bar_aria', {
+                en: 'Timetable: {dest}, {date}. Change destination or day.',
+                nl: 'Dienstregeling: {dest}, {date}. Wijzig bestemming of dag.',
+                el: busT('bus_filter_bar_aria', 'Δρομολόγια: {dest}, {date}. Αλλαγή προορισμού ή ημέρας.'),
+            });
+            tripChooserOpenBtn.setAttribute('aria-label', ariaTpl.replace('{dest}', dest).replace('{date}', datePhrase));
+        }
+    };
 
     const syncDayPickerFromOffset = () => {
         if (!dayInputEl) return;
@@ -2468,6 +2784,7 @@ async function initBusSchedule() {
             nextTitleEl.innerHTML = `<span class="bus-next-heading-label">${busEscapeHtml(plain)}</span><i class="fa-solid fa-bus bus-subsection-icon" aria-hidden="true"></i>`;
         }
         syncDayPickerFromOffset();
+        refreshFilterSummary();
     };
 
     const setActiveDirUi = (dir) => {
@@ -2482,6 +2799,9 @@ async function initBusSchedule() {
 
     let lastNormalizedForRerender = null;
     let lastSavedAtForRerender = null;
+    let activeTimeBand = (localStorage.getItem('kalanera_bus_timeband') || 'auto');
+    let lastSortedAllForBands = null;
+    let lastTimeBandCounts = null;
 
     const renderFromNormalized = (normalized, savedAtIso) => {
         lastNormalizedForRerender = normalized;
@@ -2491,6 +2811,12 @@ async function initBusSchedule() {
         const off = busClampDayOffset(activeDayOffset);
         if (isCombinedBusPage) {
             const sortedAll = busSortByDeparture([...merged]);
+            lastSortedAllForBands = sortedAll;
+            lastTimeBandCounts = sortedAll.reduce((acc, b) => {
+                const k = busTimeBandForDeparture(b.departure);
+                acc[k] = (acc[k] || 0) + 1;
+                return acc;
+            }, { night: 0, morning: 0, midday: 0, evening: 0 });
             const upcoming = (off === 0)
                 ? busSortByDeparture(busFilterRemainingToday([...merged], 10))
                 : sortedAll;
@@ -2501,10 +2827,39 @@ async function initBusSchedule() {
                     dayOffset: off,
                     showNextEta: true,
                     nextPreview: true,
+                    // NEXT is a compact status row; destinations are already in the full list.
+                    timeSections: false,
                 });
             }
             if (fullContainer) {
-                busRenderFullTimetable(fullContainer, sortedAll, { routeDir: activeDir, dayOffset: off });
+                // Default: all day. Optional: auto-pick band around next/first to shorten list.
+                const bandKey = String(activeTimeBand || 'auto');
+                // Robust auto-mode: pick band that actually contains the next/first departure.
+                // This avoids browser/timezone quirks and always yields a non-empty band when possible.
+                let autoBand = null;
+                if (bandKey === 'auto') {
+                    const idx = off === 0 ? busNextDepartureIndex(sortedAll, 10) : (sortedAll.length ? 0 : -1);
+                    const raw = idx >= 0 ? String(sortedAll[idx].departure || '').trim() : '';
+                    autoBand = raw ? busTimeBandForDeparture(raw) : null;
+                    if (!autoBand) autoBand = busTimeBandForNowAthens();
+                } else {
+                    autoBand = bandKey;
+                }
+                const effectiveBand = autoBand || 'all';
+                const showAll = effectiveBand === 'all';
+                const filteredAllPre = showAll ? sortedAll : sortedAll.filter((b) => busTimeBandForDeparture(b.departure) === effectiveBand);
+                // If the chosen band has no items, fall back to all.
+                const filteredAll = (!showAll && filteredAllPre.length === 0) ? sortedAll : filteredAllPre;
+                const effectiveForUi = (filteredAll === sortedAll) ? 'all' : effectiveBand;
+                busRenderTimelineList(fullContainer, filteredAll, {
+                    limit: 500,
+                    routeDir: activeDir,
+                    dayOffset: off,
+                    timeSections: filteredAll === sortedAll,
+                    activeTimeBand: effectiveForUi,
+                    isAutoMode: bandKey === 'auto',
+                    timeBandCounts: lastTimeBandCounts,
+                });
             }
         } else {
             const filtered = (viewMode === 'full')
@@ -2520,6 +2875,29 @@ async function initBusSchedule() {
         updateDayChrome();
         busRefreshNextEtaDom();
     };
+
+    if (fullContainer && !fullContainer._busTimebandHooked) {
+        fullContainer._busTimebandHooked = true;
+        fullContainer.addEventListener('bus:timeband', (e) => {
+            const band = e && e.detail ? e.detail.band : null;
+            activeTimeBand = band || 'all';
+            const off = busClampDayOffset(activeDayOffset);
+            if (!lastSortedAllForBands) return;
+            try { localStorage.setItem('kalanera_bus_timeband', String(activeTimeBand)); } catch { /* ignore */ }
+            const bandKey = String(activeTimeBand || 'all');
+            const showAll = bandKey === 'all';
+            const filteredAll = showAll ? lastSortedAllForBands : lastSortedAllForBands.filter((b) => busTimeBandForDeparture(b.departure) === bandKey);
+            busRenderTimelineList(fullContainer, filteredAll, {
+                limit: 500,
+                routeDir: activeDir,
+                dayOffset: off,
+                timeSections: showAll,
+                activeTimeBand: showAll ? 'all' : bandKey,
+                isAutoMode: false,
+                timeBandCounts: lastTimeBandCounts,
+            });
+        });
+    }
 
     const renderFromCacheIfAny = () => {
         const slot = busReadCacheSlot(activeDir, activeDayOffset);

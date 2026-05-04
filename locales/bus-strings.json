@@ -19,8 +19,16 @@
       "btnClose": "Close",
       "btnDone": "Done",
       "sheetFooterPlansChange": "Plans change — double-check before you travel.",
-      "nextDepartMinutes": "In about {n} min",
-      "nextDepartSoon": "Due soon"
+      "nextDepartMinutes": "In ~{n} min",
+      "nextDepartSoon": "Due soon",
+      "timeBandMorning": "Morning",
+      "timeBandMorningRange": "05:00–11:59",
+      "timeBandMidday": "Afternoon",
+      "timeBandMiddayRange": "12:00–17:59",
+      "timeBandEvening": "Evening",
+      "timeBandEveningRange": "18:00–23:59",
+      "timeBandNight": "Night",
+      "timeBandNightRange": "00:00–04:59"
     },
     "el": {
       "tipBeEarly": "Συμβουλή: 10 λεπτά νωρίτερα στη στάση",
@@ -42,7 +50,15 @@
       "btnDone": "Έτοιμο",
       "sheetFooterPlansChange": "Τα δρομολόγια αλλάζουν — επιβεβαιώστε πριν ταξιδέψετε.",
       "nextDepartMinutes": "Σε ~{n} λ.",
-      "nextDepartSoon": "Σύντομα"
+      "nextDepartSoon": "Σύντομα",
+      "timeBandMorning": "Πρωί",
+      "timeBandMorningRange": "05:00–11:59",
+      "timeBandMidday": "Απόγευμα",
+      "timeBandMiddayRange": "12:00–17:59",
+      "timeBandEvening": "Βράδυ",
+      "timeBandEveningRange": "18:00–23:59",
+      "timeBandNight": "Νύχτα",
+      "timeBandNightRange": "00:00–04:59"
     }
   }
 }

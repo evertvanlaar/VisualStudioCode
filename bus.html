@@ -11,14 +11,14 @@
     </script>
 
     <meta charset="UTF-8">
-    <title>Bus timetable Kala Nera</title>
+    <title>Bus timetable · Kala Nera stop</title>
     <link rel="canonical" href="https://www.kalanera.gr/bus.html">
     <meta name="description" content="Bus timetable from Kala Nera to Volos, Afissos, Milies, Vyzitsa, Pinakates, Neochori, Argalasti, Siki, Promiri, Katigiorgis, Milina, Platanias and Trikeri (Pelion, Greece).">
     <link rel="alternate" hreflang="en" href="https://www.kalanera.gr/bus.html" />
     <link rel="alternate" hreflang="el" href="https://www.kalanera.gr/bus-el.html" />
     <link rel="alternate" hreflang="x-default" href="https://www.kalanera.gr/bus.html" />
 
-    <meta property="og:title" content="Bus timetable Kala Nera">
+    <meta property="og:title" content="Bus timetable · Kala Nera stop">
     <meta property="og:description" content="Bus timetable from Kala Nera to Volos, Afissos, Milies, Vyzitsa, Pinakates, Neochori, Argalasti, Siki, Promiri, Katigiorgis, Milina, Platanias and Trikeri (Pelion, Greece).">
     <meta property="og:image" content="https://www.kalanera.gr/villageoverview.jpg">
     <meta property="og:type" content="website">
@@ -28,7 +28,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://www.kalanera.gr/bus.html">
     <meta name="twitter:image" content="https://www.kalanera.gr/villageoverview.jpg">
-    <meta name="twitter:title" content="Bus timetable Kala Nera">
+    <meta name="twitter:title" content="Bus timetable · Kala Nera stop">
     <meta name="twitter:description" content="Bus timetable from Kala Nera to Volos, Afissos, Milies, Vyzitsa, Pinakates, Neochori, Argalasti, Siki, Promiri, Katigiorgis, Milina, Platanias and Trikeri (Pelion, Greece).">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#4a6c4a">
@@ -37,7 +37,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.65">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.94">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -67,7 +67,7 @@
             </div>
             </a>
 
-            <button class="menu-toggle" id="mobile-menu">
+            <button class="menu-toggle" id="mobile-menu" type="button" aria-label="Open menu" title="Open menu">
                 <span class="bar"></span>
                 <span class="bar"></span>
                 <span class="bar"></span>
@@ -110,12 +110,12 @@
 </header>
 
 <div class="main-container">
-    <section class="bus-section" aria-label="Bus timetable Kala Nera">
+    <section class="bus-section" aria-label="Bus timetable · Kala Nera stop">
         <header class="bus-page-heading bus-page-heading--top-pill">
             <h1 class="bus-page-title bus-page-title--border-pill">
                 <span class="bus-page-title-row">
                     <i class="fa-solid fa-bus bus-page-title-icon" aria-hidden="true"></i>
-                    <span class="bus-page-title-plain">Bus timetable Kala Nera</span>
+                    <span class="bus-page-title-plain">Bus timetable · Kala Nera stop</span>
                 </span>
             </h1>
             <div class="bus-page-deck">
@@ -126,14 +126,37 @@
             </div>
         </header>
         <div class="bus-sticky-zone">
-        <div class="bus-input-cluster">
-        <div class="bus-input-panel bus-input-panel--destination">
-            <div class="bus-controls bus-controls--select">
-                <div class="bus-input-inline-row">
-                    <label for="bus-dir-select" class="bus-day-input-label">Where to?</label>
-                    <div class="bus-picker-strip" role="group" aria-label="Destination and regional map">
-                    <div class="bus-picker-stack">
-                        <select id="bus-dir-select" class="bus-dir-select" aria-label="Choose destination from Kala Nera">
+            <div class="bus-filter-bar" role="toolbar" aria-label="Timetable filters">
+                <button type="button" id="bus-trip-chooser-open" class="bus-filter-bar__main" aria-haspopup="dialog" aria-controls="bus-trip-chooser-dialog" aria-expanded="false">
+                    <span id="bus-filter-summary" class="bus-filter-bar__summary">Volos · Today</span>
+                    <i class="fa-solid fa-chevron-down bus-filter-bar__chev" aria-hidden="true"></i>
+                </button>
+                <div class="bus-filter-bar__actions">
+                    <button type="button" class="bus-map-open" id="bus-pelion-map-open" aria-haspopup="dialog" aria-controls="bus-pelion-map-dialog" aria-label="Open Pelion &amp; Magnesia map" title="Open Pelion &amp; Magnesia map">
+                        <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" id="bus-trust-info-open" class="bus-trust-info-btn bus-trust-info-btn--toolbar" aria-haspopup="dialog" aria-controls="bus-trust-info-dialog">
+                        <span class="bus-trust-info-btn__ico" aria-hidden="true">ⓘ</span>
+                        <span class="bus-trust-info-btn__txt">About times</span>
+                    </button>
+                </div>
+            </div>
+            <span id="bus-line-hint" class="bus-line-hint bus-line-hint--below-controls" hidden></span>
+            <div class="bus-meta">
+                <button type="button" id="bus-retry" class="bus-retry" hidden>Retry</button>
+            </div>
+        </div><!-- /.bus-sticky-zone -->
+
+        <dialog id="bus-trip-chooser-dialog" class="bus-trip-chooser-dialog" aria-labelledby="bus-trip-chooser-title">
+            <div class="bus-trip-chooser__shell">
+                <header class="bus-trip-chooser__head">
+                    <h3 id="bus-trip-chooser-title" class="bus-trip-chooser__title">Schedule options</h3>
+                    <button type="button" class="bus-trip-chooser__close" aria-label="Close"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                </header>
+                <div class="bus-trip-chooser__body">
+                    <div class="bus-trip-chooser__field">
+                        <label id="bus-dir-select-label" for="bus-dir-select" class="bus-trip-chooser__label">Where to?</label>
+                        <select id="bus-dir-select" class="bus-dir-select bus-dir-select--chooser" aria-labelledby="bus-dir-select-label">
                             <optgroup label="Main">
                                 <option value="volos" selected>Volos</option>
                                 <option value="afissos">Afissos</option>
@@ -156,47 +179,15 @@
                                 <option value="trikeri">Trikeri</option>
                             </optgroup>
                         </select>
-                        <button type="button" class="bus-map-open" id="bus-pelion-map-open" aria-haspopup="dialog" aria-controls="bus-pelion-map-dialog">
-                            <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
-                            <span class="bus-map-open__text bus-map-open__text--full">Pelion &amp; Magnesia map</span>
-                            <span class="bus-map-open__text bus-map-open__text--short">Map</span>
-                        </button>
                     </div>
-                    <button type="button" class="bus-map-preview" data-open-pelion-map aria-label="Open full map: Pelion and Magnesia (KTEL)">
-                        <img src="pix/map_magnesia_en.gif" alt="" width="140" height="90" loading="lazy" decoding="async" class="bus-map-preview__img">
-                    </button>
+                    <div class="bus-trip-chooser__field">
+                        <label for="bus-day-input" id="bus-day-input-label" class="bus-trip-chooser__label">Pick day</label>
+                        <input type="date" id="bus-day-input" class="bus-day-input" autocomplete="off">
                     </div>
+                    <button type="button" id="bus-trip-chooser-done" class="bus-trip-chooser__done">Done</button>
                 </div>
             </div>
-            <span id="bus-line-hint" class="bus-line-hint bus-line-hint--below-controls" hidden></span>
-        </div>
-
-        <div class="bus-input-panel bus-input-panel--when">
-            <div class="bus-input-inline-row">
-                <label for="bus-day-input" id="bus-day-input-label" class="bus-day-input-label">Pick day</label>
-                <input type="date" id="bus-day-input" class="bus-day-input" autocomplete="off">
-                <button type="button" id="bus-trust-info-open" class="bus-trust-info-btn" aria-haspopup="dialog" aria-controls="bus-trust-info-dialog">
-                    <span class="bus-trust-info-btn__ico" aria-hidden="true">ⓘ</span>
-                    <span class="bus-trust-info-btn__txt">About times</span>
-                </button>
-            </div>
-        </div>
-        </div>
-
-        <div class="bus-meta">
-            <button type="button" id="bus-retry" class="bus-retry" hidden>Retry</button>
-        </div>
-
-        <div class="bus-next-highlight">
-            <div class="bus-next-heading-row">
-                <div id="bus-next-section-title" class="bus-subsection-title bus-subsection-title--next" aria-live="polite"><span class="bus-next-heading-label">NEXT</span><i class="fa-solid fa-bus bus-subsection-icon" aria-hidden="true"></i></div>
-                <p id="bus-next-tip" class="bus-next-tip" role="note" aria-live="polite"></p>
-            </div>
-            <div id="bus-next-container" class="bus-container bus-container--next" aria-live="polite">
-                <div class="bus-skeleton" aria-hidden="true"></div>
-            </div>
-        </div>
-        </div><!-- /.bus-sticky-zone -->
+        </dialog>
 
         <dialog id="bus-trust-info-dialog" class="bus-trust-dialog" aria-labelledby="bus-trust-dialog-title">
             <div class="bus-trust-dialog__shell">
@@ -231,8 +222,15 @@
 
         <div class="bus-full-section">
             <div class="bus-full-panel">
-            <div class="bus-subsection-title bus-subsection-title--full" id="bus-full-title">Full timetable today</div>
-            <p id="bus-full-origin-note" class="bus-full-origin-note" role="note"></p>
+            <div class="bus-full-head">
+                <div class="bus-subsection-pill bus-subsection-pill--border" id="bus-full-title">Departures today</div>
+            </div>
+            <div class="bus-next-inline" aria-label="Next bus">
+                <div id="bus-next-container" class="bus-container bus-container--next" aria-live="polite">
+                    <div class="bus-skeleton" aria-hidden="true"></div>
+                </div>
+                <p id="bus-next-tip" class="bus-next-tip" role="note" aria-live="polite"></p>
+            </div>
             <div id="bus-full-container" class="bus-container bus-container--full" aria-live="polite">
                 <div class="bus-skeleton" aria-hidden="true"></div>
                 <div class="bus-skeleton" aria-hidden="true"></div>
@@ -250,14 +248,14 @@
         </div>
 
         <div class="bus-service-info" aria-label="Volos station and KTEL contact">
-            <p><strong>Volos:</strong> Buses depart from the main KTEL Magnesia bus station at <a class="bus-ktel-link" href="https://www.google.com/maps/search/?api=1&amp;query=KTEL%20Magnesia%20Zachou%205%20Volos%20Greece" target="_blank" rel="noopener noreferrer" title="Open in Google Maps">Zachou Street 5, Volos</a>.</p>
-            <p><strong>Contact:</strong> Tourists can call <a class="bus-ktel-link" href="tel:+302421033254" title="Call KTEL information">+30&nbsp;24210&nbsp;33254</a> for current schedule changes.</p>
+            <p><strong>Buses:</strong> Depart from the main KTEL station in <a class="bus-ktel-link" href="https://www.google.com/maps/search/?api=1&amp;query=KTEL%20Magnesia%20Zachou%205%20Volos%20Greece" target="_blank" rel="noopener noreferrer" title="KTEL Magnesia station, Zachou Street 5, Volos — open in Maps" aria-label="Open KTEL Magnesia bus station in Maps (Zachou Street 5, Volos)">Volos</a>.</p>
+            <p><strong>Contact:</strong> Call <a class="bus-ktel-link" href="tel:+302421033254" title="Call KTEL information">+30&nbsp;24210&nbsp;33254</a> for schedule changes.</p>
         </div>
         <p class="bus-page-privacy-foot"><a href="privacy.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Privacy policy</a></p>
     </section>
 </div>
 
-<script src="app.js?v=2.1.65"></script>
+<script src="app.js?v=2.1.94"></script>
 
 <nav class="bottom-nav" aria-label="Primary">
     <div class="bottom-nav-inner">
