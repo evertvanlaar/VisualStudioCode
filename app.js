@@ -212,7 +212,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.1.94'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.1.100'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -1550,9 +1550,8 @@ function busTimelineJumpbarHtml(timeBandCounts, activeBandKey, { isAuto } = {}) 
     const hasAnyBands = counts ? bandOrder.some((k) => (counts[k] || 0) > 0) : true;
     if (!hasAnyBands) return '';
 
-    const buttons = [
-        `<button type="button" class="${allClass}" aria-pressed="${allPressed}" data-bus-band="all">${allLabel}</button>`,
-        ...bandOrder.map((bandKey) => {
+    const allBtnHtml = `<button type="button" class="${allClass}" aria-pressed="${allPressed}" data-bus-band="all">${allLabel}</button>`;
+    const bandBtnHtml = bandOrder.map((bandKey) => {
             const tk = titles[bandKey];
             const labelPlain = tk ? busUiString(tk) : String(bandKey);
             const label = busEscapeHtml(labelPlain);
@@ -1563,14 +1562,47 @@ function busTimelineJumpbarHtml(timeBandCounts, activeBandKey, { isAuto } = {}) 
             const disabled = n <= 0;
             const disabledAttr = disabled ? ' disabled aria-disabled="true"' : '';
             const disabledTitle = disabled ? ` title="${busEscapeHtml(busTimelineBandDisabledTitle(bandKey))}"` : '';
-            const autoIco = (isAuto && isActive) ? '<i class="fa-solid fa-clock bus-timeline-jumpbar__clock" aria-hidden="true"></i>' : '';
+            const autoIco = '';
             const autoTitle = (isAuto && isActive) ? ` title="${busEscapeHtml(busText('bus_timeline_timeband_auto', { en: 'Auto (based on current time)', nl: 'Auto (op basis van huidige tijd)', el: busT('bus_timeline_timeband_auto', 'Αυτόματα (με βάση την ώρα)') }))}"` : '';
             const titleAttr = disabled ? disabledTitle : autoTitle;
             return `<button type="button" class="${cls}" aria-pressed="${pressed}" data-bus-band="${busEscapeHtml(String(bandKey))}"${disabledAttr}${titleAttr}>${autoIco}${label}</button>`;
+        }).join('');
+
+    // Segmented UI (B): always render, but CSS can switch to menu-only on very small screens.
+    const idxMap = { all: 0, night: 1, morning: 2, midday: 3, evening: 4 };
+    const activeIdx = (idxMap[active] != null) ? idxMap[active] : 0;
+    const segButtons = `${allBtnHtml}${bandBtnHtml}`;
+    const segmented = `<div class="bus-timeline-jumpbar bus-timeband-seg" role="group" aria-label="${aria}" data-bus-band-auto="${isAuto ? '1' : '0'}" style="--active-idx:${activeIdx}"><span class="bus-timeband-seg__thumb" aria-hidden="true"></span>${segButtons}</div>`;
+
+    // Menu UI (D): shown on very small screens via CSS. Uses the same band buttons for consistency.
+    const menuLblPlain = active === 'all' ? busTimelineTimeBandAllLabel() : (titles[active] ? busUiString(titles[active]) : active);
+    const menuLbl = busEscapeHtml(menuLblPlain);
+    const menuOpenAria = busEscapeHtml(busText('bus_timeband_menu_open', {
+        en: 'Choose time of day filter',
+        nl: 'Kies dagdeel-filter',
+        el: busT('bus_timeband_menu_open', 'Επιλογή φίλτρου ώρας ημέρας'),
+    }));
+    const menuOpen = `<button type="button" class="bus-timeband-menu__open" aria-haspopup="dialog" aria-controls="bus-timeband-menu-dialog" aria-label="${menuOpenAria}"><span class="bus-timeband-menu__open-label">${menuLbl}</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>`;
+    const menuItems = [
+        `<button type="button" class="bus-timeband-menu__item${allActive ? ' is-active' : ''}" data-bus-band="all"${allActive ? ' aria-current="true"' : ''}>${allLabel}</button>`,
+        ...bandOrder.map((bandKey) => {
+            const tk = titles[bandKey];
+            const labelPlain = tk ? busUiString(tk) : String(bandKey);
+            const label = busEscapeHtml(labelPlain);
+            const isActive = active === String(bandKey);
+            const n = counts ? (counts[bandKey] || 0) : 1;
+            const disabled = n <= 0;
+            const disabledAttr = disabled ? ' disabled aria-disabled="true"' : '';
+            const disabledTitle = disabled ? ` title="${busEscapeHtml(busTimelineBandDisabledTitle(bandKey))}"` : '';
+            const autoIco = '';
+            const autoTitle = (isAuto && isActive) ? ` title="${busEscapeHtml(busText('bus_timeline_timeband_auto', { en: 'Auto (based on current time)', nl: 'Auto (op basis van huidige tijd)', el: busT('bus_timeline_timeband_auto', 'Αυτόματα (με βάση την ώρα)') }))}"` : '';
+            const titleAttr = disabled ? disabledTitle : autoTitle;
+            return `<button type="button" class="bus-timeband-menu__item${isActive ? ' is-active' : ''}" data-bus-band="${busEscapeHtml(String(bandKey))}"${disabledAttr}${titleAttr}${isActive ? ' aria-current="true"' : ''}>${autoIco}${label}</button>`;
         })
     ].join('');
+    const menuDialog = `<dialog id="bus-timeband-menu-dialog" class="bus-timeband-menu__dialog" aria-label="${aria}"><div class="bus-timeband-menu__sheet">${menuItems}</div></dialog>`;
 
-    return `<div class="bus-timeline-jumpbar" role="group" aria-label="${aria}" data-bus-band-auto="${isAuto ? '1' : '0'}">${buttons}</div>`;
+    return `<div class="bus-timeband-ui">${segmented}${menuOpen}${menuDialog}</div>`;
 }
 
 const BUS_DIR_LABELS = {
@@ -2247,6 +2279,8 @@ function busRenderTimelineList(container, buses, {
     isAutoMode = false,
     /** Optional counts from full list so buttons stay visible when filtered */
     timeBandCounts,
+    /** Optional: highlight this exact next departure (precomputed from full list). */
+    nextDepartureKey,
 } = {}) {
     if (!container) return;
     const off = busClampDayOffset(dayOffset);
@@ -2321,10 +2355,28 @@ function busRenderTimelineList(container, buses, {
     }
     const listAria = busEscapeHtml(listAriaPlain);
 
-    /** Vandaag: eerstvolgende rit; andere gekozen dag: eerste rit (zelfde als ΠΡΩΤΟ/FIRST). */
-    const nextIdx = off === 0
-        ? busNextDepartureIndex(buses, 10)
-        : (buses.length > 0 ? 0 : -1);
+    const makeKey = (bus) => {
+        if (!bus) return '';
+        const tid = String(bus.trip_id || '').trim();
+        if (tid) return `trip:${tid}`;
+        const dep = String(bus.departure || '').trim();
+        const dest = String(bus.destination || '').trim();
+        return `dep:${dep}::${dest}`;
+    };
+
+    /** Vandaag: highlight only the true global "next" departure (if it exists in this list). */
+    let nextIdx = -1;
+    if (off !== 0) {
+        nextIdx = (buses.length > 0 ? 0 : -1);
+    } else if (nextDepartureKey) {
+        const k = String(nextDepartureKey || '');
+        for (let i = 0; i < buses.length; i++) {
+            if (makeKey(buses[i]) === k) { nextIdx = i; break; }
+        }
+    } else {
+        // Fallback behavior: compute next within the currently visible list.
+        nextIdx = busNextDepartureIndex(buses, 10);
+    }
     const nextLblPlain = busText('bus_timeline_next_badge', {
         en: 'Next bus',
         nl: 'Volgende bus',
@@ -2440,6 +2492,29 @@ function busRenderTimelineList(container, buses, {
     if (!nextPreview && !container._busTimebandFilterBound) {
         container._busTimebandFilterBound = true;
         container.addEventListener('click', (e) => {
+            const menuOpen = e.target && e.target.closest ? e.target.closest('.bus-timeband-menu__open') : null;
+            if (menuOpen) {
+                const dlg = container.querySelector('#bus-timeband-menu-dialog');
+                if (dlg && typeof dlg.showModal === 'function') dlg.showModal();
+                return;
+            }
+            const menuItem = e.target && e.target.closest ? e.target.closest('.bus-timeband-menu__item') : null;
+            if (menuItem) {
+                if (menuItem.disabled || menuItem.getAttribute('aria-disabled') === 'true') return;
+                const band = menuItem.getAttribute('data-bus-band');
+                const dlg = container.querySelector('#bus-timeband-menu-dialog');
+                if (dlg && typeof dlg.close === 'function') {
+                    try { dlg.close(); } catch { /* ignore */ }
+                }
+                if (!band) return;
+                container.dispatchEvent(new CustomEvent('bus:timeband', { detail: { band } }));
+                return;
+            }
+            const dlgBackdrop = e.target && e.target.matches ? (e.target.matches('#bus-timeband-menu-dialog') ? e.target : null) : null;
+            if (dlgBackdrop && typeof dlgBackdrop.close === 'function') {
+                try { dlgBackdrop.close(); } catch { /* ignore */ }
+                return;
+            }
             const btn = e.target && e.target.closest ? e.target.closest('.bus-timeline-jumpbar__btn') : null;
             if (!btn) return;
             if (btn.disabled || btn.getAttribute('aria-disabled') === 'true') return;
@@ -2654,6 +2729,13 @@ async function initBusSchedule() {
 
     const dayInputEl = document.getElementById('bus-day-input');
     let activeDayOffset = busClampDayOffset(parseInt(localStorage.getItem(BUS_DAY_OFFSET_STORAGE_KEY) || '0', 10));
+    // Firefox mobile: users expect "cache reset" to default back to today.
+    // Firefox may keep localStorage while clearing SW caches, so enforce today on small Firefox screens.
+    try {
+        const isFf = (window.CSS && typeof window.CSS.supports === 'function' && window.CSS.supports('-moz-appearance:none'));
+        const isSmall = window.matchMedia && window.matchMedia('(max-width: 767px)').matches;
+        if (isFf && isSmall) activeDayOffset = 0;
+    } catch { /* ignore */ }
 
     const pickLab = document.getElementById('bus-day-input-label');
     if (pickLab) {
@@ -2802,6 +2884,7 @@ async function initBusSchedule() {
     let activeTimeBand = (localStorage.getItem('kalanera_bus_timeband') || 'auto');
     let lastSortedAllForBands = null;
     let lastTimeBandCounts = null;
+    let lastNextDepartureKey = null;
 
     const renderFromNormalized = (normalized, savedAtIso) => {
         lastNormalizedForRerender = normalized;
@@ -2817,6 +2900,16 @@ async function initBusSchedule() {
                 acc[k] = (acc[k] || 0) + 1;
                 return acc;
             }, { night: 0, morning: 0, midday: 0, evening: 0 });
+            lastNextDepartureKey = (() => {
+                const idx = off === 0 ? busNextDepartureIndex(sortedAll, 10) : (sortedAll.length ? 0 : -1);
+                const b = idx >= 0 ? sortedAll[idx] : null;
+                if (!b) return null;
+                const tid = String(b.trip_id || '').trim();
+                if (tid) return `trip:${tid}`;
+                const dep = String(b.departure || '').trim();
+                const dest = String(b.destination || '').trim();
+                return `dep:${dep}::${dest}`;
+            })();
             const upcoming = (off === 0)
                 ? busSortByDeparture(busFilterRemainingToday([...merged], 10))
                 : sortedAll;
@@ -2841,7 +2934,15 @@ async function initBusSchedule() {
                     const idx = off === 0 ? busNextDepartureIndex(sortedAll, 10) : (sortedAll.length ? 0 : -1);
                     const raw = idx >= 0 ? String(sortedAll[idx].departure || '').trim() : '';
                     autoBand = raw ? busTimeBandForDeparture(raw) : null;
-                    if (!autoBand) autoBand = busTimeBandForNowAthens();
+                    if (!autoBand) {
+                        // If "next departure" can't be computed, choose a non-empty band around "now".
+                        const nowBand = busTimeBandForNowAthens();
+                        const counts = lastTimeBandCounts || { night: 0, morning: 0, midday: 0, evening: 0 };
+                        const base = ['night', 'morning', 'midday', 'evening'];
+                        const i = base.indexOf(nowBand);
+                        const order = i < 0 ? base : [...base.slice(i), ...base.slice(0, i)];
+                        autoBand = order.find((k) => (counts[k] || 0) > 0) || 'all';
+                    }
                 } else {
                     autoBand = bandKey;
                 }
@@ -2859,6 +2960,7 @@ async function initBusSchedule() {
                     activeTimeBand: effectiveForUi,
                     isAutoMode: bandKey === 'auto',
                     timeBandCounts: lastTimeBandCounts,
+                    nextDepartureKey: lastNextDepartureKey,
                 });
             }
         } else {
