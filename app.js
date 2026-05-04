@@ -212,7 +212,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.1.100'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.1.101'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -2364,17 +2364,18 @@ function busRenderTimelineList(container, buses, {
         return `dep:${dep}::${dest}`;
     };
 
-    /** Vandaag: highlight only the true global "next" departure (if it exists in this list). */
+    /**
+     * Highlight at most one row: match `nextDepartureKey` in this list when set
+     * (today = global next departure; other days = first departure of that day).
+     * Never use "index 0" on a filtered list — that marks the wrong trip for daypart views.
+     */
     let nextIdx = -1;
-    if (off !== 0) {
-        nextIdx = (buses.length > 0 ? 0 : -1);
-    } else if (nextDepartureKey) {
+    if (nextDepartureKey) {
         const k = String(nextDepartureKey || '');
         for (let i = 0; i < buses.length; i++) {
             if (makeKey(buses[i]) === k) { nextIdx = i; break; }
         }
-    } else {
-        // Fallback behavior: compute next within the currently visible list.
+    } else if (off === 0) {
         nextIdx = busNextDepartureIndex(buses, 10);
     }
     const nextLblPlain = busText('bus_timeline_next_badge', {
