@@ -220,7 +220,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.1.113'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.1.114'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -3052,6 +3052,7 @@ async function initBusSchedule() {
                 activeTimeBand: showAll ? 'all' : bandKey,
                 isAutoMode: false,
                 timeBandCounts: lastTimeBandCounts,
+                nextDepartureKey: lastNextDepartureKey,
             });
         });
     }
