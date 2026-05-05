@@ -3,6 +3,8 @@
   "short_name": "Kala Nera",
   "description": "Kala Nera Pelion, the perfect blend of mountain and sea",
   "id": "/",
+  "lang": "en",
+  "dir": "ltr",
   "start_url": "/index.html?source=pwa",
   "scope": "/",
   "display": "standalone",
