@@ -37,7 +37,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.101">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.113">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -112,12 +112,14 @@
 <div class="main-container">
     <section class="bus-section" aria-label="Δρομολόγια λεωφορείου · στάση Καλά Νερά">
         <header class="bus-page-heading bus-page-heading--top-pill">
-            <h1 class="bus-page-title bus-page-title--border-pill">
-                <span class="bus-page-title-row">
-                    <i class="fa-solid fa-bus bus-page-title-icon" aria-hidden="true"></i>
-                    <span class="bus-page-title-plain">Δρομολόγια λεωφορείου · στάση Καλά Νερά</span>
-                </span>
-            </h1>
+            <div class="bus-top-divider__center" aria-label="Κεφαλίδα δρομολογίων">
+                <h1 class="bus-page-title bus-page-title--border-pill">
+                    <span class="bus-page-title-row">
+                        <i class="fa-solid fa-bus bus-page-title-icon" aria-hidden="true"></i>
+                        <span class="bus-page-title-plain">Δρομολόγια λεωφορείου · στάση Καλά Νερά</span>
+                    </span>
+                </h1>
+            </div>
             <div class="bus-page-deck">
                 <a class="bus-ktel-glossy" href="https://ktelvolou.gr/el/routes/list/" target="_blank" rel="noopener noreferrer" title="ΚΤΕΛ Ν. Μαγνησίας — επίσημη λίστα δρομολογίων" aria-label="ΚΤΕΛ Νομού Μαγνησίας — επίσημη λίστα δρομολογίων (ανοίγει σε νέα καρτέλα)">
                     <img class="bus-ktel-logo" src="pix/ktel-logo.jpg" alt="ΚΤΕΛ Ν. Μαγνησίας" width="120" height="36" loading="lazy" decoding="async">
@@ -132,12 +134,11 @@
                     <i class="fa-solid fa-chevron-down bus-filter-bar__chev" aria-hidden="true"></i>
                 </button>
                 <div class="bus-filter-bar__actions">
+                    <button type="button" class="bus-filter-today" id="bus-filter-today" aria-label="Επιλογή σήμερα" title="Σήμερα">
+                        Σήμερα
+                    </button>
                     <button type="button" class="bus-map-open" id="bus-pelion-map-open" aria-haspopup="dialog" aria-controls="bus-pelion-map-dialog" aria-label="Άνοιγμα χάρτη Πηλίου &amp; Μαγνησίας" title="Άνοιγμα χάρτη Πηλίου &amp; Μαγνησίας">
                         <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
-                    </button>
-                    <button type="button" id="bus-trust-info-open" class="bus-trust-info-btn bus-trust-info-btn--toolbar" aria-haspopup="dialog" aria-controls="bus-trust-info-dialog">
-                        <span class="bus-trust-info-btn__ico" aria-hidden="true">ⓘ</span>
-                        <span class="bus-trust-info-btn__txt">Για τις ώρες</span>
                     </button>
                 </div>
             </div>
@@ -223,7 +224,12 @@
         <div class="bus-full-section">
             <div class="bus-full-panel">
             <div class="bus-full-head">
-                <div class="bus-subsection-pill bus-subsection-pill--border" id="bus-full-title">Αναχωρήσεις σήμερα</div>
+                <div class="bus-subsection-pill bus-subsection-pill--border" id="bus-full-title">
+                    <span class="bus-subsection-pill__text">Αναχωρήσεις σήμερα</span>
+                    <button type="button" id="bus-trust-info-open" class="bus-trust-info-btn bus-trust-info-btn--in-pill" aria-haspopup="dialog" aria-controls="bus-trust-info-dialog" aria-label="Για τις ώρες" title="Για τις ώρες">
+                        <span class="bus-trust-info-btn__ico" aria-hidden="true"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></span>
+                    </button>
+                </div>
             </div>
             <div class="bus-next-inline" aria-label="Επόμενο λεωφορείο">
                 <div id="bus-next-container" class="bus-container bus-container--next" aria-live="polite">
@@ -247,15 +253,15 @@
             </div>
         </div>
 
-        <div class="bus-service-info" aria-label="Σταθμός Βόλου και επικοινωνία ΚΤΕΛ">
-            <p><strong>Βόλος:</strong> Τα λεωφορεία αναχωρούν από τον κεντρικό σταθμό ΚΤΕΛ Μαγνησίας στον <a class="bus-ktel-link" href="https://www.google.com/maps/search/?api=1&amp;query=KTEL%20Magnesia%20Zachou%205%20Volos%20Greece" target="_blank" rel="noopener noreferrer" title="Σταθμός ΚΤΕΛ Μαγνησίας, Ζάχου 5, Βόλος — άνοιγμα στο χάρτη" aria-label="Άνοιγμα σταθμού ΚΤΕΛ Μαγνησίας στο χάρτη (Ζάχου 5, Βόλος)">Βόλο</a>.</p>
+        <div class="bus-service-info" aria-label="Σταθμός ΚΤΕΛ και επικοινωνία">
+            <p><strong>Σταθμός ΚΤΕΛ:</strong> <a class="bus-ktel-link" href="https://www.google.com/maps/search/?api=1&amp;query=KTEL%20Magnesia%20Zachou%205%20Volos%20Greece" target="_blank" rel="noopener noreferrer" title="Σταθμός ΚΤΕΛ Μαγνησίας, Ζάχου 5, Βόλος — άνοιγμα στο χάρτη" aria-label="Άνοιγμα σταθμού ΚΤΕΛ Μαγνησίας στο χάρτη (Ζάχου 5, Βόλος)">Βόλος</a> (Ζάχου&nbsp;5).</p>
             <p><strong>Επικοινωνία:</strong> Οι επισκέπτες μπορούν να καλέσουν το <a class="bus-ktel-link" href="tel:+302421033254" title="Κλήση πληροφοριών ΚΤΕΛ">+30&nbsp;24210&nbsp;33254</a> για τρέχουσες αλλαγές στο πρόγραμμα.</p>
         </div>
         <p class="bus-page-privacy-foot"><a href="privacy-el.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Πολιτική απορρήτου</a></p>
     </section>
 </div>
 
-<script src="app.js?v=2.1.101"></script>
+<script src="app.js?v=2.1.113"></script>
 
 <nav class="bottom-nav" aria-label="Κύρια πλοήγηση">
     <div class="bottom-nav-inner">

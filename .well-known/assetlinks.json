@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.kalanera.app",
+        "sha256_cert_fingerprints": ["87:94:87:F4:0F:8F:BE:72:4A:1A:20:36:C8:2F:65:16:32:44:CA:4E:BE:33:23:73:A2:A1:09:E8:99:60:22:51"]
+      }
+    }]

@@ -31,6 +31,10 @@ const BUS_UI_STRINGS_EMBEDDED = {
     "trustOfflineCached": "If you are offline, this page shows the last timetable cached from your last successful load.",
     "trustPrimary": "Times are estimates (Volos KTEL + ~30 min to this stop). Not an official timetable.",
     "trustUltraCompact": "Est. from Volos KTEL (+~30 min). Not official.",
+    "trustPrimaryFromVolos": "Times shown are estimates for the Kala Nera stop — they apply to buses departing from Volos (KTEL) towards Kala Nera / Pelion (+~30 min to this stop). Not an official timetable.",
+    "trustUltraCompactFromVolos": "Est. for Kala Nera stop (from Volos KTEL, +~30 min). Not official.",
+    "trustPrimaryToVolos": "Times shown are for the Kala Nera stop. Not an official timetable.",
+    "trustUltraCompactToVolos": "Times for Kala Nera stop. Not official.",
     "linkOfficialKtelShort": "Official KTEL",
     "linkOfficialKtelLong": "Open official KTEL timetables",
     "chipMoreStops": "+{n} stops",
@@ -61,6 +65,10 @@ const BUS_UI_STRINGS_EMBEDDED = {
     "trustOfflineCached": "Αν είστε offline, η σελίδα δείχνει το τελευταίο αποθηκευμένο πρόγραμμα από την τελευταία επιτυχή φόρτωση.",
     "trustPrimary": "Οι ώρες είναι εκτιμώμενες (δρομολόγιο ΚΤΕΛ Βόλου + ~30 λεπτά για τη στάση). Δεν είναι επίσημο πρόγραμμα.",
     "trustUltraCompact": "Εκτίμηση από ΚΤΕΛ Βόλου (+~30 λεπτά). Όχι επίσημο.",
+    "trustPrimaryFromVolos": "Οι ώρες είναι εκτιμήσεις για τη στάση στα Καλά Νερά — ισχύουν για λεωφορεία που αναχωρούν από ΚΤΕΛ Βόλου προς Καλά Νερά / Πήλιο (+~30 λεπτά μέχρι τη στάση). Δεν είναι επίσημο πρόγραμμα.",
+    "trustUltraCompactFromVolos": "Εκτίμηση για στάση Καλά Νερά (από ΚΤΕΛ Βόλου, +~30′). Όχι επίσημο.",
+    "trustPrimaryToVolos": "Οι ώρες αφορούν τη στάση στα Καλά Νερά. Δεν είναι επίσημο πρόγραμμα.",
+    "trustUltraCompactToVolos": "Ώρες για στάση Καλά Νερά. Όχι επίσημο.",
     "linkOfficialKtelShort": "Επίσημο ΚΤΕΛ",
     "linkOfficialKtelLong": "Άνοιγμα επίσημων δρομολογίων ΚΤΕΛ",
     "chipMoreStops": "+{n} στάσεις",
@@ -212,7 +220,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.1.101'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.1.113'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -959,14 +967,19 @@ function refreshBusTrustUi() {
     const dialogTitle = document.getElementById('bus-trust-dialog-title');
     const btn = document.getElementById('bus-trust-info-open');
     const btnTxt = btn && btn.querySelector ? btn.querySelector('.bus-trust-info-btn__txt') : null;
-    const tip = busUiString('trustUltraCompact');
+    const dirRaw = (() => {
+        try { return localStorage.getItem('kalanera_bus_dir') || BUS_DEFAULT_DIR; } catch { return BUS_DEFAULT_DIR; }
+    })();
+    const dir = BUS_VALID_DIRS.includes(String(dirRaw || '')) ? String(dirRaw || '') : BUS_DEFAULT_DIR;
+    const isToVolos = dir === 'volos';
+    const tip = busUiString(isToVolos ? 'trustUltraCompactToVolos' : 'trustUltraCompactFromVolos') || busUiString('trustUltraCompact');
     const openHint = busText('bus_trust_open_sheet_hint', {
         en: 'Opens details and official KTEL link.',
         nl: 'Opent details en officiële KTEL-link.',
         el: busT('bus_trust_open_sheet_hint', 'Ανοίγει λεπτομέρειες και επίσημο σύνδεσμο ΚΤΕΛ.'),
     });
 
-    const primary = busUiString('trustPrimary');
+    const primary = busUiString(isToVolos ? 'trustPrimaryToVolos' : 'trustPrimaryFromVolos') || busUiString('trustPrimary');
 
     const tipEl = document.getElementById('bus-next-tip');
     if (tipEl) tipEl.textContent = busUiString('tipBeEarly');
@@ -2390,7 +2403,12 @@ function busRenderTimelineList(container, buses, {
     });
 
     const list = buses.slice(0, Math.max(0, max));
-    const useTimeSections = timeSections !== false && !nextPreview && list.length > 1;
+    // Only show MORNING / AFTERNOON / EVENING dividers when a daypart filter is active.
+    // In "All" mode, the list should be uninterrupted.
+    const useTimeSections = timeSections !== false
+        && !nextPreview
+        && list.length > 1
+        && String(activeTimeBand || '') !== 'all';
     let lastBand = null;
     const bandsSeen = [];
     const itemFragments = [];
@@ -2782,11 +2800,32 @@ async function initBusSchedule() {
 
     const filterSummaryEl = document.getElementById('bus-filter-summary');
     const tripChooserOpenBtn = document.getElementById('bus-trip-chooser-open');
+    const todayBtn = document.getElementById('bus-filter-today');
     const refreshFilterSummary = () => {
         if (!filterSummaryEl) return;
         const dest = busDirLabel(activeDir);
         const datePhrase = busFilterSummaryDatePhrase(activeDayOffset);
         filterSummaryEl.textContent = `${dest} · ${datePhrase}`;
+        if (todayBtn) {
+            const isToday = busClampDayOffset(activeDayOffset) === 0;
+            todayBtn.disabled = isToday;
+            todayBtn.setAttribute('aria-disabled', isToday ? 'true' : 'false');
+            todayBtn.textContent = busText('bus_now_short', {
+                en: 'Now',
+                nl: 'Nu',
+                el: busT('bus_now_short', 'Τώρα'),
+            });
+            todayBtn.setAttribute('title', busText('bus_today', {
+                en: 'Today',
+                nl: 'Vandaag',
+                el: busT('bus_today', 'Σήμερα'),
+            }));
+            todayBtn.setAttribute('aria-label', busText('bus_today_select', {
+                en: 'Select today',
+                nl: 'Selecteer vandaag',
+                el: busT('bus_today_select', 'Επιλογή σήμερα'),
+            }));
+        }
         if (tripChooserOpenBtn) {
             const ariaTpl = busText('bus_filter_bar_aria', {
                 en: 'Timetable: {dest}, {date}. Change destination or day.',
@@ -2802,6 +2841,16 @@ async function initBusSchedule() {
         dayInputEl.min = busScheduleTargetYmd(0);
         dayInputEl.max = busScheduleTargetYmd(BUS_DAY_OFFSET_MAX);
         dayInputEl.value = busScheduleTargetYmd(activeDayOffset);
+    };
+
+    const setDayOffset = (off) => {
+        const next = busClampDayOffset(off);
+        if (next === activeDayOffset) return;
+        activeDayOffset = next;
+        try { localStorage.setItem(BUS_DAY_OFFSET_STORAGE_KEY, String(activeDayOffset)); } catch { /* ignore */ }
+        syncDayPickerFromOffset();
+        updateDayChrome();
+        load({ force: false });
     };
 
     const mountDayPicker = () => {
@@ -2820,18 +2869,15 @@ async function initBusSchedule() {
                 return;
             }
             const off = busDayOffsetFromPickedYmd(raw);
-            if (off === activeDayOffset) return;
-            activeDayOffset = off;
-            try {
-                localStorage.setItem(BUS_DAY_OFFSET_STORAGE_KEY, String(activeDayOffset));
-            } catch (err) { /* ignore */ }
-            syncDayPickerFromOffset();
-            updateDayChrome();
-            load({ force: false });
+            setDayOffset(off);
         });
     };
 
     mountDayPicker();
+    if (todayBtn && !todayBtn.dataset.mounted) {
+        todayBtn.dataset.mounted = '1';
+        todayBtn.addEventListener('click', () => setDayOffset(0));
+    }
 
     if (nextContainer) {
         busInitEtaDomHooks();
@@ -2839,7 +2885,15 @@ async function initBusSchedule() {
     }
 
     const updateDayChrome = () => {
-        if (fullTitleEl) fullTitleEl.textContent = busFullTimetableTitle(activeDayOffset);
+        if (fullTitleEl) {
+            const title = busFullTimetableTitle(activeDayOffset);
+            const textNode = fullTitleEl.querySelector('.bus-subsection-pill__text');
+            if (textNode) {
+                textNode.textContent = title;
+            } else {
+                fullTitleEl.textContent = title;
+            }
+        }
         if (nextTitleEl) {
             const plain = activeDayOffset === 0
                 ? busText('bus_next_heading', {
