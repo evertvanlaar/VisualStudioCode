@@ -1,7 +1,7 @@
 // service-worker.js
-const VERSION = '2.1.114'; // Dit sturen we naar de Sheet
-const CACHE_NAME = 'kalanera-cache-v2.1.114'; // Dit dwingt de code-update af
-const IMAGE_CACHE = 'kalanera-images-v2.1.114'; // Afbeeldingen apart cachen voor snelheid
+const VERSION = '2.1.115'; // Dit sturen we naar de Sheet
+const CACHE_NAME = 'kalanera-cache-v2.1.115'; // Dit dwingt de code-update af
+const IMAGE_CACHE = 'kalanera-images-v2.1.115'; // Afbeeldingen apart cachen voor snelheid
 
 // VOEG DIT TOE: Luister naar vragen van de app
 self.addEventListener('message', (event) => {
@@ -10,29 +10,24 @@ self.addEventListener('message', (event) => {
   }
 });
 
-// Zorg ook dat deze erin staan (die dwingen de update af):
-self.addEventListener('install', (event) => {
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', (event) => {
-  event.waitUntil(clients.claim());
-});
-
 // manifest.json niet pre-cachen: oude background_color bleef anders "vast" in splash/PWA-metadata
 const STATIC_ASSETS = [
   '/',
+  '/offline.html',
+  '/icon-192.png',
   '/icon-512.png'
 ];
 
-self.addEventListener('install', event => {
+// Single install handler: precache + immediate activation.
+self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS))
   );
   self.skipWaiting();
 });
 
-self.addEventListener('activate', event => {
+// Single activate handler: cleanup + claim.
+self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then(keys => {
       return Promise.all(
@@ -181,7 +176,9 @@ self.addEventListener('fetch', event => {
           }
           return networkResponse;
         })
-        .catch(() => caches.match(event.request)),
+        .catch(() =>
+          caches.match(event.request).then((cached) => cached || caches.match('/offline.html'))
+        ),
     );
     return;
   }

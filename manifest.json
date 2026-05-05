@@ -1,13 +1,44 @@
 {
   "name": "Kala Nera Business Directory",
   "short_name": "Kala Nera",
-  "description": "Discover the Magic of Pelion.",
-  "start_url": "/index.html",
+  "description": "Kala Nera Pelion, the perfect blend of mountain and sea",
+  "id": "/",
+  "start_url": "/index.html?source=pwa",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#4197f4",
+  "background_color": "#86BCE8",
   "theme_color": "#4a6c4a",
   "orientation": "any",
+  "categories": ["travel", "food", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "Bus timetable",
+      "short_name": "Bus",
+      "url": "/bus.html",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Favorites",
+      "short_name": "Favorites",
+      "url": "/wishlist.html",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/villageoverview.jpg",
+      "sizes": "2048x1025",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Kala Nera overview"
+    },
+    {
+      "src": "/villagefront.jpg",
+      "sizes": "960x720",
+      "type": "image/jpeg",
+      "label": "Kala Nera village"
+    }
+  ],
   "icons": [
     {
       "src": "/icon-512.png",
@@ -22,7 +53,7 @@
       "purpose": "maskable"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
