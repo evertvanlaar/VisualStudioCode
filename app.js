@@ -220,7 +220,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.1.116'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.1.126'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -421,12 +421,6 @@ document.addEventListener('DOMContentLoaded', updateOnlineStatus);
 
 /** Vaste gebieden in de UI (matcht Sheet-waarden Location). Uitbreiden: array aanpassen. */
 const SITE_LOCATION_FILTERS = ['Kala Nera', 'Kato Gatzea', 'Koropi'];
-
-function getColor(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    return `hsl(${Math.abs(hash) % 360}, 60%, 45%)`;
-}
 
 /** Stabiele id voor ankers / #fragment (alleen a-z, 0-9, hyphen). */
 function categorySectionSlug(cat) {
