@@ -1,4 +1,4 @@
-/* version 2.1.126 */
+/* version 2.1.129 */
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
 @keyframes slideDown{from{transform: translate(-50%, -100%); opacity: 0}to{transform: translate(-50%, 0); opacity: 1}}
@@ -1673,6 +1673,42 @@ html[lang="el"] .bus-page-title.bus-page-title--border-pill{
   margin-bottom:0 !important;min-width:0;max-width:none !important;width:100%;margin-inline:0 !important;
 }
 
+/* Directory index: titel + “add business” CTA (zelfde gloss als Categories / A–Z segment) */
+.directory-page-heading{
+  display:flex;flex-direction:column;align-items:stretch;gap:10px;
+  margin:0 0 10px 0;width:100%;max-width:100%;box-sizing:border-box;
+}
+.directory-page-heading h1{margin:0;width:100%;min-width:0;line-height:1.2;overflow-wrap:anywhere}
+.directory-head-add{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  align-self:center;width:fit-content;max-width:100%;box-sizing:border-box;
+  padding:10px 18px;border-radius:999px;text-decoration:none;
+  font-weight:900;font-size:12px;letter-spacing:0.02em;line-height:1.2;
+  color:#2d5a27!important;
+  background:linear-gradient(180deg,#f4faf4 0%,#cfe3cf 100%);
+  border:1px solid rgba(74,108,74,0.32);
+  box-shadow:
+    0 1px 2px rgba(15,23,42,0.08),
+    0 3px 10px rgba(45,90,39,0.14),
+    inset 0 1px 0 rgba(255,255,255,0.92);
+  transition:transform .15s ease,box-shadow .2s ease,filter .2s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.directory-head-add i{font-size:14px;color:inherit;opacity:0.95;flex-shrink:0}
+.directory-head-add:hover{
+  filter:brightness(1.03);
+  box-shadow:
+    0 2px 4px rgba(15,23,42,0.1),
+    0 5px 14px rgba(45,90,39,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.95);
+  color:#1a4a14!important;
+}
+.directory-head-add:active{transform:scale(0.99)}
+.directory-head-add:focus-visible{outline:2px solid var(--primary-olive,#4a6c4a);outline-offset:3px}
+@media (max-width:380px){
+  .directory-head-add{padding:9px 14px;font-size:11px}
+}
+
 .directory-toolbar-filters{
   display:flex;flex-direction:column;align-items:stretch;gap:8px;min-width:0;
 }
@@ -1922,7 +1958,7 @@ html[lang="el"] .bus-page-title.bus-page-title--border-pill{
 /* Alleen directory-index: compacter blok + titel ( :has() ≈ iOS 15.4+, moderne desktop) */
 @supports selector(:has(*)){
 .main-container:has(.directory-toolbar){margin-top:28px;margin-bottom:16px}
-.main-container:has(.directory-toolbar) > h1{font-size:clamp(1.15rem,2.8vw,1.55rem);margin-bottom:8px;letter-spacing:-0.02em;line-height:1.2}
+.main-container:has(.directory-toolbar) .directory-page-heading h1{font-size:clamp(1.15rem,2.8vw,1.55rem);letter-spacing:-0.02em;line-height:1.2}
 }
 
 .filter-btn, .add-biz-btn{white-space:nowrap;padding:8px 16px !important;border-radius:12px !important;font-size:13px !important;font-weight:700 !important;cursor:pointer;transition:all 0.25s ease;border:1px solid rgba(226, 232, 240, 0.8) !important;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
@@ -1987,7 +2023,7 @@ h1{font-size:1.35rem;margin-bottom:10px;line-height:1.15}
 .directory-toolbar .search-container .search-icon{font-size:14px !important}
 .directory-toolbar-filters .view-toggle--segment .view-toggle-btn{padding:0 6px !important;font-size:10px !important}
 @supports selector(:has(*)){
-.main-container:has(.directory-toolbar) > h1{font-size:1.2rem;margin-bottom:6px}
+.main-container:has(.directory-toolbar) .directory-page-heading h1{font-size:1.2rem}
 }
 }
 
