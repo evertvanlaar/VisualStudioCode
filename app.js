@@ -220,7 +220,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.1.130'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.1.131'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -867,8 +867,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3a. Bottom nav: voeg "Bus" toe (tussen Home en Add)
-    ensureBottomNavBusButton();
+    // 3a. Bottom nav: zorg voor vaste volgorde Home → Bus → Favorites → Add → More
+    ensureBottomNavOrder();
 
     // 3b. Mobile "More" tab (bottom nav)
     initMoreTab();
@@ -889,35 +889,61 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-function ensureBottomNavBusButton() {
+function ensureBottomNavOrder() {
     const inner = document.querySelector('.bottom-nav .bottom-nav-inner');
     if (!inner) return;
-
-    // Prevent duplicates if some pages already have a bus tab
-    if (inner.querySelector('a[data-tab="bus"], a[href$="bus.html"], a[href$="bus-el.html"]')) return;
 
     const lang = (document.documentElement.lang || 'en').toLowerCase();
     const isEl = lang === 'el' || lang.startsWith('el');
     const isNl = lang === 'nl' || lang.startsWith('nl');
     const path = (location.pathname || '').toLowerCase();
     const isInSubdir = path.includes('/business/') || path.includes('/n8n/');
+
+    const homeHref = isInSubdir
+        ? (isEl ? '../index-el.html' : '../index.html')
+        : (isEl ? 'index-el.html' : 'index.html');
+
     const busHref = isInSubdir
         ? (isEl ? '../bus-el.html' : '../bus.html')
         : (isEl ? 'bus-el.html' : 'bus.html');
-    const label = isEl ? 'Λεωφορείο' : (isNl ? 'Busschema' : 'Bus');
 
-    const busA = document.createElement('a');
-    busA.href = busHref;
-    busA.setAttribute('data-tab', 'bus');
-    busA.innerHTML = `<i class="fa-solid fa-bus"></i><span>${label}</span>`;
+    const favHref = isInSubdir
+        ? (isEl ? '../wishlist-el.html' : '../wishlist.html')
+        : (isEl ? 'wishlist-el.html' : 'wishlist.html');
 
-    // Keep ordering: Home → Bus → Favorites → Add → More
-    const homeA = inner.querySelector('a[href$="index.html"], a[aria-current="page"]');
-    if (homeA && homeA.parentNode === inner) {
-        homeA.insertAdjacentElement('afterend', busA);
+    const addHref = isInSubdir
+        ? (isEl ? '../t-form-el.html' : '../t-form.html')
+        : (isEl ? 't-form-el.html' : 't-form.html');
+
+    const busLabel = isEl ? 'Λεωφορείο' : (isNl ? 'Busschema' : 'Bus');
+
+    const getByExactHref = (href) => Array.from(inner.querySelectorAll('a[href]'))
+        .find(a => (a.getAttribute('href') || '').toLowerCase() === href.toLowerCase());
+
+    const homeA = getByExactHref(homeHref) || inner.querySelector('a[aria-current="page"]') || inner.querySelector('a[href]');
+    let busA =
+        inner.querySelector('a[data-tab="bus"]') ||
+        getByExactHref(busHref) ||
+        inner.querySelector('a[href$="bus.html"], a[href$="bus-el.html"]');
+
+    const favA = getByExactHref(favHref) || inner.querySelector('a[href$="wishlist.html"], a[href$="wishlist-el.html"]');
+    const addA = getByExactHref(addHref) || inner.querySelector('a[href$="t-form.html"], a[href$="t-form-el.html"]');
+    const moreA = inner.querySelector('a[data-more]');
+
+    if (!busA) {
+        busA = document.createElement('a');
+        busA.href = busHref;
+        busA.setAttribute('data-tab', 'bus');
+        busA.innerHTML = `<i class="fa-solid fa-bus"></i><span>${busLabel}</span>`;
     } else {
-        inner.insertAdjacentElement('afterbegin', busA);
+        // Ensure label stays consistent per language
+        const span = busA.querySelector('span');
+        if (span) span.textContent = busLabel;
     }
+
+    // Force exact order
+    const ordered = [homeA, busA, favA, addA, moreA].filter(Boolean);
+    ordered.forEach(a => inner.appendChild(a));
 
     // Mark current tab for bus pages
     if (path.endsWith('/bus.html') || path.endsWith('/bus-el.html') || path.endsWith('bus.html') || path.endsWith('bus-el.html')) {
