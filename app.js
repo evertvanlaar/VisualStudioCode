@@ -220,7 +220,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.1.129'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.1.130'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -867,6 +867,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 3a. Bottom nav: voeg "Bus" toe (tussen Home en Add)
+    ensureBottomNavBusButton();
+
     // 3b. Mobile "More" tab (bottom nav)
     initMoreTab();
 
@@ -885,6 +888,42 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Map button is ready");
     }
 });
+
+function ensureBottomNavBusButton() {
+    const inner = document.querySelector('.bottom-nav .bottom-nav-inner');
+    if (!inner) return;
+
+    // Prevent duplicates if some pages already have a bus tab
+    if (inner.querySelector('a[data-tab="bus"], a[href$="bus.html"], a[href$="bus-el.html"]')) return;
+
+    const lang = (document.documentElement.lang || 'en').toLowerCase();
+    const isEl = lang === 'el' || lang.startsWith('el');
+    const isNl = lang === 'nl' || lang.startsWith('nl');
+    const path = (location.pathname || '').toLowerCase();
+    const isInSubdir = path.includes('/business/') || path.includes('/n8n/');
+    const busHref = isInSubdir
+        ? (isEl ? '../bus-el.html' : '../bus.html')
+        : (isEl ? 'bus-el.html' : 'bus.html');
+    const label = isEl ? 'Λεωφορείο' : (isNl ? 'Busschema' : 'Bus');
+
+    const busA = document.createElement('a');
+    busA.href = busHref;
+    busA.setAttribute('data-tab', 'bus');
+    busA.innerHTML = `<i class="fa-solid fa-bus"></i><span>${label}</span>`;
+
+    // Keep ordering: Home → Bus → Favorites → Add → More
+    const homeA = inner.querySelector('a[href$="index.html"], a[aria-current="page"]');
+    if (homeA && homeA.parentNode === inner) {
+        homeA.insertAdjacentElement('afterend', busA);
+    } else {
+        inner.insertAdjacentElement('afterbegin', busA);
+    }
+
+    // Mark current tab for bus pages
+    if (path.endsWith('/bus.html') || path.endsWith('/bus-el.html') || path.endsWith('bus.html') || path.endsWith('bus-el.html')) {
+        busA.setAttribute('aria-current', 'page');
+    }
+}
 
 // --- BUS SCHEDULE (Homepage) ---
 function busT(key, fallback) {
@@ -3221,7 +3260,6 @@ function renderMoreSheetContent() {
     const isEl = (document.documentElement.lang || 'en') === 'el';
     const brandName = isEl ? 'ΚάντεΚλικ' : 'KanteKlik';
     const labels = {
-        bus: isEl ? 'Λεωφορείο (Καλά Νερά)' : 'Bus (Kala Nera)',
         useful: isEl ? 'Χρήσιμα τηλέφωνα' : 'Useful numbers',
         install: isEl ? 'Εγκατάσταση εφαρμογής' : 'Install App',
         about: isEl ? 'Σχετικά με εμάς' : 'About us',
@@ -3248,7 +3286,6 @@ function renderMoreSheetContent() {
     const copyrightRaw = (footerCopyright && footerCopyright.trim()) ? footerCopyright.trim() : copyrightFallback;
 
     const version = (typeof APP_VERSION !== 'undefined') ? APP_VERSION : '';
-    const busHref = isEl ? 'bus-el.html' : 'bus.html';
     const privacyHref = isEl ? 'privacy-el.html' : 'privacy.html';
 
     const formattedCopyright = (() => {
@@ -3259,16 +3296,6 @@ function renderMoreSheetContent() {
     })();
 
     container.innerHTML = `
-        <section class="more-section">
-            <h3>${labels.bus}</h3>
-            <div class="more-links">
-                <a href="${busHref}">
-                    <span class="more-link-leading"><i class="fa-solid fa-bus"></i><span class="more-link-label">${labels.bus}</span></span>
-                    <small>${isEl ? 'ΣΗΜΕΡΑ' : 'TODAY'}</small>
-                </a>
-            </div>
-        </section>
-
         <section class="more-section">
             <h3>${labels.useful}</h3>
             <div class="more-links">
