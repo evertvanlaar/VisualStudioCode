@@ -14,7 +14,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.131">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.170">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -48,10 +48,11 @@
             </button>
 
             <ul class="nav-links" id="nav-list">
-                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html"><i class="fa-solid fa-house" aria-hidden="true"></i> Home</a></li>
                 <li><a href="bus.html"><i class="fa-solid fa-bus"></i> Bus (Kala Nera)</a></li>
                 <li><a href="wishlist.html"><i class="fa-solid fa-heart menu-heart"></i> Favorites</a></li>
-                <li><a href="t-form.html">Add your Business</a></li>
+                <li><a href="t-form.html"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Add your Business</a></li>
+                <li><a href="info.html"><i class="fa-solid fa-compass" aria-hidden="true"></i> Pelion guide</a></li>
                 <li><a href="privacy-el.html" class="lang-link">
                     <img src="pix/flags/gr.svg" alt="Ελληνικά" style="width: 20px; vertical-align: middle;">
                 </a></li>
@@ -62,7 +63,7 @@
 
 <main class="legal-page" id="top">
     <h1>Privacy policy</h1>
-    <p class="legal-meta">Last updated: 2&nbsp;May&nbsp;2026 · Applies to <strong>kalanera.gr</strong> (website and installable PWA). This notice reflects how the published frontend and backends behave today.</p>
+    <p class="legal-meta">Last updated: 13&nbsp;May&nbsp;2026 · Applies to <strong>kalanera.gr</strong> (website and installable PWA). This notice reflects how the published frontend and backends behave today.</p>
 
     <h2>1. Who we are</h2>
     <p>The <strong>Kala Nera Business Directory</strong> website and mobile-style web app (“PWA”) are operated for local discovery of businesses and related services around Kala Nera, Pelion, Greece (project “E‑Project”). For privacy questions contact <a href="mailto:info@spiti.tech">info@spiti.tech</a>.</p>
@@ -77,7 +78,7 @@
     <p>Certain pages include <strong>Google Analytics&nbsp;4</strong>, operated by <strong>Google</strong>. That service may use cookies or similar technologies and process usage-related data under Google’s policies. See Google’s privacy documentation for retention, regional controllers, and available controls.</p>
 
     <h2>4. Application telemetry</h2>
-    <p>Shortly after load, the client sends a small JSON payload (typically ~1.5&nbsp;s delay) via <strong>HTTPS POST</strong> to an endpoint on <strong>self-hosted workflow automation</strong> (n8n) operated for this site. We intentionally <strong>do not publish the full hostname</strong> here. Regulatory or data-protection enquiries (including processor details where appropriate): <a href="mailto:info@spiti.tech">info@spiti.tech</a>.</p>
+    <p>Shortly after load, the client sends a small JSON payload (typically ~1.5&nbsp;s delay) via <strong>HTTPS POST</strong> to an endpoint on <strong>self-hosted workflow automation</strong> operated for this site. We intentionally <strong>do not publish the full hostname</strong> here. Regulatory or data-protection enquiries (including processor details where appropriate): <a href="mailto:info@spiti.tech">info@spiti.tech</a>.</p>
     <p>The payload supports secure operation and product diagnostics only — <strong>not</strong> advertising profiling. It may include: event kind (for example open, first recorded install/version, bundle update); whether the UI ran as an installed PWA or in the browser; coarse app/stylesheet version markers; coarse OS/device class from the user-agent; viewport size; referrer or “direct”; light/dark preference; and a human-readable timestamp.</p>
     <p>The server may derive approximate, non-precise location context from the connection IP using standard geo-lookup services, for aggregated operational statistics.</p>
     <p>No telemetry POST is sent while you stay on <code>privacy.html</code> or <code>privacy-el.html</code>.</p>
@@ -87,15 +88,25 @@
     <p><strong>Bus timetables:</strong> schedules shown are for convenience and reflect <strong>official KTEL</strong> information. For Kala&nbsp;Nera and the wider Pelion area, the regional operator is <strong>KTEL Magnesia</strong> (<strong>Volos</strong>). For authoritative times, cancellations, and service changes, follow that operator’s official channels — we do not list third‑party timetable URLs in this notice.</p>
     <p>Responses may be cached briefly on the server (including material maintained via spreadsheets or APIs behind those endpoints) to reduce upstream load; that processing happens server-side, not in your browser.</p>
 
+    <h3>5.1 Business detail pages (<code>/business/</code>)</h3>
+    <p>Listings may also be published as static pages under <code>/business/</code> on this domain. For privacy purposes, treat them like other public pages on the site: the same client bundle applies unless this notice says otherwise.</p>
+
     <h2>6. Weather widget</h2>
     <p>Where the weather chip is shown, the app calls <strong>Open‑Meteo</strong> (<code>api.open-meteo.com</code>) using fixed coordinates for Kala&nbsp;Nera. No precise device GPS is sent for that lookup. Review Open‑Meteo’s privacy statement for details.</p>
 
     <h2>7. Embedded content &amp; outbound links</h2>
     <p>Pages may embed or link to external resources (e.g. live webcam images, Meteoblue, Google&nbsp;Maps, Facebook, KTEL websites). Opening those links or embeds exposes standard connection data to those third parties under their policies.</p>
 
+    <h3>7.1 “Add your Business” form (Tally)</h3>
+    <p>The listing-interest form for adding a business is embedded from <strong>Tally</strong> (<code>tally.so</code>). Your submission is processed by Tally under their terms and privacy policy; the site operator receives the response through that product for operational handling (review, publication decisions, or follow-up).</p>
+
+    <h3>7.2 Mobile “More” sheet</h3>
+    <p>On narrow viewports the bottom bar includes a <strong>More</strong> action that opens a sheet of shortcuts (e.g. Pelion guide hub, flights, events, walking resources, useful numbers, install prompt, Facebook, email, privacy). Content is assembled in the browser from the same script bundle as other pages; internal links are adjusted when you are viewing a page under <code>/business/</code> so you stay on the correct origin.</p>
+
     <h2>8. Local storage on your device</h2>
     <p>The app uses <strong>browser localStorage</strong> and <strong>PWA / service-worker caches</strong> so content loads faster and parts of the directory or bus views can work offline. Typical categories stored locally include UI preferences (such as theme and directory layout), favourites, cached snapshots of listings or timetables with refresh timestamps, bus-screen choices, and markers linked to version reporting.</p>
-    <p>Favourites stay on your device unless you later use a feature that deliberately sends them to a server.</p>
+    <p>Favourites stay on your device.</p>
+    <p><strong>Language choice:</strong> English and Greek are separate HTML pages; switching language is normal navigation.</p>
     <p>You can clear site data via browser or installed-app settings.</p>
 
     <h2>9. Service worker (PWA)</h2>
@@ -119,12 +130,40 @@
 
 <footer class="site-footer">
     <div class="footer-container">
-        <div class="footer-column">
-            <h3>Legal</h3>
-            <ul>
-                <li><a href="privacy.html" aria-current="page">Privacy policy</a></li>
-                <li><a href="mailto:info@spiti.tech"><i class="fa fa-envelope"></i> Contact</a></li>
-            </ul>
+        <div class="footer-column footer-column--brand">
+            <a href="index.html" class="footer-brand-lockup">
+                <img src="logo.png" alt="Kala Nera" width="52" height="52" class="footer-brand-logo" loading="lazy">
+                <span class="footer-lockup-wordmark logo">Kala <span>Nera</span></span>
+            </a>
+            <p class="footer-tagline">Kala Nera · Pelion, Greece</p>
+            <p class="footer-lead">We help travelers discover the best places—from authentic taverns to wonderful stays—in Kala Nera and the wider Pelion area.</p>
+        </div>
+        <div class="footer-column footer-column--site">
+            <div class="footer-nav-section">
+                <h3>Site</h3>
+                <ul>
+                    <li><a href="bus.html"><i class="fa-solid fa-bus" aria-hidden="true"></i> Bus (Kala Nera)</a></li>
+                    <li><a href="wishlist.html"><i class="fa-solid fa-heart" aria-hidden="true"></i> Favorites</a></li>
+                    <li><a href="t-form.html"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Add your Business</a></li>
+                    <li><a href="info.html"><i class="fa-solid fa-compass" aria-hidden="true"></i> Pelion guide</a></li>
+                    <li><a href="useful-numbers.html"><i class="fa-solid fa-phone" aria-hidden="true"></i> Useful numbers</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-column footer-column--social">
+            <h3>Social</h3>
+            <div class="social-icons">
+                <a href="https://www.facebook.com/kalanera.info" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Kala Nera on Facebook">
+                    <i class="fab fa-facebook-f" aria-hidden="true"></i>
+                </a>
+            </div>
+        <div class="footer-nav-section footer-nav-section--under-social">
+                <h3>Info</h3>
+                <ul>
+                    <li><a href="mailto:info@spiti.tech"><i class="fa fa-envelope" aria-hidden="true"></i> Contact</a></li>
+                    <li><a href="privacy.html" aria-current="page"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Privacy policy</a></li>
+                </ul>
+            </div>
         </div>
     </div>
     <div class="footer-bottom">
@@ -136,18 +175,20 @@
             </a>
         </div>
         <div class="footer-bottom-row">
-            <p>© 2026 Kala Nera Business Directory</p>
+            <p>© 2026 Kala Nera Business Directory. E-Project all rights reserved.</p>
+            <div class="app-version-tag"><i class="fa fa-th-large" aria-hidden="true"></i> Mobile App</div>
         </div>
     </div>
 </footer>
 
-<script src="app.js?v=2.1.131"></script>
+<script src="app.js?v=2.1.170"></script>
 
 <nav class="bottom-nav" aria-label="Primary">
     <div class="bottom-nav-inner">
         <a href="index.html"><i class="fa-solid fa-house"></i><span>Home</span></a>
+        <a href="bus.html"><i class="fa-solid fa-bus"></i><span>Bus</span></a>
         <a href="wishlist.html"><i class="fa-solid fa-heart"></i><span>Favorites</span></a>
-        <a href="t-form.html"><i class="fa-solid fa-circle-plus"></i><span>Add</span></a>
+        <a href="info.html"><i class="fa-solid fa-compass"></i><span>Guide</span></a>
         <a href="#" data-more><i class="fa-solid fa-ellipsis"></i><span>More</span></a>
     </div>
 </nav>

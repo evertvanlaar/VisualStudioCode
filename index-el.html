@@ -55,7 +55,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
     
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.131">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.170">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -103,23 +103,11 @@
             </button>
 
             <ul class="nav-links" id="nav-list">
-                <li><a href="index-el.html">Αρχική</a></li>
+                <li><a href="index-el.html"><i class="fa-solid fa-house" aria-hidden="true"></i> Αρχική</a></li>
                 <li><a href="bus-el.html"><i class="fa-solid fa-bus"></i> Λεωφορείο (Καλά Νερά)</a></li>
                 <li><a href="wishlist-el.html"><i class="fa-solid fa-heart menu-heart"></i> Αγαπημένα</a></li>
-                <li><a href="t-form-el.html">Προσθέστε Επιχείρησή</a></li>
-
-                <li class="nav-emergency-item">
-                    <a href="#" onclick="toggleNavEmergency(event)" class="sos-trigger">
-                        <i class="fa-solid fa-phone" style="color: #3498db;"></i>Χρήσιμα τηλέφωνα
-                    </a>
-                    <div id="navEmergencyMenu" class="nav-sos-dropdown">
-                        <div class="nav-sos-header"> </div>
-                        <a href="tel:+302423086222"><i class="fa-solid fa-shield"></i> Αστυνομία Μηλιές <span class="phone-no">(+30 24230 86222)</span></a>
-                        <a href="tel:+302423022385"><i class="fa-solid fa-pills"></i> Φαρμακείο Καλά Νερά <span class="phone-no">(+30 24230 22385)</span></a>
-                        <a href="tel:+302423022160"><i class="fa-solid fa-pills"></i> Φαρμακείο Κάτω Γατζέα <span class="phone-no">(+30 24230 22160)</span></a>
-                        <a href="tel:+302423086666"><i class="fa-solid fa-user-doctor"></i> Ιατρός Καλά Νερά <span class="phone-no">(+30 24230 86666)</span></a>
-                    </div>
-                </li>
+                <li><a href="t-form-el.html"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Προσθέστε Επιχείρηση</a></li>
+                <li><a href="info-el.html"><i class="fa-solid fa-compass" aria-hidden="true"></i> Οδηγός Πηλίου</a></li>
 
                 <li id="menu-install-item" class="mobile-only-item">
                     <a href="#" onclick="triggerManualInstall(event)">
@@ -153,9 +141,9 @@
     <div class="main-container">
         <div class="directory-page-heading">
             <h1>Κατάλογος Επιχειρήσεων</h1>
-            <a href="t-form-el.html" class="directory-head-add">
-                <i class="fa-solid fa-circle-plus" aria-hidden="true"></i>
-                <span>Προσθέστε Επιχείρησή</span>
+            <a href="info-el.html" class="directory-head-add">
+                <i class="fa-solid fa-compass" aria-hidden="true"></i>
+                <span>Οδηγός Πηλίου</span>
             </a>
         </div>
 
@@ -229,24 +217,26 @@
                 <ul>
                     <li><a href="bus-el.html"><i class="fa-solid fa-bus" aria-hidden="true"></i> Λεωφορείο (Καλά Νερά)</a></li>
                     <li><a href="wishlist-el.html"><i class="fa-solid fa-heart" aria-hidden="true"></i> Αγαπημένα</a></li>
-                    <li><a href="t-form-el.html"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Προσθέστε Επιχείρησή</a></li>
-                </ul>
-            </div>
-            <div class="footer-nav-section">
-                <h3>Πληροφορίες</h3>
-                <ul>
-                    <li><a href="mailto:info@spiti.tech"><i class="fa fa-envelope" aria-hidden="true"></i> Επικοινωνία</a></li>
-                    <li><a href="privacy-el.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Πολιτική απορρήτου</a></li>
+                    <li><a href="t-form-el.html"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Προσθέστε Επιχείρηση</a></li>
+                    <li><a href="info-el.html"><i class="fa-solid fa-compass" aria-hidden="true"></i> Οδηγός Πηλίου</a></li>
+                    <li><a href="useful-numbers-el.html"><i class="fa-solid fa-phone" aria-hidden="true"></i> Χρήσιμα τηλέφωνα</a></li>
                 </ul>
             </div>
         </div>
 
         <div class="footer-column footer-column--social">
-            <h3>Κοινωνικά δίκτυα</h3>
+            <h3>Κοινωνικά</h3>
             <div class="social-icons">
                 <a href="https://www.facebook.com/kalanera.info" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Καλά Νερά στο Facebook">
                     <i class="fab fa-facebook-f" aria-hidden="true"></i>
                 </a>
+            </div>
+        <div class="footer-nav-section footer-nav-section--under-social">
+                <h3>Πληροφορίες</h3>
+                <ul>
+                    <li><a href="mailto:info@spiti.tech"><i class="fa fa-envelope" aria-hidden="true"></i> Επικοινωνία</a></li>
+                    <li><a href="privacy-el.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Πολιτική απορρήτου</a></li>
+                </ul>
             </div>
         </div>
     </div>
@@ -281,13 +271,14 @@
 
 <!-- N8N_SEO_END -->
  
-<script src="app.js?v=2.1.131"></script>
+<script src="app.js?v=2.1.170"></script>
 
 <nav class="bottom-nav" aria-label="Κύρια πλοήγηση">
     <div class="bottom-nav-inner">
         <a href="index-el.html" aria-current="page"><i class="fa-solid fa-house"></i><span>Αρχική</span></a>
+        <a href="bus-el.html"><i class="fa-solid fa-bus"></i><span>Λεωφορείο</span></a>
         <a href="wishlist-el.html"><i class="fa-solid fa-heart"></i><span>Αγαπημένα</span></a>
-        <a href="t-form-el.html"><i class="fa-solid fa-circle-plus"></i><span>Προσθήκη</span></a>
+        <a href="info-el.html"><i class="fa-solid fa-compass"></i><span>Οδηγός</span></a>
         <a href="#" data-more><i class="fa-solid fa-ellipsis"></i><span>Περισσότερα</span></a>
     </div>
 </nav>

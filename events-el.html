@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-12LDX13JG6"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-12LDX13JG6');
+    </script>
+    <meta charset="UTF-8">
+    <title>Τοπικές εκδηλώσεις | Οδηγός Καλά Νερά</title>
+    <link rel="canonical" href="https://www.kalanera.gr/events-el.html">
+    <meta name="description" content="Τοπικές εκδηλώσεις — πανηγύρια και έθιμα στο Πήλιο, ανά εποχή ή αλφαβητικά, για επισκέπτες στα Καλά Νερά και τη Μαγνησία.">
+    <link rel="alternate" hreflang="en" href="https://www.kalanera.gr/events.html">
+    <link rel="alternate" hreflang="el" href="https://www.kalanera.gr/events-el.html">
+    <link rel="alternate" hreflang="x-default" href="https://www.kalanera.gr/events.html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#4a6c4a">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.170">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+</head>
+<body>
+
+<div id="offline-indicator" class="offline-banner" style="display: none;">
+    <i class="fa fa-plane"></i> Αυτή τη στιγμή περιηγείστε εκτός σύνδεσης. Τα δεδομένα φορτώνονται από την προσωρινή μνήμη.
+</div>
+
+<header class="site-header">
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index-el.html" class="logo">Καλά <span>Νερά</span></a>
+            <a href="events.html" class="lang-link-mobile">
+                <img src="pix/flags/gb.svg" alt="English">
+            </a>
+            <a href="https://www.meteoblue.com/en/weather/forecast/week/kal%c3%a1-ner%c3%a1_greece_261556"
+                target="_blank" rel="noopener" style="text-decoration: none; color: inherit;">
+                <div class="weather-icon-container">
+                    <span id="weather-icon"></span>
+                    <span id="weather-temp">--°C</span>
+                </div>
+            </a>
+            <button class="menu-toggle" id="mobile-menu" type="button" aria-label="Μενού">
+                <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+            </button>
+            <ul class="nav-links" id="nav-list">
+                <li><a href="index-el.html"><i class="fa-solid fa-house" aria-hidden="true"></i> Αρχική</a></li>
+                <li><a href="bus-el.html"><i class="fa-solid fa-bus"></i> Λεωφορείο (Καλά Νερά)</a></li>
+                <li><a href="wishlist-el.html"><i class="fa-solid fa-heart menu-heart"></i> Αγαπημένα</a></li>
+                <li><a href="t-form-el.html"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Προσθέστε Επιχείρηση</a></li>
+                <li><a href="info-el.html"><i class="fa-solid fa-compass" aria-hidden="true"></i> Οδηγός Πηλίου</a></li>
+                <li id="menu-install-item" class="mobile-only-item">
+                    <a href="#" onclick="triggerManualInstall(event)">
+                        <i class="fa fa-download" style="color: var(--install-color) !important;"></i> Εγκατάσταση Εφαρμογής
+                    </a>
+                </li>
+                <li>
+                    <a href="events.html" class="lang-link">
+                        <img src="pix/flags/gb.svg" alt="English" style="width: 20px; vertical-align: middle; margin-right: 5px;">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<main class="sheet-data-page events-page flights-page" id="top">
+    <header class="flights-page-head">
+        <div class="flights-page-head-main">
+            <h1 class="flights-page-title"><i class="fa-solid fa-masks-theater" aria-hidden="true"></i> Τοπικές εκδηλώσεις</h1>
+            <p class="flights-iata-badge"><abbr title="Χερσόνησος Πηλίου, Μαγνησία">Πήλιο</abbr></p>
+        </div>
+        <p class="flights-page-kicker">Μαγνησία <span class="flights-kicker-sep" aria-hidden="true">·</span> χωριά &amp; ακτές</p>
+        <p class="flights-page-lead flights-page-lead--desktop">Πανηγύρια, εορτές, κρασιού και συγκομιδής και άλλα έθιμα από την περιοχή του Πηλίου. Οι ημερομηνίες στη λίστα είναι σταθερές κάθε χρόνο, εκτός αν αναφέρεται διαφορετικά στην περιγραφή.</p>
+        <p class="flights-page-lead flights-page-lead--mobile">Έθιμα χωριών — σταθερές ημερομηνίες εκτός αν σημειώνεται στο κείμενο.</p>
+        <div class="events-sort-wrap">
+            <div class="view-toggle view-toggle-inline view-toggle--segment events-sort-toggle" role="tablist" aria-label="Ταξινόμηση λίστας">
+                <button type="button" class="view-toggle-btn" id="events-sort-season" role="tab" aria-selected="true">Ανά εποχή</button>
+                <button type="button" class="view-toggle-btn" id="events-sort-alpha" role="tab" aria-selected="false">Α–Ω</button>
+            </div>
+        </div>
+    </header>
+
+    <div id="events-root" aria-live="polite">
+        <div class="sheet-data-placeholder">Φόρτωση εκδηλώσεων…</div>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-container">
+        <div class="footer-column footer-column--brand">
+            <a href="index-el.html" class="footer-brand-lockup">
+                <img src="logo.png" alt="Καλά Νερά" width="52" height="52" class="footer-brand-logo" loading="lazy">
+                <span class="footer-lockup-wordmark logo">Καλά <span>Νερά</span></span>
+            </a>
+            <p class="footer-tagline">Καλά Νερά · Πήλιο, Ελλάδα</p>
+            <p class="footer-lead">Βοηθάμε τους επισκέπτες να ανακαλύψουν τα καλύτερα σημεία—από αυθεντικές ταβέρνες μέχρι όμορφες διαμονές—στα Καλά Νερά και το ευρύτερο Πήλιο.</p>
+        </div>
+        <div class="footer-column footer-column--site">
+            <div class="footer-nav-section">
+                <h3>Ιστότοπος</h3>
+                <ul>
+                    <li><a href="bus-el.html"><i class="fa-solid fa-bus" aria-hidden="true"></i> Λεωφορείο (Καλά Νερά)</a></li>
+                    <li><a href="wishlist-el.html"><i class="fa-solid fa-heart" aria-hidden="true"></i> Αγαπημένα</a></li>
+                    <li><a href="t-form-el.html"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Προσθέστε Επιχείρηση</a></li>
+                    <li><a href="info-el.html"><i class="fa-solid fa-compass" aria-hidden="true"></i> Οδηγός Πηλίου</a></li>
+                    <li><a href="useful-numbers-el.html"><i class="fa-solid fa-phone" aria-hidden="true"></i> Χρήσιμα τηλέφωνα</a></li>
+                </ul>
+            </div></div>
+        <div class="footer-column footer-column--social">
+            <h3>Κοινωνικά δίκτυα</h3>
+            <div class="social-icons">
+                <a href="https://www.facebook.com/kalanera.info" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Καλά Νερά στο Facebook">
+                    <i class="fab fa-facebook-f" aria-hidden="true"></i>
+                </a>
+            </div>
+        <div class="footer-nav-section footer-nav-section--under-social">
+                <h3>Πληροφορίες</h3>
+                <ul>
+                    <li><a href="mailto:info@spiti.tech"><i class="fa fa-envelope" aria-hidden="true"></i> Επικοινωνία</a></li>
+                    <li><a href="privacy-el.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Πολιτική απορρήτου</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-powered">
+            <a href="mailto:info@spiti.tech" class="footer-powered-badge" aria-label="Με την υποστήριξη KanteKlik — επικοινωνία μέσω email">
+                <span class="footer-powered-icon" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                <span class="footer-powered-label">Με την υποστήριξη</span>
+                <span class="footer-powered-name">KanteKlik</span>
+            </a>
+        </div>
+        <div class="footer-bottom-row">
+            <p>© 2026 Κατάλογος Επιχειρήσεων Καλά Νερά. E-Project όλα τα δικαιώματα διατηρούνται.</p>
+            <div class="app-version-tag"><i class="fa fa-th-large" aria-hidden="true"></i> Εφαρμογή Κινητού</div>
+        </div>
+    </div>
+</footer>
+
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Kala+Nera" target="_blank" rel="noopener" class="map-fab-fixed" aria-label="Άνοιγμα Καλά Νερά στο Google Maps">
+    <i class="fa-solid fa-map-location-dot"></i>
+</a>
+
+<script src="app.js?v=2.1.170"></script>
+<script src="events-page.js?v=2.1.170" defer></script>
+<nav class="bottom-nav" aria-label="Κύρια πλοήγηση">
+    <div class="bottom-nav-inner">
+        <a href="index-el.html"><i class="fa-solid fa-house"></i><span>Αρχική</span></a>
+        <a href="bus-el.html"><i class="fa-solid fa-bus"></i><span>Λεωφορείο</span></a>
+        <a href="wishlist-el.html"><i class="fa-solid fa-heart"></i><span>Αγαπημένα</span></a>
+        <a href="info-el.html"><i class="fa-solid fa-compass"></i><span>Οδηγός</span></a>
+        <a href="#" data-more><i class="fa-solid fa-ellipsis"></i><span>Περισσότερα</span></a>
+    </div>
+</nav>
+</body>
+</html>

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-12LDX13JG6"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-12LDX13JG6');
+    </script>
+    <meta charset="UTF-8">
+    <title>Πτήσεις · αεροδρόμιο περιοχής Βόλου | Οδηγός Καλά Νερά</title>
+    <link rel="canonical" href="https://www.kalanera.gr/flights-el.html">
+    <meta name="description" content="Αφίξεις και αναχωρήσεις για την περιοχή του Βόλου (αεροδρόμιο Νέας Αγχιάλου). Χρήσιμο για επισκέπτες στα Καλά Νερά και το Πήλιο.">
+    <link rel="alternate" hreflang="en" href="https://www.kalanera.gr/flights.html">
+    <link rel="alternate" hreflang="el" href="https://www.kalanera.gr/flights-el.html">
+    <link rel="alternate" hreflang="x-default" href="https://www.kalanera.gr/flights.html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#4a6c4a">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.170">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+</head>
+<body>
+
+<div id="offline-indicator" class="offline-banner" style="display: none;">
+    <i class="fa fa-plane"></i> Αυτή τη στιγμή περιηγείστε εκτός σύνδεσης. Τα δεδομένα φορτώνονται από την προσωρινή μνήμη.
+</div>
+
+<header class="site-header">
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index-el.html" class="logo">Καλά <span>Νερά</span></a>
+            <a href="flights.html" class="lang-link-mobile">
+                <img src="pix/flags/gb.svg" alt="English">
+            </a>
+            <a href="https://www.meteoblue.com/en/weather/forecast/week/kal%c3%a1-ner%c3%a1_greece_261556"
+                target="_blank" rel="noopener" style="text-decoration: none; color: inherit;">
+                <div class="weather-icon-container">
+                    <span id="weather-icon"></span>
+                    <span id="weather-temp">--°C</span>
+                </div>
+            </a>
+            <button class="menu-toggle" id="mobile-menu" type="button" aria-label="Μενού">
+                <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+            </button>
+            <ul class="nav-links" id="nav-list">
+                <li><a href="index-el.html"><i class="fa-solid fa-house" aria-hidden="true"></i> Αρχική</a></li>
+                <li><a href="bus-el.html"><i class="fa-solid fa-bus"></i> Λεωφορείο (Καλά Νερά)</a></li>
+                <li><a href="wishlist-el.html"><i class="fa-solid fa-heart menu-heart"></i> Αγαπημένα</a></li>
+                <li><a href="t-form-el.html"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Προσθέστε Επιχείρηση</a></li>
+                <li><a href="info-el.html"><i class="fa-solid fa-compass" aria-hidden="true"></i> Οδηγός Πηλίου</a></li>
+                <li id="menu-install-item" class="mobile-only-item">
+                    <a href="#" onclick="triggerManualInstall(event)">
+                        <i class="fa fa-download" style="color: var(--install-color) !important;"></i> Εγκατάσταση Εφαρμογής
+                    </a>
+                </li>
+                <li>
+                    <a href="flights.html" class="lang-link">
+                        <img src="pix/flags/gb.svg" alt="English" style="width: 20px; vertical-align: middle; margin-right: 5px;">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<main class="sheet-data-page flights-page" id="top">
+    <header class="flights-page-head">
+        <div class="flights-page-head-main">
+            <h1 class="flights-page-title"><i class="fa-solid fa-plane-departure" aria-hidden="true"></i> Πτήσεις</h1>
+            <p class="flights-iata-badge"><abbr title="IATA: VOL">VOL</abbr></p>
+        </div>
+        <p class="flights-page-kicker">Βόλος <span class="flights-kicker-sep" aria-hidden="true">·</span> Νέα Αγχίαλος</p>
+        <p class="flights-page-lead flights-page-lead--desktop">Τοπική ώρα Ελλάδας. Ο πίνακας βοηθά στον προγραμματισμό· επιβεβαιώνετε ώρες, εισιτήρια και αλλαγές με την αεροπορική ή τον tour operator σας.</p>
+        <p class="flights-page-lead flights-page-lead--mobile">Τοπική ώρα · επιβεβαιώνετε με αεροπορική ή tour operator.</p>
+        <div class="flights-airport-locate">
+            <a href="https://www.google.com/maps/search/?api=1&amp;query=Nea+Anchialos+National+Airport+Greece" target="_blank" rel="noopener noreferrer" class="flights-maps-link"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i> Τερματικό επιβατών — Google Maps</a>
+            <p class="flights-airport-blurb">Το αεροδρόμιο βρίσκεται περίπου 30 χλμ. από τον Βόλο, κοντά στον <strong>Αλμυρό</strong>, δίπλα στην εθνική οδό Αθηνών–Θεσσαλονίκης. Από τον αυτοκινητόδρομο χρησιμοποιείτε την έξοδο προς Αλμυρό για το τερματικό επιβατών.</p>
+        </div>
+    </header>
+    <div id="flights-root" aria-live="polite">
+        <p class="flights-schedule-hint" role="note"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> <span class="flights-schedule-hint-text"><strong>2026</strong> · Εβδομαδιαία δρομολόγια ανά εποχή.</span></p>
+
+        <div class="flights-stack" aria-label="Πτήσεις ανά ημέρα (συμπαγής προβολή)">
+            <section class="flights-day-group">
+                <h2 class="flights-day-heading">Δευτέρα</h2>
+                <article class="flights-card">
+                    <p class="flights-card-route">Ryanair — Βρυξέλλες Charleroi</p>
+                    <dl class="flights-card-meta">
+                        <div class="flights-meta-pair">
+                            <div class="flights-meta-bit">
+                                <dt>Άφιξη</dt>
+                                <dd>10:35</dd>
+                            </div>
+                            <div class="flights-meta-bit">
+                                <dt>Αναχ.</dt>
+                                <dd>11:00</dd>
+                            </div>
+                        </div>
+                        <div class="flights-meta-season">
+                            <dt>Περίοδος</dt>
+                            <dd>1 Ιουν – 19 Οκτ</dd>
+                        </div>
+                    </dl>
+                </article>
+            </section>
+            <section class="flights-day-group">
+                <h2 class="flights-day-heading">Τρίτη</h2>
+                <article class="flights-card">
+                    <p class="flights-card-route">Sky Express — Ηράκλειο</p>
+                    <dl class="flights-card-meta">
+                        <div class="flights-meta-pair">
+                            <div class="flights-meta-bit">
+                                <dt>Άφιξη</dt>
+                                <dd>23:20</dd>
+                            </div>
+                            <div class="flights-meta-bit">
+                                <dt>Αναχ.</dt>
+                                <dd>23:50</dd>
+                            </div>
+                        </div>
+                        <div class="flights-meta-season">
+                            <dt>Περίοδος</dt>
+                            <dd>23 Ιουν – 29 Σεπτ</dd>
+                        </div>
+                    </dl>
+                </article>
+            </section>
+            <section class="flights-day-group">
+                <h2 class="flights-day-heading">Τετάρτη</h2>
+                <article class="flights-card">
+                    <p class="flights-card-route">Smartwings — Κατοβίτσε, Πολωνία</p>
+                    <dl class="flights-card-meta">
+                        <div class="flights-meta-pair">
+                            <div class="flights-meta-bit">
+                                <dt>Άφιξη</dt>
+                                <dd>08:10</dd>
+                            </div>
+                            <div class="flights-meta-bit">
+                                <dt>Αναχ.</dt>
+                                <dd>09:00</dd>
+                            </div>
+                        </div>
+                        <div class="flights-meta-season">
+                            <dt>Περίοδος</dt>
+                            <dd>3 Ιουν – 16 Σεπτ</dd>
+                        </div>
+                    </dl>
+                </article>
+                <article class="flights-card">
+                    <p class="flights-card-route">Eurowings — Ντίσελντορφ</p>
+                    <dl class="flights-card-meta">
+                        <div class="flights-meta-pair">
+                            <div class="flights-meta-bit">
+                                <dt>Άφιξη</dt>
+                                <dd>19:15</dd>
+                            </div>
+                            <div class="flights-meta-bit">
+                                <dt>Αναχ.</dt>
+                                <dd>20:00</dd>
+                            </div>
+                        </div>
+                        <div class="flights-meta-season">
+                            <dt>Περίοδος</dt>
+                            <dd>22 Ιουν – 26 Αυγ</dd>
+                        </div>
+                    </dl>
+                </article>
+            </section>
+            <section class="flights-day-group">
+                <h2 class="flights-day-heading">Πέμπτη</h2>
+                <article class="flights-card">
+                    <p class="flights-card-route">Smartwings — Μπρνο</p>
+                    <dl class="flights-card-meta">
+                        <div class="flights-meta-pair">
+                            <div class="flights-meta-bit">
+                                <dt>Άφιξη</dt>
+                                <dd>08:50</dd>
+                            </div>
+                            <div class="flights-meta-bit">
+                                <dt>Αναχ.</dt>
+                                <dd>09:40</dd>
+                            </div>
+                        </div>
+                        <div class="flights-meta-season">
+                            <dt>Περίοδος</dt>
+                            <dd>11 Ιουν – 17 Σεπτ</dd>
+                        </div>
+                    </dl>
+                </article>
+            </section>
+            <section class="flights-day-group">
+                <h2 class="flights-day-heading">Παρασκευή</h2>
+                <article class="flights-card">
+                    <p class="flights-card-route">Sky Express — Ηράκλειο</p>
+                    <dl class="flights-card-meta">
+                        <div class="flights-meta-pair">
+                            <div class="flights-meta-bit">
+                                <dt>Άφιξη</dt>
+                                <dd>16:00</dd>
+                            </div>
+                            <div class="flights-meta-bit">
+                                <dt>Αναχ.</dt>
+                                <dd>16:30</dd>
+                            </div>
+                        </div>
+                        <div class="flights-meta-season">
+                            <dt>Περίοδος</dt>
+                            <dd>19 Ιουν – 25 Σεπτ</dd>
+                        </div>
+                    </dl>
+                </article>
+                <article class="flights-card">
+                    <p class="flights-card-route">Ryanair — Βρυξέλλες Charleroi</p>
+                    <dl class="flights-card-meta">
+                        <div class="flights-meta-pair">
+                            <div class="flights-meta-bit">
+                                <dt>Άφιξη</dt>
+                                <dd>18:45</dd>
+                            </div>
+                            <div class="flights-meta-bit">
+                                <dt>Αναχ.</dt>
+                                <dd>19:10</dd>
+                            </div>
+                        </div>
+                        <div class="flights-meta-season">
+                            <dt>Περίοδος</dt>
+                            <dd>5 Ιουν – 23 Οκτ</dd>
+                        </div>
+                    </dl>
+                </article>
+            </section>
+            <section class="flights-day-group">
+                <h2 class="flights-day-heading">Σάββατο</h2>
+                <article class="flights-card">
+                    <p class="flights-card-route">Eurowings — Ντίσελντορφ</p>
+                    <dl class="flights-card-meta">
+                        <div class="flights-meta-pair">
+                            <div class="flights-meta-bit">
+                                <dt>Άφιξη</dt>
+                                <dd>10:30</dd>
+                            </div>
+                            <div class="flights-meta-bit">
+                                <dt>Αναχ.</dt>
+                                <dd>11:15</dd>
+                            </div>
+                        </div>
+                        <div class="flights-meta-season">
+                            <dt>Περίοδος</dt>
+                            <dd>9 Μαΐ – 31 Οκτ</dd>
+                        </div>
+                    </dl>
+                </article>
+                <article class="flights-card">
+                    <p class="flights-card-route">Transavia — Παρίσι Orly <span class="flights-note">(μόνο Club Med)</span></p>
+                    <dl class="flights-card-meta">
+                        <div class="flights-meta-pair">
+                            <div class="flights-meta-bit">
+                                <dt>Άφιξη</dt>
+                                <dd>11:20</dd>
+                            </div>
+                            <div class="flights-meta-bit">
+                                <dt>Αναχ.</dt>
+                                <dd>12:15</dd>
+                            </div>
+                        </div>
+                        <div class="flights-meta-season">
+                            <dt>Περίοδος</dt>
+                            <dd>6 Ιουν – 3 Οκτ</dd>
+                        </div>
+                    </dl>
+                </article>
+            </section>
+        </div>
+
+        <div class="flights-table-scroll">
+            <table class="flights-schedule-table">
+                <caption>Πτήσεις αεροδρομίου Βόλου 2026 — ενδεικτικό πρόγραμμα charter</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Ημέρα</th>
+                        <th scope="col">Αεροπορική &amp; δρομολόγιο</th>
+                        <th scope="col">Άφιξη</th>
+                        <th scope="col">Αναχώρηση</th>
+                        <th scope="col">Από</th>
+                        <th scope="col">Έως</th>
+                    </tr>
+                </thead>
+                <tbody class="flights-day-block">
+                    <tr>
+                        <th scope="row" class="flights-col-day">Δευτέρα</th>
+                        <td class="flights-col-route">Ryanair — Βρυξέλλες Charleroi</td>
+                        <td class="flights-time">10:35</td>
+                        <td class="flights-time">11:00</td>
+                        <td class="flights-time">1 Ιουν</td>
+                        <td class="flights-time">19 Οκτ</td>
+                    </tr>
+                </tbody>
+                <tbody class="flights-day-block">
+                    <tr>
+                        <th scope="row" class="flights-col-day">Τρίτη</th>
+                        <td class="flights-col-route">Sky Express — Ηράκλειο</td>
+                        <td class="flights-time">23:20</td>
+                        <td class="flights-time">23:50</td>
+                        <td class="flights-time">23 Ιουν</td>
+                        <td class="flights-time">29 Σεπτ</td>
+                    </tr>
+                </tbody>
+                <tbody class="flights-day-block">
+                    <tr>
+                        <th scope="row" class="flights-col-day">Τετάρτη</th>
+                        <td class="flights-col-route">Smartwings — Κατοβίτσε, Πολωνία</td>
+                        <td class="flights-time">08:10</td>
+                        <td class="flights-time">09:00</td>
+                        <td class="flights-time">3 Ιουν</td>
+                        <td class="flights-time">16 Σεπτ</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="flights-col-day">Τετάρτη</th>
+                        <td class="flights-col-route">Eurowings — Ντίσελντορφ</td>
+                        <td class="flights-time">19:15</td>
+                        <td class="flights-time">20:00</td>
+                        <td class="flights-time">22 Ιουν</td>
+                        <td class="flights-time">26 Αυγ</td>
+                    </tr>
+                </tbody>
+                <tbody class="flights-day-block">
+                    <tr>
+                        <th scope="row" class="flights-col-day">Πέμπτη</th>
+                        <td class="flights-col-route">Smartwings — Μπρνο</td>
+                        <td class="flights-time">08:50</td>
+                        <td class="flights-time">09:40</td>
+                        <td class="flights-time">11 Ιουν</td>
+                        <td class="flights-time">17 Σεπτ</td>
+                    </tr>
+                </tbody>
+                <tbody class="flights-day-block">
+                    <tr>
+                        <th scope="row" class="flights-col-day">Παρασκευή</th>
+                        <td class="flights-col-route">Sky Express — Ηράκλειο</td>
+                        <td class="flights-time">16:00</td>
+                        <td class="flights-time">16:30</td>
+                        <td class="flights-time">19 Ιουν</td>
+                        <td class="flights-time">25 Σεπτ</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="flights-col-day">Παρασκευή</th>
+                        <td class="flights-col-route">Ryanair — Βρυξέλλες Charleroi</td>
+                        <td class="flights-time">18:45</td>
+                        <td class="flights-time">19:10</td>
+                        <td class="flights-time">5 Ιουν</td>
+                        <td class="flights-time">23 Οκτ</td>
+                    </tr>
+                </tbody>
+                <tbody class="flights-day-block">
+                    <tr>
+                        <th scope="row" class="flights-col-day">Σάββατο</th>
+                        <td class="flights-col-route">Eurowings — Ντίσελντορφ</td>
+                        <td class="flights-time">10:30</td>
+                        <td class="flights-time">11:15</td>
+                        <td class="flights-time">9 Μαΐ</td>
+                        <td class="flights-time">31 Οκτ</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="flights-col-day">Σάββατο</th>
+                        <td class="flights-col-route">Transavia — Παρίσι Orly <span class="flights-note">(μόνο Club Med)</span></td>
+                        <td class="flights-time">11:20</td>
+                        <td class="flights-time">12:15</td>
+                        <td class="flights-time">6 Ιουν</td>
+                        <td class="flights-time">3 Οκτ</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <aside class="flights-afterword" aria-label="Σχετικά με τον πίνακα">
+            <p class="flights-reviewed">Τελευταίος έλεγχος: <time datetime="2026-05-12">12 Μαΐου 2026</time></p>
+            <p class="flights-crosslink-bottom"><a href="useful-numbers-el.html"><i class="fa-solid fa-phone" aria-hidden="true"></i> Χρήσιμα τηλέφωνα</a><span class="flights-crosslink-note"> — έκτακτη ανάγκη &amp; τοπικές υπηρεσίες</span></p>
+        </aside>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-container">
+        <div class="footer-column footer-column--brand">
+            <a href="index-el.html" class="footer-brand-lockup">
+                <img src="logo.png" alt="Καλά Νερά" width="52" height="52" class="footer-brand-logo" loading="lazy">
+                <span class="footer-lockup-wordmark logo">Καλά <span>Νερά</span></span>
+            </a>
+            <p class="footer-tagline">Καλά Νερά · Πήλιο, Ελλάδα</p>
+            <p class="footer-lead">Βοηθάμε τους ταξιδιώτες να ανακαλύψουν τα καλύτερα μέρη — από παραδοσιακές ταβέρνες μέχρι όμορφα καταλύματα — στα Καλά Νερά και την ευρύτερη περιοχή του Πηλίου.</p>
+        </div>
+        <div class="footer-column footer-column--site">
+            <div class="footer-nav-section">
+                <h3>Ιστότοπος</h3>
+                <ul>
+                    <li><a href="bus-el.html"><i class="fa-solid fa-bus" aria-hidden="true"></i> Λεωφορείο (Καλά Νερά)</a></li>
+                    <li><a href="wishlist-el.html"><i class="fa-solid fa-heart" aria-hidden="true"></i> Αγαπημένα</a></li>
+                    <li><a href="t-form-el.html"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Προσθέστε Επιχείρηση</a></li>
+                    <li><a href="info-el.html"><i class="fa-solid fa-compass" aria-hidden="true"></i> Οδηγός Πηλίου</a></li>
+                    <li><a href="useful-numbers-el.html"><i class="fa-solid fa-phone" aria-hidden="true"></i> Χρήσιμα τηλέφωνα</a></li>
+                </ul>
+            </div></div>
+        <div class="footer-column footer-column--social">
+            <h3>Κοινωνικά δίκτυα</h3>
+            <div class="social-icons">
+                <a href="https://www.facebook.com/kalanera.info" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Καλά Νερά στο Facebook">
+                    <i class="fab fa-facebook-f" aria-hidden="true"></i>
+                </a>
+            </div>
+        <div class="footer-nav-section footer-nav-section--under-social">
+                <h3>Πληροφορίες</h3>
+                <ul>
+                    <li><a href="mailto:info@spiti.tech"><i class="fa fa-envelope" aria-hidden="true"></i> Επικοινωνία</a></li>
+                    <li><a href="privacy-el.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Πολιτική απορρήτου</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-powered">
+            <a href="mailto:info@spiti.tech" class="footer-powered-badge" aria-label="Με την υποστήριξη KanteKlik — email">
+                <span class="footer-powered-icon" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                <span class="footer-powered-label">Με την υποστήριξη</span>
+                <span class="footer-powered-name">KanteKlik</span>
+            </a>
+        </div>
+        <div class="footer-bottom-row">
+            <p>© 2026 Κατάλογος Επιχειρήσεων Καλά Νερά. E-Project όλα τα δικαιώματα διατηρούνται.</p>
+            <div class="app-version-tag"><i class="fa fa-th-large" aria-hidden="true"></i> Εφαρμογή για κινητά</div>
+        </div>
+    </div>
+</footer>
+
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Kala+Nera" target="_blank" rel="noopener" class="map-fab-fixed" aria-label="Άνοιγμα Καλά Νερά στο Google Maps">
+    <i class="fa-solid fa-map-location-dot"></i>
+</a>
+
+<script src="app.js?v=2.1.170"></script>
+<nav class="bottom-nav" aria-label="Primary">
+    <div class="bottom-nav-inner">
+        <a href="index-el.html"><i class="fa-solid fa-house"></i><span>Αρχική</span></a>
+        <a href="bus-el.html"><i class="fa-solid fa-bus"></i><span>Λεωφορείο</span></a>
+        <a href="wishlist-el.html"><i class="fa-solid fa-heart"></i><span>Αγαπημένα</span></a>
+        <a href="info-el.html"><i class="fa-solid fa-compass"></i><span>Οδηγός</span></a>
+        <a href="#" data-more><i class="fa-solid fa-ellipsis"></i><span>Περισσότερα</span></a>
+    </div>
+</nav>
+</body>
+</html>

@@ -220,7 +220,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.1.131'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.1.170'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -867,7 +867,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3a. Bottom nav: zorg voor vaste volgorde Home → Bus → Favorites → Add → More
+    // 3a. Bottom nav: vaste volgorde Home → Bus → Favorites → Guide → More
     ensureBottomNavOrder();
 
     // 3b. Mobile "More" tab (bottom nav)
@@ -911,9 +911,9 @@ function ensureBottomNavOrder() {
         ? (isEl ? '../wishlist-el.html' : '../wishlist.html')
         : (isEl ? 'wishlist-el.html' : 'wishlist.html');
 
-    const addHref = isInSubdir
-        ? (isEl ? '../t-form-el.html' : '../t-form.html')
-        : (isEl ? 't-form-el.html' : 't-form.html');
+    const guideHref = isInSubdir
+        ? (isEl ? '../info-el.html' : '../info.html')
+        : (isEl ? 'info-el.html' : 'info.html');
 
     const busLabel = isEl ? 'Λεωφορείο' : (isNl ? 'Busschema' : 'Bus');
 
@@ -927,7 +927,9 @@ function ensureBottomNavOrder() {
         inner.querySelector('a[href$="bus.html"], a[href$="bus-el.html"]');
 
     const favA = getByExactHref(favHref) || inner.querySelector('a[href$="wishlist.html"], a[href$="wishlist-el.html"]');
-    const addA = getByExactHref(addHref) || inner.querySelector('a[href$="t-form.html"], a[href$="t-form-el.html"]');
+    const guideA =
+        getByExactHref(guideHref) ||
+        inner.querySelector('a[href$="info.html"], a[href$="info-el.html"]');
     const moreA = inner.querySelector('a[data-more]');
 
     if (!busA) {
@@ -941,8 +943,8 @@ function ensureBottomNavOrder() {
         if (span) span.textContent = busLabel;
     }
 
-    // Force exact order
-    const ordered = [homeA, busA, favA, addA, moreA].filter(Boolean);
+    // Force exact order (Guide must be included — old code targeted t-form and left Guide first in DOM)
+    const ordered = [homeA, busA, favA, guideA, moreA].filter(Boolean);
     ordered.forEach(a => inner.appendChild(a));
 
     // Mark current tab for bus pages
@@ -3286,13 +3288,20 @@ function renderMoreSheetContent() {
     const isEl = (document.documentElement.lang || 'en') === 'el';
     const brandName = isEl ? 'ΚάντεΚλικ' : 'KanteKlik';
     const labels = {
-        useful: isEl ? 'Χρήσιμα τηλέφωνα' : 'Useful numbers',
         install: isEl ? 'Εγκατάσταση εφαρμογής' : 'Install App',
         about: isEl ? 'Σχετικά με εμάς' : 'About us',
         follow: isEl ? 'Ακολουθήστε μας' : 'Follow us',
         contact: isEl ? 'Επικοινωνία' : 'Contact',
         privacy: isEl ? 'Πολιτική απορρήτου' : 'Privacy policy',
-        developer: isEl ? 'Με την υποστήριξη' : 'Powered by'
+        developer: isEl ? 'Με την υποστήριξη' : 'Powered by',
+        travelTitle: isEl ? 'Οδηγός Πηλίου' : 'Pelion guide',
+        travelHub: isEl ? 'Επισκόπηση' : 'Overview',
+        travelFlights: isEl ? 'Πτήσεις (αεροδρόμιο Βόλου)' : 'Flights (Volos area airport)',
+        travelEvents: isEl ? 'Τοπικές εκδηλώσεις' : 'Regional events',
+        travelWalking: isEl ? 'Περπατήματα (αγγλικός οδηγός)' : 'Walking routes (English guide)',
+        travelExternal: isEl ? 'Εξωτερικός ιστότοπος' : 'External site',
+        travelNumbers: isEl ? 'Χρήσιμα τηλέφωνα' : 'Useful numbers',
+        travelNumbersSub: isEl ? 'Τοπικοί & έκτακτοι' : 'Local & emergency'
     };
 
     const aboutText = getFooterAboutText() || (isEl
@@ -3312,7 +3321,20 @@ function renderMoreSheetContent() {
     const copyrightRaw = (footerCopyright && footerCopyright.trim()) ? footerCopyright.trim() : copyrightFallback;
 
     const version = (typeof APP_VERSION !== 'undefined') ? APP_VERSION : '';
+    const pathPrefix = (() => {
+        try {
+            const p = window.location.pathname || '';
+            return p.includes('/business/') ? '../' : '';
+        } catch (e) {
+            return '';
+        }
+    })();
     const privacyHref = isEl ? 'privacy-el.html' : 'privacy.html';
+    const infoHref = isEl ? 'info-el.html' : 'info.html';
+    const flightsHref = isEl ? 'flights-el.html' : 'flights.html';
+    const eventsHref = isEl ? 'events-el.html' : 'events.html';
+    const usefulNumbersHref = isEl ? 'useful-numbers-el.html' : 'useful-numbers.html';
+    const walkingPelionHref = 'https://walking-pelion.blogspot.com/';
 
     const formattedCopyright = (() => {
         // Avoid double copyright symbol (some pages already include "©")
@@ -3323,12 +3345,26 @@ function renderMoreSheetContent() {
 
     container.innerHTML = `
         <section class="more-section">
-            <h3>${labels.useful}</h3>
+            <h3>${labels.travelTitle}</h3>
             <div class="more-links">
-                <a href="tel:+302423086222"><span class="more-link-leading"><i class="fa-solid fa-shield"></i><span class="more-link-label">${isEl ? 'Αστυνομία Μηλιές' : 'Police Office Milies'}</span></span><small>+30 24230 86222</small></a>
-                <a href="tel:+302423022385"><span class="more-link-leading"><i class="fa-solid fa-pills"></i><span class="more-link-label">${isEl ? 'Φαρμακείο Καλά Νερά' : 'Pharmacy Kala Nera'}</span></span><small>+30 24230 22385</small></a>
-                <a href="tel:+302423022160"><span class="more-link-leading"><i class="fa-solid fa-pills"></i><span class="more-link-label">${isEl ? 'Φαρμακείο Κάτω Γατζέα' : 'Pharmacy Kato Gatzea'}</span></span><small>+30 24230 22160</small></a>
-                <a href="tel:+302423086666"><span class="more-link-leading"><i class="fa-solid fa-user-doctor"></i><span class="more-link-label">${isEl ? 'Ιατρός Καλά Νερά' : 'Doctor Kala Nera'}</span></span><small>+30 24230 86666</small></a>
+                <a href="${pathPrefix}${infoHref}">
+                    <span class="more-link-leading"><i class="fa-solid fa-compass"></i><span class="more-link-label">${labels.travelHub}</span></span>
+                    <small>kalanera.gr</small>
+                </a>
+                <a href="${pathPrefix}${flightsHref}">
+                    <span class="more-link-leading"><i class="fa-solid fa-plane-departure"></i><span class="more-link-label">${labels.travelFlights}</span></span>
+                </a>
+                <a href="${pathPrefix}${eventsHref}">
+                    <span class="more-link-leading"><i class="fa-solid fa-calendar-days"></i><span class="more-link-label">${labels.travelEvents}</span></span>
+                </a>
+                <a href="${walkingPelionHref}" target="_blank" rel="noopener noreferrer">
+                    <span class="more-link-leading"><i class="fa-solid fa-person-hiking"></i><span class="more-link-label">${labels.travelWalking}</span></span>
+                    <small>${labels.travelExternal}</small>
+                </a>
+                <a href="${pathPrefix}${usefulNumbersHref}">
+                    <span class="more-link-leading"><i class="fa-solid fa-phone"></i><span class="more-link-label">${labels.travelNumbers}</span></span>
+                    <small>${labels.travelNumbersSub}</small>
+                </a>
             </div>
         </section>
 
@@ -3354,7 +3390,7 @@ function renderMoreSheetContent() {
                     <span class="more-link-leading"><i class="fa-solid fa-envelope"></i><span class="more-link-label">${labels.contact}</span></span>
                     <small>info@spiti.tech</small>
                 </a>
-                <a href="${privacyHref}">
+                <a href="${pathPrefix}${privacyHref}">
                     <span class="more-link-leading"><i class="fa-solid fa-user-shield"></i><span class="more-link-label">${labels.privacy}</span></span>
                     <small>kalanera.gr</small>
                 </a>
@@ -3367,7 +3403,7 @@ function renderMoreSheetContent() {
                             <div class="meta-version"><code>v${version}</code></div>
                         </div>
                     </div>
-                    ${formattedCopyright ? `<div class="copyright-row"><span class="copyright-text">© ${formattedCopyright}</span><img class="meta-logo" src="logo-72x72.png" alt="Kalanera InPhoto" width="28" height="28" loading="lazy"></div>` : ``}
+                    ${formattedCopyright ? `<div class="copyright-row"><span class="copyright-text">© ${formattedCopyright}</span><img class="meta-logo" src="${pathPrefix}logo-72x72.png" alt="Kalanera InPhoto" width="28" height="28" loading="lazy"></div>` : ``}
                 </div>
             </div>
         </section>
@@ -3498,20 +3534,24 @@ function updateWishlistCount() {
     const label = isEl ? 'Αγαπημένα' : 'Favorites';
     const targetPage = isEl ? 'wishlist-el.html' : 'wishlist.html';
 
-    // Zoek de link die "wishlist" in de href heeft
-    const wishlistLink = document.querySelector('a[href*="wishlist"]');
-    
-    if (wishlistLink) {
-        // Zorg dat de link naar de juiste taal-pagina wijst
+    // Alleen echte favorieten-navlinks (niet de taalvlag: die href ook "wishlist" bevat)
+    const wishlistLinks = document.querySelectorAll(
+        '#nav-list a[href*="wishlist"], .bottom-nav-inner a[href*="wishlist"]',
+    );
+    wishlistLinks.forEach((wishlistLink) => {
+        if (
+            wishlistLink.classList.contains('lang-link-mobile')
+            || wishlistLink.classList.contains('lang-link')
+        ) {
+            return;
+        }
         wishlistLink.href = targetPage;
-
-        // Update de tekst en het icoon
         if (count > 0) {
             wishlistLink.innerHTML = `<i class="fa-solid fa-heart menu-heart"></i> ${label} (${count})`;
         } else {
             wishlistLink.innerHTML = `<i class="fa-solid fa-heart menu-heart"></i> ${label}`;
         }
-    }
+    });
 }
 
 /**
@@ -3814,21 +3854,6 @@ if (document.getElementById('webcamImage')) {
 }
 
 
-
-function toggleNavEmergency(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    const menu = document.getElementById("navEmergencyMenu");
-    menu.classList.toggle("is-open");
-}
-
-// Sluit het menu als je ergens anders klikt
-window.addEventListener('click', function(e) {
-    const menu = document.getElementById("navEmergencyMenu");
-    if (menu && !menu.contains(e.target) && !e.target.closest('.sos-trigger')) {
-        menu.classList.remove("is-open");
-    }
-});
 
 
 

@@ -79,7 +79,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
 
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.131">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.170">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -92,8 +92,10 @@
     <nav class="main-nav">
         <div class="nav-container">
             <a href="index.html" class="logo">Kala <span>Nera</span></a>
-            
 
+            <a href="wishlist-el.html" class="lang-link-mobile">
+                <img src="pix/flags/gr.svg" alt="Ελληνικά">
+            </a>
 
             <a href="https://www.meteoblue.com/en/weather/forecast/week/kal%c3%a1-ner%c3%a1_greece_261556" 
                 target="_blank" 
@@ -105,7 +107,7 @@
             </div>
             </a>
 
-            <button class="menu-toggle" id="mobile-menu">
+            <button class="menu-toggle" id="mobile-menu" type="button" aria-label="Open menu" title="Open menu">
                 <span class="bar"></span>
                 <span class="bar"></span>
                 <span class="bar"></span>
@@ -113,24 +115,22 @@
             </button>
 
             <ul class="nav-links" id="nav-list">
-                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html"><i class="fa-solid fa-house" aria-hidden="true"></i> Home</a></li>
                 <li><a href="bus.html"><i class="fa-solid fa-bus"></i> Bus (Kala Nera)</a></li>
                 <li><a href="wishlist.html" class="active"><i class="fa-solid fa-heart menu-heart"></i> Favorites</a></li>
-                <li><a href="t-form.html">Add your Business</a></li>
-                
-                <li class="nav-emergency-item">
-                    <a href="#" onclick="toggleNavEmergency(event)" class="sos-trigger">
-                         <i class="fa-solid fa-phone" style="color: #3498db;"></i>Useful Numbers
-                    </a>
-                    <div id="navEmergencyMenu" class="nav-sos-dropdown">
-                        <div class="nav-sos-header"> </div>
-                        <a href="tel:+302423086222"><i class="fa-solid fa-shield"></i> Police Office Milies <span class="phone-no">(+30 24230 86222)</span></a>
-                        <a href="tel:+302423022385"><i class="fa-solid fa-pills"></i> Pharmacy Kala Nera <span class="phone-no">(+30 24230 22385)</span></a>
-                        <a href="tel:+302423022160"><i class="fa-solid fa-pills"></i> Pharmacy Kato Gatzea <span class="phone-no">(+30 24230 22160)</span></a>
-                        <a href="tel:+302423086666"><i class="fa-solid fa-user-doctor"></i> Doctor Kala Nera <span class="phone-no">(+30 24230 86666)</span></a>
-                    </div>
-                </li>     
+                <li><a href="t-form.html"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Add your Business</a></li>
+                <li><a href="info.html"><i class="fa-solid fa-compass" aria-hidden="true"></i> Pelion guide</a></li>
 
+                <li id="menu-install-item" class="mobile-only-item">
+                    <a href="#" onclick="triggerManualInstall(event)">
+                        <i class="fa fa-download" style="color: var(--install-color) !important;"></i> Install App
+                    </a>
+                </li>
+                <li>
+                    <a href="wishlist-el.html" class="lang-link">
+                        <img src="pix/flags/gr.svg" alt="Ελληνικά" style="width: 20px; vertical-align: middle; margin-right: 5px;">
+                    </a>
+                </li>
             </ul>
         </div>
     </nav>
@@ -165,30 +165,43 @@
 
 <footer class="site-footer">
     <div class="footer-container">
-        <div class="footer-column">
-            <h3>About us</h3>
-            <p>We help travelers discover the best places from authentic taverns to the finest accommodations in Kala Nera and the surrounding area.</p>
+        <div class="footer-column footer-column--brand">
+            <a href="index.html" class="footer-brand-lockup">
+                <img src="logo.png" alt="Kala Nera" width="52" height="52" class="footer-brand-logo" loading="lazy">
+                <span class="footer-lockup-wordmark logo">Kala <span>Nera</span></span>
+            </a>
+            <p class="footer-tagline">Kala Nera · Pelion, Greece</p>
+            <p class="footer-lead">We help travelers discover the best places—from authentic taverns to wonderful stays—in Kala Nera and the wider Pelion area.</p>
         </div>
-
-        <div class="footer-column">
-            <h3></h3>
-            <ul>
-                <li><a href="mailto:info@spiti.tech"><i class="fa fa-envelope"></i> Contact</a></li>
-                <li><a href="privacy.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Privacy policy</a></li>
-            </ul>
+        <div class="footer-column footer-column--site">
+            <div class="footer-nav-section">
+                <h3>Site</h3>
+                <ul>
+                    <li><a href="bus.html"><i class="fa-solid fa-bus" aria-hidden="true"></i> Bus (Kala Nera)</a></li>
+                    <li><a href="wishlist.html" aria-current="page"><i class="fa-solid fa-heart" aria-hidden="true"></i> Favorites</a></li>
+                    <li><a href="t-form.html"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Add your Business</a></li>
+                    <li><a href="info.html"><i class="fa-solid fa-compass" aria-hidden="true"></i> Pelion guide</a></li>
+                    <li><a href="useful-numbers.html"><i class="fa-solid fa-phone" aria-hidden="true"></i> Useful numbers</a></li>
+                </ul>
+            </div>
         </div>
-
-        <div class="footer-column">
-            <h3>Follow Us</h3>
+        <div class="footer-column footer-column--social">
+            <h3>Social</h3>
             <div class="social-icons">
-                <a href="https://www.facebook.com/kalanera.info" target="_blank" class="social-icon">
-                    <i class="fab fa-facebook-f"></i>
+                <a href="https://www.facebook.com/kalanera.info" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Kala Nera on Facebook">
+                    <i class="fab fa-facebook-f" aria-hidden="true"></i>
                 </a>
-                </div>
+            </div>
+        <div class="footer-nav-section footer-nav-section--under-social">
+                <h3>Info</h3>
+                <ul>
+                    <li><a href="mailto:info@spiti.tech"><i class="fa fa-envelope" aria-hidden="true"></i> Contact</a></li>
+                    <li><a href="privacy.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Privacy policy</a></li>
+                </ul>
+            </div>
         </div>
     </div>
-
-<div class="footer-bottom">
+    <div class="footer-bottom">
         <div class="footer-powered">
             <a href="mailto:info@spiti.tech" class="footer-powered-badge" aria-label="Powered by KanteKlik — email contact">
                 <span class="footer-powered-icon" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
@@ -198,21 +211,19 @@
         </div>
         <div class="footer-bottom-row">
             <p>© 2026 Kala Nera Business Directory. E-Project all rights reserved.</p>
-            <div class="app-version-tag">
-                <i class="fa fa-th-large"></i> Mobile App
-            </div>
+            <div class="app-version-tag"><i class="fa fa-th-large" aria-hidden="true"></i> Mobile App</div>
         </div>
     </div>
-
 </footer>
 
-<script src="app.js?v=2.1.131"></script>
+<script src="app.js?v=2.1.170"></script>
 
 <nav class="bottom-nav" aria-label="Primary">
     <div class="bottom-nav-inner">
         <a href="index.html"><i class="fa-solid fa-house"></i><span>Home</span></a>
+        <a href="bus.html"><i class="fa-solid fa-bus"></i><span>Bus</span></a>
         <a href="wishlist.html" aria-current="page"><i class="fa-solid fa-heart"></i><span>Favorites</span></a>
-        <a href="t-form.html"><i class="fa-solid fa-circle-plus"></i><span>Add</span></a>
+        <a href="info.html"><i class="fa-solid fa-compass"></i><span>Guide</span></a>
         <a href="#" data-more><i class="fa-solid fa-ellipsis"></i><span>More</span></a>
     </div>
 </nav>
