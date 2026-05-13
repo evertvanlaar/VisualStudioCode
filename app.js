@@ -220,7 +220,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.1.170'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.1.171'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -3296,7 +3296,7 @@ function renderMoreSheetContent() {
         developer: isEl ? 'Με την υποστήριξη' : 'Powered by',
         travelTitle: isEl ? 'Οδηγός Πηλίου' : 'Pelion guide',
         travelHub: isEl ? 'Επισκόπηση' : 'Overview',
-        travelFlights: isEl ? 'Πτήσεις (αεροδρόμιο Βόλου)' : 'Flights (Volos area airport)',
+        travelFlights: isEl ? 'Πτήσεις (αεροδρόμιο Βόλου - VOL)' : 'Flights (Volos airport - VOL)',
         travelEvents: isEl ? 'Τοπικές εκδηλώσεις' : 'Regional events',
         travelWalking: isEl ? 'Περπατήματα (αγγλικός οδηγός)' : 'Walking routes (English guide)',
         travelExternal: isEl ? 'Εξωτερικός ιστότοπος' : 'External site',
