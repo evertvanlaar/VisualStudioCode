@@ -40,6 +40,56 @@
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+  <url>
+    <loc>https://www.kalanera.gr/info.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.kalanera.gr/info-el.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.kalanera.gr/privacy.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.kalanera.gr/privacy-el.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.kalanera.gr/events.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.kalanera.gr/events-el.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.kalanera.gr/flights.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.kalanera.gr/flights-el.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.kalanera.gr/useful-numbers.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.kalanera.gr/useful-numbers-el.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
     <url>
         <loc>https://www.kalanera.gr/business/hellas.html</loc>
         <lastmod>2026-04-28</lastmod>
@@ -718,6 +768,16 @@
     <url>
         <loc>https://www.kalanera.gr/business/stoumpovikos-tours-pelion-el.html</loc>
         <lastmod>2026-04-28</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://www.kalanera.gr/business/vasileiou.html</loc>
+        <lastmod>2026-05-14</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://www.kalanera.gr/business/vasileiou-el.html</loc>
+        <lastmod>2026-05-14</lastmod>
         <priority>0.8</priority>
     </url>
 </urlset>
