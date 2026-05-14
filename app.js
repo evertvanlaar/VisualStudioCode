@@ -1,5 +1,5 @@
 /**
- * app.js - De "hersenen" van de Kala Nera Business Directory
+ * app.js - De "hersenen" van de Kala Nera Guide
  */
 
 const N8N_WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/local-businesses';
@@ -220,7 +220,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.1.171'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.1.172'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -3316,8 +3316,8 @@ function renderMoreSheetContent() {
     const year = new Date().getFullYear();
     const footerCopyright = getFooterCopyrightText();
     const copyrightFallback = isEl
-        ? `${year} Κατάλογος Επιχειρήσεων Καλά Νερά. E-Project όλα τα δικαιώματα διατηρούνται.`
-        : `${year} Kala Nera Business Directory. E-Project all rights reserved.`;
+        ? `${year} Οδηγός Καλών Νερών. E-Project όλα τα δικαιώματα διατηρούνται.`
+        : `${year} Kala Nera Guide. E-Project all rights reserved.`;
     const copyrightRaw = (footerCopyright && footerCopyright.trim()) ? footerCopyright.trim() : copyrightFallback;
 
     const version = (typeof APP_VERSION !== 'undefined') ? APP_VERSION : '';
