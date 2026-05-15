@@ -220,7 +220,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.1.172'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '2.1.173'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -3301,7 +3301,9 @@ function renderMoreSheetContent() {
         travelWalking: isEl ? 'Περπατήματα (αγγλικός οδηγός)' : 'Walking routes (English guide)',
         travelExternal: isEl ? 'Εξωτερικός ιστότοπος' : 'External site',
         travelNumbers: isEl ? 'Χρήσιμα τηλέφωνα' : 'Useful numbers',
-        travelNumbersSub: isEl ? 'Τοπικοί & έκτακτοι' : 'Local & emergency'
+        travelNumbersSub: isEl ? 'Τοπικοί & έκτακτοι' : 'Local & emergency',
+        travelBus: isEl ? 'Λεωφορείο (Καλά Νερά)' : 'Bus (Kala Nera)',
+        travelBusSub: isEl ? 'Δρομολόγια & κατευθύνσεις' : 'Timetables & directions'
     };
 
     const aboutText = getFooterAboutText() || (isEl
@@ -3334,6 +3336,7 @@ function renderMoreSheetContent() {
     const flightsHref = isEl ? 'flights-el.html' : 'flights.html';
     const eventsHref = isEl ? 'events-el.html' : 'events.html';
     const usefulNumbersHref = isEl ? 'useful-numbers-el.html' : 'useful-numbers.html';
+    const busHref = isEl ? 'bus-el.html' : 'bus.html';
     const walkingPelionHref = 'https://walking-pelion.blogspot.com/';
 
     const formattedCopyright = (() => {
@@ -3364,6 +3367,10 @@ function renderMoreSheetContent() {
                 <a href="${pathPrefix}${usefulNumbersHref}">
                     <span class="more-link-leading"><i class="fa-solid fa-phone"></i><span class="more-link-label">${labels.travelNumbers}</span></span>
                     <small>${labels.travelNumbersSub}</small>
+                </a>
+                <a href="${pathPrefix}${busHref}">
+                    <span class="more-link-leading"><i class="fa-solid fa-bus"></i><span class="more-link-label">${labels.travelBus}</span></span>
+                    <small>${labels.travelBusSub}</small>
                 </a>
             </div>
         </section>
