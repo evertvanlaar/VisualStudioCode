@@ -19,7 +19,7 @@
     <meta name="theme-color" content="#4a6c4a">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.173">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.174">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -68,38 +68,39 @@
     </nav>
 </header>
 
-<div class="hero-section">
-    <div class="hero-overlay">
-        <h1>Οδηγός Πηλίου</h1>
-        <p>Πτήσεις, εκδηλώσεις, περπατήματα και τηλέφωνα</p>
-    </div>
-</div>
-
-<main class="main-container info-hub-page" style="margin-top: 28px; padding-bottom: calc(var(--bottom-nav-h, 64px) + 32px);">
-    <p class="info-hub-lead">Εδώ συγκεντρώνονται τα βασικά θέματα για τη διαμονή σας: πτήσεις, τοπικές εκδηλώσεις, ιδέες για περπάτημα και μια ξεχωριστή λίστα χρήσιμων τηλεφώνων.</p>
+<main class="sheet-data-page info-hub-page flights-page" id="top">
+    <header class="flights-page-head">
+        <div class="flights-page-head-main">
+            <h1 class="flights-page-title"><i class="fa-solid fa-compass" aria-hidden="true"></i> Οδηγός Πηλίου</h1>
+            <p class="flights-iata-badge"><abbr title="Χερσόνησος Πηλίου, Μαγνησία">Πήλιο</abbr></p>
+        </div>
+        <p class="flights-page-kicker">Καλά Νερά <span class="flights-kicker-sep" aria-hidden="true">·</span> Μαγνησία</p>
+        <p class="flights-page-lead flights-page-lead--desktop">Εδώ συγκεντρώνονται τα βασικά θέματα για τη διαμονή σας: πτήσεις, τοπικές εκδηλώσεις, ιδέες για περπάτημα και μια ξεχωριστή λίστα χρήσιμων τηλεφώνων.</p>
+        <p class="flights-page-lead flights-page-lead--mobile">Πτήσεις, εκδηλώσεις, περπάτημα και χρήσιμα τηλέφωνα για τη διαμονή σας.</p>
+    </header>
     <p class="info-hub-hint" role="note">Πατήστε ή κάντε κλικ σε μια κάρτα για να ανοίξετε το θέμα.</p>
     <div class="info-hub-grid" role="navigation" aria-label="Θέματα οδηγού Πηλίου">
-        <a class="info-hub-card" href="flights-el.html">
+        <a class="info-hub-card flights-card" href="flights-el.html">
             <span class="info-hub-card__icon" aria-hidden="true"><i class="fa-solid fa-plane-departure"></i></span>
             <h2>Πτήσεις</h2>
             <p>Εποχιακά charter στο αεροδρόμιο Νέας Αγχιάλου (VOL): εννέα εβδομαδιαία δρομολόγια Μάιος–Οκτώβριος σε έναν πίνακα.</p>
         </a>
-        <a class="info-hub-card" href="events-el.html">
+        <a class="info-hub-card flights-card" href="events-el.html">
             <span class="info-hub-card__icon" aria-hidden="true"><i class="fa-solid fa-calendar-days"></i></span>
             <h2>Τοπικές εκδηλώσεις</h2>
             <p>Τοπικές εκδηλώσεις και έθιμα χωριών στο Πήλιο — ανά εποχή (αναδιπλούμενες ενότητες) ή αλφαβητικά, με στήλη γραμμάτων σε μεγαλύτερες λίστες. Οι ημερομηνίες επαναλαμβάνονται κάθε χρόνο εκτός αν αναφέρεται στο κείμενο· η πηγή στη σελίδα.</p>
         </a>
-        <a class="info-hub-card" href="https://walking-pelion.blogspot.com/" target="_blank" rel="noopener noreferrer" title="Walking Pelion — ανοίγει σε νέα καρτέλα">
+        <a class="info-hub-card flights-card" href="https://walking-pelion.blogspot.com/" target="_blank" rel="noopener noreferrer" title="Walking Pelion — ανοίγει σε νέα καρτέλα">
             <span class="info-hub-card__icon" aria-hidden="true"><i class="fa-solid fa-person-hiking"></i></span>
             <h2>Περπατήματα</h2>
             <p>Ιδέες περιπάτου και πεζοπορίας στα αγγλικά σε ανεξάρτητο ιστότοπο. Ανοίγει σε νέα καρτέλα.</p>
         </a>
-        <a class="info-hub-card" id="useful-numbers" href="useful-numbers-el.html">
+        <a class="info-hub-card flights-card" id="useful-numbers" href="useful-numbers-el.html">
             <span class="info-hub-card__icon" aria-hidden="true"><i class="fa-solid fa-phone"></i></span>
             <h2>Χρήσιμα τηλέφωνα</h2>
             <p>Τοπικές επαφές γύρω από τα Καλά Νερά συν ελληνικοί αριθμοί έκτακτης ανάγκης και εθνικοί σύντομοι κωδικοί — πατήστε μια γραμμή για κλήση.</p>
         </a>
-        <a class="info-hub-card" href="bus-el.html">
+        <a class="info-hub-card flights-card" href="bus-el.html">
             <span class="info-hub-card__icon" aria-hidden="true"><i class="fa-solid fa-bus"></i></span>
             <h2>Λεωφορείο (Καλά Νερά)</h2>
             <p>Δρομολόγια KTEL από τη στάση Καλά Νερά προς Βόλο και χωριά του Πηλίου — ανά ημέρα και κατεύθυνση.</p>
@@ -163,7 +164,7 @@
     <i class="fa-solid fa-map-location-dot"></i>
 </a>
 
-<script src="app.js?v=2.1.173"></script>
+<script src="app.js?v=2.1.174"></script>
 <nav class="bottom-nav" aria-label="Primary">
     <div class="bottom-nav-inner">
         <a href="index-el.html"><i class="fa-solid fa-house"></i><span>Αρχική</span></a>

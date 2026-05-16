@@ -1,4 +1,4 @@
-/* version 2.1.173 */
+/* version 2.1.174 */
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
 @keyframes slideDown{from{transform: translate(-50%, -100%); opacity: 0}to{transform: translate(-50%, 0); opacity: 1}}
@@ -2642,22 +2642,31 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 .bus-page-privacy-foot a .fa-user-shield{color:var(--primary-olive,#4a6c4a);opacity:.95}
 
 /* Pelion guide hub + sheet placeholder pages */
-.info-hub-page{max-width:56rem;margin-left:auto;margin-right:auto;padding-left:20px;padding-right:20px;box-sizing:border-box}
-.info-hub-lead{font-size:.95rem;color:var(--muted,#64748b);line-height:1.55;margin:0 0 .55rem}
+.sheet-data-page.info-hub-page{max-width:56rem}
+.info-hub-page{margin-left:auto;margin-right:auto;box-sizing:border-box}
 .info-hub-hint{font-size:.8125rem;color:var(--muted,#64748b);line-height:1.45;margin:0 0 1.1rem;letter-spacing:.01em}
-.info-hub-grid{display:grid;grid-template-columns:1fr;gap:16px}
-@media (min-width:640px){.info-hub-grid{grid-template-columns:repeat(2,1fr)}}
-@media (min-width:992px){.info-hub-grid{grid-template-columns:repeat(3,1fr)}}
-.info-hub-card{display:flex;flex-direction:column;gap:.5rem;min-height:100%;box-sizing:border-box;padding:1.15rem 1.1rem .95rem;border-radius:12px;border:1px solid var(--border,#e2e8f0);background:#fff;text-decoration:none;color:inherit;box-shadow:0 2px 10px rgba(0,0,0,.04);cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
-.info-hub-card:hover,.info-hub-card:focus-visible{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.08);border-color:rgba(74,108,74,.35)}
-.info-hub-card:focus-visible{outline:none;box-shadow:0 8px 24px rgba(0,0,0,.08),0 0 0 3px rgba(74,108,74,.28)}
-.info-hub-card h2{margin:0;font-size:1.05rem;color:var(--primary-olive,#4a6c4a);text-decoration:underline;text-decoration-color:transparent;text-underline-offset:.2em;text-decoration-thickness:1px;transition:text-decoration-color .15s ease,color .15s ease}
-.info-hub-card:hover h2,.info-hub-card:focus-visible h2{text-decoration-color:rgba(74,108,74,.38)}
-.info-hub-card p{margin:0;font-size:.875rem;line-height:1.5;color:var(--text-main,#334155)}
-.info-hub-card__icon{font-size:1.5rem;color:var(--primary-olive,#4a6c4a)}
-.info-hub-card::after{content:"\203A";margin-top:auto;padding-top:.4rem;align-self:flex-end;font-size:1.35rem;font-weight:300;line-height:1;color:rgba(74,108,74,.38);transition:transform .18s ease,color .15s ease}
-.info-hub-card:hover::after,.info-hub-card:focus-visible::after{color:rgba(74,108,74,.88);transform:translateX(4px)}
-.info-hub-card[target="_blank"]::after{content:"\2197\00a0\203A";font-size:1.05rem;padding-top:.5rem}
+.info-hub-page .info-hub-grid{display:grid;grid-template-columns:1fr;gap:.35rem}
+@media (min-width:768px){
+  .info-hub-page .info-hub-grid{grid-template-columns:repeat(2,1fr);gap:.35rem}
+  .info-hub-page .info-hub-grid .info-hub-card{margin-bottom:0}
+}
+@media (min-width:992px){.info-hub-page .info-hub-grid{grid-template-columns:repeat(3,1fr)}}
+.info-hub-page .info-hub-card{display:flex;flex-direction:column;gap:.28rem;min-height:0;box-sizing:border-box;text-decoration:none;color:inherit;cursor:pointer;position:relative}
+.info-hub-page .info-hub-card:focus-visible{outline:none;box-shadow:0 1px 8px rgba(0,0,0,.04),0 0 0 3px rgba(74,108,74,.28)}
+.info-hub-page .info-hub-card h2{margin:0;font-size:.8125rem;font-weight:600;color:var(--text-main,#334155);line-height:1.3}
+.info-hub-page .info-hub-card p{margin:0;font-size:.78rem;line-height:1.42;color:var(--muted,#64748b)}
+.info-hub-page .info-hub-card__icon{font-size:.95rem;line-height:1;color:var(--primary-olive,#4a6c4a)}
+.info-hub-page .info-hub-card::after{content:"\203A";position:absolute;right:.45rem;bottom:.38rem;margin:0;font-size:1rem;font-weight:300;line-height:1;color:rgba(74,108,74,.38)}
+.info-hub-page .info-hub-card[target="_blank"]::after{content:"\2197\00a0\203A";font-size:.85rem;right:.35rem;bottom:.42rem}
+@media (min-width:768px){
+  .info-hub-page .info-hub-card:hover,.info-hub-page .info-hub-card:focus-visible{border-color:rgba(74,108,74,.35)}
+  .info-hub-page .info-hub-card:hover::after,.info-hub-page .info-hub-card:focus-visible::after{color:rgba(74,108,74,.88)}
+}
+@media (max-width:767px){
+  .sheet-data-page.info-hub-page{max-width:42rem}
+  .info-hub-page .info-hub-grid{display:block;margin:0 auto .25rem;max-width:min(100% - 1.25rem,21.5rem);padding:0 .125rem}
+  .info-hub-page .info-hub-hint{max-width:min(100% - 1.25rem,21.5rem);margin-left:auto;margin-right:auto}
+}
 .info-hub-card--placeholder{border-style:dashed;cursor:default;box-shadow:none}
 .info-hub-card--placeholder::after{display:none}
 .info-hub-card--placeholder:hover,.info-hub-card--placeholder:focus-visible{transform:none;box-shadow:none;border-color:var(--border,#e2e8f0)}
@@ -2829,6 +2838,7 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 .flights-day-group{margin:0 0 .85rem}
 .flights-day-heading{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--primary-olive,#4a6c4a);margin:0 0 .35rem;padding-bottom:.2rem;border-bottom:1px solid rgba(74,108,74,.22);font-weight:800}
 .flights-card{border:1px solid var(--border,#e2e8f0);border-radius:10px;padding:.4rem .55rem .45rem;margin:0 0 .35rem;background:#fff;box-shadow:0 1px 8px rgba(0,0,0,.04)}
+.info-hub-page .info-hub-card.flights-card{padding:.4rem 1.65rem .45rem .55rem}
 .flights-card-route{margin:0 0 .3rem;font-size:.8125rem;font-weight:600;color:var(--text-main,#334155);line-height:1.3}
 .flights-card-meta{display:flex;align-items:stretch;gap:.35rem .4rem;margin:0}
 .flights-meta-pair{display:flex;flex:1 1 auto;gap:.28rem;min-width:0}

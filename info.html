@@ -19,7 +19,7 @@
     <meta name="theme-color" content="#4a6c4a">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.173">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.174">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -68,38 +68,39 @@
     </nav>
 </header>
 
-<div class="hero-section">
-    <div class="hero-overlay">
-        <h1>Pelion guide</h1>
-        <p>Flights, events, walking routes and phone numbers for your stay</p>
-    </div>
-</div>
-
-<main class="main-container info-hub-page" style="margin-top: 28px; padding-bottom: calc(var(--bottom-nav-h, 64px) + 32px);">
-    <p class="info-hub-lead">This page gathers the main topics for your stay: flights, local events, walking inspiration and a dedicated list of useful phone numbers.</p>
+<main class="sheet-data-page info-hub-page flights-page" id="top">
+    <header class="flights-page-head">
+        <div class="flights-page-head-main">
+            <h1 class="flights-page-title"><i class="fa-solid fa-compass" aria-hidden="true"></i> Pelion guide</h1>
+            <p class="flights-iata-badge"><abbr title="Pelion peninsula, Magnesia">Pelion</abbr></p>
+        </div>
+        <p class="flights-page-kicker">Kala Nera <span class="flights-kicker-sep" aria-hidden="true">·</span> Magnesia</p>
+        <p class="flights-page-lead flights-page-lead--desktop">This page gathers the main topics for your stay: flights, local events, walking inspiration and a dedicated list of useful phone numbers.</p>
+        <p class="flights-page-lead flights-page-lead--mobile">Flights, events, walking routes and useful numbers for your stay.</p>
+    </header>
     <p class="info-hub-hint" role="note">Tap or click a card to open that topic.</p>
     <div class="info-hub-grid" role="navigation" aria-label="Pelion guide topics">
-        <a class="info-hub-card" href="flights.html">
+        <a class="info-hub-card flights-card" href="flights.html">
             <span class="info-hub-card__icon" aria-hidden="true"><i class="fa-solid fa-plane-departure"></i></span>
             <h2>Flights</h2>
             <p>Seasonal charter routes at Nea Anchialos (VOL): nine weekly flights May–October, in one clear table.</p>
         </a>
-        <a class="info-hub-card" href="events.html">
+        <a class="info-hub-card flights-card" href="events.html">
             <span class="info-hub-card__icon" aria-hidden="true"><i class="fa-solid fa-calendar-days"></i></span>
             <h2>Regional events</h2>
             <p>Regional events and village traditions across Pelion — by season (fold-out sections) or A–Z, with a letter rail on longer lists. Dates repeat each year unless noted in the text; source on the page.</p>
         </a>
-        <a class="info-hub-card" href="https://walking-pelion.blogspot.com/" target="_blank" rel="noopener noreferrer" title="Walking Pelion — opens in a new tab">
+        <a class="info-hub-card flights-card" href="https://walking-pelion.blogspot.com/" target="_blank" rel="noopener noreferrer" title="Walking Pelion — opens in a new tab">
             <span class="info-hub-card__icon" aria-hidden="true"><i class="fa-solid fa-person-hiking"></i></span>
             <h2>Walking routes</h2>
             <p>Hiking and walking ideas in English on an independent site. Opens in a new tab.</p>
         </a>
-        <a class="info-hub-card" id="useful-numbers" href="useful-numbers.html">
+        <a class="info-hub-card flights-card" id="useful-numbers" href="useful-numbers.html">
             <span class="info-hub-card__icon" aria-hidden="true"><i class="fa-solid fa-phone"></i></span>
             <h2>Useful numbers</h2>
             <p>Local contacts around Kala Nera plus Greek emergency and national short codes — tap any row to dial.</p>
         </a>
-        <a class="info-hub-card" href="bus.html">
+        <a class="info-hub-card flights-card" href="bus.html">
             <span class="info-hub-card__icon" aria-hidden="true"><i class="fa-solid fa-bus"></i></span>
             <h2>Bus (Kala Nera)</h2>
             <p>KTEL timetables from the Kala Nera stop toward Volos and villages across Pelion — by day and direction.</p>
@@ -163,7 +164,7 @@
     <i class="fa-solid fa-map-location-dot"></i>
 </a>
 
-<script src="app.js?v=2.1.173"></script>
+<script src="app.js?v=2.1.174"></script>
 <nav class="bottom-nav" aria-label="Primary">
     <div class="bottom-nav-inner">
         <a href="index.html"><i class="fa-solid fa-house"></i><span>Home</span></a>
