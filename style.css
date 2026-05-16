@@ -1,4 +1,5 @@
-/* version 2.1.174 */
+/* version 2.1.177 */
+@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
 @keyframes slideDown{from{transform: translate(-50%, -100%); opacity: 0}to{transform: translate(-50%, 0); opacity: 1}}
@@ -1617,6 +1618,42 @@ html[lang="el"] .bus-page-title.bus-page-title--border-pill{
 
 .logo span{font-weight:300;opacity:0.7}
 
+/* Preview: script “Guide” tag on wordmark (index*.html) — inspired by travel-directory lockups */
+.logo--with-tag{display:inline-flex;align-items:flex-end;flex-wrap:nowrap;gap:.28em;position:relative;text-transform:none;padding:0 .2rem .1rem 0;max-width:min(100%,17.5rem);flex-shrink:0}
+.logo--with-tag .logo-main{display:inline-block;font-size:1.12em;font-weight:900;color:#1a3f18 !important;text-transform:uppercase;letter-spacing:.55px;line-height:1;white-space:nowrap;text-shadow:0 1px 0 rgba(255,255,255,.9)}
+.logo--with-tag .logo-main span{font-weight:600;opacity:.88;text-transform:uppercase}
+.logo--with-tag .logo-tag{font-family:'Kalam',cursive;font-size:1.42rem;font-weight:700;color:#1e5632;text-transform:none;letter-spacing:.01em;line-height:1.2;display:inline-block;padding-top:.14em;transform:rotate(-10deg) translateY(-4px);margin:0 0 .12rem 0;opacity:1;white-space:nowrap;text-shadow:0 1px 0 rgba(255,255,255,.8);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+@media screen and (min-width:992px){
+  .nav-container:has(.logo--with-tag){flex-wrap:nowrap!important}
+  .logo--with-tag{max-width:none;gap:.32em}
+  .logo--with-tag .logo-main{letter-spacing:.6px}
+  .nav-container:has(.logo--with-tag) .nav-links{flex-wrap:nowrap;gap:14px}
+  .nav-container:has(.logo--with-tag) .nav-links li{flex-shrink:0}
+  .nav-container:has(.logo--with-tag) .nav-links a{white-space:nowrap;font-size:14px;padding:8px 11px}
+  html[lang="el"] .nav-container:has(.logo--with-tag) .nav-links{gap:11px}
+  html[lang="el"] .nav-container:has(.logo--with-tag) .nav-links a{font-size:13.5px;padding:8px 9px}
+}
+@media screen and (max-width:991px){
+  .nav-container:has(.logo--with-tag){
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto auto;
+    flex-wrap:nowrap!important;
+    align-items:center!important;
+    gap:6px 8px;
+    padding:10px 12px!important;
+  }
+  .nav-container:has(.logo--with-tag) .logo{min-width:0;max-width:100%;overflow:visible;white-space:nowrap}
+  .nav-container:has(.logo--with-tag) .lang-link-mobile,
+  .nav-container:has(.logo--with-tag)>a[href*="meteoblue.com"]{flex-shrink:0}
+  .nav-container:has(.logo--with-tag)>a[href*="meteoblue.com"]{justify-self:end;max-width:none}
+  .nav-container:has(.logo--with-tag) .weather-icon-container{font-size:13px;padding:3px 7px;gap:5px}
+  .logo--with-tag{max-width:100%;gap:.22em}
+  .logo--with-tag .logo-main{font-size:1.05em;letter-spacing:.45px}
+  .logo--with-tag .logo-tag{font-size:1.15rem;color:#225c30;transform:rotate(-9deg) translateY(-3px);margin:0 0 .1rem 0}
+  html[lang="el"] .logo--with-tag .logo-main{font-size:.98em;letter-spacing:.3px}
+  html[lang="el"] .nav-container:has(.logo--with-tag){gap:5px 6px}
+}
+
 .nav-links{list-style:none;display:flex;gap:25px;margin:0;padding:0;align-items:center}
 
 .nav-links a{text-decoration:none;color:#2d5a27;font-weight:700;font-size:14px;transition:0.3s;padding:8px 12px;border-radius:12px}
@@ -2562,6 +2599,8 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 .btn-visit-glossy:active{transform:scale(0.99)}
 
 .site-header .logo{max-height:50px;width:auto}
+.site-header .logo.logo--with-tag{max-height:none;overflow:visible}
+.main-nav:has(.logo--with-tag){padding-top:18px;padding-bottom:14px}
 
 .footer-top-bar{background:#5d6d4e;height:10px;width:100%}
 
