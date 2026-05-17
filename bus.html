@@ -37,12 +37,12 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.177">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=3.1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
-<body data-bus-view="full">
+<body data-bus-view="full" class="bus-page-poc">
 
 <div id="offline-indicator" class="offline-banner" style="display: none;">
     <i class="fa fa-plane"></i> You are currently browsing offline. Data is loaded from cache.
@@ -100,24 +100,18 @@
     </nav>
 </header>
 
-<div class="main-container">
-    <section class="bus-section" aria-label="Bus timetable · Kala Nera stop">
-        <header class="bus-page-heading bus-page-heading--top-pill">
-            <div class="bus-top-divider__center" aria-label="Bus timetable header">
-                <h1 class="bus-page-title bus-page-title--border-pill">
-                    <span class="bus-page-title-row">
-                        <i class="fa-solid fa-bus bus-page-title-icon" aria-hidden="true"></i>
-                        <span class="bus-page-title-plain">Bus timetable · Kala Nera stop</span>
-                    </span>
-                </h1>
-            </div>
-            <div class="bus-page-deck">
-                <a class="bus-ktel-glossy" href="https://ktelvolou.gr/en/routes/list/" target="_blank" rel="noopener noreferrer" title="KTEL Volos — official route list" aria-label="KTEL Volos — official route list (opens in new tab)">
-                    <img class="bus-ktel-logo" src="pix/ktel-logo.jpg" alt="KTEL Volos" width="120" height="36" loading="lazy" decoding="async">
-                </a>
-                <span class="bus-page-deck-hint">Regional bus operator (Magnesia)</span>
-            </div>
-        </header>
+<main class="sheet-data-page bus-page flights-page" id="top" aria-label="Bus timetable · Kala Nera stop">
+    <header class="flights-page-head">
+        <div class="flights-page-head-main">
+            <h1 class="flights-page-title"><i class="fa-solid fa-bus" aria-hidden="true"></i> Bus timetable</h1>
+            <p class="flights-iata-badge"><abbr title="Kala Nera bus stop">Kala Nera</abbr></p>
+        </div>
+        <p class="flights-page-kicker">Volos &amp; Pelion <span class="flights-kicker-sep" aria-hidden="true">·</span> Magnesia</p>
+        <p class="flights-page-lead flights-page-lead--desktop">Departures from the Kala Nera stop — confirm last-minute changes with KTEL before you travel.</p>
+        <p class="flights-page-lead flights-page-lead--mobile">From Kala Nera stop · confirm with KTEL before travel.</p>
+    </header>
+
+    <article class="flights-card bus-timetable-card" aria-label="Timetable">
         <div class="bus-sticky-zone">
             <div class="bus-filter-bar" role="toolbar" aria-label="Timetable filters">
                 <button type="button" id="bus-trip-chooser-open" class="bus-filter-bar__main" aria-haspopup="dialog" aria-controls="bus-trip-chooser-dialog" aria-expanded="false">
@@ -191,7 +185,6 @@
                     <p id="bus-trust-dialog-copy" class="bus-trust-dialog__copy"></p>
                     <p id="bus-trust-dialog-stop" class="bus-trust-dialog__extra"></p>
                     <p id="bus-trust-dialog-offline" class="bus-trust-dialog__extra"></p>
-                    <p class="bus-trust-dialog__linkwrap"><a id="bus-trust-dialog-ktel" class="bus-ktel-link bus-trust-dialog__ktel" href="#" target="_blank" rel="noopener noreferrer"></a></p>
                     <button type="button" id="bus-trust-dialog-done" class="bus-trust-dialog__done"></button>
                 </div>
             </div>
@@ -244,12 +237,14 @@
             </div>
         </div>
 
-        <div class="bus-service-info" aria-label="KTEL station and contact">
-            <p><strong>KTEL station:</strong> <a class="bus-ktel-link" href="https://www.google.com/maps/search/?api=1&amp;query=KTEL%20Magnesia%20Zachou%205%20Volos%20Greece" target="_blank" rel="noopener noreferrer" title="KTEL Magnesia station, Zachou Street 5, Volos — open in Maps" aria-label="Open KTEL Magnesia station in Maps (Zachou Street 5, Volos)">Volos</a> (Zachou&nbsp;Street&nbsp;5).</p>
-            <p><strong>Contact:</strong> Call <a class="bus-ktel-link" href="tel:+302421033254" title="Call KTEL information">+30&nbsp;24210&nbsp;33254</a> for schedule changes.</p>
-        </div>
-    </section>
-</div>
+    </article>
+
+    <footer class="bus-page-footnote events-footnote" aria-label="KTEL station and contact">
+        <p class="events-footnote__line" id="bus-footnote-ktel-line"></p>
+        <p class="events-footnote__line"><strong>KTEL station:</strong> <a class="bus-page-footnote__link" href="https://www.google.com/maps/search/?api=1&amp;query=KTEL%20Magnesia%20Zachou%205%20Volos%20Greece" target="_blank" rel="noopener noreferrer" title="KTEL Magnesia station, Zachou Street 5, Volos — open in Maps">Volos</a> (Zachou Street 5).</p>
+        <p class="events-footnote__line"><strong>Contact:</strong> <a class="bus-page-footnote__call" href="tel:+302421033254" aria-label="Call KTEL information +30 24210 33254" title="Call KTEL information"><span class="bus-page-footnote__call-ico" aria-hidden="true"><i class="fa-solid fa-phone"></i></span><span class="bus-page-footnote__call-num">+30&nbsp;24210&nbsp;33254</span></a> for schedule changes.</p>
+    </footer>
+</main>
 
 <footer class="site-footer">
     <div class="footer-container">
@@ -304,7 +299,7 @@
     </div>
 </footer>
 
-<script src="app.js?v=2.1.177"></script>
+<script src="app.js?v=3.1.0"></script>
 
 <nav class="bottom-nav" aria-label="Primary">
     <div class="bottom-nav-inner">

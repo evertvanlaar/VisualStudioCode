@@ -19,7 +19,7 @@
     <meta name="theme-color" content="#4a6c4a">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.177">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=3.1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -81,10 +81,18 @@
         <p class="flights-page-lead flights-page-lead--desktop">Festivals, name days, wine and harvest celebrations, and other traditions from around the peninsula. Dates in the list are fixed each year unless the description says otherwise.</p>
         <p class="flights-page-lead flights-page-lead--mobile">Village traditions — fixed dates unless noted in the text.</p>
         <div class="events-sort-wrap">
-            <div class="view-toggle view-toggle-inline view-toggle--segment events-sort-toggle" role="tablist" aria-label="Sort list">
+            <div class="events-sort-toggle" role="tablist" aria-label="Sort list">
                 <button type="button" class="view-toggle-btn" id="events-sort-season" role="tab" aria-selected="true">By season</button>
                 <button type="button" class="view-toggle-btn" id="events-sort-alpha" role="tab" aria-selected="false">A–Z</button>
             </div>
+        </div>
+        <div class="events-results-row" id="events-results-row">
+            <p class="hub-results-line events-results-line" id="events-results-line" aria-live="polite"></p>
+            <p class="events-bulk-actions" id="events-bulk-actions" hidden>
+                <button type="button" class="hub-filter-link events-bulk-link" id="events-expand-all">Expand all</button>
+                <span class="events-bulk-sep" aria-hidden="true">·</span>
+                <button type="button" class="hub-filter-link events-bulk-link" id="events-collapse-all">Collapse all</button>
+            </p>
         </div>
     </header>
 
@@ -149,8 +157,8 @@
     <i class="fa-solid fa-map-location-dot"></i>
 </a>
 
-<script src="app.js?v=2.1.177"></script>
-<script src="events-page.js?v=2.1.177" defer></script>
+<script src="app.js?v=3.1.0"></script>
+<script src="events-page.js?v=3.1.0" defer></script>
 <nav class="bottom-nav" aria-label="Primary">
     <div class="bottom-nav-inner">
         <a href="index.html"><i class="fa-solid fa-house"></i><span>Home</span></a>

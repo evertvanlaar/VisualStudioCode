@@ -37,12 +37,12 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.177">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=3.1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
-<body data-bus-view="full">
+<body data-bus-view="full" class="bus-page-poc">
 
 <div id="offline-indicator" class="offline-banner" style="display: none;">
     <i class="fa fa-plane"></i> Αυτή τη στιγμή περιηγείστε εκτός σύνδεσης. Τα δεδομένα φορτώνονται από την προσωρινή μνήμη.
@@ -100,24 +100,18 @@
     </nav>
 </header>
 
-<div class="main-container">
-    <section class="bus-section" aria-label="Δρομολόγια λεωφορείου · στάση Καλά Νερά">
-        <header class="bus-page-heading bus-page-heading--top-pill">
-            <div class="bus-top-divider__center" aria-label="Κεφαλίδα δρομολογίων">
-                <h1 class="bus-page-title bus-page-title--border-pill">
-                    <span class="bus-page-title-row">
-                        <i class="fa-solid fa-bus bus-page-title-icon" aria-hidden="true"></i>
-                        <span class="bus-page-title-plain">Δρομολόγια λεωφορείου · στάση Καλά Νερά</span>
-                    </span>
-                </h1>
-            </div>
-            <div class="bus-page-deck">
-                <a class="bus-ktel-glossy" href="https://ktelvolou.gr/el/routes/list/" target="_blank" rel="noopener noreferrer" title="ΚΤΕΛ Ν. Μαγνησίας — επίσημη λίστα δρομολογίων" aria-label="ΚΤΕΛ Νομού Μαγνησίας — επίσημη λίστα δρομολογίων (ανοίγει σε νέα καρτέλα)">
-                    <img class="bus-ktel-logo" src="pix/ktel-logo.jpg" alt="ΚΤΕΛ Ν. Μαγνησίας" width="120" height="36" loading="lazy" decoding="async">
-                </a>
-                <span class="bus-page-deck-hint">Επίσημος περιφερειακός μεταφορέας (Μαγνησία)</span>
-            </div>
-        </header>
+<main class="sheet-data-page bus-page flights-page" id="top" aria-label="Δρομολόγια λεωφορείου · στάση Καλά Νερά">
+    <header class="flights-page-head">
+        <div class="flights-page-head-main">
+            <h1 class="flights-page-title"><i class="fa-solid fa-bus" aria-hidden="true"></i> Δρομολόγια λεωφορείου</h1>
+            <p class="flights-iata-badge"><abbr title="Στάση Καλά Νερά">Καλά Νερά</abbr></p>
+        </div>
+        <p class="flights-page-kicker">Βόλος &amp; Πήλιο <span class="flights-kicker-sep" aria-hidden="true">·</span> Μαγνησία</p>
+        <p class="flights-page-lead flights-page-lead--desktop">Αναχωρήσεις από τη στάση Καλά Νερά — επιβεβαιώστε τελευταία λεπτά αλλαγές με το ΚΤΕΛ πριν το ταξίδι.</p>
+        <p class="flights-page-lead flights-page-lead--mobile">Από στάση Καλά Νερά · επιβεβαιώστε με ΚΤΕΛ.</p>
+    </header>
+
+    <article class="flights-card bus-timetable-card" aria-label="Πρόγραμμα δρομολογίων">
         <div class="bus-sticky-zone">
             <div class="bus-filter-bar" role="toolbar" aria-label="Φίλτρα δρομολογίων">
                 <button type="button" id="bus-trip-chooser-open" class="bus-filter-bar__main" aria-haspopup="dialog" aria-controls="bus-trip-chooser-dialog" aria-expanded="false">
@@ -191,7 +185,6 @@
                     <p id="bus-trust-dialog-copy" class="bus-trust-dialog__copy"></p>
                     <p id="bus-trust-dialog-stop" class="bus-trust-dialog__extra"></p>
                     <p id="bus-trust-dialog-offline" class="bus-trust-dialog__extra"></p>
-                    <p class="bus-trust-dialog__linkwrap"><a id="bus-trust-dialog-ktel" class="bus-ktel-link bus-trust-dialog__ktel" href="#" target="_blank" rel="noopener noreferrer"></a></p>
                     <button type="button" id="bus-trust-dialog-done" class="bus-trust-dialog__done"></button>
                 </div>
             </div>
@@ -244,12 +237,14 @@
             </div>
         </div>
 
-        <div class="bus-service-info" aria-label="Σταθμός ΚΤΕΛ και επικοινωνία">
-            <p><strong>Σταθμός ΚΤΕΛ:</strong> <a class="bus-ktel-link" href="https://www.google.com/maps/search/?api=1&amp;query=KTEL%20Magnesia%20Zachou%205%20Volos%20Greece" target="_blank" rel="noopener noreferrer" title="Σταθμός ΚΤΕΛ Μαγνησίας, Ζάχου 5, Βόλος — άνοιγμα στο χάρτη" aria-label="Άνοιγμα σταθμού ΚΤΕΛ Μαγνησίας στο χάρτη (Ζάχου 5, Βόλος)">Βόλος</a> (Ζάχου&nbsp;5).</p>
-            <p><strong>Επικοινωνία:</strong> Οι επισκέπτες μπορούν να καλέσουν το <a class="bus-ktel-link" href="tel:+302421033254" title="Κλήση πληροφοριών ΚΤΕΛ">+30&nbsp;24210&nbsp;33254</a> για τρέχουσες αλλαγές στο πρόγραμμα.</p>
-        </div>
-    </section>
-</div>
+    </article>
+
+    <footer class="bus-page-footnote events-footnote" aria-label="Σταθμός ΚΤΕΛ και επικοινωνία">
+        <p class="events-footnote__line" id="bus-footnote-ktel-line"></p>
+        <p class="events-footnote__line"><strong>Σταθμός ΚΤΕΛ:</strong> <a class="bus-page-footnote__link" href="https://www.google.com/maps/search/?api=1&amp;query=KTEL%20Magnesia%20Zachou%205%20Volos%20Greece" target="_blank" rel="noopener noreferrer" title="Σταθμός ΚΤΕΛ Μαγνησίας, Ζάχου 5, Βόλος">Βόλος</a> (Ζάχου 5).</p>
+        <p class="events-footnote__line"><strong>Επικοινωνία:</strong> <a class="bus-page-footnote__call" href="tel:+302421033254" aria-label="Κλήση πληροφοριών ΚΤΕΛ +30 24210 33254" title="Κλήση πληροφοριών ΚΤΕΛ"><span class="bus-page-footnote__call-ico" aria-hidden="true"><i class="fa-solid fa-phone"></i></span><span class="bus-page-footnote__call-num">+30&nbsp;24210&nbsp;33254</span></a> για αλλαγές στο πρόγραμμα.</p>
+    </footer>
+</main>
 
 <footer class="site-footer">
     <div class="footer-container">
@@ -304,7 +299,7 @@
     </div>
 </footer>
 
-<script src="app.js?v=2.1.177"></script>
+<script src="app.js?v=3.1.0"></script>
 
 <nav class="bottom-nav" aria-label="Κύρια πλοήγηση">
     <div class="bottom-nav-inner">

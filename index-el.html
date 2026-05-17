@@ -55,7 +55,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
     
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.177">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=3.1.0">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -69,7 +69,7 @@
     ]}
     </script>
 </head>
-<body>
+<body class="page-home-hub">
 
 <div id="offline-indicator" class="offline-banner" style="display: none;">
     <i class="fa fa-plane"></i> Αυτή τη στιγμή περιηγείστε εκτός σύνδεσης. Τα δεδομένα φορτώνονται από την προσωρινή μνήμη.
@@ -128,26 +128,47 @@
     </nav>
 </header>
 
-<div class="hero-section">
-    <div class="hero-overlay">
-        <h1>Καλά Νερά Πηλίου<BR>τέλειος συνδυασμός βουνού και θάλασσας</h1>
-        <p></p>
+<div class="hero-section hero-section--hub">
+    <div class="hero-overlay hero-overlay--hub">
+        <h1 class="hero-hub-title">Καλά Νερά Πηλίου<br><span class="hero-hub-title-sub">βουνό &amp; θάλασσα</span></h1>
+        <div class="hero-hub-search">
+            <div class="search-container hero-hub-search-container">
+                <i class="fa fa-search search-icon" aria-hidden="true"></i>
+                <input
+                    type="search"
+                    class="search-input hero-hub-search-input"
+                    id="search-input"
+                    placeholder="Αναζήτηση με όνομα ή κατηγορία..."
+                    inputmode="search"
+                    enterkeyhint="search"
+                    autocomplete="off"
+                >
+            </div>
+        </div>
+        <div class="hero-category-tiles" id="hero-category-tiles" role="group" aria-label="Περιήγηση ανά κατηγορία"></div>
+        <p class="hero-hub-cta">
+            <a href="t-form-el.html" class="hero-hub-add">
+                <i class="fa-solid fa-circle-plus" aria-hidden="true"></i>
+                <span>Προσθέστε την επιχείρησή σας</span>
+            </a>
+        </p>
     </div>
     <div class="hero-container">
-        <div id="floating-webcam" class="webcam-float-wrapper" onclick="this.classList.toggle('is-zoomed')">
-            <div class="webcam-live-badge">ΠΗΛΙΟ ΖΩΝΤΑΝΑ</div>
-            <img id="webcamImage" src="https://www.meteology.gr/cam/milina/index.php" class="webcam-img" alt="">
+        <div id="floating-webcam" class="webcam-float-wrapper webcam-float-wrapper--hub">
+            <button type="button" class="webcam-hub-trigger" id="webcam-hub-trigger" aria-expanded="false" aria-controls="webcam-hub-panel" aria-label="Άνοιγμα ζωντανής κάμερας Πηλίου">
+                <i class="fa-solid fa-video" aria-hidden="true"></i>
+                <span class="webcam-live-dot" aria-hidden="true"></span>
+            </button>
+            <div class="webcam-hub-panel" id="webcam-hub-panel" hidden>
+                <button type="button" class="webcam-hub-close" aria-label="Κλείσιμο κάμερας"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                <div class="webcam-live-badge">ΠΗΛΙΟ ΖΩΝΤΑΝΑ</div>
+                <img id="webcamImage" src="https://www.meteology.gr/cam/milina/index.php" class="webcam-img" alt="Ζωντανή κάμερα Μηλιά, Πήλιο">
+            </div>
         </div>
     </div>
 </div>
 
-    <div class="main-container">
-        <div class="directory-page-heading">
-            <a href="t-form-el.html" class="directory-head-add">
-                <i class="fa-solid fa-circle-plus" aria-hidden="true"></i>
-                <span>Προσθέστε Επιχείρηση</span>
-            </a>
-        </div>
+    <div class="main-container main-container--hub">
 
 <div id="install-banner">
     <p>Προσθέστε τα <b>Καλά Νερά</b> στην αρχική σας οθόνη για εύκολη πρόσβαση!</p>
@@ -165,32 +186,20 @@
         <button id="close-ios-banner" style="position: absolute; right: 10px; top: 10px; background: transparent; border: none; color: #8e8e93; cursor: pointer; font-size: 18px;">✕</button>
     </div>
 
-        <div class="directory-toolbar">
-            <div class="directory-toolbar-stack">
-                <div class="directory-toolbar-search">
-                    <div class="search-row">
-                        <div class="search-container">
-                            <i class="fa fa-search search-icon"></i>
-                            <input 
-                                type="search" 
-                                class="search-input" 
-                                id="search-input" 
-                                placeholder="Αναζήτηση με όνομα ή κατηγορία..."
-                                inputmode="search"
-                                enterkeyhint="search"
-                                autocomplete="off"
-                            >
-                        </div>
+        <div class="hub-filter-bar directory-toolbar--below-hero">
+            <p class="hub-results-line" id="hub-results-line" aria-live="polite">
+                <span id="hub-results-count"><strong>0</strong> επιχειρήσεις · <span class="hub-results-hint">— επιλέξτε κατηγορία παραπάνω</span></span>
+            </p>
+            <div class="hub-filter-row" role="group" aria-labelledby="hub-filter-label">
+                <div class="hub-filter-meta">
+                    <span class="hub-filter-label" id="hub-filter-label">Περιοχές</span>
+                    <div class="hub-filter-util">
+                        <button type="button" class="hub-filter-link hub-filter-reset hub-filter-reset--areas" id="clear-location-filter" aria-pressed="true">Όλες</button>
+                        <button type="button" class="hub-filter-link hub-filter-reset hub-filter-reset--category" id="clear-category-filter" hidden>Καθαρισμός</button>
                     </div>
                 </div>
-                <div class="directory-toolbar-filters">
-                    <div class="directory-location-row directory-location-row--scroll">
-                        <div class="location-quick" id="location-buttons" role="group" aria-label="Περιοχές, πολλαπλή επιλογή"></div>
-                    </div>
-                    <div class="view-toggle view-toggle-inline view-toggle--segment" role="tablist" aria-label="Λειτουργία προβολής">
-                        <button type="button" class="view-toggle-btn" id="view-mode-categories" role="tab" aria-selected="true">Κατηγορίες</button>
-                        <button type="button" class="view-toggle-btn" id="view-mode-az" role="tab" aria-selected="false">A–Z</button>
-                    </div>
+                <div class="hub-filter-scroll directory-location-row directory-location-row--scroll">
+                    <div class="location-quick" id="location-buttons" role="group" aria-label="Περιοχές, πατήστε για συμπερίληψη ή αποκλεισμό"></div>
                 </div>
             </div>
         </div>
@@ -273,7 +282,7 @@
 
 <!-- N8N_SEO_END -->
  
-<script src="app.js?v=2.1.177"></script>
+<script src="app.js?v=3.1.0"></script>
 
 <nav class="bottom-nav" aria-label="Κύρια πλοήγηση">
     <div class="bottom-nav-inner">

@@ -80,14 +80,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
 
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=2.1.177">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=3.1.0">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
 
-<body>
+<body class="page-wishlist">
 
 <header class="site-header">
     <nav class="main-nav">
@@ -140,25 +140,35 @@
     </nav>
 </header>
 
-<div class="hero-section">
-    <div class="hero-overlay">
-        <h1>Τα Αγαπημένα μου</h1>
-        <p>Μέρη για να σημειώσετε</p>
-        <a href="#" id="clear-wishlist" style="display: none; color: white; text-decoration: none; font-size: 0.9rem; margin-top: 15px; opacity: 0.8; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.3); padding: 5px 15px; border-radius: 20px; background: rgba(0,0,0,0.2);">
-        <i class="fa-regular fa-trash-can"></i> Εκκαθάριση Λίστας Αγαπημένων
-        </a>
-    </div>
-</div>
+<main class="sheet-data-page flights-page wishlist-page" id="top">
+    <header class="flights-page-head">
+        <div class="flights-page-head-main">
+            <h1 class="flights-page-title"><i class="fa-solid fa-heart" aria-hidden="true"></i> Τα Αγαπημένα μου</h1>
+            <p class="flights-iata-badge"><abbr title="Αποθηκευμένα στη συσκευή">Αποθ.</abbr></p>
+        </div>
+        <p class="flights-page-kicker">Kala Nera <span class="flights-kicker-sep" aria-hidden="true">·</span> Pelion</p>
+        <p class="flights-page-lead flights-page-lead--desktop">Μέρη που αποθηκεύσατε από τον οδηγό — μόνο σε αυτή τη συσκευή.</p>
+        <p class="flights-page-lead flights-page-lead--mobile">Τα αποθηκευμένα σας μέρη στα Καλά Νερά.</p>
+    </header>
 
-<main class="main-container" style="margin-top: 30px; min-height: 60vh;">
-    
-    <div id="empty-wishlist" style="display:none; text-align:center; padding:60px 20px;">
-        <i class="fa-regular fa-heart" style="font-size: 4rem; color: #ccc; margin-bottom: 20px; display: block;"></i>
-        <p style="font-size: 1.2rem; color: var(--muted);">Δεν έχετε αποθηκεύσει ακόμα αγαπημένα.</p>
-        <br>
-        <a href="index.html" class="add-biz-btn" style="display: inline-block; text-decoration: none; padding: 12px 25px;">
-            Εξερευνήστε Επιχειρήσεις
-        </a>
+    <div class="hub-filter-bar wishlist-toolbar" id="wishlist-toolbar" hidden>
+        <p class="hub-results-line" id="wishlist-results-line" aria-live="polite">
+            <span id="wishlist-results-count"><strong>0</strong> αγαπημένα</span>
+        </p>
+        <div class="hub-filter-meta">
+            <span class="hub-filter-label">Λίστα</span>
+            <div class="hub-filter-util">
+                <button type="button" class="hub-filter-link hub-filter-link--clear" id="clear-wishlist" hidden>
+                    <i class="fa-regular fa-trash-can" aria-hidden="true"></i> Εκκαθάριση
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="empty-wishlist" class="wishlist-empty" hidden>
+        <i class="fa-regular fa-heart wishlist-empty__icon" aria-hidden="true"></i>
+        <p class="wishlist-empty__text">Δεν έχετε αποθηκεύσει ακόμα αγαπημένα.</p>
+        <a href="index-el.html" class="hero-hub-add wishlist-empty__cta">Εξερευνήστε επιχειρήσεις</a>
     </div>
 
     <div id="business-list">
@@ -220,7 +230,7 @@
     </div>
 </footer>
 
-<script src="app.js?v=2.1.177"></script>
+<script src="app.js?v=3.1.0"></script>
 
 <nav class="bottom-nav" aria-label="Κύρια πλοήγηση">
     <div class="bottom-nav-inner">

@@ -37,6 +37,8 @@ const BUS_UI_STRINGS_EMBEDDED = {
     "trustUltraCompactToVolos": "Times for Kala Nera stop. Not official.",
     "linkOfficialKtelShort": "Official KTEL",
     "linkOfficialKtelLong": "Open official KTEL timetables",
+    "footnoteTimetablesLabel": "Timetables",
+    "footnoteKtelLink": "Official KTEL timetables",
     "chipMoreStops": "+{n} stops",
     "chipMoreSuffix": "+{n} more",
     "ariaAdditionalDestinations": "{n} additional destinations on this departure",
@@ -71,6 +73,8 @@ const BUS_UI_STRINGS_EMBEDDED = {
     "trustUltraCompactToVolos": "Ώρες για στάση Καλά Νερά. Όχι επίσημο.",
     "linkOfficialKtelShort": "Επίσημο ΚΤΕΛ",
     "linkOfficialKtelLong": "Άνοιγμα επίσημων δρομολογίων ΚΤΕΛ",
+    "footnoteTimetablesLabel": "Δρομολόγια",
+    "footnoteKtelLink": "Επίσημα δρομολόγια ΚΤΕΛ",
     "chipMoreStops": "+{n} στάσεις",
     "chipMoreSuffix": "+{n} ακόμη",
     "ariaAdditionalDestinations": "{n} επιπλέον προορισμοί σε αυτή την αναχώρηση",
@@ -180,6 +184,12 @@ function t(text) {
 let allBusinesses = []; 
 /** Geselecteerde gebieden (Sheet-waarden Location). Leeg, of alles uit SITE_LOCATION_FILTERS aangevinkt = geen filter. */
 let activeLocations = new Set();
+/** Home hub (?cat=): null = no category filter (after user clears); default Eat on first load */
+let activeCategory = null;
+const HUB_DEFAULT_CATEGORY = 'Eat';
+let hubCategoryScrollPending = false;
+/** Category to restore when hub search is cleared (undefined = not searching). */
+let hubCategoryBeforeSearch;
 let deferredPrompt; // Global variabele voor PWA
 let listMode = (localStorage.getItem('kalanera_list_mode') || 'categories'); // 'categories' | 'az'
 
@@ -216,11 +226,12 @@ const iconMap = {
     'Eat': 'fa-utensils', 'Eten': 'fa-utensils', 'Drink': 'fa-glass-cheers', 'Pub': 'fa-beer',
     'Shop': 'fa-shopping-cart', 'Other': 'fa-shopping-bag', 'Supermarket': 'fa-shopping-basket',
     'Sleep': 'fa-bed', 'B&B': 'fa-hotel', 'Camp': 'fa-campground', 'Beauty': 'fa-spa',
-    'Kapper': 'fa-cut', 'Sport': 'fa-running', 'Pharmacy': 'fa-pills', 'Garage': 'fa-car'
+    'Kapper': 'fa-cut', 'Sport': 'fa-running', 'Pharmacy': 'fa-pills', 'Garage': 'fa-car',
+    'Rent': 'fa-car', 'Travel': 'fa-route'
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '2.1.177'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.0'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -395,7 +406,201 @@ async function init() {
 // --- UI RENDERING & FILTERS ---
 function renderEverything() {
     generateLocationButtons();
-    renderBusinesses(allBusinesses);
+    generateHeroCategoryTiles();
+    syncHeroCategoryTilesUI();
+    syncHubFilterBar();
+    applyFilters();
+}
+
+function isHomeHubPage() {
+    return document.body.classList.contains('page-home-hub');
+}
+
+function isWishlistPage() {
+    return document.getElementById('empty-wishlist') !== null;
+}
+
+function useMagazineCardLayout() {
+    return (isHomeHubPage() && activeCategory) || isWishlistPage();
+}
+
+function resolveCategoryParam(raw) {
+    if (!raw || !String(raw).trim()) return null;
+    const norm = String(raw).trim().toLowerCase();
+    return SITE_CATEGORY_TILES.find(
+        (c) => c.toLowerCase() === norm || categorySectionSlug(c) === norm
+    ) || null;
+}
+
+function readCategoryFromUrl() {
+    return resolveCategoryParam(new URLSearchParams(window.location.search).get('cat'));
+}
+
+function setActiveCategory(cat, { updateUrl = true, scrollToList = false } = {}) {
+    activeCategory = cat && SITE_CATEGORY_TILES.includes(cat) ? cat : null;
+    if (updateUrl && isHomeHubPage()) {
+        const url = new URL(window.location.href);
+        if (activeCategory) url.searchParams.set('cat', categorySectionSlug(activeCategory));
+        else url.searchParams.delete('cat');
+        history.replaceState(null, '', url);
+    }
+    syncHeroCategoryTilesUI();
+    syncHubFilterBar();
+    applyFilters();
+    if (scrollToList) scrollToBusinessList();
+}
+
+function syncHeroCategoryTilesUI() {
+    const container = document.getElementById('hero-category-tiles');
+    if (!container) return;
+    container.querySelectorAll('.hero-category-tile').forEach((btn) => {
+        const cat = btn.getAttribute('data-cat');
+        const on = !!(cat && activeCategory === cat);
+        btn.classList.toggle('is-active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+}
+
+function generateHeroCategoryTiles() {
+    const container = document.getElementById('hero-category-tiles');
+    if (!container || container.dataset.ready === '1') return;
+
+    let html = '';
+
+    SITE_CATEGORY_TILES.forEach((cat) => {
+        const iconHtml = getIcon(cat);
+        const label = escapeHtml(t(cat));
+        html += `<button type="button" class="hero-category-tile" data-cat="${escapeHtml(cat)}" aria-pressed="false"><span class="hero-category-tile__icon" aria-hidden="true">${iconHtml}</span><span class="hero-category-tile__label">${label}</span></button>`;
+    });
+
+    container.innerHTML = html;
+    container.dataset.ready = '1';
+
+    container.querySelectorAll('.hero-category-tile').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const cat = btn.getAttribute('data-cat');
+            if (!cat || activeCategory === cat) return;
+            setActiveCategory(cat, { updateUrl: true, scrollToList: true });
+        });
+    });
+}
+
+function locationBtnAppearsOn(loc) {
+    return activeLocations.size === 0 || activeLocations.has(loc);
+}
+
+function hubLocationLabel(loc) {
+    if (currentLang === 'el') {
+        const short = { 'Kala Nera': 'Καλά Νερά', 'Kato Gatzea': 'Γατζέα', Koropi: 'Κορώπη' };
+        return short[loc] || t(loc);
+    }
+    return t(loc);
+}
+
+function hubFilterResetLabels() {
+    const isEl = currentLang === 'el';
+    return {
+        areas: isEl ? 'Όλες' : 'All areas',
+        areasTitle: isEl ? 'Όλες οι περιοχές' : 'Show businesses in all areas',
+        categories: isEl ? 'Καθαρισμός' : 'Clear',
+        categoriesTitle: isEl ? 'Αφαίρεση επιλογής κατηγορίας' : 'Clear category filter',
+    };
+}
+
+function syncHubFilterBar() {
+    const catBtn = document.getElementById('clear-category-filter');
+    const areasBtn = document.getElementById('clear-location-filter');
+    const labels = hubFilterResetLabels();
+    if (catBtn) {
+        catBtn.hidden = !activeCategory;
+        catBtn.textContent = labels.categories;
+        catBtn.title = labels.categoriesTitle;
+    }
+    if (areasBtn) {
+        const allOn = locationFilterShowsAllBusinesses();
+        areasBtn.hidden = allOn;
+        areasBtn.textContent = labels.areas;
+        areasBtn.title = labels.areasTitle;
+        areasBtn.setAttribute('aria-pressed', allOn ? 'true' : 'false');
+        areasBtn.classList.toggle('is-active', allOn);
+    }
+}
+
+function hubListUnlocked() {
+    if (!isHomeHubPage()) return true;
+    const searchInput = document.getElementById('search-input');
+    const searchTerm = searchInput ? searchInput.value.trim() : '';
+    return !!(activeCategory || searchTerm);
+}
+
+function renderHubIdlePrompt() {
+    const container = document.getElementById('business-list');
+    if (!container) return;
+    container.innerHTML = '';
+    const existing = document.querySelector('.alpha-index');
+    if (existing) existing.remove();
+}
+
+function syncHubResultsLine(count) {
+    const line = document.getElementById('hub-results-line');
+    const countEl = document.getElementById('hub-results-count');
+    if (!line || !countEl || !isHomeHubPage()) return;
+
+    const isEl = currentLang === 'el';
+    const unlocked = hubListUnlocked();
+    const n = unlocked ? (Number(count) || 0) : 0;
+    const bizWord = n === 1 ? (isEl ? 'επιχείρηση' : 'business') : (isEl ? 'επιχειρήσεις' : 'businesses');
+    const parts = [`<strong>${n}</strong> ${bizWord}`];
+
+    if (!unlocked) {
+        parts.push(
+            isEl
+                ? '<span class="hub-results-hint">— επιλέξτε κατηγορία παραπάνω</span>'
+                : '<span class="hub-results-hint">— select a category above</span>'
+        );
+    } else {
+        const searchInput = document.getElementById('search-input');
+        const searchTermRaw = searchInput ? searchInput.value.trim() : '';
+        if (searchTermRaw) {
+            parts.push(
+                isEl
+                    ? `για «<em>${escapeHtml(searchTermRaw)}</em>»`
+                    : `for “<em>${escapeHtml(searchTermRaw)}</em>”`
+            );
+        } else if (activeCategory) {
+            parts.push(isEl ? `στην <em>${escapeHtml(t(activeCategory))}</em>` : `in <em>${escapeHtml(t(activeCategory))}</em>`);
+        }
+        if (!locationFilterShowsAllBusinesses()) {
+            const locs = SITE_LOCATION_FILTERS.filter((loc) => activeLocations.has(loc)).map((loc) => t(loc));
+            if (locs.length) {
+                parts.push(isEl ? `στην ${escapeHtml(locs.join(', '))}` : `in ${escapeHtml(locs.join(', '))}`);
+            }
+        }
+    }
+
+    countEl.innerHTML = parts.join(' · ');
+    line.hidden = false;
+}
+
+function scrollToBusinessList() {
+    if (!isHomeHubPage()) {
+        const target = document.getElementById('business-list')
+            || document.querySelector('.directory-toolbar--below-hero');
+        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+    }
+    const header = document.querySelector('.site-header');
+    const anchor = document.getElementById('hub-results-line') || document.getElementById('business-list');
+    if (!anchor) return;
+    const headerH = header ? header.offsetHeight : 0;
+    const top = anchor.getBoundingClientRect().top + window.scrollY - headerH - 6;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+}
+
+function expandActiveCategorySection() {
+    if (!activeCategory || listMode === 'az') return;
+    const el = document.getElementById(`section-${categorySectionSlug(activeCategory)}`);
+    if (el && el.tagName === 'DETAILS') el.open = true;
 }
 
 function updateOnlineStatus() {
@@ -422,6 +627,9 @@ document.addEventListener('DOMContentLoaded', updateOnlineStatus);
 /** Vaste gebieden in de UI (matcht Sheet-waarden Location). Uitbreiden: array aanpassen. */
 const SITE_LOCATION_FILTERS = ['Kala Nera', 'Kato Gatzea', 'Koropi'];
 
+/** Categorie-tegels op home hub (index). Volgorde = UI. */
+const SITE_CATEGORY_TILES = ['Eat', 'Drink', 'Sleep', 'Shop', 'Rent', 'Travel', 'Camp', 'Other'];
+
 /** Stabiele id voor ankers / #fragment (alleen a-z, 0-9, hyphen). */
 function categorySectionSlug(cat) {
     return String(cat || 'other')
@@ -442,9 +650,12 @@ function generateLocationButtons() {
 
     let html = '';
     SITE_LOCATION_FILTERS.forEach((loc) => {
-        const label = escapeHtml(t(loc));
-        const isOn = activeLocations.has(loc);
-        html += `<button type="button" class="loc-btn${isOn ? ' active' : ''}" data-location="${escapeHtml(loc)}" aria-pressed="${isOn ? 'true' : 'false'}" title="${label}"><span class="loc-btn__text">${label}</span></button>`;
+        const display = isHomeHubPage() ? hubLocationLabel(loc) : t(loc);
+        const label = escapeHtml(display);
+        const title = escapeHtml(isHomeHubPage() && currentLang === 'el' ? t(loc) : display);
+        const isOn = locationBtnAppearsOn(loc);
+        const isOff = activeLocations.size > 0 && !activeLocations.has(loc);
+        html += `<button type="button" class="loc-btn${isOn ? ' active' : ''}${isOff ? ' loc-btn--off' : ''}" data-location="${escapeHtml(loc)}" aria-pressed="${isOn ? 'true' : 'false'}" title="${title}"><span class="loc-btn__text">${label}</span></button>`;
     });
 
     container.innerHTML = html;
@@ -454,25 +665,62 @@ function generateLocationButtons() {
             if (!targetBtn) return;
             const loc = targetBtn.getAttribute('data-location');
             if (!loc) return;
-            if (activeLocations.has(loc)) activeLocations.delete(loc);
-            else activeLocations.add(loc);
-            const on = activeLocations.has(loc);
-            targetBtn.classList.toggle('active', on);
-            targetBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
-            if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) {
-                targetBtn.blur();
+            if (isHomeHubPage()) {
+                if (activeLocations.size === 1 && activeLocations.has(loc)) return;
+                activeLocations.clear();
+                activeLocations.add(loc);
+            } else {
+                if (activeLocations.has(loc)) activeLocations.delete(loc);
+                else activeLocations.add(loc);
+                if (SITE_LOCATION_FILTERS.every((l) => activeLocations.has(l))) activeLocations.clear();
             }
+            generateLocationButtons();
             applyFilters();
         });
     });
 }
 
+function syncHubCategoryForSearch(filtered, isSearching) {
+    if (!isHomeHubPage()) return;
+
+    if (!isSearching) {
+        if (hubCategoryBeforeSearch === undefined) return;
+        activeCategory = hubCategoryBeforeSearch;
+        hubCategoryBeforeSearch = undefined;
+        const url = new URL(window.location.href);
+        if (activeCategory) url.searchParams.set('cat', categorySectionSlug(activeCategory));
+        else url.searchParams.delete('cat');
+        history.replaceState(null, '', url);
+        syncHeroCategoryTilesUI();
+        syncHubFilterBar();
+        return;
+    }
+
+    if (hubCategoryBeforeSearch === undefined) hubCategoryBeforeSearch = activeCategory;
+    if (!filtered.length) return;
+
+    const cats = [...new Set(filtered.map((b) => b.Category || 'Other'))];
+    const nextCat = cats.length === 1 ? cats[0] : null;
+    if (activeCategory === nextCat) return;
+
+    activeCategory = nextCat;
+    const url = new URL(window.location.href);
+    if (activeCategory) url.searchParams.set('cat', categorySectionSlug(activeCategory));
+    else url.searchParams.delete('cat');
+    history.replaceState(null, '', url);
+    syncHeroCategoryTilesUI();
+    syncHubFilterBar();
+}
+
 function applyFilters() {
     const searchInput = document.getElementById('search-input');
-    const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
+    const searchTermRaw = searchInput ? searchInput.value.trim() : '';
+    const searchTerm = searchTermRaw.toLowerCase();
+    const isSearching = searchTerm.length > 0;
 
     const filtered = allBusinesses.filter((biz) => {
         const matchesSearch =
+            !isSearching ||
             (biz.Name || "").toLowerCase().includes(searchTerm) ||
             (biz.Name_EL || "").toLowerCase().includes(searchTerm) ||
             (biz.Category || "").toLowerCase().includes(searchTerm) ||
@@ -482,8 +730,20 @@ function applyFilters() {
         const matchesLocation =
             locationFilterShowsAllBusinesses() || activeLocations.has(biz.Location);
 
-        return matchesSearch && matchesLocation;
+        const matchesCategory =
+            isSearching || !activeCategory || (biz.Category || 'Other') === activeCategory;
+
+        return matchesSearch && matchesLocation && matchesCategory;
     });
+
+    syncHubCategoryForSearch(filtered, isSearching);
+    syncHubFilterBar();
+    if (isHomeHubPage() && !hubListUnlocked()) {
+        syncHubResultsLine(0);
+        renderHubIdlePrompt();
+        return;
+    }
+    syncHubResultsLine(filtered.length);
     renderBusinesses(filtered);
 }
 
@@ -495,7 +755,7 @@ function renderBusinesses(data) {
     container.innerHTML = '';
 
     if (!data || data.length === 0) {
-            // NIEUW: Vertaal ook de "geen resultaten" melding
+            if (isHomeHubPage() && hubListUnlocked()) return;
             const noResultsMsg = (currentLang === 'el') ? 'Δεν βρέθηκαν επιχειρήσεις.' : 'No businesses found matching your criteria.';
             container.innerHTML = `<p class="status-msg">${noResultsMsg}</p>`;
             return;
@@ -546,6 +806,36 @@ function renderBusinesses(data) {
 
             const locDisplay = t(biz.Location) || t('Kala Nera');
             const locDisplaySafe = escapeHtml(locDisplay);
+            const detailHref = `business/${bizId}${currentLang === 'el' ? '-el' : ''}.html`;
+            const phoneHtml = (biz.Phone && biz.Phone.trim() !== "" && biz.Phone !== "-")
+                ? `<a href="tel:${biz.Phone}" class="btn-icon phone-btn" title="${escapeHtml(biz.Phone)}" onclick="gtag('event', 'click_phone', {'biz_name': '${safeBizName}'})"><i class="fa fa-phone"></i></a>`
+                : '';
+
+            if (useMagazineCardLayout()) {
+                grid.innerHTML += `
+    <div class="biz-card-mini biz-card-mini--magazine" id="${bizId}">
+        <div class="magazine-preview">
+            <a class="magazine-link" href="${detailHref}" onclick="gtag('event', 'click_image', {'biz_name': '${safeBizName}'})">
+                <img src="${finalImageUrl}" onerror="this.src='pix/nophoto.jpg'" alt="${escapeHtml(displayName)}">
+            </a>
+            <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeBizName}', this)" aria-label="Toggle favorite">
+                <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+            </button>
+        </div>
+        <div class="magazine-body">
+            <h3 class="magazine-title"><a href="${detailHref}">${escapeHtml(displayName)}</a></h3>
+            <div class="magazine-actions">
+                ${phoneHtml}
+                ${webHtml}
+                ${emailHtml}
+                <a href="${reviewUrl}" target="_blank" rel="noopener" class="btn-icon review-btn" onclick="gtag('event', 'click_reviews', {'biz_name': '${safeBizName}'})"><i class="fa fa-star"></i></a>
+                <a href="${mapsUrl}" target="_blank" rel="noopener" class="btn-icon nav-btn-action" onclick="gtag('event', 'open_maps', {'biz_name': '${safeBizName}'})"><i class="fa fa-location-dot"></i></a>
+            </div>
+            <p class="magazine-location" title="${locDisplaySafe}"><i class="fa fa-map-marker-alt" aria-hidden="true"></i> ${locDisplaySafe}</p>
+        </div>
+    </div>`;
+                return;
+            }
 
   // 3. De Grid HTML
 grid.innerHTML += `
@@ -581,6 +871,52 @@ grid.innerHTML += `
     </div>`;
     };
 
+    if (isWishlistPage()) {
+        const grid = document.createElement('div');
+        grid.className = 'business-grid hub-category-grid';
+        const sorted = [...data].sort((a, b) => {
+            const nameA = (currentLang === 'el' && a.Name_EL) ? a.Name_EL : (a.Name || '');
+            const nameB = (currentLang === 'el' && b.Name_EL) ? b.Name_EL : (b.Name || '');
+            return (nameA || '').localeCompare(nameB || '');
+        });
+        sorted.forEach((biz) => renderCardInto(grid, biz, biz.Category || 'Other'));
+        container.appendChild(grid);
+        syncWishlistToolbar(data.length);
+        setTimeout(() => {
+            document.querySelectorAll('.biz-card-mini').forEach((card, index) => {
+                setTimeout(() => { card.classList.add('show'); }, index * 30);
+            });
+        }, 50);
+        return;
+    }
+
+    if (isHomeHubPage() && activeCategory && listMode !== 'az') {
+        const grid = document.createElement('div');
+        grid.className = 'business-grid hub-category-grid';
+        const sorted = [...data].sort((a, b) => {
+            const nameA = (currentLang === 'el' && a.Name_EL) ? a.Name_EL : (a.Name || '');
+            const nameB = (currentLang === 'el' && b.Name_EL) ? b.Name_EL : (b.Name || '');
+            return (nameA || '').localeCompare(nameB || '');
+        });
+        sorted.forEach((biz) => renderCardInto(grid, biz, activeCategory));
+        container.appendChild(grid);
+        if (hubCategoryScrollPending && activeCategory) {
+            hubCategoryScrollPending = false;
+            requestAnimationFrame(() => scrollToBusinessList());
+        }
+        const syncLabel = (currentLang === 'el') ? 'Τελευταίος συγχρονισμός' : 'Last sync';
+        const lastSync = localStorage.getItem('kalanera_last_sync') || (currentLang === 'el' ? 'Άγνωστο' : 'Unknown');
+        const syncDiv = document.createElement('div');
+        syncDiv.className = 'sync-info';
+        syncDiv.innerHTML = `<small style="display:block; text-align:center; margin-top:20px; color:var(--muted); font-size:11px;">${syncLabel}: ${lastSync}</small>`;
+        container.appendChild(syncDiv);
+        setTimeout(() => {
+            document.querySelectorAll('.biz-card-mini').forEach((card, index) => {
+                setTimeout(() => { card.classList.add('show'); }, index * 30);
+            });
+        }, 50);
+        return;
+    }
     // Mode A: grouped by category (default)
     if (listMode !== 'az') {
         const grouped = data.reduce((acc, biz) => {
@@ -594,13 +930,15 @@ grid.innerHTML += `
             const details = document.createElement('details');
             details.className = 'category-disclosure';
             details.id = `section-${categorySectionSlug(category)}`;
-            if (catIndex === 0) {
+            if (activeCategory) {
+                if (category === activeCategory) details.setAttribute('open', '');
+            } else if (catIndex === 0) {
                 details.setAttribute('open', '');
             }
 
             const summary = document.createElement('summary');
             summary.className = 'category-section-summary';
-            const accent = getColor(category);
+            const accent = isHomeHubPage() ? '#64748b' : getColor(category);
             summary.style.setProperty('--cat-accent', accent);
             const iconWrap = document.createElement('span');
             iconWrap.className = 'category-summary-icon';
@@ -626,6 +964,7 @@ grid.innerHTML += `
             details.appendChild(grid);
             container.appendChild(details);
         });
+        expandActiveCategorySection();
     } else {
         // Mode B: global A–Z list (best for alpha index)
         const grid = document.createElement('div');
@@ -639,6 +978,11 @@ grid.innerHTML += `
 
         sorted.forEach(biz => renderCardInto(grid, biz, biz.Category || 'Other'));
         container.appendChild(grid);
+    }
+
+    if (hubCategoryScrollPending && activeCategory) {
+        hubCategoryScrollPending = false;
+        requestAnimationFrame(() => scrollToBusinessList());
     }
 
     // Fast-scroll A–Z index (mobile): build after list is in DOM
@@ -773,6 +1117,55 @@ function buildAlphaIndex() {
     index.addEventListener('pointercancel', () => { tracking = false; });
 }
 
+function initHubWebcam() {
+    const wrap = document.getElementById('floating-webcam');
+    const trigger = document.getElementById('webcam-hub-trigger');
+    const panel = document.getElementById('webcam-hub-panel');
+    const closeBtn = wrap?.querySelector('.webcam-hub-close');
+    if (!wrap || !trigger || !panel) return;
+
+    const mobileMq = window.matchMedia('(max-width: 767px)');
+
+    const syncLayout = () => {
+        if (mobileMq.matches) return;
+        panel.hidden = false;
+        wrap.classList.remove('is-open', 'is-zoomed');
+        trigger.setAttribute('aria-expanded', 'false');
+    };
+
+    const setOpen = (open) => {
+        wrap.classList.toggle('is-open', open);
+        if (!open) wrap.classList.remove('is-zoomed');
+        trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        panel.hidden = !open;
+    };
+
+    trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setOpen(true);
+    });
+
+    closeBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setOpen(false);
+    });
+
+    panel.addEventListener('click', (e) => {
+        if (e.target.closest('.webcam-hub-close')) return;
+        e.stopPropagation();
+        wrap.classList.toggle('is-zoomed');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!mobileMq.matches || !wrap.classList.contains('is-open')) return;
+        if (wrap.contains(e.target)) return;
+        setOpen(false);
+    });
+
+    mobileMq.addEventListener('change', syncLayout);
+    syncLayout();
+}
+
 function setListMode(mode) {
     listMode = mode === 'az' ? 'az' : 'categories';
     localStorage.setItem('kalanera_list_mode', listMode);
@@ -845,6 +1238,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-input');
     if (searchInput) searchInput.addEventListener('input', applyFilters);
 
+    if (isWishlistPage()) {
+        bindClearWishlistButton();
+    }
+
+    if (isHomeHubPage()) {
+        listMode = 'categories';
+        const urlCat = readCategoryFromUrl();
+        activeCategory = urlCat || HUB_DEFAULT_CATEGORY;
+        if (urlCat) hubCategoryScrollPending = true;
+        generateHeroCategoryTiles();
+        syncHeroCategoryTilesUI();
+        syncHubFilterBar();
+        initHubWebcam();
+        const clearCatBtn = document.getElementById('clear-category-filter');
+        if (clearCatBtn) {
+            clearCatBtn.addEventListener('click', () => setActiveCategory(null, { updateUrl: true, scrollToList: true }));
+        }
+        const clearLocBtn = document.getElementById('clear-location-filter');
+        if (clearLocBtn) {
+            clearLocBtn.addEventListener('click', () => {
+                activeLocations.clear();
+                generateLocationButtons();
+                applyFilters();
+            });
+        }
+        window.addEventListener('popstate', () => {
+            activeCategory = readCategoryFromUrl() || HUB_DEFAULT_CATEGORY;
+            syncHeroCategoryTilesUI();
+            syncHubFilterBar();
+            applyFilters();
+        });
+    }
+
     // 2a. View mode toggle (Categories / A-Z)
     const btnCat = document.getElementById('view-mode-categories');
     const btnAz = document.getElementById('view-mode-az');
@@ -872,6 +1298,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 3b. Mobile "More" tab (bottom nav)
     initMoreTab();
+
+    // 3c. Business detail: enlarge photo on tap
+    initBizDetailPhotoLightbox();
 
     // 4. Wishlist teller bijwerken
     updateWishlistCount();
@@ -1024,7 +1453,6 @@ function busUiString(key, repl = {}) {
  */
 function refreshBusTrustUi() {
     const dialogCopy = document.getElementById('bus-trust-dialog-copy');
-    const dialogLink = document.getElementById('bus-trust-dialog-ktel');
     const dialogTitle = document.getElementById('bus-trust-dialog-title');
     const btn = document.getElementById('bus-trust-info-open');
     const btnTxt = btn && btn.querySelector ? btn.querySelector('.bus-trust-info-btn__txt') : null;
@@ -1035,9 +1463,9 @@ function refreshBusTrustUi() {
     const isToVolos = dir === 'volos';
     const tip = busUiString(isToVolos ? 'trustUltraCompactToVolos' : 'trustUltraCompactFromVolos') || busUiString('trustUltraCompact');
     const openHint = busText('bus_trust_open_sheet_hint', {
-        en: 'Opens details and official KTEL link.',
-        nl: 'Opent details en officiële KTEL-link.',
-        el: busT('bus_trust_open_sheet_hint', 'Ανοίγει λεπτομέρειες και επίσημο σύνδεσμο ΚΤΕΛ.'),
+        en: 'Opens details about these times.',
+        nl: 'Opent uitleg over deze tijden.',
+        el: busT('bus_trust_open_sheet_hint', 'Ανοίγει λεπτομέρειες για τις ώρες.'),
     });
 
     const primary = busUiString(isToVolos ? 'trustPrimaryToVolos' : 'trustPrimaryFromVolos') || busUiString('trustPrimary');
@@ -1052,11 +1480,16 @@ function refreshBusTrustUi() {
     if (offlineEl) offlineEl.textContent = busUiString('trustOfflineCached');
 
     if (dialogCopy) dialogCopy.textContent = primary;
-    if (dialogLink) {
-        dialogLink.href = busKtelTimetableUrl();
-        dialogLink.textContent = busUiString('linkOfficialKtelLong');
-        dialogLink.setAttribute('title', busUiString('linkOfficialKtelLong'));
-        dialogLink.setAttribute('aria-label', busUiString('linkOfficialKtelLong'));
+    const footnoteKtelLine = document.getElementById('bus-footnote-ktel-line');
+    if (footnoteKtelLine) {
+        const ktelUrl = busKtelTimetableUrl();
+        const ktelAria = busUiString('linkOfficialKtelLong');
+        const ktelLabel = busUiString('footnoteTimetablesLabel');
+        const ktelLinkText = busUiString('footnoteKtelLink');
+        footnoteKtelLine.innerHTML =
+            `<strong>${busEscapeHtml(ktelLabel)}:</strong> ` +
+            `<a class="bus-page-footnote__link" href="${busEscapeHtml(ktelUrl)}" target="_blank" rel="noopener noreferrer" ` +
+            `title="${busEscapeHtml(ktelAria)}" aria-label="${busEscapeHtml(ktelAria)}">${busEscapeHtml(ktelLinkText)}</a>`;
     }
     if (dialogTitle) {
         dialogTitle.textContent = busText('bus_trust_sheet_title', {
@@ -3208,6 +3641,72 @@ async function initBusSchedule() {
     load({ force: false });
 }
 
+/** Business detail: tap photo → full-size original in native <dialog> lightbox */
+function initBizDetailPhotoLightbox() {
+    if (!document.body.classList.contains('biz-detail-page')) return;
+
+    const trigger =
+        document.querySelector('.biz-detail-card__image-btn') ||
+        document.querySelector('.biz-detail-card__image');
+    if (!trigger || trigger.dataset.lightboxReady) return;
+    trigger.dataset.lightboxReady = '1';
+
+    const thumb = trigger.matches('img') ? trigger : trigger.querySelector('img');
+    if (!thumb) return;
+
+    const lang = (document.documentElement.lang || 'en').toLowerCase();
+    const isEl = lang === 'el' || lang.startsWith('el');
+    const labelOpen = isEl ? 'Προβολή πλήρους φωτογραφίας' : 'View full photo';
+    const labelClose = isEl ? 'Κλείσιμο' : 'Close';
+
+    let dialog = document.getElementById('biz-detail-photo-lightbox');
+    if (!dialog) {
+        dialog = document.createElement('dialog');
+        dialog.id = 'biz-detail-photo-lightbox';
+        dialog.className = 'biz-detail-photo-lightbox';
+        dialog.innerHTML = `
+            <button type="button" class="biz-detail-photo-lightbox__close" aria-label="${labelClose}">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+            <figure class="biz-detail-photo-lightbox__figure">
+                <img class="biz-detail-photo-lightbox__img" alt="">
+            </figure>`;
+        document.body.appendChild(dialog);
+        dialog.querySelector('.biz-detail-photo-lightbox__close').addEventListener('click', () => dialog.close());
+        dialog.addEventListener('click', (e) => {
+            if (e.target === dialog) dialog.close();
+        });
+    }
+
+    const fullImg = dialog.querySelector('.biz-detail-photo-lightbox__img');
+    const closeBtn = dialog.querySelector('.biz-detail-photo-lightbox__close');
+    closeBtn.setAttribute('aria-label', labelClose);
+
+    const open = () => {
+        const src = thumb.currentSrc || thumb.getAttribute('src') || '';
+        if (!src) return;
+        fullImg.src = src;
+        fullImg.alt = thumb.alt || '';
+        if (typeof dialog.showModal === 'function') dialog.showModal();
+    };
+
+    if (trigger.matches('button')) {
+        trigger.setAttribute('aria-label', labelOpen);
+    } else {
+        trigger.setAttribute('role', 'button');
+        trigger.setAttribute('tabindex', '0');
+        trigger.setAttribute('aria-label', labelOpen);
+    }
+
+    trigger.addEventListener('click', open);
+    trigger.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            open();
+        }
+    });
+}
+
 function initMoreTab() {
     const moreBtn = document.querySelector('.bottom-nav a[data-more]');
     if (!moreBtn) return;
@@ -3295,7 +3794,7 @@ function renderMoreSheetContent() {
         privacy: isEl ? 'Πολιτική απορρήτου' : 'Privacy policy',
         developer: isEl ? 'Με την υποστήριξη' : 'Powered by',
         travelTitle: isEl ? 'Οδηγός Πηλίου' : 'Pelion guide',
-        travelHub: isEl ? 'Επισκόπηση' : 'Overview',
+        travelHub: isEl ? 'Οδηγός Πηλίου' : 'Pelion guide',
         travelFlights: isEl ? 'Πτήσεις (αεροδρόμιο Βόλου - VOL)' : 'Flights (Volos airport - VOL)',
         travelEvents: isEl ? 'Τοπικές εκδηλώσεις' : 'Regional events',
         travelWalking: isEl ? 'Περπατήματα (αγγλικός οδηγός)' : 'Walking routes (English guide)',
@@ -3303,7 +3802,9 @@ function renderMoreSheetContent() {
         travelNumbers: isEl ? 'Χρήσιμα τηλέφωνα' : 'Useful numbers',
         travelNumbersSub: isEl ? 'Τοπικοί & έκτακτοι' : 'Local & emergency',
         travelBus: isEl ? 'Λεωφορείο (Καλά Νερά)' : 'Bus (Kala Nera)',
-        travelBusSub: isEl ? 'Δρομολόγια & κατευθύνσεις' : 'Timetables & directions'
+        travelBusSub: isEl ? 'Δρομολόγια & κατευθύνσεις' : 'Timetables & directions',
+        addBusiness: isEl ? 'Προσθέστε την επιχείρησή σας' : 'Add your Business',
+        addBusinessSub: isEl ? 'Δωρεάν' : 'Free'
     };
 
     const aboutText = getFooterAboutText() || (isEl
@@ -3337,6 +3838,7 @@ function renderMoreSheetContent() {
     const eventsHref = isEl ? 'events-el.html' : 'events.html';
     const usefulNumbersHref = isEl ? 'useful-numbers-el.html' : 'useful-numbers.html';
     const busHref = isEl ? 'bus-el.html' : 'bus.html';
+    const tFormHref = isEl ? 't-form-el.html' : 't-form.html';
     const walkingPelionHref = 'https://walking-pelion.blogspot.com/';
 
     const formattedCopyright = (() => {
@@ -3347,6 +3849,15 @@ function renderMoreSheetContent() {
     })();
 
     container.innerHTML = `
+        <section class="more-section more-section--cta">
+            <div class="more-links">
+                <a href="${pathPrefix}${tFormHref}" class="more-link--add-business">
+                    <span class="more-link-leading"><i class="fa-solid fa-circle-plus"></i><span class="more-link-label">${labels.addBusiness}</span></span>
+                    <small>${labels.addBusinessSub}</small>
+                </a>
+            </div>
+        </section>
+
         <section class="more-section">
             <h3>${labels.travelTitle}</h3>
             <div class="more-links">
@@ -3487,48 +3998,62 @@ async function updateWeather() {
 
 // --- WISHLIST LOGICA ---
 
+function syncWishlistToolbar(count) {
+    const toolbar = document.getElementById('wishlist-toolbar');
+    const countEl = document.getElementById('wishlist-results-count');
+    const clearBtn = document.getElementById('clear-wishlist');
+    if (!toolbar || !countEl) return;
+
+    const isEl = currentLang === 'el';
+    const n = Number(count) || 0;
+    const savedWord = n === 1 ? (isEl ? 'αγαπημένο' : 'saved place') : (isEl ? 'αγαπημένα' : 'saved places');
+    countEl.innerHTML = `<strong>${n}</strong> ${savedWord}`;
+    toolbar.hidden = false;
+
+    if (clearBtn) {
+        clearBtn.hidden = n === 0;
+        clearBtn.textContent = isEl ? 'Εκκαθάριση' : 'Clear wishlist';
+        clearBtn.title = isEl ? 'Αφαίρεση όλων των αγαπημένων' : 'Remove all saved places';
+    }
+}
+
+function bindClearWishlistButton() {
+    const clearBtn = document.getElementById('clear-wishlist');
+    if (!clearBtn || clearBtn.dataset.bound === '1') return;
+    clearBtn.dataset.bound = '1';
+    clearBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const isEl = currentLang === 'el';
+        const msg = isEl
+            ? 'Θέλετε σίγουρα να διαγράψετε όλα τα αγαπημένα;'
+            : 'Are you sure you want to clear your entire wishlist?';
+        if (!confirm(msg)) return;
+        localStorage.setItem('kalanera_wishlist', JSON.stringify([]));
+        renderWishlist();
+        if (typeof updateWishlistCount === 'function') updateWishlistCount();
+    });
+}
+
 function renderWishlist() {
     const container = document.getElementById('business-list');
     const emptyMsg = document.getElementById('empty-wishlist');
-    const clearBtn = document.getElementById('clear-wishlist'); // Pak de knop uit de hero op
+    const toolbar = document.getElementById('wishlist-toolbar');
 
-    // 1. Haal de namen van je favorieten op uit de browser-opslag
+    bindClearWishlistButton();
+
     const saved = localStorage.getItem('kalanera_wishlist');
     const wishlistNames = saved ? JSON.parse(saved) : [];
-
-    // 2. Filter de grote lijst (allBusinesses) op alleen deze namen
     const favoriteBusinesses = allBusinesses.filter(biz => wishlistNames.includes(biz.Name));
 
-    // --- NIEUW: Beheer de "Clear Wishlist" knop ---
-    if (clearBtn) {
-        // Toon de knop alleen als er echt favorieten zijn
-        clearBtn.style.display = favoriteBusinesses.length > 0 ? 'inline-block' : 'none';
-
-        // Voeg de klik-actie toe
-        clearBtn.onclick = (e) => {
-            e.preventDefault();
-            if (confirm("Are you sure you want to clear your entire wishlist?")) {
-                localStorage.setItem('kalanera_wishlist', JSON.stringify([]));
-                // We roepen de functie opnieuw aan om de UI direct te updaten
-                renderWishlist();
-                // Vergeet niet het hartje in de menubalk ook te updaten
-                if (typeof updateWishlistCount === "function") updateWishlistCount();
-            }
-        };
-    }
-    // ----------------------------------------------
-
-    // 3. Als de lijst leeg is, toon de "Nog geen favorieten" melding
     if (favoriteBusinesses.length === 0) {
-        if (emptyMsg) emptyMsg.style.display = 'block';
+        if (emptyMsg) emptyMsg.hidden = false;
         if (container) container.innerHTML = '';
+        if (toolbar) toolbar.hidden = true;
+        syncWishlistToolbar(0);
         return;
     }
 
-    // 4. Als er wel favorieten zijn, verberg de melding en render de kaartjes
-    if (emptyMsg) emptyMsg.style.display = 'none';
-    
-    // We hergebruiken hier je bestaande renderBusinesses functie!
+    if (emptyMsg) emptyMsg.hidden = true;
     renderBusinesses(favoriteBusinesses);
 }
 

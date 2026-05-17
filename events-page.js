@@ -9,6 +9,17 @@
   var LS_SORT = 'kalanera_events_sort';
   var cachedRows = null;
   var railCleanup = null;
+  var periodOpenMode = 'auto';
+
+  var MONTH_GROUP_NUM = {
+    March: 3,
+    April: 4,
+    May: 5,
+    June: 6,
+    July: 7,
+    August: 8,
+    September: 9,
+  };
 
   var isEl = document.documentElement.getAttribute('lang') === 'el';
 
@@ -29,6 +40,12 @@
         lastReviewed: 'Τελευταία ενημέρωση σελίδας',
         asideAria: 'Πηγή',
         creditLinkText: 'Around Pelion — Cultural events',
+        resultsLoading: 'Φόρτωση…',
+        resultsAlphaTail: 'αλφαβητικά (χωριό)',
+        expandAll: 'Ανάπτυξη όλων',
+        collapseAll: 'Σύμπτυξη όλων',
+        periodNow: 'Τώρα',
+        alphaLetterPrefix: 'Γράμμα',
       }
     : {
         when: 'When',
@@ -46,6 +63,12 @@
         lastReviewed: 'Page last updated',
         asideAria: 'Source',
         creditLinkText: 'Around Pelion — Cultural events',
+        resultsLoading: 'Loading…',
+        resultsAlphaTail: 'A–Z by village',
+        expandAll: 'Expand all',
+        collapseAll: 'Collapse all',
+        periodNow: 'Now',
+        alphaLetterPrefix: 'Letter',
       };
 
   function esc(s) {
@@ -66,6 +89,72 @@
     return r[key];
   }
 
+  var MONTHS_EN = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
+  var MONTH_STRIP_EL = {
+    Ιανουάριος: ['του Ιανουαρίου', 'Ιανουαρίου'],
+    Φεβρουάριος: ['του Φεβρουαρίου', 'Φεβρουαρίου'],
+    Μάρτιος: ['του Μαρτίου', 'Μαρτίου'],
+    Απρίλιος: ['του Απριλίου', 'Απριλίου'],
+    Μάιος: ['του Μαΐου', 'Μαΐου'],
+    Ιούνιος: ['του Ιουνίου', 'Ιουνίου'],
+    Ιούλιος: ['του Ιουλίου', 'Ιουλίου'],
+    Αύγουστος: ['του Αυγούστου', 'Αυγούστου'],
+    Σεπτέμβριος: ['του Σεπτεμβρίου', 'του Σεπτ.', 'Σεπτεμβρίου', 'Σεπτ.'],
+    Οκτώβριος: ['του Οκτωβρίου', 'Οκτωβρίου'],
+    Νοέμβριος: ['του Νοεμβρίου', 'Νοεμβρίου'],
+    Δεκέμβριος: ['του Δεκεμβρίου', 'Δεκεμβρίου'],
+  };
+
+  function stripRedundantMonthInParen(lead, inner) {
+    var i;
+    var lowered = lead.toLowerCase();
+    var out = inner;
+    for (i = 0; i < MONTHS_EN.length; i++) {
+      if (lowered === MONTHS_EN[i].toLowerCase()) {
+        out = out.replace(new RegExp('\\s+of\\s+' + MONTHS_EN[i] + '\\s*$', 'i'), '');
+        out = out.replace(new RegExp('\\s+' + MONTHS_EN[i] + '\\s*$', 'i'), '');
+      }
+    }
+    if (isEl && MONTH_STRIP_EL[lead]) {
+      MONTH_STRIP_EL[lead]
+        .slice()
+        .sort(function (a, b) {
+          return b.length - a.length;
+        })
+        .forEach(function (suffix) {
+          var escaped = suffix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          out = out.replace(new RegExp('\\s+' + escaped + '\\s*$'), '');
+        });
+    }
+    return out.trim();
+  }
+
+  /** Drop repeated month inside parentheses when the label already names that month. */
+  function formatWhenDisplay(when) {
+    if (!when) return when;
+    var match = when.match(/^([^(]+)\(([^)]+)\)\s*$/);
+    if (!match) return when;
+    var lead = match[1].trim();
+    var inner = match[2].trim();
+    var cleaned = stripRedundantMonthInParen(lead, inner);
+    if (!cleaned || cleaned === inner) return when;
+    return lead + ' (' + cleaned + ')';
+  }
+
   function groupHeading(r) {
     if (isEl && r.groupEl) return r.groupEl;
     return r.group;
@@ -76,7 +165,9 @@
   }
 
   function setSortMode(mode) {
+    var prev = getSortMode();
     localStorage.setItem(LS_SORT, mode === 'alpha' ? 'alpha' : 'season');
+    if (mode === 'season' && prev === 'alpha') periodOpenMode = 'auto';
     updateSortToggleUi();
     if (cachedRows) render(cachedRows);
   }
@@ -103,9 +194,139 @@
     updateSortToggleUi();
   }
 
+  function syncEventsBulkActions(mode) {
+    var bar = document.getElementById('events-bulk-actions');
+    if (!bar) return;
+    var show = mode === 'season' && cachedRows && cachedRows.length;
+    if (show) bar.removeAttribute('hidden');
+    else bar.setAttribute('hidden', '');
+  }
+
+  function wireBulkActions() {
+    if (document._eventsBulkWired) return;
+    document._eventsBulkWired = true;
+    document.addEventListener('click', function (e) {
+      var id = e.target && e.target.id;
+      if (id === 'events-expand-all') {
+        periodOpenMode = 'all';
+        if (cachedRows) render(cachedRows);
+      } else if (id === 'events-collapse-all') {
+        periodOpenMode = 'none';
+        if (cachedRows) render(cachedRows);
+      }
+    });
+  }
+
+  function getCurrentPeriodKey(groups) {
+    if (!groups.length) return null;
+    var now = new Date();
+    var month = now.getMonth() + 1;
+    var i;
+    for (i = 0; i < groups.length; i++) {
+      if (MONTH_GROUP_NUM[groups[i].key] === month) return groups[i].key;
+    }
+    var todaySort = now.getFullYear() * 10000 + month * 100 + now.getDate();
+    var bestKey = groups[0].key;
+    var bestDist = Infinity;
+    for (i = 0; i < groups.length; i++) {
+      var G = groups[i];
+      var minS = G.rows[0].sort;
+      var maxS = G.rows[0].sort;
+      for (var ri = 1; ri < G.rows.length; ri++) {
+        if (G.rows[ri].sort < minS) minS = G.rows[ri].sort;
+        if (G.rows[ri].sort > maxS) maxS = G.rows[ri].sort;
+      }
+      if (todaySort >= minS && todaySort <= maxS + 40) return G.key;
+      var mid = (minS + maxS) / 2;
+      var dist = Math.abs(todaySort - mid);
+      if (dist < bestDist) {
+        bestDist = dist;
+        bestKey = G.key;
+      }
+    }
+    return bestKey;
+  }
+
+  function periodDetailsOpenAttr(groupKey, currentKey) {
+    if (periodOpenMode === 'all') return ' open';
+    if (periodOpenMode === 'none') return '';
+    if (groupKey === currentKey) return ' open';
+    return '';
+  }
+
   function eventCountLabel(n) {
     if (isEl) return n === 1 ? '1 εκδήλωση' : n + ' εκδηλώσεις';
     return n === 1 ? '1 event' : n + ' events';
+  }
+
+  function periodCountLabel(n) {
+    if (isEl) return n === 1 ? '1 περίοδος' : n + ' περίοδοι';
+    return n === 1 ? '1 period' : n + ' periods';
+  }
+
+  function eventsCountWord(n) {
+    if (isEl) return n === 1 ? 'εκδήλωση' : 'εκδηλώσεις';
+    return n === 1 ? 'event' : 'events';
+  }
+
+  function syncEventsResultsLine(rows, mode) {
+    var line = document.getElementById('events-results-line');
+    if (!line) return;
+    if (!rows || !rows.length) {
+      line.textContent = '';
+      return;
+    }
+    var n = rows.length;
+    var tail = mode === 'alpha' ? S.resultsAlphaTail : periodCountLabel(buildGroups(rows).length);
+    line.innerHTML =
+      '<strong>' +
+      n +
+      '</strong> ' +
+      esc(eventsCountWord(n)) +
+      ' · <span class="events-results-tail">' +
+      esc(tail) +
+      '</span>';
+  }
+
+  function alphaDomId(letter) {
+    if (letter === '#') return 'events-alpha-hash';
+    var slug = String(letter)
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9\u0370-\u03ff-]/g, '');
+    return 'events-alpha-' + (slug || 'x');
+  }
+
+  function renderAlphaLetterHeading(letter) {
+    return (
+      '<h3 class="events-alpha-letter" id="' +
+      escAttr(alphaDomId(letter)) +
+      '" data-events-alpha="' +
+      escAttr(letter) +
+      '">' +
+      esc(letter) +
+      '</h3>'
+    );
+  }
+
+  function renderEventCard(r, anchorAttr) {
+    return (
+      '<article class="events-evt-card"' +
+      (anchorAttr || '') +
+      '>' +
+      '<div class="events-evt-head">' +
+      '<h3 class="events-evt-village">' +
+      esc(pick(r, 'village')) +
+      '</h3>' +
+      '<p class="events-evt-when">' +
+      esc(formatWhenDisplay(pick(r, 'when'))) +
+      '</p>' +
+      '</div>' +
+      '<p class="events-evt-details">' +
+      esc(pick(r, 'details')) +
+      '</p>' +
+      '</article>'
+    );
   }
 
   function sortRows(rows, mode) {
@@ -263,10 +484,10 @@
     }
 
     function pickTarget(letter) {
-      var mobile = root.querySelector('.flights-stack .events-evt-card[data-events-alpha="' + letter + '"]');
-      var desk = root.querySelector('.events-desktop-alpha tbody tr[data-events-alpha="' + letter + '"]');
-      if (window.matchMedia('(max-width:767px)').matches) return mobile || desk;
-      return desk || mobile;
+      return (
+        root.querySelector('.flights-stack .events-alpha-letter[data-events-alpha="' + letter + '"]') ||
+        root.querySelector('.flights-stack .events-evt-card[data-events-alpha="' + letter + '"]')
+      );
     }
 
     function scrollToLetter(letter) {
@@ -318,104 +539,54 @@
     };
   }
 
-  function renderThead() {
-    return (
-      '<thead><tr>' +
-      '<th scope="col">' +
-      esc(S.village) +
-      '</th>' +
-      '<th scope="col">' +
-      esc(S.when) +
-      '</th>' +
-      '<th scope="col">' +
-      esc(S.what) +
-      '</th>' +
-      '</tr></thead>'
-    );
-  }
-
-  function renderSeasonView(sortedRows, thead) {
+  function renderSeasonView(sortedRows) {
     var groups = buildGroups(sortedRows);
-    var stackHtml = '';
-    var desktopHtml =
-      '<div class="events-desktop-periods" role="region" aria-label="' + esc(S.desktopPeriodsAria) + '">';
+    var currentKey = getCurrentPeriodKey(groups);
+    var listHtml = '';
 
     for (var gi = 0; gi < groups.length; gi++) {
       var G = groups[gi];
       var n = G.rows.length;
+      var isCurrent = G.key === currentKey;
+      var openAttr = periodDetailsOpenAttr(G.key, currentKey);
+      var nowBadge = isCurrent
+        ? '<span class="events-period-now">' + esc(S.periodNow) + '</span>'
+        : '';
       var summaryInner =
-        '<span class="flights-day-heading events-period-summary__title">' +
+        '<span class="events-period-summary__title events-period-title">' +
         esc(G.label) +
+        nowBadge +
         '</span><span class="events-period-summary__meta">' +
         '<span class="events-period-count">' +
         esc(eventCountLabel(n)) +
         '</span>' +
         '<i class="fa-solid fa-chevron-down events-period-chevron" aria-hidden="true"></i></span>';
 
-      stackHtml +=
-        '<details class="flights-day-group events-period-details">' +
+      listHtml +=
+        '<details class="flights-day-group events-period-details"' +
+        (isCurrent ? ' data-period-current="true"' : '') +
+        ' data-period-key="' +
+        escAttr(G.key) +
+        '"' +
+        openAttr +
+        '>' +
         '<summary class="events-period-summary">' +
         summaryInner +
         '</summary><div class="events-period-cards">';
 
-      var tableBody = '';
       for (var ri = 0; ri < G.rows.length; ri++) {
-        var r = G.rows[ri];
-        stackHtml +=
-          '<article class="flights-card events-evt-card">' +
-          '<p class="flights-card-route">' +
-          esc(pick(r, 'village')) +
-          '</p>' +
-          '<dl class="flights-card-meta events-evt-meta">' +
-          '<div class="flights-meta-pair events-evt-meta-pair">' +
-          '<div class="flights-meta-bit"><dt>' +
-          esc(S.when) +
-          '</dt><dd>' +
-          esc(pick(r, 'when')) +
-          '</dd></div></dl>' +
-          '<p class="events-card-details">' +
-          esc(pick(r, 'details')) +
-          '</p></article>';
-
-        tableBody +=
-          '<tr><th scope="row" class="flights-col-day events-col-village">' +
-          esc(pick(r, 'village')) +
-          '</th><td class="flights-time events-col-when">' +
-          esc(pick(r, 'when')) +
-          '</td><td class="events-col-details">' +
-          esc(pick(r, 'details')) +
-          '</td></tr>';
+        listHtml += renderEventCard(G.rows[ri]);
       }
 
-      stackHtml += '</div></details>';
-
-      desktopHtml +=
-        '<details class="flights-day-group events-period-details">' +
-        '<summary class="events-period-summary">' +
-        summaryInner +
-        '</summary><div class="flights-table-scroll">' +
-        '<table class="flights-schedule-table events-cultural-table">' +
-        '<caption>' +
-        esc(G.label) +
-        '</caption>' +
-        thead +
-        '<tbody class="flights-day-block">' +
-        tableBody +
-        '</tbody></table></div></details>';
+      listHtml += '</div></details>';
     }
 
-    desktopHtml += '</div>';
-    return {
-      stackHtml: stackHtml,
-      desktopHtml: desktopHtml,
-      desktopAlphaHtml: '',
-    };
+    return { listHtml: listHtml };
   }
 
-  function renderAlphaView(sortedRows, thead) {
+  function renderAlphaView(sortedRows) {
     var seen = {};
-    var stackHtml = '<div class="events-alpha-mobile-inner">';
-    var tableBody = '';
+    var listHtml = '<div class="events-alpha-mobile-inner">';
     for (var i = 0; i < sortedRows.length; i++) {
       var r = sortedRows[i];
       var vname = pick(r, 'village');
@@ -423,56 +594,12 @@
       var isFirst = !seen[L];
       if (isFirst) seen[L] = true;
       var anchorAttr = isFirst ? ' data-events-alpha="' + escAttr(L) + '"' : '';
-      stackHtml +=
-        '<article class="flights-card events-evt-card"' +
-        anchorAttr +
-        '>' +
-        '<p class="flights-card-route">' +
-        esc(vname) +
-        '</p>' +
-        '<dl class="flights-card-meta events-evt-meta">' +
-        '<div class="flights-meta-pair events-evt-meta-pair">' +
-        '<div class="flights-meta-bit"><dt>' +
-        esc(S.when) +
-        '</dt><dd>' +
-        esc(pick(r, 'when')) +
-        '</dd></div></dl>' +
-        '<p class="events-card-details">' +
-        esc(pick(r, 'details')) +
-        '</p></article>';
-
-      tableBody +=
-        '<tr' +
-        anchorAttr +
-        '><th scope="row" class="flights-col-day events-col-village">' +
-        esc(vname) +
-        '</th><td class="flights-time events-col-when">' +
-        esc(pick(r, 'when')) +
-        '</td><td class="events-col-details">' +
-        esc(pick(r, 'details')) +
-        '</td></tr>';
+      if (isFirst) listHtml += renderAlphaLetterHeading(L);
+      listHtml += renderEventCard(r, anchorAttr);
     }
-    stackHtml += '</div>';
+    listHtml += '</div>';
 
-    var desktopAlphaHtml =
-      '<div class="events-desktop-alpha" role="region" aria-label="' +
-      esc(S.desktopAlphaAria) +
-      '">' +
-      '<div class="flights-table-scroll">' +
-      '<table class="flights-schedule-table events-cultural-table">' +
-      '<caption>' +
-      esc(S.tableCaptionAlpha) +
-      '</caption>' +
-      thead +
-      '<tbody class="flights-day-block">' +
-      tableBody +
-      '</tbody></table></div></div>';
-
-    return {
-      stackHtml: stackHtml,
-      desktopHtml: '',
-      desktopAlphaHtml: desktopAlphaHtml,
-    };
+    return { listHtml: listHtml };
   }
 
   function render(rows) {
@@ -483,8 +610,7 @@
     if (mainEl) mainEl.classList.toggle('events-page--alpha', mode === 'alpha');
 
     var sortedRows = sortRows(rows, mode);
-    var thead = renderThead();
-    var view = mode === 'season' ? renderSeasonView(sortedRows, thead) : renderAlphaView(sortedRows, thead);
+    var view = mode === 'season' ? renderSeasonView(sortedRows) : renderAlphaView(sortedRows);
 
     var stackAria = mode === 'season' ? S.stackAria : S.stackAriaAlpha;
 
@@ -498,27 +624,26 @@
       '<div class="flights-stack" aria-label="' +
       esc(stackAria) +
       '">' +
-      view.stackHtml +
+      view.listHtml +
       '</div>' +
-      view.desktopHtml +
-      view.desktopAlphaHtml +
-      '<aside class="flights-afterword events-afterword" aria-label="' +
+      '<footer class="events-footnote" aria-label="' +
       esc(S.asideAria) +
       '">' +
-      '<p class="events-source-credit">' +
+      '<p class="events-footnote__line">' +
       esc(S.sourceLead) +
       ' <a href="https://www.aroundpelion.com/cultural-events" target="_blank" rel="noopener noreferrer">' +
       esc(S.creditLinkText) +
-      '</a>.' +
-      '</p>' +
-      '<p class="flights-reviewed">' +
+      '</a><br>' +
       esc(S.lastReviewed) +
-      ': <time datetime="' +
+      ' <time datetime="' +
       esc(iso) +
       '">' +
       esc(display) +
       '</time></p>' +
-      '</aside>';
+      '</footer>';
+
+    syncEventsResultsLine(rows, mode);
+    syncEventsBulkActions(mode);
 
     if (mode === 'alpha') {
       requestAnimationFrame(function () {
@@ -530,6 +655,8 @@
   function fail() {
     teardownEventsAlphaRail();
     root.innerHTML = '<div class="sheet-data-placeholder">' + esc(S.loadErr) + '</div>';
+    syncEventsResultsLine(null, getSortMode());
+    syncEventsBulkActions(getSortMode());
   }
 
   function go() {
@@ -548,6 +675,9 @@
 
   function init() {
     wireSortToggle();
+    wireBulkActions();
+    var line = document.getElementById('events-results-line');
+    if (line) line.textContent = S.resultsLoading;
     go();
   }
 
