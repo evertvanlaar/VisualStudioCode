@@ -33,14 +33,22 @@
   <link rel="manifest" href="/manifest.json">
 </head>
 <body class="biz-detail-page">
-  <header class="site-header"><nav class="main-nav"><div class="nav-container nav-container--detail-lite">
+  <header class="site-header"><nav class="main-nav"><div class="nav-container">
         <a href="../index-el.html" class="logo logo--with-tag" aria-label="Οδηγός Καλών Νερών — αρχική"><span class="logo-main">Καλά <span>Νερά</span></span><span class="logo-tag" aria-hidden="true">Guide</span></a>
         <a href="kadi.html" class="lang-link-mobile" title="English" aria-label="English"><img src="../pix/flags/gb.svg" alt="English"></a>
         <a href="https://www.meteoblue.com/en/weather/forecast/week/kal%c3%a1-ner%c3%a1_greece_261556" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><div class="weather-icon-container"><span id="weather-icon"></span><span id="weather-temp">--°C</span></div></a>
-        <a href="kadi.html" class="lang-link lang-link--detail-bar-desktop" title="English" aria-label="English"><img src="../pix/flags/gb.svg" alt="English" style="width:20px;vertical-align:middle"></a>
+        <button class="menu-toggle" id="mobile-menu" type="button" aria-label="Άνοιγμα μενού" title="Άνοιγμα μενού"><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span></button>
+        <ul class="nav-links" id="nav-list">
+          <li><a href="../index-el.html"><i class="fa-solid fa-house" aria-hidden="true"></i> Αρχική</a></li>
+          <li><a href="../bus-el.html"><i class="fa-solid fa-bus" aria-hidden="true"></i> Λεωφορείο (Καλά Νερά)</a></li>
+          <li><a href="../wishlist-el.html"><i class="fa-solid fa-heart menu-heart" aria-hidden="true"></i> Αγαπημένα</a></li>
+          <li><a href="../t-form-el.html"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Προσθέστε Επιχείρηση</a></li>
+          <li><a href="../info-el.html"><i class="fa-solid fa-compass" aria-hidden="true"></i> Οδηγός Πηλίου</a></li>
+          <li id="menu-install-item" class="mobile-only-item"><a href="#" onclick="triggerManualInstall(event)"><i class="fa fa-download" style="color:var(--install-color)!important"></i> Εγκατάσταση Εφαρμογής</a></li>
+          <li><a href="kadi.html" class="lang-link" title="English" aria-label="English"><img src="../pix/flags/gb.svg" alt="English" style="width:20px;vertical-align:middle;margin-right:5px"></a></li>
+        </ul>
       </div></nav></header>
   <main class="sheet-data-page biz-detail-page flights-page" id="top">
-    <p class="biz-detail-back"><a href="../index-el.html?cat=eat"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Κατάλογος</a></p>
     <header class="flights-page-head"><div class="flights-page-head-main"><h1 class="flights-page-title">Κάδη</h1><p class="flights-iata-badge"><abbr title="Κατηγορία">Φαγητό</abbr></p></div>
       <p class="flights-page-kicker">Κορώπη <span class="flights-kicker-sep" aria-hidden="true">·</span> Πήλιο</p></header>
     <article class="biz-detail-card">
