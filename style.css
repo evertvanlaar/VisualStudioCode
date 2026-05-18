@@ -1,4 +1,4 @@
-/* version 3.1.0 */
+/* version 3.1.1 */
 @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
@@ -3286,12 +3286,6 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
   padding:clamp(24px,3vw,36px) clamp(16px,3vw,26px) calc(var(--bottom-nav-h,64px) + 24px)
 }
 .biz-detail-page .site-footer{margin-top:20px;padding-left:16px;padding-right:16px}
-.biz-detail-back{margin:0 0 .5rem}
-.biz-detail-back a{
-  font-size:.8125rem;font-weight:600;color:#64748b;text-decoration:none;
-  display:inline-flex;align-items:center;gap:.25rem
-}
-.biz-detail-back a:hover{color:#2d5a27}
 .biz-detail-page .flights-page-head{margin-bottom:.85rem}
 .biz-detail-page .flights-page-title{letter-spacing:-.02em}
 .biz-detail-card{

@@ -231,7 +231,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.0'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.1'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -4064,7 +4064,11 @@ function updateWishlistCount() {
     // Check de taal (Engels is standaard, tenzij de pagina op 'el' staat)
     const isEl = (currentLang === 'el');
     const label = isEl ? 'Αγαπημένα' : 'Favorites';
-    const targetPage = isEl ? 'wishlist-el.html' : 'wishlist.html';
+    const path = (location.pathname || '').toLowerCase();
+    const isInSubdir = path.includes('/business/') || path.includes('/n8n/');
+    const targetPage = isInSubdir
+        ? (isEl ? '../wishlist-el.html' : '../wishlist.html')
+        : (isEl ? 'wishlist-el.html' : 'wishlist.html');
 
     // Alleen echte favorieten-navlinks (niet de taalvlag: die href ook "wishlist" bevat)
     const wishlistLinks = document.querySelectorAll(
@@ -4078,10 +4082,12 @@ function updateWishlistCount() {
             return;
         }
         wishlistLink.href = targetPage;
-        if (count > 0) {
-            wishlistLink.innerHTML = `<i class="fa-solid fa-heart menu-heart"></i> ${label} (${count})`;
+        const countSuffix = count > 0 ? ` (${count})` : '';
+        const inBottomNav = Boolean(wishlistLink.closest('.bottom-nav-inner'));
+        if (inBottomNav) {
+            wishlistLink.innerHTML = `<i class="fa-solid fa-heart"></i><span>${label}${countSuffix}</span>`;
         } else {
-            wishlistLink.innerHTML = `<i class="fa-solid fa-heart menu-heart"></i> ${label}`;
+            wishlistLink.innerHTML = `<i class="fa-solid fa-heart menu-heart"></i> ${label}${countSuffix}`;
         }
     });
 }
