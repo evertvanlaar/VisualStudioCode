@@ -1,4 +1,4 @@
-/* version 3.1.1 */
+/* version 3.1.2 */
 @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
@@ -3307,11 +3307,17 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 }
 .biz-detail-card>.biz-detail-card__image{
   cursor:zoom-in;width:100%;height:min(54vw,360px);object-fit:cover;object-position:center 28%;
-  display:block;border-bottom:1px solid rgba(15,23,42,.06)
+  display:block;border-bottom:1px solid rgba(15,23,42,.06);
+  transition:object-position .25s ease
 }
 .biz-detail-card__image-btn .biz-detail-card__image{
   width:100%;height:min(54vw,360px);object-fit:cover;object-position:center 28%;
-  display:block;border-bottom:1px solid rgba(15,23,42,.06);pointer-events:none
+  display:block;border-bottom:1px solid rgba(15,23,42,.06);pointer-events:none;
+  transition:object-position .25s ease
+}
+.page-home-hub .biz-card-mini--magazine .magazine-link img,
+.page-wishlist .biz-card-mini--magazine .magazine-link img{
+  transition:object-position .25s ease
 }
 .biz-detail-photo-lightbox{
   border:none;padding:0;margin:auto;max-width:96vw;max-height:92dvh;width:fit-content;

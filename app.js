@@ -231,7 +231,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.1'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.2'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -887,6 +887,7 @@ grid.innerHTML += `
                 setTimeout(() => { card.classList.add('show'); }, index * 30);
             });
         }, 50);
+        scheduleSmartCropForListing(container);
         return;
     }
 
@@ -915,6 +916,7 @@ grid.innerHTML += `
                 setTimeout(() => { card.classList.add('show'); }, index * 30);
             });
         }, 50);
+        scheduleSmartCropForListing(container);
         return;
     }
     // Mode A: grouped by category (default)
@@ -1003,6 +1005,8 @@ grid.innerHTML += `
             setTimeout(() => { card.classList.add('show'); }, index * 30);
         });
     }, 50);
+
+    scheduleSmartCropForListing(container);
 
     // Schema.org update voor SEO
      // updateSchemaOrg(data); // sitemap.xml wordt nu via n8n ingevuld
@@ -1299,7 +1303,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3b. Mobile "More" tab (bottom nav)
     initMoreTab();
 
-    // 3c. Business detail: enlarge photo on tap
+    // 3c. Business detail: smart crop + enlarge photo on tap
+    initSmartCropForBizDetail();
     initBizDetailPhotoLightbox();
 
     // 4. Wishlist teller bijwerken
@@ -3639,6 +3644,306 @@ async function initBusSchedule() {
 
     updateDayChrome();
     load({ force: false });
+}
+
+/** Smart crop (trial): saliency-based object-position for cover crops */
+const SMART_CROP_ENABLED = true;
+/** Console logs crop result on these pages/cards (trial). */
+const SMART_CROP_DEBUG_SLUGS = new Set(['pasta-la-vista', 'sikia-taverna']);
+const SMART_CROP_SCRIPT_URL = 'https://cdn.jsdelivr.net/npm/smartcrop@2.0.5/smartcrop.min.js';
+const SMART_CROP_IMG_SELECTOR =
+    '.biz-detail-card__image, .biz-card-mini--magazine .magazine-link img, .biz-card-mini.is-media .mini-preview img';
+let smartCropLoadPromise = null;
+let smartCropTaskChain = Promise.resolve();
+
+function shouldSkipSmartCrop(img) {
+    const src = (img.currentSrc || img.getAttribute('src') || '').toLowerCase();
+    return !src || src.includes('nophoto') || src.includes('placeholder');
+}
+
+function isSmartCropDebugTarget(img) {
+    if (!SMART_CROP_DEBUG_SLUGS.size) return false;
+    const card = img.closest('.biz-card-mini[id]');
+    if (card && SMART_CROP_DEBUG_SLUGS.has(card.id)) return true;
+    const path = (location.pathname || '').toLowerCase();
+    for (const slug of SMART_CROP_DEBUG_SLUGS) {
+        if (path.includes(`/business/${slug}`)) return true;
+    }
+    return false;
+}
+
+function loadSmartCropLibrary() {
+    if (typeof smartcrop !== 'undefined') return Promise.resolve();
+    if (smartCropLoadPromise) return smartCropLoadPromise;
+    smartCropLoadPromise = new Promise((resolve, reject) => {
+        const existing = document.querySelector('script[data-smartcrop]');
+        if (existing) {
+            if (typeof smartcrop !== 'undefined') {
+                resolve();
+                return;
+            }
+            existing.addEventListener('load', () => resolve(), { once: true });
+            existing.addEventListener('error', () => reject(new Error('smartcrop load failed')), { once: true });
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = SMART_CROP_SCRIPT_URL;
+        script.async = true;
+        script.dataset.smartcrop = '1';
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('smartcrop load failed'));
+        document.head.appendChild(script);
+    });
+    return smartCropLoadPromise;
+}
+
+function isMagazinePreviewImage(img) {
+    return !!img.closest('.magazine-preview');
+}
+
+/** Match CSS heights when layout is not ready yet (e.g. right after innerHTML). */
+function getMagazinePreviewCssHeight() {
+    if (typeof window === 'undefined' || !window.matchMedia) return 168;
+    if (window.matchMedia('(min-width:992px)').matches) return 210;
+    if (window.matchMedia('(min-width:768px)').matches) return 190;
+    if (window.matchMedia('(max-width:767px)').matches) return 118;
+    return 168;
+}
+
+function getSmartCropFrameSize(img) {
+    const magazine = img.closest('.magazine-preview');
+    if (magazine) {
+        const rect = magazine.getBoundingClientRect();
+        const w = Math.max(1, Math.round(rect.width || img.clientWidth || 360));
+        let h = Math.round(rect.height);
+        if (h < 40) h = getMagazinePreviewCssHeight();
+        return { width: w, height: Math.max(1, h) };
+    }
+    const frame =
+        img.closest('.mini-preview') ||
+        img.closest('.biz-detail-card__image-btn') ||
+        img.parentElement;
+    const rect = frame && frame.getBoundingClientRect ? frame.getBoundingClientRect() : null;
+    const w = Math.max(1, Math.round((rect && rect.width) || img.clientWidth || 320));
+    const h = Math.max(1, Math.round((rect && rect.height) || img.clientHeight || 200));
+    return { width: w, height: h };
+}
+
+/** Portrait photos: if saliency sits too high (foliage/sky), boost lower band (tables, people, sea). */
+function isPortraitImage(nw, nh) {
+    return nh > nw * 1.05;
+}
+
+function getSmartCropFrameAspect(frame) {
+    return frame.width / Math.max(1, frame.height);
+}
+
+function buildPortraitLowerBoosts(nw, nh, frame) {
+    const aspect = getSmartCropFrameAspect(frame);
+    if (aspect >= 2) {
+        return [
+            { x: 0, y: Math.floor(nh * 0.45), width: nw, height: Math.ceil(nh * 0.55), weight: 2 },
+            { x: 0, y: Math.floor(nh * 0.58), width: nw, height: Math.ceil(nh * 0.42), weight: 2.8 },
+        ];
+    }
+    return [
+        { x: 0, y: Math.floor(nh * 0.4), width: nw, height: Math.ceil(nh * 0.6), weight: 1.5 },
+        { x: 0, y: Math.floor(nh * 0.55), width: nw, height: Math.ceil(nh * 0.45), weight: 2 },
+    ];
+}
+
+function getPortraitBoostThresholdY(frame, img) {
+    const aspect = getSmartCropFrameAspect(frame);
+    if (isMagazinePreviewImage(img) && aspect >= 2) return 58;
+    return SMART_CROP_PORTRAIT_LOW_FOCUS_Y;
+}
+
+/** Wide magazine strips need a lower focal point than business detail (same photo). */
+function refineMagazinePortraitFocus(img, frame, px, py, nw, nh) {
+    if (!isMagazinePreviewImage(img) || !isPortraitImage(nw, nh)) {
+        return { px, py };
+    }
+    const aspect = getSmartCropFrameAspect(frame);
+    if (aspect < 1.85) return { px, py };
+    const minPy = aspect >= 2.6 ? 56 : aspect >= 2 ? 52 : py;
+    return { px, py: Math.max(py, minPy) };
+}
+
+function cropCenterPercent(crop, nw, nh) {
+    return {
+        px: Math.min(100, Math.max(0, ((crop.x + crop.width / 2) / nw) * 100)),
+        py: Math.min(100, Math.max(0, ((crop.y + crop.height / 2) / nh) * 100)),
+    };
+}
+
+/** When SmartCrop picks the upper half on portrait shots, re-run with a lower boost (Sikia-style). */
+const SMART_CROP_PORTRAIT_LOW_FOCUS_Y = 42;
+
+function runSmartCropAnalysis(analysisImg, frame, domImg) {
+    const nw = analysisImg.naturalWidth;
+    const nh = analysisImg.naturalHeight;
+    const baseOpts = { width: frame.width, height: frame.height };
+    const boostThreshold = getPortraitBoostThresholdY(frame, domImg);
+    return smartcrop.crop(analysisImg, baseOpts).then((result) => {
+        let crop = result && result.topCrop;
+        if (!crop || !crop.width || !crop.height) return { crop: null, boosted: false };
+
+        if (isPortraitImage(nw, nh)) {
+            const { py } = cropCenterPercent(crop, nw, nh);
+            if (py < boostThreshold) {
+                return smartcrop
+                    .crop(analysisImg, { ...baseOpts, boost: buildPortraitLowerBoosts(nw, nh, frame) })
+                    .then((boosted) => {
+                        const boostedCrop = boosted && boosted.topCrop;
+                        if (boostedCrop && boostedCrop.width && boostedCrop.height) {
+                            return { crop: boostedCrop, boosted: true };
+                        }
+                        return { crop, boosted: false };
+                    });
+            }
+        }
+        return { crop, boosted: false };
+    });
+}
+
+function waitForImageReady(img) {
+    if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+        const done = () => {
+            img.removeEventListener('load', done);
+            img.removeEventListener('error', fail);
+            if (img.naturalWidth > 0) resolve();
+            else reject(new Error('image has no dimensions'));
+        };
+        const fail = () => {
+            img.removeEventListener('load', done);
+            img.removeEventListener('error', fail);
+            reject(new Error('image load failed'));
+        };
+        img.addEventListener('load', done, { once: true });
+        img.addEventListener('error', fail, { once: true });
+    });
+}
+
+/** Cross-origin pix URLs break canvas (localhost → kalanera.gr). Prefer same-origin relative /pix/ path. */
+function normalizeImageSrcForSmartCrop(src) {
+    try {
+        const url = new URL(src, location.href);
+        const pixIdx = url.pathname.indexOf('/pix/');
+        if (pixIdx === -1) return src;
+        const pixPath = url.pathname.slice(pixIdx);
+        if (url.origin === location.origin) return src;
+        if (location.pathname.includes('/business/')) return `..${pixPath}`;
+        return `.${pixPath}`;
+    } catch (e) {
+        return src;
+    }
+}
+
+function isCrossOriginImageSrc(src) {
+    try {
+        return new URL(src, location.href).origin !== location.origin;
+    } catch (e) {
+        return false;
+    }
+}
+
+const smartCropAnalysisCache = new Map();
+
+/** Image safe for canvas (same-origin or CORS). Display <img> may stay unchanged. */
+function loadImageForSmartCropAnalysis(domImg) {
+    const rawSrc = domImg.currentSrc || domImg.getAttribute('src') || '';
+    const src = normalizeImageSrcForSmartCrop(rawSrc);
+
+    if (!isCrossOriginImageSrc(src)) {
+        if (src !== rawSrc && domImg.getAttribute('src') !== src) {
+            domImg.setAttribute('src', src);
+        }
+        return waitForImageReady(domImg).then(() => domImg);
+    }
+
+    if (smartCropAnalysisCache.has(src)) return smartCropAnalysisCache.get(src);
+
+    const promise = new Promise((resolve, reject) => {
+        const probe = new Image();
+        probe.crossOrigin = 'anonymous';
+        probe.onload = () => resolve(probe);
+        probe.onerror = () => reject(new Error('smartcrop CORS: image blocked (need Access-Control-Allow-Origin on /pix/)'));
+        probe.src = src;
+    });
+    smartCropAnalysisCache.set(src, promise);
+    return promise;
+}
+
+function applySmartCropObjectPosition(img) {
+    if (!SMART_CROP_ENABLED || !img || img.dataset.smartcropApplied === '1') return Promise.resolve();
+    if (shouldSkipSmartCrop(img)) return Promise.resolve();
+
+    return loadSmartCropLibrary()
+        .then(() => loadImageForSmartCropAnalysis(img))
+        .then((analysisImg) => {
+            if (typeof smartcrop === 'undefined' || !smartcrop.crop) {
+                throw new Error('smartcrop unavailable');
+            }
+            const nw = analysisImg.naturalWidth;
+            const nh = analysisImg.naturalHeight;
+            if (nw < 8 || nh < 8) return;
+
+            const frame = getSmartCropFrameSize(img);
+            return runSmartCropAnalysis(analysisImg, frame, img).then(({ crop, boosted }) => {
+                if (!crop || !crop.width || !crop.height) return;
+                let { px, py } = cropCenterPercent(crop, nw, nh);
+                ({ px, py } = refineMagazinePortraitFocus(img, frame, px, py, nw, nh));
+                const pos = `${px.toFixed(1)}% ${py.toFixed(1)}%`;
+                img.style.objectPosition = pos;
+                img.dataset.smartcropApplied = '1';
+                img.classList.add('is-smartcrop-ready');
+                if (isSmartCropDebugTarget(img)) {
+                    console.info('[smartcrop]', {
+                        src: img.currentSrc || img.getAttribute('src'),
+                        frame,
+                        natural: { w: nw, h: nh },
+                        crop,
+                        objectPosition: pos,
+                        portraitBoost: boosted,
+                        frameAspect: Number(getSmartCropFrameAspect(frame).toFixed(2)),
+                        fallback: 'center 28%',
+                    });
+                }
+            });
+        })
+        .catch((err) => {
+            if (isSmartCropDebugTarget(img)) console.warn('[smartcrop] failed', img.src, err);
+        });
+}
+
+function queueSmartCropForImage(img) {
+    if (!SMART_CROP_ENABLED || !img || img.dataset.smartcropApplied === '1' || shouldSkipSmartCrop(img)) {
+        return;
+    }
+    smartCropTaskChain = smartCropTaskChain.then(() => applySmartCropObjectPosition(img));
+}
+
+function scheduleSmartCropForListing(container) {
+    if (!SMART_CROP_ENABLED || !container) return;
+    const run = () => {
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                const imgs = container.querySelectorAll(SMART_CROP_IMG_SELECTOR);
+                imgs.forEach((img) => queueSmartCropForImage(img));
+            });
+        });
+    };
+    if (typeof requestIdleCallback === 'function') {
+        requestIdleCallback(run, { timeout: 2500 });
+    } else {
+        setTimeout(run, 120);
+    }
+}
+
+function initSmartCropForBizDetail() {
+    if (!SMART_CROP_ENABLED || !document.body.classList.contains('biz-detail-page')) return;
+    document.querySelectorAll('.biz-detail-card__image').forEach((img) => queueSmartCropForImage(img));
 }
 
 /** Business detail: tap photo → full-size original in native <dialog> lightbox */
