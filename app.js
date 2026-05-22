@@ -232,15 +232,15 @@ const iconMap = {
 
 const SITE_ORIGIN = location.origin;
 
-/** Zelfde logica als n8n-business-page-template: consistente absolute /pix/ URLs in listings. */
-function absolutePhotoUrl(photoField) {
-    const fallback = `${SITE_ORIGIN}/pix/nophoto.jpg`;
+/** Same-origin /pix/ path — avoids apex↔www cross-origin blocks (Edge, Play Store TWA on kalanera.gr). */
+function sameOriginPixUrl(photoField) {
+    const fallback = '/pix/nophoto.jpg';
     const raw = String(photoField ?? '').trim();
     if (!raw) return fallback;
     if (/^https?:\/\//i.test(raw)) {
-        if (/^https?:\/\/(www\.)?kalanera\.gr\b/i.test(raw)) {
-            return raw.replace(/^https?:\/\/(www\.)?kalanera\.gr\b/i, SITE_ORIGIN);
-        }
+        const m = raw.match(/\/pix\/[^?#'"\s]+/i);
+        if (m && /kalanera\.gr\b/i.test(raw)) return m[0];
+        if (/kalanera\.gr\b/i.test(raw)) return fallback;
         return raw;
     }
     let path = raw.replace(/^(\.\.\/)+/, '').replace(/^\/+/, '');
@@ -248,11 +248,24 @@ function absolutePhotoUrl(photoField) {
         path = path.replace(/^pix\/?/, '');
         path = 'pix/' + path;
     }
-    return `${SITE_ORIGIN}/${path}`;
+    return '/' + path;
+}
+
+/** Zelfde logica als n8n-business-page-template: consistente /pix/ URLs in listings. */
+function absolutePhotoUrl(photoField) {
+    return sameOriginPixUrl(photoField);
+}
+
+/** Static business HTML may still ship https://www.kalanera.gr/pix/… — rewrite before Smart Crop / display. */
+function rewriteDomPixImagesToSameOrigin(root = document) {
+    root.querySelectorAll('img[src*="kalanera.gr/pix/"]').forEach((img) => {
+        const next = sameOriginPixUrl(img.getAttribute('src') || '');
+        if (next && img.getAttribute('src') !== next) img.setAttribute('src', next);
+    });
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.12'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.13'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -1254,6 +1267,8 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+    rewriteDomPixImagesToSameOrigin();
+
     // 1. Dark Mode
     if (typeof initDarkMode === 'function') {
         initDarkMode();
