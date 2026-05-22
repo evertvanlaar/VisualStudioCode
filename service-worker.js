@@ -1,7 +1,7 @@
 // service-worker.js
-const VERSION = '3.1.9'; // Dit sturen we naar de Sheet
-const CACHE_NAME = 'kalanera-cache-v3.1.9'; // Dit dwingt de code-update af
-const IMAGE_CACHE = 'kalanera-images-v3.1.9'; // Afbeeldingen apart cachen voor snelheid
+const VERSION = '3.1.11'; // Dit sturen we naar de Sheet
+const CACHE_NAME = 'kalanera-cache-v3.1.11'; // Dit dwingt de code-update af
+const IMAGE_CACHE = 'kalanera-images-v3.1.11'; // Afbeeldingen apart cachen voor snelheid
 
 // VOEG DIT TOE: Luister naar vragen van de app
 self.addEventListener('message', (event) => {
@@ -43,9 +43,8 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // KRUCIAL: Alleen verzoeken naar onze EIGEN domein cachen
-  // Dit voorkomt problemen met externe origins (Google Maps, ingesloten formulieren, enz.)
-  if (!url.origin.includes(self.location.hostname)) return;
+  // Alleen exact dezelfde origin (niet apex vs www: includes('kalanera.gr') matcht ook www.kalanera.gr).
+  if (url.origin !== self.location.origin) return;
 
   // Businessfoto's: niet via SW (mobiel/PWA: parallelle /pix/-loads anders deels geblokkeerd of time-out).
   if (url.pathname.startsWith('/pix/')) return;
