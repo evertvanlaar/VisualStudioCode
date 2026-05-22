@@ -231,7 +231,7 @@ const iconMap = {
 };
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.5'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.8'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -816,7 +816,7 @@ function renderBusinesses(data) {
     <div class="biz-card-mini biz-card-mini--magazine" id="${bizId}">
         <div class="magazine-preview">
             <a class="magazine-link" href="${detailHref}" onclick="gtag('event', 'click_image', {'biz_name': '${safeBizName}'})">
-                <img src="${finalImageUrl}" onerror="this.src='pix/nophoto.jpg'" alt="${escapeHtml(displayName)}">
+                <img src="${finalImageUrl}" onerror="this.onerror=null;this.src='/pix/nophoto.jpg'" alt="${escapeHtml(displayName)}">
             </a>
             <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeBizName}', this)" aria-label="Toggle favorite">
                 <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
@@ -842,7 +842,7 @@ grid.innerHTML += `
     <div class="biz-card-mini is-media" id="${bizId}" style="border-left: 4px solid ${catColor}">
         <div class="mini-preview">
             <a class="media-link" href="business/${bizId}${currentLang === 'el' ? '-el' : ''}.html" onclick="gtag('event', 'click_image', {'biz_name': '${safeBizName}'})">
-                <img src="${finalImageUrl}" onerror="this.src='pix/nophoto.jpg'" alt="${displayName}">
+                <img src="${finalImageUrl}" onerror="this.onerror=null;this.src='/pix/nophoto.jpg'" alt="${displayName}">
             </a>
             <div class="media-overlay">
                 <div class="media-title">${displayName}</div>
@@ -3850,15 +3850,13 @@ function isCrossOriginImageSrc(src) {
 
 const smartCropAnalysisCache = new Map();
 
-/** Image safe for canvas (same-origin or CORS). Display <img> may stay unchanged. */
+/** Image safe for canvas (same-origin or CORS). Never rewrite visible <img src>. */
 function loadImageForSmartCropAnalysis(domImg) {
     const rawSrc = domImg.currentSrc || domImg.getAttribute('src') || '';
     const src = normalizeImageSrcForSmartCrop(rawSrc);
 
-    if (!isCrossOriginImageSrc(src)) {
-        if (src !== rawSrc && domImg.getAttribute('src') !== src) {
-            domImg.setAttribute('src', src);
-        }
+    // Reuse the on-screen element only when its URL is already the analysis URL.
+    if (src === rawSrc && !isCrossOriginImageSrc(rawSrc)) {
         return waitForImageReady(domImg).then(() => domImg);
     }
 
@@ -3866,9 +3864,17 @@ function loadImageForSmartCropAnalysis(domImg) {
 
     const promise = new Promise((resolve, reject) => {
         const probe = new Image();
-        probe.crossOrigin = 'anonymous';
+        const needsCors = isCrossOriginImageSrc(src);
+        if (needsCors) probe.crossOrigin = 'anonymous';
         probe.onload = () => resolve(probe);
-        probe.onerror = () => reject(new Error('smartcrop CORS: image blocked (need Access-Control-Allow-Origin on /pix/)'));
+        probe.onerror = () =>
+            reject(
+                new Error(
+                    needsCors
+                        ? 'smartcrop CORS: image blocked (need Access-Control-Allow-Origin on /pix/)'
+                        : 'smartcrop: image load failed'
+                )
+            );
         probe.src = src;
     });
     smartCropAnalysisCache.set(src, promise);
@@ -3941,9 +3947,29 @@ function scheduleSmartCropForListing(container) {
     }
 }
 
+function bizDetailPhotoFallbackSrc() {
+    return '/pix/nophoto.jpg';
+}
+
+function ensureBizDetailPhotoFallback(img) {
+    if (!img || img.dataset.photoFallbackReady) return;
+    img.dataset.photoFallbackReady = '1';
+    img.addEventListener(
+        'error',
+        () => {
+            const fallback = bizDetailPhotoFallbackSrc();
+            if (!(img.currentSrc || img.src || '').includes('nophoto')) img.src = fallback;
+        },
+        { once: true }
+    );
+}
+
 function initSmartCropForBizDetail() {
-    if (!SMART_CROP_ENABLED || !document.body.classList.contains('biz-detail-page')) return;
-    document.querySelectorAll('.biz-detail-card__image').forEach((img) => queueSmartCropForImage(img));
+    if (!document.body.classList.contains('biz-detail-page')) return;
+    document.querySelectorAll('.biz-detail-card__image').forEach((img) => {
+        ensureBizDetailPhotoFallback(img);
+        if (SMART_CROP_ENABLED) queueSmartCropForImage(img);
+    });
 }
 
 /** Business detail: tap photo → full-size original in native <dialog> lightbox */

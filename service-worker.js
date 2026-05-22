@@ -1,7 +1,7 @@
 // service-worker.js
-const VERSION = '3.1.5'; // Dit sturen we naar de Sheet
-const CACHE_NAME = 'kalanera-cache-v3.1.5'; // Dit dwingt de code-update af
-const IMAGE_CACHE = 'kalanera-images-v3.1.5'; // Afbeeldingen apart cachen voor snelheid
+const VERSION = '3.1.8'; // Dit sturen we naar de Sheet
+const CACHE_NAME = 'kalanera-cache-v3.1.8'; // Dit dwingt de code-update af
+const IMAGE_CACHE = 'kalanera-images-v3.1.8'; // Afbeeldingen apart cachen voor snelheid
 
 // VOEG DIT TOE: Luister naar vragen van de app
 self.addEventListener('message', (event) => {
@@ -79,35 +79,27 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // 1. AFBEELDINGEN: Cache First, then Network
-  if (event.request.destination === 'image' || url.pathname.match(/\.(jpg|jpeg|png|gif|webp)$/)) {
+  // 1. AFBEELDINGEN: network-first (PWA/mobiel: geen kapotte cache-first meer → lege/icon placeholders)
+  if (event.request.destination === 'image' || url.pathname.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)) {
     event.respondWith(
-      caches.open(IMAGE_CACHE).then(cache => {
-        return cache.match(event.request).then(cachedResponse => {
-          if (cachedResponse) return cachedResponse;
-          return fetch(event.request).then(networkResponse => {
-            if (networkResponse.status === 200) {
-              const copy = networkResponse.clone();
-              event.waitUntil(
-                copy
-                  .arrayBuffer()
-                  .then((body) =>
-                    cache.put(
-                      event.request,
-                      new Response(body, {
-                        status: networkResponse.status,
-                        statusText: networkResponse.statusText,
-                        headers: networkResponse.headers
-                      })
-                    )
-                  )
-                  .catch(() => {})
-              );
-            }
-            return networkResponse;
-          }).catch(() => caches.match('/icon-512.png'));
-        });
-      })
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse.status === 200) {
+            event.waitUntil(
+              caches.open(IMAGE_CACHE).then((cache) =>
+                cache.put(event.request, networkResponse.clone()).catch(() => {})
+              )
+            );
+          }
+          return networkResponse;
+        })
+        .catch(() =>
+          caches.open(IMAGE_CACHE).then((cache) =>
+            cache.match(event.request).then(
+              (cached) => cached || caches.match('/pix/nophoto.jpg') || caches.match('/icon-512.png')
+            )
+          )
+        )
     );
     return;
   }
