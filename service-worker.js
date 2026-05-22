@@ -1,7 +1,7 @@
 // service-worker.js
-const VERSION = '3.1.8'; // Dit sturen we naar de Sheet
-const CACHE_NAME = 'kalanera-cache-v3.1.8'; // Dit dwingt de code-update af
-const IMAGE_CACHE = 'kalanera-images-v3.1.8'; // Afbeeldingen apart cachen voor snelheid
+const VERSION = '3.1.9'; // Dit sturen we naar de Sheet
+const CACHE_NAME = 'kalanera-cache-v3.1.9'; // Dit dwingt de code-update af
+const IMAGE_CACHE = 'kalanera-images-v3.1.9'; // Afbeeldingen apart cachen voor snelheid
 
 // VOEG DIT TOE: Luister naar vragen van de app
 self.addEventListener('message', (event) => {
@@ -47,6 +47,9 @@ self.addEventListener('fetch', event => {
   // Dit voorkomt problemen met externe origins (Google Maps, ingesloten formulieren, enz.)
   if (!url.origin.includes(self.location.hostname)) return;
 
+  // Businessfoto's: niet via SW (mobiel/PWA: parallelle /pix/-loads anders deels geblokkeerd of time-out).
+  if (url.pathname.startsWith('/pix/')) return;
+
   // Manifest: network-first zodat background_color / icons altijd actueel zijn (geen witte splash uit oude cache)
   if (url.pathname === '/manifest.json') {
     event.respondWith(
@@ -90,8 +93,11 @@ self.addEventListener('fetch', event => {
                 cache.put(event.request, networkResponse.clone()).catch(() => {})
               )
             );
+            return networkResponse;
           }
-          return networkResponse;
+          return caches.open(IMAGE_CACHE).then((cache) =>
+            cache.match(event.request).then((cached) => cached || networkResponse)
+          );
         })
         .catch(() =>
           caches.open(IMAGE_CACHE).then((cache) =>

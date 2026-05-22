@@ -230,8 +230,29 @@ const iconMap = {
     'Rent': 'fa-car', 'Travel': 'fa-route'
 };
 
+const SITE_ORIGIN = 'https://www.kalanera.gr';
+
+/** Zelfde logica als n8n-business-page-template: consistente absolute /pix/ URLs in listings. */
+function absolutePhotoUrl(photoField) {
+    const fallback = `${SITE_ORIGIN}/pix/nophoto.jpg`;
+    const raw = String(photoField ?? '').trim();
+    if (!raw) return fallback;
+    if (/^https?:\/\//i.test(raw)) {
+        if (/^https?:\/\/(www\.)?kalanera\.gr\b/i.test(raw)) {
+            return raw.replace(/^https?:\/\/(www\.)?kalanera\.gr\b/i, SITE_ORIGIN);
+        }
+        return raw;
+    }
+    let path = raw.replace(/^(\.\.\/)+/, '').replace(/^\/+/, '');
+    if (!path.startsWith('pix/')) {
+        path = path.replace(/^pix\/?/, '');
+        path = 'pix/' + path;
+    }
+    return `${SITE_ORIGIN}/${path}`;
+}
+
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.8'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.9'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -792,7 +813,7 @@ function renderBusinesses(data) {
             : '';
 
             const isFavorite = wishlist.includes(biz.Name);
-            let finalImageUrl = biz.PhotoURL || `https://via.placeholder.com/180x130?text=${encodeURIComponent(biz.Name)}`;
+            const finalImageUrl = absolutePhotoUrl(biz.PhotoURL);
 
             // 1. Website knop met tracking
             const webHtml = biz.Website && biz.Website.trim() !== "" 
@@ -3654,7 +3675,9 @@ const SMART_CROP_SCRIPT_URL = 'https://cdn.jsdelivr.net/npm/smartcrop@2.0.5/smar
 const SMART_CROP_IMG_SELECTOR =
     '.biz-detail-card__image, .biz-card-mini--magazine .magazine-link img, .biz-card-mini.is-media .mini-preview img';
 let smartCropLoadPromise = null;
-let smartCropTaskChain = Promise.resolve();
+const SMART_CROP_MAX_CONCURRENT = 4;
+let smartCropActive = 0;
+const smartCropWaitQueue = [];
 
 function shouldSkipSmartCrop(img) {
     const src = (img.currentSrc || img.getAttribute('src') || '').toLowerCase();
@@ -3807,7 +3830,11 @@ function runSmartCropAnalysis(analysisImg, frame, domImg) {
 }
 
 function waitForImageReady(img) {
-    if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+    if (img.complete) {
+        return img.naturalWidth > 0
+            ? Promise.resolve()
+            : Promise.reject(new Error('image load failed'));
+    }
     return new Promise((resolve, reject) => {
         const done = () => {
             img.removeEventListener('load', done);
@@ -3867,7 +3894,8 @@ function loadImageForSmartCropAnalysis(domImg) {
         const needsCors = isCrossOriginImageSrc(src);
         if (needsCors) probe.crossOrigin = 'anonymous';
         probe.onload = () => resolve(probe);
-        probe.onerror = () =>
+        probe.onerror = () => {
+            smartCropAnalysisCache.delete(src);
             reject(
                 new Error(
                     needsCors
@@ -3875,6 +3903,7 @@ function loadImageForSmartCropAnalysis(domImg) {
                         : 'smartcrop: image load failed'
                 )
             );
+        };
         probe.src = src;
     });
     smartCropAnalysisCache.set(src, promise);
@@ -3923,11 +3952,23 @@ function applySmartCropObjectPosition(img) {
         });
 }
 
+function drainSmartCropQueue() {
+    while (smartCropActive < SMART_CROP_MAX_CONCURRENT && smartCropWaitQueue.length) {
+        const img = smartCropWaitQueue.shift();
+        smartCropActive++;
+        applySmartCropObjectPosition(img).finally(() => {
+            smartCropActive--;
+            drainSmartCropQueue();
+        });
+    }
+}
+
 function queueSmartCropForImage(img) {
     if (!SMART_CROP_ENABLED || !img || img.dataset.smartcropApplied === '1' || shouldSkipSmartCrop(img)) {
         return;
     }
-    smartCropTaskChain = smartCropTaskChain.then(() => applySmartCropObjectPosition(img));
+    smartCropWaitQueue.push(img);
+    drainSmartCropQueue();
 }
 
 function scheduleSmartCropForListing(container) {
@@ -3936,7 +3977,10 @@ function scheduleSmartCropForListing(container) {
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 const imgs = container.querySelectorAll(SMART_CROP_IMG_SELECTOR);
-                imgs.forEach((img) => queueSmartCropForImage(img));
+                imgs.forEach((img) => {
+                    ensurePhotoFallback(img);
+                    queueSmartCropForImage(img);
+                });
             });
         });
     };
@@ -3951,7 +3995,7 @@ function bizDetailPhotoFallbackSrc() {
     return '/pix/nophoto.jpg';
 }
 
-function ensureBizDetailPhotoFallback(img) {
+function ensurePhotoFallback(img) {
     if (!img || img.dataset.photoFallbackReady) return;
     img.dataset.photoFallbackReady = '1';
     img.addEventListener(
@@ -3962,6 +4006,10 @@ function ensureBizDetailPhotoFallback(img) {
         },
         { once: true }
     );
+}
+
+function ensureBizDetailPhotoFallback(img) {
+    ensurePhotoFallback(img);
 }
 
 function initSmartCropForBizDetail() {
