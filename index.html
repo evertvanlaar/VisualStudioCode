@@ -55,7 +55,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
     
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=3.1.13">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=3.1.22">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -169,20 +169,20 @@
 </div>
 
     <div class="main-container main-container--hub">
-<div id="install-banner">
-    <p>Add <b>Kala Nera</b> to your home screen for easy access!</p>
+<div id="install-banner" data-install-ui="android" hidden>
+    <p id="install-banner-message">Add <b>Kala Nera</b> to your home screen for easy access!</p>
     <div class="banner-buttons">
         <button id="custom-install-button" class="location-btn" style="margin:0;">Install App</button>
         <button id="close-banner" style="background:none; border:none; color:var(--muted); cursor:pointer;">Not now</button>
     </div>
 </div>
 
-    <div id="ios-install-instructions" class="ios-banner" style="display: none;">
+    <div id="ios-install-instructions" class="ios-banner" data-install-ui="ios" hidden>
         <p style="margin: 0;">
-            <i class="fab fa-apple"></i> <strong>Install as App:</strong> 
-            Tap the <i class="far fa-share-square"></i> icon and select <strong>'Add to Home Screen'</strong>.
+            <i class="fab fa-apple"></i> <strong>iPhone:</strong>
+            Tap <i class="far fa-share-square"></i> <strong>Share</strong>, then <strong>Add to Home Screen</strong> → <strong>Add</strong>.
         </p>
-        <button id="close-ios-banner" style="position: absolute; right: 10px; top: 10px; background: transparent; border: none; color: #8e8e93; cursor: pointer; font-size: 18px;">✕</button>
+        <button id="close-ios-banner" type="button" aria-label="Close" style="position: absolute; right: 10px; top: 10px; background: transparent; border: none; color: #8e8e93; cursor: pointer; font-size: 18px;">✕</button>
     </div>
 
         <div class="hub-filter-bar directory-toolbar--below-hero">
@@ -211,7 +211,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <footer class="site-footer">
-    <div class="footer-container">
+    <div class="footer-container footer-container--hub">
         <div class="footer-column footer-column--brand">
             <a href="index.html" class="footer-brand-lockup">
                 <img src="logo.png" alt="Kala Nera" width="52" height="52" class="footer-brand-logo" loading="lazy">
@@ -219,51 +219,54 @@
             </a>
             <p class="footer-tagline">Kala Nera · Pelion, Greece</p>
             <p class="footer-lead">We help travelers discover the best places—from authentic taverns to wonderful stays—in Kala Nera and the wider Pelion area.</p>
-        </div>
-
-        <div class="footer-column footer-column--site">
-            <div class="footer-nav-section">
-                <h3>Site</h3>
-                <ul>
-                    <li><a href="bus.html"><i class="fa-solid fa-bus" aria-hidden="true"></i> Bus (Kala Nera)</a></li>
-                    <li><a href="wishlist.html"><i class="fa-solid fa-heart" aria-hidden="true"></i> Favorites</a></li>
-                    <li><a href="t-form.html"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Add your Business</a></li>
-                    <li><a href="info.html"><i class="fa-solid fa-compass" aria-hidden="true"></i> Pelion guide</a></li>
-                    <li><a href="useful-numbers.html"><i class="fa-solid fa-phone" aria-hidden="true"></i> Useful numbers</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="footer-column footer-column--social">
-            <h3>Social</h3>
-            <div class="social-icons">
-                <a href="https://www.facebook.com/kalanera.info" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Kala Nera on Facebook">
-                    <i class="fab fa-facebook-f" aria-hidden="true"></i>
+            <div class="footer-install-strip">
+                <a href="install.html" class="install-badge install-badge--footer" aria-label="Install Kala Nera Guide on your phone">
+                    <span class="install-badge__icon" aria-hidden="true"><i class="fa-solid fa-mobile-screen-button"></i></span>
+                    <span class="install-badge__text">
+                        <span class="install-badge__title">Install on your phone</span>
+                        <span class="install-badge__note">Free · Browser install · Not in App Store or Google Play</span>
+                    </span>
+                    <i class="fa-solid fa-chevron-right install-badge__chevron" aria-hidden="true"></i>
                 </a>
-            </div>
-        <div class="footer-nav-section footer-nav-section--under-social">
-                <h3>Info</h3>
-                <ul>
-                    <li><a href="mailto:info@spiti.tech"><i class="fa fa-envelope" aria-hidden="true"></i> Contact</a></li>
-                    <li><a href="privacy.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Privacy policy</a></li>
-                </ul>
+                <div class="footer-install-qr">
+                    <img src="pix/install-qr-en.png" width="72" height="72" alt="QR: install Kala Nera Guide at kalanera.gr/install.html" loading="lazy">
+                    <span class="footer-install-qr__label">Scan</span>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="footer-bottom">
-        <div class="footer-powered">
-            <a href="mailto:info@spiti.tech" class="footer-powered-badge" aria-label="Powered by KanteKlik — email contact">
-                <span class="footer-powered-icon" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
-                <span class="footer-powered-label">Powered by</span>
-                <span class="footer-powered-name">KanteKlik</span>
-            </a>
-        </div>
-        <div class="footer-bottom-row">
-            <p>© 2026 Kala Nera Guide. E-Project all rights reserved.</p>
-            <div class="app-version-tag">
-                <i class="fa fa-th-large" aria-hidden="true"></i> Mobile App
+        <div class="footer-aside">
+            <div class="footer-aside-cols">
+                <div class="footer-column footer-column--site">
+                    <div class="footer-nav-section">
+                        <h3>Site</h3>
+                        <ul>
+                            <li><a href="bus.html"><i class="fa-solid fa-bus" aria-hidden="true"></i> Bus (Kala Nera)</a></li>
+                            <li><a href="wishlist.html"><i class="fa-solid fa-heart" aria-hidden="true"></i> Favorites</a></li>
+                            <li><a href="t-form.html"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Add your Business</a></li>
+                            <li><a href="info.html"><i class="fa-solid fa-compass" aria-hidden="true"></i> Pelion guide</a></li>
+                            <li><a href="useful-numbers.html"><i class="fa-solid fa-phone" aria-hidden="true"></i> Useful numbers</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer-column footer-column--social">
+                    <h3>Social</h3>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com/kalanera.info" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Kala Nera on Facebook">
+                            <i class="fab fa-facebook-f" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    <div class="footer-nav-section footer-nav-section--under-social">
+                        <h3>Info</h3>
+                        <ul>
+                            <li><a href="mailto:info@spiti.tech"><i class="fa fa-envelope" aria-hidden="true"></i> Contact</a></li>
+                            <li><a href="privacy.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Privacy policy</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
+            <p class="footer-legal">© 2026 Kala Nera Guide. E-Project all rights reserved. · <span class="footer-powered-inline">Powered by <a href="mailto:info@spiti.tech">KanteKlik</a></span></p>
         </div>
     </div>
 
@@ -281,7 +284,7 @@
 
 <!-- N8N_SEO_END -->
  
-<script src="app.js?v=3.1.13"></script>
+<script src="app.js?v=3.1.22"></script>
 
 <nav class="bottom-nav" aria-label="Primary">
     <div class="bottom-nav-inner">

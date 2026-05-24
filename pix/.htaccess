@@ -1,0 +1,6 @@
+# Allow SmartCrop / canvas analysis when the site is opened from another origin (e.g. localhost dev).
+<IfModule mod_headers.c>
+  <FilesMatch "\.(?i:jpe?g|png|webp|gif)$">
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+</IfModule>

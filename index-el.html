@@ -55,7 +55,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
     
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=3.1.13">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=3.1.22">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -169,20 +169,20 @@
 </div>
 
     <div class="main-container main-container--hub">
-<div id="install-banner">
-    <p>Προσθέστε τα <b>Καλά Νερά</b> στην αρχική σας οθόνη για εύκολη πρόσβαση!</p>
+<div id="install-banner" data-install-ui="android" hidden>
+    <p id="install-banner-message">Προσθέστε τα <b>Καλά Νερά</b> στην αρχική σας οθόνη για εύκολη πρόσβαση!</p>
     <div class="banner-buttons">
         <button id="custom-install-button" class="location-btn" style="margin:0;">Εγκατάσταση Εφαρμογής</button>
         <button id="close-banner" style="background:none; border:none; color:var(--muted); cursor:pointer;">Όχι τώρα</button>
     </div>
 </div>
 
-    <div id="ios-install-instructions" class="ios-banner" style="display: none;">
+    <div id="ios-install-instructions" class="ios-banner" data-install-ui="ios" hidden>
         <p style="margin: 0;">
-            <i class="fab fa-apple"></i> <strong>Εγκατάσταση ως Εφαρμογή:</strong> 
-            Πατήστε το <i class="far fa-share-square"></i> εικονίδιο και επιλέξτε <strong>'Προσθήκη στην Αρχική Οθόνη'</strong>.
+            <i class="fab fa-apple"></i> <strong>iPhone:</strong>
+            <i class="far fa-share-square"></i> <strong>Κοινή χρήση</strong> → <strong>Προσθήκη στην αρχική οθόνη</strong> → <strong>Προσθήκη</strong>.
         </p>
-        <button id="close-ios-banner" style="position: absolute; right: 10px; top: 10px; background: transparent; border: none; color: #8e8e93; cursor: pointer; font-size: 18px;">✕</button>
+        <button id="close-ios-banner" type="button" aria-label="Κλείσιμο" style="position: absolute; right: 10px; top: 10px; background: transparent; border: none; color: #8e8e93; cursor: pointer; font-size: 18px;">✕</button>
     </div>
 
         <div class="hub-filter-bar directory-toolbar--below-hero">
@@ -211,7 +211,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <footer class="site-footer">
-    <div class="footer-container">
+    <div class="footer-container footer-container--hub">
         <div class="footer-column footer-column--brand">
             <a href="index-el.html" class="footer-brand-lockup">
                 <img src="logo.png" alt="Καλά Νερά" width="52" height="52" class="footer-brand-logo" loading="lazy">
@@ -219,51 +219,54 @@
             </a>
             <p class="footer-tagline">Καλά Νερά · Πήλιο, Ελλάδα</p>
             <p class="footer-lead">Βοηθάμε τους επισκέπτες να ανακαλύψουν τα καλύτερα σημεία—από αυθεντικές ταβέρνες μέχρι όμορφες διαμονές—στα Καλά Νερά και το ευρύτερο Πήλιο.</p>
-        </div>
-
-        <div class="footer-column footer-column--site">
-            <div class="footer-nav-section">
-                <h3>Ιστότοπος</h3>
-                <ul>
-                    <li><a href="bus-el.html"><i class="fa-solid fa-bus" aria-hidden="true"></i> Λεωφορείο (Καλά Νερά)</a></li>
-                    <li><a href="wishlist-el.html"><i class="fa-solid fa-heart" aria-hidden="true"></i> Αγαπημένα</a></li>
-                    <li><a href="t-form-el.html"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Προσθέστε Επιχείρηση</a></li>
-                    <li><a href="info-el.html"><i class="fa-solid fa-compass" aria-hidden="true"></i> Οδηγός Πηλίου</a></li>
-                    <li><a href="useful-numbers-el.html"><i class="fa-solid fa-phone" aria-hidden="true"></i> Χρήσιμα τηλέφωνα</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="footer-column footer-column--social">
-            <h3>Κοινωνικά</h3>
-            <div class="social-icons">
-                <a href="https://www.facebook.com/kalanera.info" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Καλά Νερά στο Facebook">
-                    <i class="fab fa-facebook-f" aria-hidden="true"></i>
+            <div class="footer-install-strip">
+                <a href="install-el.html" class="install-badge install-badge--footer" aria-label="Εγκατάσταση Καλά Νερά Guide στο κινητό">
+                    <span class="install-badge__icon" aria-hidden="true"><i class="fa-solid fa-mobile-screen-button"></i></span>
+                    <span class="install-badge__text">
+                        <span class="install-badge__title">Εγκατάσταση στο κινητό</span>
+                        <span class="install-badge__note">Δωρεάν · Μέσω browser · Όχι App Store ή Google Play</span>
+                    </span>
+                    <i class="fa-solid fa-chevron-right install-badge__chevron" aria-hidden="true"></i>
                 </a>
-            </div>
-        <div class="footer-nav-section footer-nav-section--under-social">
-                <h3>Πληροφορίες</h3>
-                <ul>
-                    <li><a href="mailto:info@spiti.tech"><i class="fa fa-envelope" aria-hidden="true"></i> Επικοινωνία</a></li>
-                    <li><a href="privacy-el.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Πολιτική απορρήτου</a></li>
-                </ul>
+                <div class="footer-install-qr">
+                    <img src="pix/install-qr-el.png" width="72" height="72" alt="QR εγκατάστασης: kalanera.gr/install-el.html" loading="lazy">
+                    <span class="footer-install-qr__label">Σάρωση</span>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="footer-bottom">
-        <div class="footer-powered">
-            <a href="mailto:info@spiti.tech" class="footer-powered-badge" aria-label="Με την υποστήριξη KanteKlik — επικοινωνία μέσω email">
-                <span class="footer-powered-icon" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
-                <span class="footer-powered-label">Με την υποστήριξη</span>
-                <span class="footer-powered-name">KanteKlik</span>
-            </a>
-        </div>
-        <div class="footer-bottom-row">
-            <p>© 2026 Οδηγός Καλών Νερών. E-Project όλα τα δικαιώματα διατηρούνται.</p>
-            <div class="app-version-tag">
-                <i class="fa fa-th-large" aria-hidden="true"></i> Εφαρμογή Κινητού
+        <div class="footer-aside">
+            <div class="footer-aside-cols">
+                <div class="footer-column footer-column--site">
+                    <div class="footer-nav-section">
+                        <h3>Ιστότοπος</h3>
+                        <ul>
+                            <li><a href="bus-el.html"><i class="fa-solid fa-bus" aria-hidden="true"></i> Λεωφορείο (Καλά Νερά)</a></li>
+                            <li><a href="wishlist-el.html"><i class="fa-solid fa-heart" aria-hidden="true"></i> Αγαπημένα</a></li>
+                            <li><a href="t-form-el.html"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Προσθέστε Επιχείρηση</a></li>
+                            <li><a href="info-el.html"><i class="fa-solid fa-compass" aria-hidden="true"></i> Οδηγός Πηλίου</a></li>
+                            <li><a href="useful-numbers-el.html"><i class="fa-solid fa-phone" aria-hidden="true"></i> Χρήσιμα τηλέφωνα</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer-column footer-column--social">
+                    <h3>Κοινωνικά</h3>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com/kalanera.info" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Καλά Νερά στο Facebook">
+                            <i class="fab fa-facebook-f" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    <div class="footer-nav-section footer-nav-section--under-social">
+                        <h3>Πληροφορίες</h3>
+                        <ul>
+                            <li><a href="mailto:info@spiti.tech"><i class="fa fa-envelope" aria-hidden="true"></i> Επικοινωνία</a></li>
+                            <li><a href="privacy-el.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Πολιτική απορρήτου</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
+            <p class="footer-legal">© 2026 Οδηγός Καλών Νερών. E-Project όλα τα δικαιώματα διατηρούνται. · <span class="footer-powered-inline">Με την υποστήριξη <a href="mailto:info@spiti.tech">KanteKlik</a></span></p>
         </div>
     </div>
 
@@ -281,7 +284,7 @@
 
 <!-- N8N_SEO_END -->
  
-<script src="app.js?v=3.1.13"></script>
+<script src="app.js?v=3.1.22"></script>
 
 <nav class="bottom-nav" aria-label="Κύρια πλοήγηση">
     <div class="bottom-nav-inner">

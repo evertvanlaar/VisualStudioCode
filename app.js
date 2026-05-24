@@ -2,6 +2,82 @@
  * app.js - De "hersenen" van de Kala Nera Guide
  */
 
+/** Live site — analytics/webhooks die CORS-ruis op LAN willen vermijden. */
+function isKalaneraProductionOrigin() {
+    const h = (window.location.hostname || '').toLowerCase();
+    return h === 'www.kalanera.gr' || h === 'kalanera.gr';
+}
+
+/** LAN / localhost testserver (eigen localStorage, niet kalanera.gr). */
+function isLocalDevHost() {
+    const h = (window.location.hostname || '').toLowerCase();
+    return h === 'localhost'
+        || h === '127.0.0.1'
+        || h.endsWith('.local')
+        || /^192\.168\./.test(h)
+        || /^10\./.test(h)
+        || /^172\.(1[6-9]|2\d|3[0-1])\./.test(h);
+}
+
+let devWebhookSkipLogged = false;
+function logDevWebhookSkipOnce(featureLabel) {
+    if (devWebhookSkipLogged) return;
+    devWebhookSkipLogged = true;
+    console.info(`[Kalanera] ${featureLabel}`);
+}
+
+/** Zelfde origin als 192.168:5501 — werkt wél op echte telefoon (n8n cross-origin vaak geblokkeerd). */
+function devSnapshotUrl(relativePath) {
+    return new URL(String(relativePath || '').replace(/^\//, ''), location.origin).href;
+}
+
+async function loadLocalDevBusinessSnapshot() {
+    if (!isLocalDevHost()) return false;
+    try {
+        const res = await fetch(devSnapshotUrl('dev/local-businesses.json'), { cache: 'no-store' });
+        if (!res.ok) return false;
+        const payload = await res.json();
+        const rawData = normalizeBusinessWebhookPayload(payload);
+        if (!Array.isArray(rawData)) return false;
+        const freshData = rawData.filter(businessRowIsActive);
+        if (!freshData.length) return false;
+        allBusinesses = freshData;
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
+            const now = new Date();
+            const locale = (currentLang === 'el') ? 'el-GR' : 'en-GB';
+            const timeString = now.toLocaleDateString(locale) + ' '
+                + now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+            localStorage.setItem('kalanera_last_sync', `${timeString} (dev snapshot)`);
+        } catch { /* ignore */ }
+        console.info('[Kalanera] Bedrijven via dev/local-businesses.json (LAN-mobiel fallback).');
+        return true;
+    } catch (e) {
+        console.warn('[Kalanera] Dev-snapshot bedrijven mislukt', e);
+        return false;
+    }
+}
+
+/** LAN-mobiel: zelfde origin als de pagina (n8n cross-origin vaak geblokkeerd). Alleen volos + vandaag in repo. */
+async function loadLocalDevBusSnapshot(dir, dayOffset) {
+    if (!isLocalDevHost()) return null;
+    const d = String(dir || BUS_DEFAULT_DIR).toLowerCase();
+    const off = busClampDayOffset(dayOffset);
+    if (d !== 'volos' || off !== 0) return null;
+    try {
+        const res = await fetch(devSnapshotUrl('dev/bus-schedule-next-volos.json'), { cache: 'no-store' });
+        if (!res.ok) return null;
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : (data && data.items ? data.items : []);
+        if (!list.length) return null;
+        console.info('[Kalanera] Bus via dev/bus-schedule-next-volos.json (LAN-mobiel fallback).');
+        return data;
+    } catch (e) {
+        console.warn('[Kalanera] Dev-snapshot bus mislukt', e);
+        return null;
+    }
+}
+
 const N8N_WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/local-businesses';
 // Bus timetable (n8n path bus-schedule-next). Query: from, dir, remaining=0|1, dayOffset=0..6 (Athens calendar).
 // Legacy webhook /webhook/bus-schedule blijft in n8n actief voor oudere app.js die nog niet via service worker is bijgewerkt.
@@ -265,7 +341,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.13'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.22'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -329,8 +405,11 @@ async function init() {
         }
     }
 
-// --- STAP 3: Haal verse data op via n8n ---
+// --- STAP 3: Haal verse data op via n8n (ook op LAN proberen; bij CORS-fout val terug op cache) ---
     try {
+        if (isLocalDevHost()) {
+            logDevWebhookSkipOnce('LAN: n8n wordt geprobeerd; bij CORS-fout wordt cache gebruikt');
+        }
         const response = await fetch(N8N_WEBHOOK_URL);
         if (!response.ok) {
             const bodySnippet = await response.text().catch(() => '');
@@ -393,33 +472,45 @@ async function init() {
             if (rawData.length === 0) {
                 console.warn('Businesses webhook: lege array — check n8n Google Sheets bereik/tab en workflow.');
             }
-           
-            const now = new Date();
-            
-            // DYNAMISCHE TAAL CHECK
-            // We bepalen de juiste 'locale' op basis van de pagina taal
-            const locale = (currentLang === 'el') ? 'el-GR' : 'en-GB'; 
-            
-            // Formatteer datum en tijd volgens de taal van de bezoeker
-            const timeString = now.toLocaleDateString(locale) + ' ' + 
-                               now.toLocaleTimeString(locale, {hour: '2-digit', minute:'2-digit'});
-            
-            localStorage.setItem('kalanera_last_sync', timeString);
 
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
-            allBusinesses = freshData;
-          
-            // VOEG DEZE REGEL TOE OM DE DOWNLOAD TE STARTEN: \/ <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<--------------
-            // exportSitemap(allBusinesses); 
+            if (freshData.length === 0 && allBusinesses.length > 0) {
+                console.warn('Businesses webhook: lege lijst genegeerd — bestaande cache behouden.');
+                showData();
+            } else {
+                allBusinesses = freshData;
 
-            showData(); 
+                const now = new Date();
+                const locale = (currentLang === 'el') ? 'el-GR' : 'en-GB';
+                const timeString = now.toLocaleDateString(locale) + ' '
+                    + now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+
+                try {
+                    if (freshData.length > 0) {
+                        localStorage.setItem('kalanera_last_sync', timeString);
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
+                    }
+                } catch (storageErr) {
+                    console.warn('Bedrijven-cache opslaan mislukt (localStorage):', storageErr);
+                }
+
+                showData();
+            }
         }
     } catch (error) {
-        console.warn('Offline mode.', error?.message || error);
+        console.warn('Bedrijven ophalen mislukt — cache gebruikt indien aanwezig.', error?.message || error);
     }
 
     if (!isWishlistPage && businessList && !directoryUiRendered) {
         showData();
+    }
+
+    if (!isWishlistPage && isHomeHubPage() && allBusinesses.length === 0) {
+        const fromSnapshot = await loadLocalDevBusinessSnapshot();
+        if (fromSnapshot) {
+            showData();
+        } else {
+            renderHubDirectoryLoadError();
+        }
     }
 
     // --- STAP 4: Overige extra's ---
@@ -452,6 +543,216 @@ function isHomeHubPage() {
 
 function isWishlistPage() {
     return document.getElementById('empty-wishlist') !== null;
+}
+
+function isInstallLandingPage() {
+    return document.body.classList.contains('page-install-landing');
+}
+
+function wantsInstallDeepLink() {
+    const q = new URLSearchParams(window.location.search);
+    const v = (q.get('install') || '').toLowerCase();
+    return v === '1' || v === 'true' || v === 'yes';
+}
+
+function isAppStandalone() {
+    return window.matchMedia('(display-mode: standalone)').matches
+        || window.navigator.standalone === true
+        || document.referrer.includes('android-app://');
+}
+
+function isIOSInstallDevice() {
+    return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+function shouldPromoteInstall() {
+    if (isAppStandalone()) return false;
+    return isInstallLandingPage() || wantsInstallDeepLink();
+}
+
+function isAndroidDevice() {
+    return /Android/i.test(navigator.userAgent);
+}
+
+function isChromeOnAndroid() {
+    return isAndroidDevice()
+        && /Chrome/i.test(navigator.userAgent)
+        && !/EdgA|Edg\/|OPR\/|SamsungBrowser/i.test(navigator.userAgent);
+}
+
+/** Desktop of DevTools-emulatie: mobiele UA maar geen echte touch/PWA-install. */
+function isLikelyDesktopInstallContext() {
+    if (!/Mobi|Android/i.test(navigator.userAgent)) return true;
+    if (window.innerWidth > 820) return true;
+    const finePointer = window.matchMedia('(pointer: fine)').matches;
+    const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    return finePointer && !coarsePointer;
+}
+
+function getInstallGuidance(scenario) {
+    const isEl = (document.documentElement.lang || '').toLowerCase().startsWith('el');
+    const liveUrl = isEl ? 'https://www.kalanera.gr/install-el.html' : 'https://www.kalanera.gr/install.html';
+
+    const copy = isEl ? {
+        alreadyInstalled: {
+            title: 'Η εφαρμογή είναι ήδη εγκατεστημένη.',
+            steps: ['Ανοίξτε την από το εικονίδιο στην αρχική οθόνη σας.']
+        },
+        desktop: {
+            title: 'Εγκαταστήστε την εφαρμογή <strong>Καλά Νερά</strong> Guide στο κινητό σας.',
+            steps: [
+                'Ανοίξτε Chrome (Android) ή Safari (iPhone).',
+                `Μεταβείτε στο <strong>${liveUrl.replace('https://', '')}</strong> ή σαρώστε τον QR κωδικό.`,
+                'Πατήστε <strong>Εγκατάσταση</strong> — το εικονίδιο στην αρχική οθόνη.'
+            ],
+            landingHint: 'Η εφαρμογή δεν εγκαθίσταται στον υπολογιστή — μόνο στο τηλέφωνο.'
+        },
+        localDev: {
+            title: 'Δοκιμή από υπολογιστή — η εγκατάσταση λειτουργεί μόνο στο live site.',
+            steps: [
+                `Στο κινητό ανοίξτε <strong>${liveUrl.replace('https://', '')}</strong> (όχι διεύθυνση 192.168…).`,
+                'Πατήστε <strong>Εγκατάσταση τώρα</strong>.',
+                'Εναλλακτικά: μενού Chrome (⋮) → <strong>Εγκατάσταση εφαρμογής</strong>.'
+            ],
+            landingHint: `Για πραγματική εγκατάσταση ανοίξτε <strong>${liveUrl.replace('https://', '')}</strong> στο τηλέφωνό σας.`
+        },
+        androidOtherBrowser: {
+            title: 'Χρησιμοποιήστε το <strong>Chrome</strong> στο Android.',
+            steps: [
+                'Αντιγράψτε τη διεύθυνση και επικολλήστε την στο Chrome.',
+                'Πατήστε ξανά <strong>Εγκατάσταση τώρα</strong>.',
+                'Ή: <strong>Περισσότερα</strong> (···) κάτω → <strong>Εγκατάσταση</strong>.'
+            ]
+        },
+        androidManual: {
+            title: 'Πατήστε <strong>Εγκατάσταση τώρα</strong> ξανά σε λίγα δευτερόλεπτα.',
+            steps: [
+                'Αν δεν εμφανιστεί παράθυρο: <strong>Περισσότερα</strong> (···) στο κάτω μενού.',
+                'Επιλέξτε <strong>Εγκατάσταση</strong>.',
+                'Το εικονίδιο εμφανίζεται στην αρχική οθόνη.'
+            ],
+            landingHint: 'Δεν εμφανίστηκε παράθυρο; <strong>Περισσότερα</strong> (···) κάτω → <strong>Εγκατάσταση</strong>.'
+        },
+        promptFailed: {
+            title: 'Η αυτόματη εγκατάσταση δεν ξεκίνησε.',
+            steps: [
+                '<strong>Περισσότερα</strong> (···) κάτω → <strong>Εγκατάσταση</strong>.',
+                `Ή ανοίξτε <strong>${liveUrl.replace('https://', '')}</strong> και δοκιμάστε ξανά.`
+            ]
+        }
+    } : {
+        alreadyInstalled: {
+            title: 'The app is already installed.',
+            steps: ['Open it from the icon on your home screen.']
+        },
+        desktop: {
+            title: 'Install the <strong>Kala Nera Guide</strong> mobile app on your phone.',
+            steps: [
+                'Open Chrome (Android) or Safari (iPhone).',
+                `Go to <strong>${liveUrl.replace('https://', '')}</strong> or scan the QR code.`,
+                'Tap <strong>Install</strong> — the app icon appears on your home screen.'
+            ],
+            landingHint: 'The app installs on your phone only, not on this computer.'
+        },
+        localDev: {
+            title: 'You are testing locally — install only works on the live site.',
+            steps: [
+                `On your phone open <strong>${liveUrl.replace('https://', '')}</strong> (not a 192.168… address).`,
+                'Tap <strong>Install now</strong>.',
+                'Or: Chrome menu (⋮) → <strong>Install app</strong>.'
+            ],
+            landingHint: `For a real install, open <strong>${liveUrl.replace('https://', '')}</strong> on your phone.`
+        },
+        androidOtherBrowser: {
+            title: 'Please use <strong>Chrome</strong> on Android.',
+            steps: [
+                'Copy this page address and open it in Chrome.',
+                'Tap <strong>Install now</strong> again.',
+                'Or: <strong>More</strong> (···) at the bottom → <strong>Install</strong>.'
+            ]
+        },
+        androidManual: {
+            title: 'Tap <strong>Install now</strong> again in a few seconds.',
+            steps: [
+                'If no popup appears: tap <strong>More</strong> (···) in the bottom menu.',
+                'Choose <strong>Install</strong>.',
+                'The icon appears on your home screen.'
+            ],
+            landingHint: 'No popup? <strong>More</strong> (···) at the bottom → <strong>Install</strong>.'
+        },
+        promptFailed: {
+            title: 'Automatic install did not start.',
+            steps: [
+                '<strong>More</strong> (···) at the bottom → <strong>Install</strong>.',
+                `Or open <strong>${liveUrl.replace('https://', '')}</strong> and try again.`
+            ]
+        }
+    };
+
+    return copy[scenario] || copy.androidManual;
+}
+
+function resolveInstallGuidanceScenario() {
+    if (isAppStandalone()) return 'alreadyInstalled';
+    if (!isKalaneraProductionOrigin()) return 'localDev';
+    if (isLikelyDesktopInstallContext()) return 'desktop';
+    if (isAndroidDevice() && !isChromeOnAndroid()) return 'androidOtherBrowser';
+    return 'androidManual';
+}
+
+function showInstallGuidance(scenario) {
+    closeMoreSheet();
+    if (isIOSInstallDevice()) {
+        revealIosInstallPanel();
+        return;
+    }
+
+    const content = getInstallGuidance(scenario);
+    const banner = document.getElementById('install-banner');
+
+    if (banner && getInstallPlatform() === 'android') {
+        document.body.classList.add('install-promo-active');
+        banner.hidden = false;
+        banner.classList.add('is-visible', 'install-banner--guidance');
+
+        let titleEl = document.getElementById('install-banner-message');
+        if (!titleEl) {
+            titleEl = banner.querySelector('p');
+            if (titleEl) titleEl.id = 'install-banner-message';
+        }
+        if (titleEl) titleEl.innerHTML = content.title;
+
+        let stepsEl = document.getElementById('install-banner-steps');
+        if (!stepsEl) {
+            stepsEl = document.createElement('ol');
+            stepsEl.id = 'install-banner-steps';
+            stepsEl.className = 'install-banner-steps';
+            const anchor = banner.querySelector('.banner-buttons');
+            banner.insertBefore(stepsEl, anchor || null);
+        }
+        if (content.steps && content.steps.length) {
+            stepsEl.hidden = false;
+            stepsEl.innerHTML = content.steps.map((line) => `<li>${line}</li>`).join('');
+        } else {
+            stepsEl.hidden = true;
+        }
+
+        try {
+            banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } catch (e) { /* ignore */ }
+    }
+
+    const landingHint = document.getElementById('install-landing-android-hint');
+    if (landingHint && content.landingHint) {
+        landingHint.innerHTML = content.landingHint;
+        landingHint.hidden = false;
+        landingHint.classList.add('install-landing-hint--active');
+    }
+
+    if (!banner && !landingHint) {
+        const plain = [content.title.replace(/<[^>]+>/g, ''), ...(content.steps || [])].join('\n• ');
+        window.alert(plain);
+    }
 }
 
 function useMagazineCardLayout() {
@@ -575,6 +876,40 @@ function renderHubIdlePrompt() {
     if (existing) existing.remove();
 }
 
+function renderHubDirectoryLoadError() {
+    const container = document.getElementById('business-list');
+    if (!container || !isHomeHubPage() || allBusinesses.length > 0) return;
+
+    const isEl = currentLang === 'el';
+    let hint;
+    if (isLocalDevHost()) {
+        hint = isEl
+            ? 'Δοκιμαστικός server: αν δεν φορτώνει, βεβαιωθείτε ότι υπάρχουν dev/local-businesses.json και dev/bus-schedule-next-volos.json στο project.'
+            : 'Test server: if loading fails, ensure dev/local-businesses.json and dev/bus-schedule-next-volos.json are in the project folder.';
+    } else if (isKalaneraProductionOrigin()) {
+        hint = isEl
+            ? 'Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.'
+            : 'Check your connection and try again.';
+    } else {
+        hint = isEl
+            ? 'Δοκιμάστε ξανά ή ανοίξτε https://www.kalanera.gr.'
+            : 'Try again, or open https://www.kalanera.gr.';
+    }
+
+    container.innerHTML = `
+        <p class="status-msg hub-load-error">
+            ${isEl ? 'Δεν ήταν δυνατή η φόρτωση των επιχειρήσεων.' : 'Could not load businesses.'}
+            ${hint}
+            <button type="button" class="hub-load-retry">${isEl ? 'Δοκιμή ξανά' : 'Try again'}</button>
+        </p>`;
+
+    const btn = container.querySelector('.hub-load-retry');
+    if (btn && btn.dataset.wired !== '1') {
+        btn.dataset.wired = '1';
+        btn.addEventListener('click', () => { void init(); });
+    }
+}
+
 function syncHubResultsLine(count) {
     const line = document.getElementById('hub-results-line');
     const countEl = document.getElementById('hub-results-count');
@@ -652,7 +987,12 @@ function updateOnlineStatus() {
 }
 
 // Zorg dat de browser luistert naar veranderingen in de verbinding
-window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('online', () => {
+    updateOnlineStatus();
+    if (!isInstallLandingPage() && allBusinesses.length === 0 && document.getElementById('business-list')) {
+        void init();
+    }
+});
 window.addEventListener('offline', updateOnlineStatus);
 
 // Voer het ook direct uit als de pagina laadt
@@ -789,7 +1129,11 @@ function renderBusinesses(data) {
     container.innerHTML = '';
 
     if (!data || data.length === 0) {
-            if (isHomeHubPage() && hubListUnlocked()) return;
+            if (isHomeHubPage() && !hubListUnlocked()) return;
+            if (isHomeHubPage() && allBusinesses.length === 0) {
+                renderHubDirectoryLoadError();
+                return;
+            }
             const noResultsMsg = (currentLang === 'el') ? 'Δεν βρέθηκαν επιχειρήσεις.' : 'No businesses found matching your criteria.';
             container.innerHTML = `<p class="status-msg">${noResultsMsg}</p>`;
             return;
@@ -815,7 +1159,7 @@ function renderBusinesses(data) {
             const rawUrl = biz.Website || '';
             const cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
             const catColor = getColor(categoryForColor || biz.Category || 'Other');
-            const safeBizName = biz.Name.replace(/'/g, "\\'"); // Veilig voor JS strings
+            const safeBizName = String(biz.Name || '').replace(/'/g, "\\'"); // Veilig voor JS strings
             
             const reviewUrl = `https://www.google.com/search?q=${encodeURIComponent(biz.Name + ' Kala Nera reviews')}`;
             const mapsUrl = biz.GoogleMapsLink || `https://www.google.com/maps/search/${encodeURIComponent(biz.Name + ' Kala Nera')}`;
@@ -1246,26 +1590,6 @@ function copyToClipboard(text, el) {
 
 // --- EVENT LISTENERS ---
 
-window.addEventListener('online', updateOnlineStatus);
-window.addEventListener('offline', updateOnlineStatus);
-
-// --- GEOPTIMALISEERD PWA INSTALL EVENT ---
-window.addEventListener('beforeinstallprompt', (e) => {
-    // 1. Altijd blokkeren op desktop (boven 767px)
-    if (window.innerWidth > 767) return; 
-
-    // 2. Stop het standaard gedrag en sla het event op
-    e.preventDefault();
-    deferredPrompt = e;
-
-    // 3. Toon de optie ALTIJD in het menu
-    const installItem = document.getElementById('menu-install-item');
-    if (installItem) {
-        installItem.style.display = 'block';
-        installItem.classList.add('show-install');
-    }
-});
-
 document.addEventListener('DOMContentLoaded', () => {
     rewriteDomPixImagesToSameOrigin();
 
@@ -1346,11 +1670,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. Wishlist teller bijwerken
     updateWishlistCount();
 
-    // 5. De data-fetching starten
-    init();
+    // 5. De data-fetching starten (niet op install-landingspagina)
+    if (!isInstallLandingPage()) {
+        init();
+        void initBusSchedule();
+    } else if (document.getElementById('weather-temp')) {
+        updateWeather();
+    }
 
-    // 5b. Bus schedule (optional section on homepage)
-    void initBusSchedule();
+    initInstallPromo();
 
     // 6. EXTRA: Google Maps Button logica (optioneel, voor analytics of effect)
     const mapFab = document.querySelector('.map-fab');
@@ -3092,14 +3420,20 @@ async function busFetchSchedule(dir, dayOffset) {
     url.searchParams.set('remaining', '0');
     url.searchParams.set('dayOffset', String(busClampDayOffset(dayOffset)));
 
-    const res = await fetch(url.toString(), {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json'
-        }
-    });
-    if (!res.ok) throw new Error(`Bus schedule fetch failed: ${res.status}`);
-    return await res.json();
+    try {
+        const res = await fetch(url.toString(), {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        if (!res.ok) throw new Error(`Bus schedule fetch failed: ${res.status}`);
+        return await res.json();
+    } catch (e) {
+        const snap = await loadLocalDevBusSnapshot(dir, dayOffset);
+        if (snap) return snap;
+        throw e;
+    }
 }
 
 function busReadCacheSlot(dir, dayOffset) {
@@ -3641,8 +3975,13 @@ async function initBusSchedule() {
             renderFromNormalized(normalized, new Date().toISOString());
             void busPrefetchMissingDirs();
         } catch (e) {
-            // Fall back to cache if present
-            if (!renderFromCacheIfAny()) {
+            const snap = await loadLocalDevBusSnapshot(activeDir, activeDayOffset);
+            if (snap) {
+                const list = Array.isArray(snap) ? snap : (snap.items || []);
+                busWriteCacheSlot(activeDir, activeDayOffset, list);
+                const normalized = list.map(busNormalizeItem);
+                renderFromNormalized(normalized, new Date().toISOString());
+            } else if (!renderFromCacheIfAny()) {
                 if (isCombinedBusPage) {
                     if (nextContainer) busRenderError(nextContainer, retryBtn);
                     if (fullContainer) busRenderError(fullContainer, retryBtn);
@@ -4285,7 +4624,7 @@ function renderMoreSheetContent() {
             <div class="more-links">
                 <button type="button" onclick="if(typeof triggerManualInstall === 'function'){ triggerManualInstall(event); }">
                     <span class="more-link-leading"><i class="fa fa-download"></i><span class="more-link-label">${isEl ? 'Εγκατάσταση' : 'Install'}</span></span>
-                    <small>${isEl ? 'PWA' : 'PWA'}</small>
+                    <small>${isEl ? 'Στην αρχική οθόνη' : 'Add to home screen'}</small>
                 </button>
             </div>
         </section>
@@ -4332,7 +4671,7 @@ function getFooterAboutText() {
 function getFooterCopyrightText() {
     const footer = document.querySelector('footer.site-footer');
     if (!footer) return '';
-    const p = footer.querySelector('.footer-bottom p');
+    const p = footer.querySelector('.footer-legal') || footer.querySelector('.footer-bottom p');
     return p && p.textContent ? p.textContent.trim() : '';
 }
 
@@ -4534,85 +4873,250 @@ function getWishlist() {
 
 // Zorg dat deze functie wordt aangeroepen in je DOMContentLoaded event listener (die heb je al staan!)
 
-// --- GEOPTIMALISEERDE INSTALLATIE CODE (VERSIE 1.0.8) ---
-(function() {
-    let deferredPrompt; // We gebruiken nu één universele naam
+// --- PWA INSTALL (unified: menu, ?install=1, /install.html) ---
+function enableInstallMenuItem() {
     const installItem = document.getElementById('menu-install-item');
-
-    // 1. Luister naar het installatie-event
-    window.addEventListener('beforeinstallprompt', (e) => {
-        console.log("PWA Installatie event opgevangen.");
-        e.preventDefault();
-        deferredPrompt = e;
-        
-        // De CSS regelt de weergave, maar we kunnen de class voor de zekerheid toevoegen
-        if (installItem) {
-            installItem.classList.add('show-install');
-        }
-    });
-
-    // 2. De functie die wordt aangeroepen door de HTML (onclick)
-    window.triggerManualInstall = async function(event) {
-        if (event) event.preventDefault();
-        
-        console.log("Klik op install-knop. Status event:", deferredPrompt);
-
-        if (!deferredPrompt) {
-            // Als er geen event is, is de app waarschijnlijk al geïnstalleerd
-            alert("The app is already installed or can be added via the browser-settings.");
-            return;
-        }
-
-        // Toon de prompt
-        deferredPrompt.prompt();
-
-        // Wacht op keuze
-        const { outcome } = await deferredPrompt.userChoice;
-        console.log(`Gebruiker koos: ${outcome}`);
-
-        if (outcome === 'accepted') {
-            console.log('Installatie geaccepteerd.');
-            // We laten de knop staan (jouw wens), of we halen de class weg:
-            // if (installItem) installItem.classList.remove('show-install');
-        }
-
-        // Reset het event (verplicht door browser)
-        deferredPrompt = null;
-    };
-
-    // 3. Luister naar de voltooide installatie
-    window.addEventListener('appinstalled', () => {
-        console.log('PWA succesvol geïnstalleerd.');
-        // Optioneel: verberg knop na installatie
-        // if (installItem) installItem.classList.remove('show-install');
-    });
-})();
-
-// --- STAP 3: VERBERG INSTALLATIE-OPTIE IN DE APP ZELF ---
-function checkDisplayMode() {
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
-                         || window.navigator.standalone 
-                         || document.referrer.includes('android-app://');
-
-    if (isStandalone) {
-        console.log("App running in standalone mode. Hide installation-button.");
-        const installItem = document.getElementById('menu-install-item');
-        if (installItem) {
-            // We gebruiken !important om de CSS-force die we eerder maakten te overrulen
-            installItem.style.setProperty('display', 'none', 'important');
-        }
+    if (installItem) {
+        installItem.style.display = 'block';
+        installItem.classList.add('show-install');
     }
+    document.querySelectorAll('[data-install-trigger]').forEach((btn) => {
+        btn.removeAttribute('disabled');
+        btn.classList.remove('install-landing-btn--waiting');
+    });
 }
 
-// Voer de check uit zodra de pagina geladen is
-window.addEventListener('load', checkDisplayMode);
-
-// Luister ook naar de 'appinstalled' event voor directe feedback
-window.addEventListener('appinstalled', () => {
+function hideInstallMenuItem() {
     const installItem = document.getElementById('menu-install-item');
     if (installItem) {
         installItem.style.setProperty('display', 'none', 'important');
     }
+}
+
+function dismissInstallPromoUi() {
+    const banner = document.getElementById('install-banner');
+    if (banner) {
+        banner.classList.remove('is-visible', 'install-banner--guidance');
+        banner.hidden = true;
+        const steps = document.getElementById('install-banner-steps');
+        if (steps) steps.remove();
+    }
+    const ios = document.getElementById('ios-install-instructions');
+    if (ios) {
+        ios.classList.remove('is-visible');
+        ios.hidden = true;
+        ios.style.display = 'none';
+    }
+    document.body.classList.remove('install-promo-active');
+    if (isHomeHubPage() && typeof applyFilters === 'function') {
+        applyFilters();
+    }
+}
+
+function revealIosInstallPanel() {
+    closeMoreSheet();
+    applyInstallPlatformUi();
+    const el = document.getElementById('ios-install-instructions');
+    if (!el) return;
+    el.hidden = false;
+    el.style.display = 'block';
+    el.classList.add('is-visible');
+    document.body.classList.add('install-promo-active');
+}
+
+function wireInstallTriggerButtons() {
+    const handler = (event) => {
+        if (typeof window.triggerManualInstall === 'function') {
+            window.triggerManualInstall(event);
+        }
+    };
+    ['custom-install-button', 'install-landing-btn'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el || el.dataset.installWired === '1') return;
+        el.dataset.installWired = '1';
+        el.addEventListener('click', handler);
+    });
+    document.querySelectorAll('[data-install-trigger]').forEach((el) => {
+        if (el.dataset.installWired === '1') return;
+        el.dataset.installWired = '1';
+        el.addEventListener('click', handler);
+    });
+    const closeBanner = document.getElementById('close-banner');
+    if (closeBanner && closeBanner.dataset.installWired !== '1') {
+        closeBanner.dataset.installWired = '1';
+        closeBanner.addEventListener('click', () => dismissInstallPromoUi());
+    }
+    const closeIos = document.getElementById('close-ios-banner');
+    if (closeIos && closeIos.dataset.installWired !== '1') {
+        closeIos.dataset.installWired = '1';
+        closeIos.addEventListener('click', () => dismissInstallPromoUi());
+    }
+}
+
+function getInstallPlatform() {
+    if (isAppStandalone()) return 'installed';
+    if (isIOSInstallDevice()) return 'ios';
+    if (isAndroidDevice()) return 'android';
+    if (isLikelyDesktopInstallContext()) return 'desktop';
+    return 'unknown';
+}
+
+function applyInstallPlatformUi() {
+    const platform = getInstallPlatform();
+    const uiKey = platform === 'installed' ? null : (platform === 'unknown' ? 'desktop' : platform);
+
+    document.body.classList.remove(
+        'install-platform-android',
+        'install-platform-ios',
+        'install-platform-desktop',
+        'install-platform-installed'
+    );
+    if (platform === 'installed') {
+        document.body.classList.add('install-platform-installed');
+    } else if (uiKey === 'android') {
+        document.body.classList.add('install-platform-android');
+    } else if (uiKey === 'ios') {
+        document.body.classList.add('install-platform-ios');
+    } else if (uiKey === 'desktop') {
+        document.body.classList.add('install-platform-desktop');
+    }
+
+    document.querySelectorAll('[data-install-ui]').forEach((el) => {
+        if (el.id === 'install-banner' || el.id === 'ios-install-instructions') return;
+
+        const block = el.getAttribute('data-install-ui');
+        if (!uiKey) {
+            el.hidden = true;
+            el.setAttribute('aria-hidden', 'true');
+            return;
+        }
+        const show = block === uiKey;
+        el.hidden = !show;
+        el.setAttribute('aria-hidden', show ? 'false' : 'true');
+    });
+
+    const ready = document.getElementById('install-landing-ready');
+    const done = document.getElementById('install-landing-done');
+    if (ready) {
+        if (platform === 'installed') {
+            ready.hidden = true;
+            if (done) done.hidden = false;
+        } else {
+            ready.hidden = false;
+            if (done) done.hidden = true;
+        }
+    }
+
+    const installBanner = document.getElementById('install-banner');
+    const iosBanner = document.getElementById('ios-install-instructions');
+    if (!bodyWantsInstallPromo()) {
+        if (installBanner) {
+            installBanner.classList.remove('is-visible');
+            installBanner.hidden = true;
+        }
+        if (iosBanner) {
+            iosBanner.classList.remove('is-visible');
+            iosBanner.hidden = true;
+            iosBanner.style.display = 'none';
+        }
+    }
+}
+
+function bodyWantsInstallPromo() {
+    return document.body.classList.contains('install-promo-active');
+}
+
+function updateInstallLandingUi() {
+    applyInstallPlatformUi();
+}
+
+function showInstallPromoForPlatform() {
+    if (!shouldPromoteInstall() || isAppStandalone()) return;
+
+    const platform = getInstallPlatform();
+    if (platform === 'installed') return;
+
+    document.body.classList.add('install-promo-active');
+    applyInstallPlatformUi();
+
+    if (platform === 'android') {
+        const banner = document.getElementById('install-banner');
+        if (banner) {
+            banner.hidden = false;
+            banner.classList.add('is-visible');
+        }
+    } else if (platform === 'ios') {
+        revealIosInstallPanel();
+    } else if (!isInstallLandingPage() && typeof openMoreSheet === 'function' && platform === 'desktop') {
+        setTimeout(() => openMoreSheet(), 900);
+    }
+}
+
+function initInstallPromo() {
+    wireInstallTriggerButtons();
+    applyInstallPlatformUi();
+
+    if (!shouldPromoteInstall()) {
+        if (isAppStandalone()) hideInstallMenuItem();
+        return;
+    }
+
+    if (wantsInstallDeepLink() && !isInstallLandingPage()) {
+        showInstallPromoForPlatform();
+    }
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    if (!isInstallLandingPage() && window.innerWidth > 767) return;
+    e.preventDefault();
+    deferredPrompt = e;
+    enableInstallMenuItem();
+});
+
+window.triggerManualInstall = async function(event) {
+    if (event) event.preventDefault();
+    closeMoreSheet();
+
+    if (isAppStandalone()) {
+        showInstallGuidance('alreadyInstalled');
+        return;
+    }
+
+    if (isIOSInstallDevice()) {
+        revealIosInstallPanel();
+        return;
+    }
+
+    if (!deferredPrompt) {
+        showInstallGuidance(resolveInstallGuidanceScenario());
+        return;
+    }
+
+    try {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'dismissed') {
+            console.log('PWA install dismissed.');
+        }
+    } catch (err) {
+        console.warn('PWA install prompt failed:', err);
+        showInstallGuidance('promptFailed');
+    }
+
+    deferredPrompt = null;
+};
+
+function checkDisplayMode() {
+    if (!isAppStandalone()) return;
+    hideInstallMenuItem();
+    updateInstallLandingUi();
+}
+
+window.addEventListener('load', checkDisplayMode);
+
+window.addEventListener('appinstalled', () => {
+    hideInstallMenuItem();
+    updateInstallLandingUi();
 });
 
 // Trace app versie, OS, Device, Scherm, Referrer, Theme, Install/Update en SOURCE (Web vs App)
@@ -4657,6 +5161,10 @@ window.addEventListener('appinstalled', () => {
             theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
             datum: new Date().toLocaleString('nl-NL')
         };
+
+        if (!isKalaneraProductionOrigin()) {
+            return;
+        }
 
         console.log("Stats verzenden:", data);
 
