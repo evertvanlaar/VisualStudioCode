@@ -341,7 +341,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.27'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.28'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -662,13 +662,49 @@ function getInstallDoneMessageHtml(situation) {
         'browser-both-installed': 'You already have the app (Google Play <em>or</em> home screen icon). One is enough — open whichever you prefer.'
     };
     const text = copy[situation] || copy['running-pwa'];
-    return icon + text;
+    let html = icon + text;
+    if (situation === 'browser-pwa-installed' || situation === 'browser-both-installed') {
+        const reinstallLabel = isEl ? 'Εγκατάσταση ξανά' : 'Install again';
+        const reinstallHint = isEl
+            ? 'Αφαιρέσατε το εικονίδιο από την αρχική οθόνη;'
+            : 'Removed the icon from your home screen?';
+        html += `<p class="install-landing-reinstall-wrap">`
+            + `<button type="button" class="install-landing-reinstall-btn" id="install-landing-reinstall">${reinstallLabel}</button>`
+            + `<span class="install-landing-reinstall-hint">${reinstallHint}</span></p>`;
+    }
+    return html;
+}
+
+function resetInstallLandingToOfferInstall() {
+    clearPwaInstalledMarkInBrowser();
+    _installSituation = 'browser-can-install';
+    _installDetectReady = true;
+    applyInstallPlatformUi();
+    enableInstallMenuItem();
+}
+
+function wireInstallLandingReinstallButton() {
+    const btn = document.getElementById('install-landing-reinstall');
+    if (!btn || btn.dataset.installWired === '1') return;
+    btn.dataset.installWired = '1';
+    btn.addEventListener('click', () => {
+        resetInstallLandingToOfferInstall();
+    });
+}
+
+function scheduleInstallLandingRecheckForRemovedPwa() {
+    window.setTimeout(() => {
+        if (!isInstallLandingPage()) return;
+        if (!isPwaMarkedInstalledInBrowser()) return;
+        if (deferredPrompt) resetInstallLandingToOfferInstall();
+    }, 2800);
 }
 
 function renderInstallLandingDoneMessage() {
     const el = document.getElementById('install-landing-done-msg');
     if (!el || !_installDetectReady) return;
     el.innerHTML = getInstallDoneMessageHtml(_installSituation);
+    wireInstallLandingReinstallButton();
 }
 
 function isIOSInstallDevice() {
@@ -5273,6 +5309,10 @@ async function initInstallPromo() {
 
     applyInstallPlatformUi();
 
+    if (isInstallLandingPage() && isPwaMarkedInstalledInBrowser()) {
+        scheduleInstallLandingRecheckForRemovedPwa();
+    }
+
     if (!shouldPromoteInstall()) {
         if (isAppStandalone() || installSituationBlocksBrowserInstall()) hideInstallMenuItem();
         return;
@@ -5285,11 +5325,17 @@ async function initInstallPromo() {
 
 window.addEventListener('beforeinstallprompt', (e) => {
     if (!isInstallLandingPage() && window.innerWidth > 767) return;
-    if (isPwaMarkedInstalledInBrowser()) return;
-    if (_installDetectReady && installSituationBlocksBrowserInstall()) return;
     e.preventDefault();
     hadDeferredInstallPrompt = true;
     deferredPrompt = e;
+
+    if (isInstallLandingPage() && isPwaMarkedInstalledInBrowser()) {
+        resetInstallLandingToOfferInstall();
+        return;
+    }
+
+    if (isPwaMarkedInstalledInBrowser()) return;
+    if (_installDetectReady && installSituationBlocksBrowserInstall()) return;
     enableInstallMenuItem();
 });
 
@@ -5298,9 +5344,13 @@ window.triggerManualInstall = async function(event) {
     closeMoreSheet();
 
     if (isPwaMarkedInstalledInBrowser()) {
-        await refreshInstallSituation();
-        applyInstallPlatformUi();
-        showInstallGuidance('browserPwaInstalled');
+        if (isInstallLandingPage() && deferredPrompt) {
+            resetInstallLandingToOfferInstall();
+        } else {
+            await refreshInstallSituation();
+            applyInstallPlatformUi();
+            showInstallGuidance('browserPwaInstalled');
+        }
         return;
     }
 
