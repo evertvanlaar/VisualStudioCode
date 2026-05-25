@@ -12,6 +12,17 @@
   "theme_color": "#4a6c4a",
   "orientation": "any",
   "categories": ["travel", "food", "lifestyle"],
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "com.kalanera.app"
+    },
+    {
+      "platform": "webapp",
+      "url": "/manifest.json"
+    }
+  ],
+  "prefer_related_applications": false,
   "shortcuts": [
     {
       "name": "Bus timetable",

@@ -341,7 +341,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.22'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.23'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -555,10 +555,102 @@ function wantsInstallDeepLink() {
     return v === '1' || v === 'true' || v === 'yes';
 }
 
+const TWA_ANDROID_PACKAGE = 'com.kalanera.app';
+const PWA_INSTALLED_STORAGE_KEY = 'kalanera_pwa_installed';
+
+/** @type {'browser-can-install'|'running-twa'|'running-pwa'|'browser-play-installed'|'browser-pwa-installed'|'browser-both-installed'} */
+let _installSituation = 'browser-can-install';
+let _installDetectReady = false;
+
 function isAppStandalone() {
+    // True when opened as installed PWA (home screen) or inside the Play Store TWA shell.
     return window.matchMedia('(display-mode: standalone)').matches
-        || window.navigator.standalone === true
-        || document.referrer.includes('android-app://');
+        || window.navigator.standalone === true;
+}
+
+/** Only our Play package — not Google Lens / other apps (android-app://…). */
+function isOpenedFromKalaneraTwa() {
+    const ref = document.referrer || '';
+    return ref.includes(`android-app://${TWA_ANDROID_PACKAGE}`);
+}
+
+function isPwaMarkedInstalledInBrowser() {
+    try {
+        return localStorage.getItem(PWA_INSTALLED_STORAGE_KEY) === '1';
+    } catch (e) {
+        return false;
+    }
+}
+
+function markPwaInstalledInBrowser() {
+    try {
+        localStorage.setItem(PWA_INSTALLED_STORAGE_KEY, '1');
+    } catch (e) { /* ignore */ }
+}
+
+async function probeInstalledRelatedApps() {
+    if (!navigator.getInstalledRelatedApps) {
+        return { playStore: false, webapp: false };
+    }
+    try {
+        const apps = await navigator.getInstalledRelatedApps();
+        const playStore = apps.some(
+            (a) => a.platform === 'play' && a.id === TWA_ANDROID_PACKAGE
+        );
+        const webapp = apps.some((a) => a.platform === 'webapp');
+        return { playStore, webapp };
+    } catch (e) {
+        return { playStore: false, webapp: false };
+    }
+}
+
+async function resolveInstallSituation() {
+    if (isAppStandalone()) {
+        return isOpenedFromKalaneraTwa() ? 'running-twa' : 'running-pwa';
+    }
+    const related = await probeInstalledRelatedApps();
+    const pwaHint = isPwaMarkedInstalledInBrowser() || related.webapp;
+    const playHint = related.playStore;
+    if (playHint && pwaHint) return 'browser-both-installed';
+    if (playHint) return 'browser-play-installed';
+    if (pwaHint) return 'browser-pwa-installed';
+    return 'browser-can-install';
+}
+
+async function refreshInstallSituation() {
+    _installSituation = await resolveInstallSituation();
+    _installDetectReady = true;
+    return _installSituation;
+}
+
+function installSituationBlocksBrowserInstall() {
+    return _installSituation !== 'browser-can-install';
+}
+
+function getInstallDoneMessageHtml(situation) {
+    const isEl = (document.documentElement.lang || '').toLowerCase().startsWith('el');
+    const icon = '<i class="fa fa-check-circle" aria-hidden="true"></i> ';
+    const copy = isEl ? {
+        'running-twa': 'Χρησιμοποιείτε ήδη την εφαρμογή <strong>Καλά Νερά</strong> από το Google Play. Την επόμενη φορά ανοίξτε την από το μενού εφαρμογών.',
+        'running-pwa': 'Χρησιμοποιείτε ήδη την εφαρμογή από την <strong>αρχική οθόνη</strong>. Την επόμενη φορά ανοίξτε την από το εικονίδιο.',
+        'browser-play-installed': 'Η εφαρμογή <strong>Καλά Νερά</strong> είναι ήδη εγκατεστημένη μέσω <strong>Google Play</strong>. Ανοίξτε την από το μενού εφαρμογών — δεν χρειάζεται εγκατάσταση μέσω Chrome.',
+        'browser-pwa-installed': 'Η εφαρμογή είναι ήδη στην <strong>αρχική οθόνη</strong> (εγκατάσταση μέσω Chrome). Ανοίξτε την από το εικονίδιο.',
+        'browser-both-installed': 'Έχετε ήδη την εφαρμογή (Google Play <em>ή</em> εικονίδιο στην αρχική οθόνη). Αρκεί ένα — ανοίξτε ό,τι προτιμάτε.'
+    } : {
+        'running-twa': 'You are already using the <strong>Kala Nera</strong> app from <strong>Google Play</strong>. Next time, open it from your app drawer.',
+        'running-pwa': 'You are already using the app from your <strong>home screen</strong>. Next time, open it from that icon.',
+        'browser-play-installed': 'The <strong>Kala Nera</strong> app is already installed via <strong>Google Play</strong>. Open it from your app drawer — no Chrome install needed.',
+        'browser-pwa-installed': 'The app is already on your <strong>home screen</strong> (installed via Chrome). Open it from that icon.',
+        'browser-both-installed': 'You already have the app (Google Play <em>or</em> home screen icon). One is enough — open whichever you prefer.'
+    };
+    const text = copy[situation] || copy['running-pwa'];
+    return icon + text;
+}
+
+function renderInstallLandingDoneMessage() {
+    const el = document.getElementById('install-landing-done-msg');
+    if (!el || !_installDetectReady) return;
+    el.innerHTML = getInstallDoneMessageHtml(_installSituation);
 }
 
 function isIOSInstallDevice() {
@@ -567,6 +659,7 @@ function isIOSInstallDevice() {
 
 function shouldPromoteInstall() {
     if (isAppStandalone()) return false;
+    if (_installDetectReady && installSituationBlocksBrowserInstall()) return false;
     return isInstallLandingPage() || wantsInstallDeepLink();
 }
 
@@ -597,6 +690,29 @@ function getInstallGuidance(scenario) {
         alreadyInstalled: {
             title: 'Η εφαρμογή είναι ήδη εγκατεστημένη.',
             steps: ['Ανοίξτε την από το εικονίδιο στην αρχική οθόνη σας.']
+        },
+        runningTwa: {
+            title: 'Χρησιμοποιείτε ήδη την εφαρμογή από το Google Play.',
+            steps: ['Την επόμενη φορά ανοίξτε την από το μενού εφαρμογών του κινητού.']
+        },
+        runningPwa: {
+            title: 'Χρησιμοποιείτε ήδη την εφαρμογή από την αρχική οθόνη.',
+            steps: ['Την επόμενη φορά ανοίξτε την από το εικονίδιο Kala Nera.']
+        },
+        browserPlayInstalled: {
+            title: 'Η εφαρμογή είναι ήδη εγκατεστημένη μέσω Google Play.',
+            steps: [
+                'Ανοίξτε την από το μενού εφαρμογών — όχι ξανά μέσω Chrome.',
+                'Δεν χρειάζεται δεύτερη εγκατάσταση.'
+            ]
+        },
+        browserPwaInstalled: {
+            title: 'Η εφαρμογή είναι ήδη στην αρχική οθόνη.',
+            steps: ['Ανοίξτε το εικονίδιο <strong>Kala Nera</strong> στην αρχική οθόνη σας.']
+        },
+        browserBothInstalled: {
+            title: 'Έχετε ήδη την εφαρμογή (Play Store ή αρχική οθόνη).',
+            steps: ['Αρκεί ένα εικονίδιο — ανοίξτε ό,τι προτιμάτε.']
         },
         desktop: {
             title: 'Εγκαταστήστε την εφαρμογή <strong>Καλά Νερά</strong> Guide στο κινητό σας.',
@@ -645,6 +761,29 @@ function getInstallGuidance(scenario) {
             title: 'The app is already installed.',
             steps: ['Open it from the icon on your home screen.']
         },
+        runningTwa: {
+            title: 'You are already using the app from Google Play.',
+            steps: ['Next time, open it from your phone’s app drawer.']
+        },
+        runningPwa: {
+            title: 'You are already using the app from your home screen.',
+            steps: ['Next time, open the Kala Nera icon on your home screen.']
+        },
+        browserPlayInstalled: {
+            title: 'The app is already installed via Google Play.',
+            steps: [
+                'Open it from your app drawer — not via Chrome again.',
+                'You do not need a second install.'
+            ]
+        },
+        browserPwaInstalled: {
+            title: 'The app is already on your home screen.',
+            steps: ['Open the <strong>Kala Nera</strong> icon on your home screen.']
+        },
+        browserBothInstalled: {
+            title: 'You already have the app (Play Store or home screen).',
+            steps: ['One icon is enough — open whichever you prefer.']
+        },
         desktop: {
             title: 'Install the <strong>Kala Nera Guide</strong> mobile app on your phone.',
             steps: [
@@ -692,8 +831,24 @@ function getInstallGuidance(scenario) {
     return copy[scenario] || copy.androidManual;
 }
 
+function installSituationToGuidanceKey(situation) {
+    const map = {
+        'running-twa': 'runningTwa',
+        'running-pwa': 'runningPwa',
+        'browser-play-installed': 'browserPlayInstalled',
+        'browser-pwa-installed': 'browserPwaInstalled',
+        'browser-both-installed': 'browserBothInstalled'
+    };
+    return map[situation] || null;
+}
+
 function resolveInstallGuidanceScenario() {
-    if (isAppStandalone()) return 'alreadyInstalled';
+    if (_installDetectReady) {
+        const key = installSituationToGuidanceKey(_installSituation);
+        if (key) return key;
+    } else if (isAppStandalone()) {
+        return isOpenedFromKalaneraTwa() ? 'runningTwa' : 'runningPwa';
+    }
     if (!isKalaneraProductionOrigin()) return 'localDev';
     if (isLikelyDesktopInstallContext()) return 'desktop';
     if (isAndroidDevice() && !isChromeOnAndroid()) return 'androidOtherBrowser';
@@ -4954,6 +5109,7 @@ function wireInstallTriggerButtons() {
 }
 
 function getInstallPlatform() {
+    if (_installDetectReady && installSituationBlocksBrowserInstall()) return 'installed';
     if (isAppStandalone()) return 'installed';
     if (isIOSInstallDevice()) return 'ios';
     if (isAndroidDevice()) return 'android';
@@ -5001,6 +5157,7 @@ function applyInstallPlatformUi() {
         if (platform === 'installed') {
             ready.hidden = true;
             if (done) done.hidden = false;
+            renderInstallLandingDoneMessage();
         } else {
             ready.hidden = false;
             if (done) done.hidden = true;
@@ -5052,12 +5209,17 @@ function showInstallPromoForPlatform() {
     }
 }
 
-function initInstallPromo() {
+async function initInstallPromo() {
     wireInstallTriggerButtons();
+
+    if (isInstallLandingPage() || wantsInstallDeepLink() || isAppStandalone()) {
+        await refreshInstallSituation();
+    }
+
     applyInstallPlatformUi();
 
     if (!shouldPromoteInstall()) {
-        if (isAppStandalone()) hideInstallMenuItem();
+        if (isAppStandalone() || installSituationBlocksBrowserInstall()) hideInstallMenuItem();
         return;
     }
 
@@ -5077,8 +5239,13 @@ window.triggerManualInstall = async function(event) {
     if (event) event.preventDefault();
     closeMoreSheet();
 
-    if (isAppStandalone()) {
-        showInstallGuidance('alreadyInstalled');
+    if (!_installDetectReady) {
+        await refreshInstallSituation();
+        applyInstallPlatformUi();
+    }
+
+    if (installSituationBlocksBrowserInstall() || isAppStandalone()) {
+        showInstallGuidance(resolveInstallGuidanceScenario());
         return;
     }
 
@@ -5109,14 +5276,15 @@ window.triggerManualInstall = async function(event) {
 function checkDisplayMode() {
     if (!isAppStandalone()) return;
     hideInstallMenuItem();
-    updateInstallLandingUi();
+    refreshInstallSituation().then(updateInstallLandingUi);
 }
 
 window.addEventListener('load', checkDisplayMode);
 
 window.addEventListener('appinstalled', () => {
+    markPwaInstalledInBrowser();
     hideInstallMenuItem();
-    updateInstallLandingUi();
+    refreshInstallSituation().then(updateInstallLandingUi);
 });
 
 // Trace app versie, OS, Device, Scherm, Referrer, Theme, Install/Update en SOURCE (Web vs App)
