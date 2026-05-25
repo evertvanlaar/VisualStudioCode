@@ -341,7 +341,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.23'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.25'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -588,6 +588,12 @@ function markPwaInstalledInBrowser() {
     } catch (e) { /* ignore */ }
 }
 
+function clearPwaInstalledMarkInBrowser() {
+    try {
+        localStorage.removeItem(PWA_INSTALLED_STORAGE_KEY);
+    } catch (e) { /* ignore */ }
+}
+
 async function probeInstalledRelatedApps() {
     if (!navigator.getInstalledRelatedApps) {
         return { playStore: false, webapp: false };
@@ -609,8 +615,21 @@ async function resolveInstallSituation() {
         return isOpenedFromKalaneraTwa() ? 'running-twa' : 'running-pwa';
     }
     const related = await probeInstalledRelatedApps();
-    const pwaHint = isPwaMarkedInstalledInBrowser() || related.webapp;
     const playHint = related.playStore;
+
+    // Uninstalling PWA/TWA does not clear localStorage — prefer getInstalledRelatedApps when available.
+    if (navigator.getInstalledRelatedApps) {
+        if (!playHint && !related.webapp) {
+            clearPwaInstalledMarkInBrowser();
+        }
+        const pwaHint = related.webapp;
+        if (playHint && pwaHint) return 'browser-both-installed';
+        if (playHint) return 'browser-play-installed';
+        if (pwaHint) return 'browser-pwa-installed';
+        return 'browser-can-install';
+    }
+
+    const pwaHint = isPwaMarkedInstalledInBrowser();
     if (playHint && pwaHint) return 'browser-both-installed';
     if (playHint) return 'browser-play-installed';
     if (pwaHint) return 'browser-pwa-installed';
@@ -672,6 +691,15 @@ function isChromeOnAndroid() {
         && /Chrome/i.test(navigator.userAgent)
         && !/EdgA|Edg\/|OPR\/|SamsungBrowser/i.test(navigator.userAgent);
 }
+
+/** Chrome or Edge (Chromium) on Android — both support PWA install. */
+function isChromiumInstallBrowserOnAndroid() {
+    return isAndroidDevice()
+        && (/Chrome/i.test(navigator.userAgent) || /EdgA/i.test(navigator.userAgent))
+        && !/OPR\/|SamsungBrowser/i.test(navigator.userAgent);
+}
+
+let hadDeferredInstallPrompt = false;
 
 /** Desktop of DevTools-emulatie: mobiele UA maar geen echte touch/PWA-install. */
 function isLikelyDesktopInstallContext() {
@@ -851,8 +879,25 @@ function resolveInstallGuidanceScenario() {
     }
     if (!isKalaneraProductionOrigin()) return 'localDev';
     if (isLikelyDesktopInstallContext()) return 'desktop';
-    if (isAndroidDevice() && !isChromeOnAndroid()) return 'androidOtherBrowser';
+    if (isAndroidDevice() && !isChromiumInstallBrowserOnAndroid()) return 'androidOtherBrowser';
     return 'androidManual';
+}
+
+function likelyPwaAlreadyInstalledInBrowser() {
+    if (isAppStandalone()) return true;
+    if (_installDetectReady) {
+        return _installSituation === 'browser-pwa-installed' || _installSituation === 'browser-both-installed';
+    }
+    return isPwaMarkedInstalledInBrowser();
+}
+
+function resolveGuidanceWhenNoInstallPrompt() {
+    if (installSituationBlocksBrowserInstall()) {
+        const key = installSituationToGuidanceKey(_installSituation);
+        if (key) return key;
+    }
+    if (likelyPwaAlreadyInstalledInBrowser()) return 'browserPwaInstalled';
+    return resolveInstallGuidanceScenario();
 }
 
 function showInstallGuidance(scenario) {
@@ -864,8 +909,9 @@ function showInstallGuidance(scenario) {
 
     const content = getInstallGuidance(scenario);
     const banner = document.getElementById('install-banner');
+    const useBanner = banner && (isAndroidDevice() || isLikelyDesktopInstallContext());
 
-    if (banner && getInstallPlatform() === 'android') {
+    if (useBanner) {
         document.body.classList.add('install-promo-active');
         banner.hidden = false;
         banner.classList.add('is-visible', 'install-banner--guidance');
@@ -5212,7 +5258,12 @@ function showInstallPromoForPlatform() {
 async function initInstallPromo() {
     wireInstallTriggerButtons();
 
-    if (isInstallLandingPage() || wantsInstallDeepLink() || isAppStandalone()) {
+    if (
+        isInstallLandingPage()
+        || wantsInstallDeepLink()
+        || isAppStandalone()
+        || (isKalaneraProductionOrigin() && /Mobi|Android/i.test(navigator.userAgent))
+    ) {
         await refreshInstallSituation();
     }
 
@@ -5231,7 +5282,13 @@ async function initInstallPromo() {
 window.addEventListener('beforeinstallprompt', (e) => {
     if (!isInstallLandingPage() && window.innerWidth > 767) return;
     e.preventDefault();
+    hadDeferredInstallPrompt = true;
     deferredPrompt = e;
+    clearPwaInstalledMarkInBrowser();
+    if (_installDetectReady) {
+        _installSituation = 'browser-can-install';
+        applyInstallPlatformUi();
+    }
     enableInstallMenuItem();
 });
 
@@ -5239,10 +5296,8 @@ window.triggerManualInstall = async function(event) {
     if (event) event.preventDefault();
     closeMoreSheet();
 
-    if (!_installDetectReady) {
-        await refreshInstallSituation();
-        applyInstallPlatformUi();
-    }
+    await refreshInstallSituation();
+    applyInstallPlatformUi();
 
     if (installSituationBlocksBrowserInstall() || isAppStandalone()) {
         showInstallGuidance(resolveInstallGuidanceScenario());
@@ -5255,7 +5310,7 @@ window.triggerManualInstall = async function(event) {
     }
 
     if (!deferredPrompt) {
-        showInstallGuidance(resolveInstallGuidanceScenario());
+        showInstallGuidance(resolveGuidanceWhenNoInstallPrompt());
         return;
     }
 
@@ -5282,6 +5337,7 @@ function checkDisplayMode() {
 window.addEventListener('load', checkDisplayMode);
 
 window.addEventListener('appinstalled', () => {
+    hadDeferredInstallPrompt = true;
     markPwaInstalledInBrowser();
     hideInstallMenuItem();
     refreshInstallSituation().then(updateInstallLandingUi);
