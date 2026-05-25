@@ -341,7 +341,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.25'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.26'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -616,20 +616,24 @@ async function resolveInstallSituation() {
     }
     const related = await probeInstalledRelatedApps();
     const playHint = related.playStore;
+    let pwaHint = related.webapp;
 
-    // Uninstalling PWA/TWA does not clear localStorage — prefer getInstalledRelatedApps when available.
-    if (navigator.getInstalledRelatedApps) {
-        if (!playHint && !related.webapp) {
-            clearPwaInstalledMarkInBrowser();
-        }
-        const pwaHint = related.webapp;
-        if (playHint && pwaHint) return 'browser-both-installed';
-        if (playHint) return 'browser-play-installed';
-        if (pwaHint) return 'browser-pwa-installed';
-        return 'browser-can-install';
+    // Edge/Chrome often report webapp:false even when the PWA is on the home screen.
+    if (!pwaHint && isPwaMarkedInstalledInBrowser()) {
+        pwaHint = true;
     }
 
-    const pwaHint = isPwaMarkedInstalledInBrowser();
+    if (navigator.getInstalledRelatedApps) {
+        if (!playHint && !related.webapp && !isPwaMarkedInstalledInBrowser()) {
+            clearPwaInstalledMarkInBrowser();
+        }
+        // Stale mark after uninstall: API empty but browser still offers install.
+        if (!playHint && !related.webapp && isPwaMarkedInstalledInBrowser() && deferredPrompt) {
+            clearPwaInstalledMarkInBrowser();
+            pwaHint = false;
+        }
+    }
+
     if (playHint && pwaHint) return 'browser-both-installed';
     if (playHint) return 'browser-play-installed';
     if (pwaHint) return 'browser-pwa-installed';
@@ -5269,6 +5273,14 @@ async function initInstallPromo() {
 
     applyInstallPlatformUi();
 
+    if (isInstallLandingPage() && isKalaneraProductionOrigin()) {
+        window.setTimeout(async () => {
+            if (isPwaMarkedInstalledInBrowser()) return;
+            await refreshInstallSituation();
+            applyInstallPlatformUi();
+        }, 2500);
+    }
+
     if (!shouldPromoteInstall()) {
         if (isAppStandalone() || installSituationBlocksBrowserInstall()) hideInstallMenuItem();
         return;
@@ -5281,14 +5293,11 @@ async function initInstallPromo() {
 
 window.addEventListener('beforeinstallprompt', (e) => {
     if (!isInstallLandingPage() && window.innerWidth > 767) return;
+    if (isPwaMarkedInstalledInBrowser()) return;
+    if (_installDetectReady && installSituationBlocksBrowserInstall()) return;
     e.preventDefault();
     hadDeferredInstallPrompt = true;
     deferredPrompt = e;
-    clearPwaInstalledMarkInBrowser();
-    if (_installDetectReady) {
-        _installSituation = 'browser-can-install';
-        applyInstallPlatformUi();
-    }
     enableInstallMenuItem();
 });
 
@@ -5339,6 +5348,7 @@ window.addEventListener('load', checkDisplayMode);
 window.addEventListener('appinstalled', () => {
     hadDeferredInstallPrompt = true;
     markPwaInstalledInBrowser();
+    deferredPrompt = null;
     hideInstallMenuItem();
     refreshInstallSituation().then(updateInstallLandingUi);
 });
