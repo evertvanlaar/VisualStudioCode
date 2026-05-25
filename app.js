@@ -341,7 +341,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.26'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.27'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -626,11 +626,6 @@ async function resolveInstallSituation() {
     if (navigator.getInstalledRelatedApps) {
         if (!playHint && !related.webapp && !isPwaMarkedInstalledInBrowser()) {
             clearPwaInstalledMarkInBrowser();
-        }
-        // Stale mark after uninstall: API empty but browser still offers install.
-        if (!playHint && !related.webapp && isPwaMarkedInstalledInBrowser() && deferredPrompt) {
-            clearPwaInstalledMarkInBrowser();
-            pwaHint = false;
         }
     }
 
@@ -5262,6 +5257,11 @@ function showInstallPromoForPlatform() {
 async function initInstallPromo() {
     wireInstallTriggerButtons();
 
+    if (isInstallLandingPage() && isPwaMarkedInstalledInBrowser()) {
+        _installSituation = 'browser-pwa-installed';
+        _installDetectReady = true;
+    }
+
     if (
         isInstallLandingPage()
         || wantsInstallDeepLink()
@@ -5272,14 +5272,6 @@ async function initInstallPromo() {
     }
 
     applyInstallPlatformUi();
-
-    if (isInstallLandingPage() && isKalaneraProductionOrigin()) {
-        window.setTimeout(async () => {
-            if (isPwaMarkedInstalledInBrowser()) return;
-            await refreshInstallSituation();
-            applyInstallPlatformUi();
-        }, 2500);
-    }
 
     if (!shouldPromoteInstall()) {
         if (isAppStandalone() || installSituationBlocksBrowserInstall()) hideInstallMenuItem();
@@ -5305,6 +5297,13 @@ window.triggerManualInstall = async function(event) {
     if (event) event.preventDefault();
     closeMoreSheet();
 
+    if (isPwaMarkedInstalledInBrowser()) {
+        await refreshInstallSituation();
+        applyInstallPlatformUi();
+        showInstallGuidance('browserPwaInstalled');
+        return;
+    }
+
     await refreshInstallSituation();
     applyInstallPlatformUi();
 
@@ -5326,6 +5325,13 @@ window.triggerManualInstall = async function(event) {
     try {
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            markPwaInstalledInBrowser();
+            deferredPrompt = null;
+            await refreshInstallSituation();
+            applyInstallPlatformUi();
+            return;
+        }
         if (outcome === 'dismissed') {
             console.log('PWA install dismissed.');
         }
