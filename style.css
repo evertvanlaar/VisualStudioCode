@@ -1,4 +1,4 @@
-/* version 3.1.28 */
+/* version 3.1.31 */
 @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
@@ -2880,6 +2880,12 @@ body.page-install-landing .install-landing{
 .install-landing-btn-primary:active{transform:scale(.98)}
 
 .install-landing-btn-primary.install-landing-btn--waiting{opacity:.65;cursor:wait}
+
+.install-landing-aware,.install-aware{margin:12px auto 0;max-width:320px;font-size:.85rem;color:var(--muted);line-height:1.45;text-align:left}
+
+#install-banner .install-aware{margin:0 0 12px;max-width:none;text-align:left}
+
+.more-install-aware{margin:0 0 10px;padding:0 2px;font-size:11px;line-height:1.4}
 
 .install-landing-hint{margin:14px 0 0;font-size:.85rem;color:var(--muted);line-height:1.4}
 

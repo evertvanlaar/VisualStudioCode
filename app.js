@@ -341,7 +341,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.28'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.31'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -557,8 +557,10 @@ function wantsInstallDeepLink() {
 
 const TWA_ANDROID_PACKAGE = 'com.kalanera.app';
 const PWA_INSTALLED_STORAGE_KEY = 'kalanera_pwa_installed';
+/** QR install page: show success panel after Install accepted in this tab (session only). */
+const PWA_INSTALL_SUCCESS_SESSION_KEY = 'kalanera_pwa_install_success';
 
-/** @type {'browser-can-install'|'running-twa'|'running-pwa'|'browser-play-installed'|'browser-pwa-installed'|'browser-both-installed'} */
+/** @type {'browser-can-install'|'running-twa'|'running-pwa'|'browser-play-installed'|'install-success'} */
 let _installSituation = 'browser-can-install';
 let _installDetectReady = false;
 
@@ -574,23 +576,29 @@ function isOpenedFromKalaneraTwa() {
     return ref.includes(`android-app://${TWA_ANDROID_PACKAGE}`);
 }
 
-function isPwaMarkedInstalledInBrowser() {
+function isInstallLandingSuccessShown() {
     try {
-        return localStorage.getItem(PWA_INSTALLED_STORAGE_KEY) === '1';
+        return sessionStorage.getItem(PWA_INSTALL_SUCCESS_SESSION_KEY) === '1';
     } catch (e) {
         return false;
     }
 }
 
-function markPwaInstalledInBrowser() {
+function markInstallLandingSuccess() {
     try {
-        localStorage.setItem(PWA_INSTALLED_STORAGE_KEY, '1');
+        sessionStorage.setItem(PWA_INSTALL_SUCCESS_SESSION_KEY, '1');
     } catch (e) { /* ignore */ }
 }
 
-function clearPwaInstalledMarkInBrowser() {
+function clearInstallLandingSuccess() {
     try {
-        localStorage.removeItem(PWA_INSTALLED_STORAGE_KEY);
+        sessionStorage.removeItem(PWA_INSTALL_SUCCESS_SESSION_KEY);
+    } catch (e) { /* ignore */ }
+}
+
+function markPwaInstalledInBrowser() {
+    try {
+        localStorage.setItem(PWA_INSTALLED_STORAGE_KEY, '1');
     } catch (e) { /* ignore */ }
 }
 
@@ -614,24 +622,16 @@ async function resolveInstallSituation() {
     if (isAppStandalone()) {
         return isOpenedFromKalaneraTwa() ? 'running-twa' : 'running-pwa';
     }
+
+    if (isInstallLandingPage()) {
+        if (isInstallLandingSuccessShown()) return 'install-success';
+        const related = await probeInstalledRelatedApps();
+        if (related.playStore) return 'browser-play-installed';
+        return 'browser-can-install';
+    }
+
     const related = await probeInstalledRelatedApps();
-    const playHint = related.playStore;
-    let pwaHint = related.webapp;
-
-    // Edge/Chrome often report webapp:false even when the PWA is on the home screen.
-    if (!pwaHint && isPwaMarkedInstalledInBrowser()) {
-        pwaHint = true;
-    }
-
-    if (navigator.getInstalledRelatedApps) {
-        if (!playHint && !related.webapp && !isPwaMarkedInstalledInBrowser()) {
-            clearPwaInstalledMarkInBrowser();
-        }
-    }
-
-    if (playHint && pwaHint) return 'browser-both-installed';
-    if (playHint) return 'browser-play-installed';
-    if (pwaHint) return 'browser-pwa-installed';
+    if (related.playStore) return 'browser-play-installed';
     return 'browser-can-install';
 }
 
@@ -652,18 +652,16 @@ function getInstallDoneMessageHtml(situation) {
         'running-twa': 'Χρησιμοποιείτε ήδη την εφαρμογή <strong>Καλά Νερά</strong> από το Google Play. Την επόμενη φορά ανοίξτε την από το μενού εφαρμογών.',
         'running-pwa': 'Χρησιμοποιείτε ήδη την εφαρμογή από την <strong>αρχική οθόνη</strong>. Την επόμενη φορά ανοίξτε την από το εικονίδιο.',
         'browser-play-installed': 'Η εφαρμογή <strong>Καλά Νερά</strong> είναι ήδη εγκατεστημένη μέσω <strong>Google Play</strong>. Ανοίξτε την από το μενού εφαρμογών — δεν χρειάζεται εγκατάσταση μέσω Chrome.',
-        'browser-pwa-installed': 'Η εφαρμογή είναι ήδη στην <strong>αρχική οθόνη</strong> (εγκατάσταση μέσω Chrome). Ανοίξτε την από το εικονίδιο.',
-        'browser-both-installed': 'Έχετε ήδη την εφαρμογή (Google Play <em>ή</em> εικονίδιο στην αρχική οθόνη). Αρκεί ένα — ανοίξτε ό,τι προτιμάτε.'
+        'install-success': 'Η εγκατάσταση ολοκληρώθηκε. Ανοίξτε την εφαρμογή από το εικονίδιο <strong>Καλά Νερά</strong> στην αρχική οθόνη.'
     } : {
         'running-twa': 'You are already using the <strong>Kala Nera</strong> app from <strong>Google Play</strong>. Next time, open it from your app drawer.',
         'running-pwa': 'You are already using the app from your <strong>home screen</strong>. Next time, open it from that icon.',
-        'browser-play-installed': 'The <strong>Kala Nera</strong> app is already installed via <strong>Google Play</strong>. Open it from your app drawer — no Chrome install needed.',
-        'browser-pwa-installed': 'The app is already on your <strong>home screen</strong> (installed via Chrome). Open it from that icon.',
-        'browser-both-installed': 'You already have the app (Google Play <em>or</em> home screen icon). One is enough — open whichever you prefer.'
+        'browser-play-installed': 'The <strong>Kala Nera</strong> app is already installed via <strong>Google Play</strong>. Open it from your app drawer — no browser install needed.',
+        'install-success': 'Installation complete. Open the app from the <strong>Kala Nera</strong> icon on your home screen.'
     };
     const text = copy[situation] || copy['running-pwa'];
     let html = icon + text;
-    if (situation === 'browser-pwa-installed' || situation === 'browser-both-installed') {
+    if (situation === 'install-success') {
         const reinstallLabel = isEl ? 'Εγκατάσταση ξανά' : 'Install again';
         const reinstallHint = isEl
             ? 'Αφαιρέσατε το εικονίδιο από την αρχική οθόνη;'
@@ -676,7 +674,7 @@ function getInstallDoneMessageHtml(situation) {
 }
 
 function resetInstallLandingToOfferInstall() {
-    clearPwaInstalledMarkInBrowser();
+    clearInstallLandingSuccess();
     _installSituation = 'browser-can-install';
     _installDetectReady = true;
     applyInstallPlatformUi();
@@ -690,14 +688,6 @@ function wireInstallLandingReinstallButton() {
     btn.addEventListener('click', () => {
         resetInstallLandingToOfferInstall();
     });
-}
-
-function scheduleInstallLandingRecheckForRemovedPwa() {
-    window.setTimeout(() => {
-        if (!isInstallLandingPage()) return;
-        if (!isPwaMarkedInstalledInBrowser()) return;
-        if (deferredPrompt) resetInstallLandingToOfferInstall();
-    }, 2800);
 }
 
 function renderInstallLandingDoneMessage() {
@@ -743,6 +733,25 @@ function isLikelyDesktopInstallContext() {
     const finePointer = window.matchMedia('(pointer: fine)').matches;
     const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
     return finePointer && !coarsePointer;
+}
+
+/** Shared copy: QR page, hub banner, More sheet — do not block install on stale storage. */
+function getInstallAwarenessHtml() {
+    const isEl = (document.documentElement.lang || '').toLowerCase().startsWith('el');
+    if (isEl) {
+        return 'Έχετε ήδη το εικονίδιο <strong>Καλά Νερά</strong> στην αρχική οθόνη; Ανοίξτε την εφαρμογή από εκεί. Πατήστε <strong>Εγκατάσταση</strong> μόνο για πρώτη εγκατάσταση ή αν αφαιρέσατε το εικονίδιο.';
+    }
+    return 'Already have the <strong>Kala Nera</strong> icon on your home screen? Open the app from there. Tap <strong>Install</strong> only for a first install, or if you removed the icon.';
+}
+
+const INSTALL_GUIDANCE_NO_AWARENESS = new Set([
+    'runningTwa', 'runningPwa', 'browserPlayInstalled', 'browserPwaInstalled',
+    'browserBothInstalled', 'alreadyInstalled'
+]);
+
+function setInstallBannerAwarenessVisible(show) {
+    const el = document.getElementById('install-banner-aware');
+    if (el) el.hidden = !show;
 }
 
 function getInstallGuidance(scenario) {
@@ -900,7 +909,7 @@ function installSituationToGuidanceKey(situation) {
         'running-pwa': 'runningPwa',
         'browser-play-installed': 'browserPlayInstalled',
         'browser-pwa-installed': 'browserPwaInstalled',
-        'browser-both-installed': 'browserBothInstalled'
+        'install-success': 'installSuccess'
     };
     return map[situation] || null;
 }
@@ -918,20 +927,11 @@ function resolveInstallGuidanceScenario() {
     return 'androidManual';
 }
 
-function likelyPwaAlreadyInstalledInBrowser() {
-    if (isAppStandalone()) return true;
-    if (_installDetectReady) {
-        return _installSituation === 'browser-pwa-installed' || _installSituation === 'browser-both-installed';
-    }
-    return isPwaMarkedInstalledInBrowser();
-}
-
 function resolveGuidanceWhenNoInstallPrompt() {
     if (installSituationBlocksBrowserInstall()) {
         const key = installSituationToGuidanceKey(_installSituation);
         if (key) return key;
     }
-    if (likelyPwaAlreadyInstalledInBrowser()) return 'browserPwaInstalled';
     return resolveInstallGuidanceScenario();
 }
 
@@ -989,6 +989,8 @@ function showInstallGuidance(scenario) {
         const plain = [content.title.replace(/<[^>]+>/g, ''), ...(content.steps || [])].join('\n• ');
         window.alert(plain);
     }
+
+    setInstallBannerAwarenessVisible(!INSTALL_GUIDANCE_NO_AWARENESS.has(scenario));
 }
 
 function useMagazineCardLayout() {
@@ -4857,6 +4859,7 @@ function renderMoreSheetContent() {
 
         <section class="more-section">
             <h3>${labels.install}</h3>
+            <p class="install-aware more-install-aware">${getInstallAwarenessHtml()}</p>
             <div class="more-links">
                 <button type="button" onclick="if(typeof triggerManualInstall === 'function'){ triggerManualInstall(event); }">
                     <span class="more-link-leading"><i class="fa fa-download"></i><span class="more-link-label">${isEl ? 'Εγκατάσταση' : 'Install'}</span></span>
@@ -5282,6 +5285,7 @@ function showInstallPromoForPlatform() {
         if (banner) {
             banner.hidden = false;
             banner.classList.add('is-visible');
+            setInstallBannerAwarenessVisible(true);
         }
     } else if (platform === 'ios') {
         revealIosInstallPanel();
@@ -5293,11 +5297,6 @@ function showInstallPromoForPlatform() {
 async function initInstallPromo() {
     wireInstallTriggerButtons();
 
-    if (isInstallLandingPage() && isPwaMarkedInstalledInBrowser()) {
-        _installSituation = 'browser-pwa-installed';
-        _installDetectReady = true;
-    }
-
     if (
         isInstallLandingPage()
         || wantsInstallDeepLink()
@@ -5308,10 +5307,6 @@ async function initInstallPromo() {
     }
 
     applyInstallPlatformUi();
-
-    if (isInstallLandingPage() && isPwaMarkedInstalledInBrowser()) {
-        scheduleInstallLandingRecheckForRemovedPwa();
-    }
 
     if (!shouldPromoteInstall()) {
         if (isAppStandalone() || installSituationBlocksBrowserInstall()) hideInstallMenuItem();
@@ -5328,31 +5323,12 @@ window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     hadDeferredInstallPrompt = true;
     deferredPrompt = e;
-
-    if (isInstallLandingPage() && isPwaMarkedInstalledInBrowser()) {
-        resetInstallLandingToOfferInstall();
-        return;
-    }
-
-    if (isPwaMarkedInstalledInBrowser()) return;
-    if (_installDetectReady && installSituationBlocksBrowserInstall()) return;
     enableInstallMenuItem();
 });
 
 window.triggerManualInstall = async function(event) {
     if (event) event.preventDefault();
     closeMoreSheet();
-
-    if (isPwaMarkedInstalledInBrowser()) {
-        if (isInstallLandingPage() && deferredPrompt) {
-            resetInstallLandingToOfferInstall();
-        } else {
-            await refreshInstallSituation();
-            applyInstallPlatformUi();
-            showInstallGuidance('browserPwaInstalled');
-        }
-        return;
-    }
 
     await refreshInstallSituation();
     applyInstallPlatformUi();
@@ -5377,6 +5353,14 @@ window.triggerManualInstall = async function(event) {
         const { outcome } = await deferredPrompt.userChoice;
         if (outcome === 'accepted') {
             markPwaInstalledInBrowser();
+            if (isInstallLandingPage()) {
+                markInstallLandingSuccess();
+                deferredPrompt = null;
+                _installSituation = 'install-success';
+                _installDetectReady = true;
+                applyInstallPlatformUi();
+                return;
+            }
             deferredPrompt = null;
             await refreshInstallSituation();
             applyInstallPlatformUi();
@@ -5405,8 +5389,14 @@ window.addEventListener('appinstalled', () => {
     hadDeferredInstallPrompt = true;
     markPwaInstalledInBrowser();
     deferredPrompt = null;
-    hideInstallMenuItem();
-    refreshInstallSituation().then(updateInstallLandingUi);
+    if (isInstallLandingPage()) {
+        markInstallLandingSuccess();
+        _installSituation = 'install-success';
+        _installDetectReady = true;
+        applyInstallPlatformUi();
+    } else {
+        refreshInstallSituation().then(updateInstallLandingUi);
+    }
 });
 
 // Trace app versie, OS, Device, Scherm, Referrer, Theme, Install/Update en SOURCE (Web vs App)
