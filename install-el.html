@@ -14,7 +14,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=3.1.31">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=3.1.36">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -86,30 +86,36 @@
     <div id="install-landing-ready">
         <div class="install-landing-card" data-install-ui="android">
             <img src="logo.png" alt="" width="72" height="72" class="install-landing-logo" loading="eager">
-            <h1>Εγκατάσταση εφαρμογής</h1>
-            <p class="install-landing-lead">Δωρεάν εφαρμογή <strong>Καλά Νερά</strong> Guide στην αρχική οθόνη — επιχειρήσεις, λεωφορείο και πληροφορίες για το Πήλιο.</p>
+            <h1>Καλά Νερά Guide στην αρχική οθόνη</h1>
+            <p class="install-landing-lead">Δωρεάν επιχειρήσεις, λεωφορείο και tips για το Πήλιο — με ένα πάτημα.</p>
             <button type="button" id="install-landing-btn" class="install-landing-btn-primary install-landing-btn--waiting" data-install-trigger>
                 <i class="fa fa-download" aria-hidden="true"></i>
                 <span>Εγκατάσταση τώρα</span>
             </button>
-            <p class="install-landing-aware">Έχετε ήδη το εικονίδιο <strong>Καλά Νερά</strong> στην αρχική οθόνη; Ανοίξτε την εφαρμογή από εκεί. Πατήστε <strong>Εγκατάσταση τώρα</strong> μόνο για πρώτη εγκατάσταση ή αν αφαιρέσατε το εικονίδιο.</p>
-            <ol class="install-landing-steps">
-                <li>Πατήστε <strong>Εγκατάσταση τώρα</strong></li>
-                <li>Στο παράθυρο επιλέξτε <strong>Εγκατάσταση</strong></li>
-                <li>Το εικονίδιο εμφανίζεται στην αρχική οθόνη</li>
-            </ol>
-            <p class="install-landing-hint" id="install-landing-android-hint">Χρησιμοποιήστε <strong>Chrome</strong>. Δεν εμφανίστηκε παράθυρο; <strong>Περισσότερα</strong> (···) κάτω → <strong>Εγκατάσταση</strong>.</p>
+            <p class="install-landing-aware">Έχετε ήδη το εικονίδιο <strong>Καλά Νερά</strong> στην αρχική οθόνη; Ανοίξτε την εφαρμογή από εκεί.</p>
+            <details class="install-landing-help" id="install-landing-help-android">
+                <summary>Χρειάζεστε βοήθεια;</summary>
+                <ol class="install-landing-steps">
+                    <li>Πατήστε <strong>Εγκατάσταση τώρα</strong></li>
+                    <li>Στο παράθυρο επιλέξτε <strong>Εγκατάσταση</strong></li>
+                    <li>Το εικονίδιο εμφανίζεται στην αρχική οθόνη</li>
+                </ol>
+                <p class="install-landing-hint" id="install-landing-android-hint" hidden>Χρησιμοποιήστε <strong>Chrome</strong>. Δεν εμφανίστηκε παράθυρο; <strong>Περισσότερα</strong> (···) κάτω → <strong>Εγκατάσταση</strong>.</p>
+            </details>
         </div>
 
         <div class="install-landing-card" data-install-ui="ios">
             <img src="logo.png" alt="" width="72" height="72" class="install-landing-logo" loading="eager">
-            <h1>Εγκατάσταση εφαρμογής</h1>
-            <p class="install-landing-lead">Δωρεάν εφαρμογή <strong>Καλά Νερά</strong> Guide στην αρχική οθόνη — μέσω Safari (iPhone/iPad).</p>
-            <ol class="install-landing-steps install-landing-steps--ios">
-                <li>Πατήστε <i class="far fa-share-square" aria-hidden="true"></i> <strong>Κοινή χρήση</strong> (κάτω ή πάνω στη Safari)</li>
-                <li>Επιλέξτε <strong>Προσθήκη στην αρχική οθόνη</strong></li>
-                <li>Πατήστε <strong>Προσθήκη</strong> — έτοιμο</li>
-            </ol>
+            <h1>Καλά Νερά Guide στην αρχική οθόνη</h1>
+            <p class="install-landing-lead">Δωρεάν επιχειρήσεις, λεωφορείο και tips για το Πήλιο — μέσω Safari (iPhone/iPad).</p>
+            <details class="install-landing-help" id="install-landing-help-ios">
+                <summary>Χρειάζεστε βοήθεια;</summary>
+                <ol class="install-landing-steps install-landing-steps--ios">
+                    <li>Πατήστε <i class="far fa-share-square" aria-hidden="true"></i> <strong>Κοινή χρήση</strong> (κάτω ή πάνω στη Safari)</li>
+                    <li>Επιλέξτε <strong>Προσθήκη στην αρχική οθόνη</strong></li>
+                    <li>Πατήστε <strong>Προσθήκη</strong> — έτοιμο</li>
+                </ol>
+            </details>
         </div>
 
         <div class="install-landing-card" data-install-ui="desktop">
@@ -202,7 +208,7 @@
 
 </footer>
 
-<script src="app.js?v=3.1.31"></script>
+<script src="app.js?v=3.1.36"></script>
 
 <nav class="bottom-nav" aria-label="Κύρια πλοήγηση">
     <div class="bottom-nav-inner">

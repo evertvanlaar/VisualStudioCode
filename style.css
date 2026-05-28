@@ -1,4 +1,4 @@
-/* version 3.1.31 */
+/* version 3.1.36 */
 @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
@@ -2896,6 +2896,15 @@ body.page-install-landing .install-landing{
 .install-landing-steps li:last-child{margin-bottom:0}
 
 .install-landing-steps--ios i.fa-share-square{color:#007aff}
+
+.install-landing-help{margin:14px auto 0;max-width:320px;text-align:left}
+.install-landing-help > summary{cursor:pointer;list-style:none;font-weight:800;color:var(--primary-olive);user-select:none}
+.install-landing-help > summary::-webkit-details-marker{display:none}
+.install-landing-help > summary::after{content:'▾';float:right;opacity:.9}
+.install-landing-help[open] > summary::after{content:'▴'}
+.install-landing-help[open]{padding-top:8px}
+.install-landing-help .install-landing-steps{margin:12px 0 0}
+.install-landing-help .install-landing-hint{margin:10px 0 0}
 
 /* Install landings: één platform tegelijk (ook vóór app.js) */
 body.page-install-landing [data-install-ui]{display:none !important}
