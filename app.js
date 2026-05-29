@@ -1,8 +1,8 @@
-﻿/**
+/**
  * app.js - De "hersenen" van de Kala Nera Guide
  */
 
-/** Live site â€” analytics/webhooks die CORS-ruis op LAN willen vermijden. */
+/** Live site — analytics/webhooks die CORS-ruis op LAN willen vermijden. */
 function isKalaneraProductionOrigin() {
     const h = (window.location.hostname || '').toLowerCase();
     return h === 'www.kalanera.gr' || h === 'kalanera.gr';
@@ -26,7 +26,7 @@ function logDevWebhookSkipOnce(featureLabel) {
     console.info(`[Kalanera] ${featureLabel}`);
 }
 
-/** Zelfde origin als 192.168:5501 â€” werkt wÃ©l op echte telefoon (n8n cross-origin vaak geblokkeerd). */
+/** Zelfde origin als 192.168:5501 — werkt wél op echte telefoon (n8n cross-origin vaak geblokkeerd). */
 function devSnapshotUrl(relativePath) {
     return new URL(String(relativePath || '').replace(/^\//, ''), location.origin).href;
 }
@@ -96,7 +96,7 @@ const BUS_VALID_DIRS = [
     'volos', 'milies', 'argalasti', 'afissos',
     'vyzitsa', 'pinakates', 'neochori', 'siki', 'promiri', 'katigiorgis', 'milina', 'platanias', 'trikeri',
 ];
-/** Toon chauffeur-waarschuwing (lage frequentie) voor deze bestemmingen â€” uitbreidbaar. */
+/** Toon chauffeur-waarschuwing (lage frequentie) voor deze bestemmingen — uitbreidbaar. */
 const BUS_LOW_FREQ_DIRS = new Set(['trikeri', 'katigiorgis', 'platanias']);
 
 // <sync-bus-ui-strings>
@@ -107,7 +107,7 @@ const BUS_UI_STRINGS_EMBEDDED = {
     "trustOfflineCached": "If you are offline, this page shows the last timetable cached from your last successful load.",
     "trustPrimary": "Times are estimates (Volos KTEL + ~30 min to this stop). Not an official timetable.",
     "trustUltraCompact": "Est. from Volos KTEL (+~30 min). Not official.",
-    "trustPrimaryFromVolos": "Times shown are estimates for the Kala Nera stop â€” they apply to buses departing from Volos (KTEL) towards Kala Nera / Pelion (+~30 min to this stop). Not an official timetable.",
+    "trustPrimaryFromVolos": "Times shown are estimates for the Kala Nera stop — they apply to buses departing from Volos (KTEL) towards Kala Nera / Pelion (+~30 min to this stop). Not an official timetable.",
     "trustUltraCompactFromVolos": "Est. for Kala Nera stop (from Volos KTEL, +~30 min). Not official.",
     "trustPrimaryToVolos": "Times shown are for the Kala Nera stop. Not an official timetable.",
     "trustUltraCompactToVolos": "Times for Kala Nera stop. Not official.",
@@ -118,60 +118,60 @@ const BUS_UI_STRINGS_EMBEDDED = {
     "chipMoreStops": "+{n} stops",
     "chipMoreSuffix": "+{n} more",
     "ariaAdditionalDestinations": "{n} additional destinations on this departure",
-    "sheetTitleDeparture": "This departure Â· {time}",
-    "sheetTitleWhereBusGoes": "Where this bus goes Â· {time}",
-    "sheetSubtitleStopFull": "From the main-road stop Â· Kala Nera Â· estimates only",
-    "sheetSubtitleStopShort": "Kala Nera stop Â· estimates",
+    "sheetTitleDeparture": "This departure · {time}",
+    "sheetTitleWhereBusGoes": "Where this bus goes · {time}",
+    "sheetSubtitleStopFull": "From the main-road stop · Kala Nera · estimates only",
+    "sheetSubtitleStopShort": "Kala Nera stop · estimates",
     "btnAllStops": "All stops",
     "btnClose": "Close",
     "btnDone": "Done",
-    "sheetFooterPlansChange": "Plans change â€” double-check before you travel.",
+    "sheetFooterPlansChange": "Plans change — double-check before you travel.",
     "nextDepartMinutes": "In ~{n} min",
     "nextDepartSoon": "Due soon",
     "timeBandMorning": "Morning",
-    "timeBandMorningRange": "05:00â€“11:59",
+    "timeBandMorningRange": "05:00–11:59",
     "timeBandMidday": "Afternoon",
-    "timeBandMiddayRange": "12:00â€“17:59",
+    "timeBandMiddayRange": "12:00–17:59",
     "timeBandEvening": "Evening",
-    "timeBandEveningRange": "18:00â€“23:59",
+    "timeBandEveningRange": "18:00–23:59",
     "timeBandNight": "Night",
-    "timeBandNightRange": "00:00â€“04:59"
+    "timeBandNightRange": "00:00–04:59"
   },
   "el": {
-    "tipBeEarly": "Î£Ï…Î¼Î²Î¿Ï…Î»Î®: 10 Î»ÎµÏ€Ï„Î¬ Î½Ï‰ÏÎ¯Ï„ÎµÏÎ± ÏƒÏ„Î· ÏƒÏ„Î¬ÏƒÎ·",
-    "trustStopDetail": "ÎŸÎ¹ ÏŽÏÎµÏ‚ Î±Ï†Î¿ÏÎ¿ÏÎ½ Ï„Î· ÏƒÏ„Î¬ÏƒÎ· ÏƒÏ„Î¿Î½ ÎºÎµÎ½Ï„ÏÎ¹ÎºÏŒ Î´ÏÏŒÎ¼Î¿ (Ï†Î¿ÏÏÎ½Î¿Ï‚).",
-    "trustOfflineCached": "Î‘Î½ ÎµÎ¯ÏƒÏ„Îµ offline, Î· ÏƒÎµÎ»Î¯Î´Î± Î´ÎµÎ¯Ï‡Î½ÎµÎ¹ Ï„Î¿ Ï„ÎµÎ»ÎµÏ…Ï„Î±Î¯Î¿ Î±Ï€Î¿Î¸Î·ÎºÎµÏ…Î¼Î­Î½Î¿ Ï€ÏÏŒÎ³ÏÎ±Î¼Î¼Î± Î±Ï€ÏŒ Ï„Î·Î½ Ï„ÎµÎ»ÎµÏ…Ï„Î±Î¯Î± ÎµÏ€Î¹Ï„Ï…Ï‡Î® Ï†ÏŒÏÏ„Ï‰ÏƒÎ·.",
-    "trustPrimary": "ÎŸÎ¹ ÏŽÏÎµÏ‚ ÎµÎ¯Î½Î±Î¹ ÎµÎºÏ„Î¹Î¼ÏŽÎ¼ÎµÎ½ÎµÏ‚ (Î´ÏÎ¿Î¼Î¿Î»ÏŒÎ³Î¹Î¿ ÎšÎ¤Î•Î› Î’ÏŒÎ»Î¿Ï… + ~30 Î»ÎµÏ€Ï„Î¬ Î³Î¹Î± Ï„Î· ÏƒÏ„Î¬ÏƒÎ·). Î”ÎµÎ½ ÎµÎ¯Î½Î±Î¹ ÎµÏ€Î¯ÏƒÎ·Î¼Î¿ Ï€ÏÏŒÎ³ÏÎ±Î¼Î¼Î±.",
-    "trustUltraCompact": "Î•ÎºÏ„Î¯Î¼Î·ÏƒÎ· Î±Ï€ÏŒ ÎšÎ¤Î•Î› Î’ÏŒÎ»Î¿Ï… (+~30 Î»ÎµÏ€Ï„Î¬). ÎŒÏ‡Î¹ ÎµÏ€Î¯ÏƒÎ·Î¼Î¿.",
-    "trustPrimaryFromVolos": "ÎŸÎ¹ ÏŽÏÎµÏ‚ ÎµÎ¯Î½Î±Î¹ ÎµÎºÏ„Î¹Î¼Î®ÏƒÎµÎ¹Ï‚ Î³Î¹Î± Ï„Î· ÏƒÏ„Î¬ÏƒÎ· ÏƒÏ„Î± ÎšÎ±Î»Î¬ ÎÎµÏÎ¬ â€” Î¹ÏƒÏ‡ÏÎ¿Ï…Î½ Î³Î¹Î± Î»ÎµÏ‰Ï†Î¿ÏÎµÎ¯Î± Ï€Î¿Ï… Î±Î½Î±Ï‡Ï‰ÏÎ¿ÏÎ½ Î±Ï€ÏŒ ÎšÎ¤Î•Î› Î’ÏŒÎ»Î¿Ï… Ï€ÏÎ¿Ï‚ ÎšÎ±Î»Î¬ ÎÎµÏÎ¬ / Î Î®Î»Î¹Î¿ (+~30 Î»ÎµÏ€Ï„Î¬ Î¼Î­Ï‡ÏÎ¹ Ï„Î· ÏƒÏ„Î¬ÏƒÎ·). Î”ÎµÎ½ ÎµÎ¯Î½Î±Î¹ ÎµÏ€Î¯ÏƒÎ·Î¼Î¿ Ï€ÏÏŒÎ³ÏÎ±Î¼Î¼Î±.",
-    "trustUltraCompactFromVolos": "Î•ÎºÏ„Î¯Î¼Î·ÏƒÎ· Î³Î¹Î± ÏƒÏ„Î¬ÏƒÎ· ÎšÎ±Î»Î¬ ÎÎµÏÎ¬ (Î±Ï€ÏŒ ÎšÎ¤Î•Î› Î’ÏŒÎ»Î¿Ï…, +~30â€²). ÎŒÏ‡Î¹ ÎµÏ€Î¯ÏƒÎ·Î¼Î¿.",
-    "trustPrimaryToVolos": "ÎŸÎ¹ ÏŽÏÎµÏ‚ Î±Ï†Î¿ÏÎ¿ÏÎ½ Ï„Î· ÏƒÏ„Î¬ÏƒÎ· ÏƒÏ„Î± ÎšÎ±Î»Î¬ ÎÎµÏÎ¬. Î”ÎµÎ½ ÎµÎ¯Î½Î±Î¹ ÎµÏ€Î¯ÏƒÎ·Î¼Î¿ Ï€ÏÏŒÎ³ÏÎ±Î¼Î¼Î±.",
-    "trustUltraCompactToVolos": "ÎÏÎµÏ‚ Î³Î¹Î± ÏƒÏ„Î¬ÏƒÎ· ÎšÎ±Î»Î¬ ÎÎµÏÎ¬. ÎŒÏ‡Î¹ ÎµÏ€Î¯ÏƒÎ·Î¼Î¿.",
-    "linkOfficialKtelShort": "Î•Ï€Î¯ÏƒÎ·Î¼Î¿ ÎšÎ¤Î•Î›",
-    "linkOfficialKtelLong": "Î†Î½Î¿Î¹Î³Î¼Î± ÎµÏ€Î¯ÏƒÎ·Î¼Ï‰Î½ Î´ÏÎ¿Î¼Î¿Î»Î¿Î³Î¯Ï‰Î½ ÎšÎ¤Î•Î›",
-    "footnoteTimetablesLabel": "Î”ÏÎ¿Î¼Î¿Î»ÏŒÎ³Î¹Î±",
-    "footnoteKtelLink": "Î•Ï€Î¯ÏƒÎ·Î¼Î± Î´ÏÎ¿Î¼Î¿Î»ÏŒÎ³Î¹Î± ÎšÎ¤Î•Î›",
-    "chipMoreStops": "+{n} ÏƒÏ„Î¬ÏƒÎµÎ¹Ï‚",
-    "chipMoreSuffix": "+{n} Î±ÎºÏŒÎ¼Î·",
-    "ariaAdditionalDestinations": "{n} ÎµÏ€Î¹Ï€Î»Î­Î¿Î½ Ï€ÏÎ¿Î¿ÏÎ¹ÏƒÎ¼Î¿Î¯ ÏƒÎµ Î±Ï…Ï„Î® Ï„Î·Î½ Î±Î½Î±Ï‡ÏŽÏÎ·ÏƒÎ·",
-    "sheetTitleDeparture": "Î‘Ï…Ï„Î® Î· Î±Î½Î±Ï‡ÏŽÏÎ·ÏƒÎ· Â· {time}",
-    "sheetTitleWhereBusGoes": "Î Î¿Ï Ï€Î¬ÎµÎ¹ Î±Ï…Ï„ÏŒ Ï„Î¿ Î»ÎµÏ‰Ï†Î¿ÏÎµÎ¯Î¿ Â· {time}",
-    "sheetSubtitleStopFull": "Î‘Ï€ÏŒ Ï„Î· ÏƒÏ„Î¬ÏƒÎ· ÏƒÏ„Î¿Î½ ÎºÎµÎ½Ï„ÏÎ¹ÎºÏŒ Î´ÏÏŒÎ¼Î¿ Â· ÎšÎ±Î»Î¬ ÎÎµÏÎ¬ Â· Î¼ÏŒÎ½Î¿ ÎµÎºÏ„Î¹Î¼Î®ÏƒÎµÎ¹Ï‚",
-    "sheetSubtitleStopShort": "Î£Ï„Î¬ÏƒÎ· ÎšÎ±Î»Î¬ ÎÎµÏÎ¬ Â· ÎµÎºÏ„Î¹Î¼Î®ÏƒÎµÎ¹Ï‚",
-    "btnAllStops": "ÎŒÎ»ÎµÏ‚ Î¿Î¹ ÏƒÏ„Î¬ÏƒÎµÎ¹Ï‚",
-    "btnClose": "ÎšÎ»ÎµÎ¯ÏƒÎ¹Î¼Î¿",
-    "btnDone": "ÎˆÏ„Î¿Î¹Î¼Î¿",
-    "sheetFooterPlansChange": "Î¤Î± Î´ÏÎ¿Î¼Î¿Î»ÏŒÎ³Î¹Î± Î±Î»Î»Î¬Î¶Î¿Ï…Î½ â€” ÎµÏ€Î¹Î²ÎµÎ²Î±Î¹ÏŽÏƒÏ„Îµ Ï€ÏÎ¹Î½ Ï„Î±Î¾Î¹Î´Î­ÏˆÎµÏ„Îµ.",
-    "nextDepartMinutes": "Î£Îµ ~{n} Î».",
-    "nextDepartSoon": "Î£ÏÎ½Ï„Î¿Î¼Î±",
-    "timeBandMorning": "Î ÏÏ‰Î¯",
-    "timeBandMorningRange": "05:00â€“11:59",
-    "timeBandMidday": "Î‘Ï€ÏŒÎ³ÎµÏ…Î¼Î±",
-    "timeBandMiddayRange": "12:00â€“17:59",
-    "timeBandEvening": "Î’ÏÎ¬Î´Ï…",
-    "timeBandEveningRange": "18:00â€“23:59",
-    "timeBandNight": "ÎÏÏ‡Ï„Î±",
-    "timeBandNightRange": "00:00â€“04:59"
+    "tipBeEarly": "Συμβουλή: 10 λεπτά νωρίτερα στη στάση",
+    "trustStopDetail": "Οι ώρες αφορούν τη στάση στον κεντρικό δρόμο (φούρνος).",
+    "trustOfflineCached": "Αν είστε offline, η σελίδα δείχνει το τελευταίο αποθηκευμένο πρόγραμμα από την τελευταία επιτυχή φόρτωση.",
+    "trustPrimary": "Οι ώρες είναι εκτιμώμενες (δρομολόγιο ΚΤΕΛ Βόλου + ~30 λεπτά για τη στάση). Δεν είναι επίσημο πρόγραμμα.",
+    "trustUltraCompact": "Εκτίμηση από ΚΤΕΛ Βόλου (+~30 λεπτά). Όχι επίσημο.",
+    "trustPrimaryFromVolos": "Οι ώρες είναι εκτιμήσεις για τη στάση στα Καλά Νερά — ισχύουν για λεωφορεία που αναχωρούν από ΚΤΕΛ Βόλου προς Καλά Νερά / Πήλιο (+~30 λεπτά μέχρι τη στάση). Δεν είναι επίσημο πρόγραμμα.",
+    "trustUltraCompactFromVolos": "Εκτίμηση για στάση Καλά Νερά (από ΚΤΕΛ Βόλου, +~30′). Όχι επίσημο.",
+    "trustPrimaryToVolos": "Οι ώρες αφορούν τη στάση στα Καλά Νερά. Δεν είναι επίσημο πρόγραμμα.",
+    "trustUltraCompactToVolos": "Ώρες για στάση Καλά Νερά. Όχι επίσημο.",
+    "linkOfficialKtelShort": "Επίσημο ΚΤΕΛ",
+    "linkOfficialKtelLong": "Άνοιγμα επίσημων δρομολογίων ΚΤΕΛ",
+    "footnoteTimetablesLabel": "Δρομολόγια",
+    "footnoteKtelLink": "Επίσημα δρομολόγια ΚΤΕΛ",
+    "chipMoreStops": "+{n} στάσεις",
+    "chipMoreSuffix": "+{n} ακόμη",
+    "ariaAdditionalDestinations": "{n} επιπλέον προορισμοί σε αυτή την αναχώρηση",
+    "sheetTitleDeparture": "Αυτή η αναχώρηση · {time}",
+    "sheetTitleWhereBusGoes": "Πού πάει αυτό το λεωφορείο · {time}",
+    "sheetSubtitleStopFull": "Από τη στάση στον κεντρικό δρόμο · Καλά Νερά · μόνο εκτιμήσεις",
+    "sheetSubtitleStopShort": "Στάση Καλά Νερά · εκτιμήσεις",
+    "btnAllStops": "Όλες οι στάσεις",
+    "btnClose": "Κλείσιμο",
+    "btnDone": "Έτοιμο",
+    "sheetFooterPlansChange": "Τα δρομολόγια αλλάζουν — επιβεβαιώστε πριν ταξιδέψετε.",
+    "nextDepartMinutes": "Σε ~{n} λ.",
+    "nextDepartSoon": "Σύντομα",
+    "timeBandMorning": "Πρωί",
+    "timeBandMorningRange": "05:00–11:59",
+    "timeBandMidday": "Απόγευμα",
+    "timeBandMiddayRange": "12:00–17:59",
+    "timeBandEvening": "Βράδυ",
+    "timeBandEveningRange": "18:00–23:59",
+    "timeBandNight": "Νύχτα",
+    "timeBandNightRange": "00:00–04:59"
   }
 };
 // </sync-bus-ui-strings>
@@ -183,69 +183,69 @@ const currentLang = document.documentElement.lang || 'en'; // Nu is Engels de fa
 
 const translations = {
     'el': {
-        'all': 'ÎŒÎ»Î±',
-        'all_locations': 'ÎŒÎ»ÎµÏ‚ Î¿Î¹ Ï„Î¿Ï€Î¿Î¸ÎµÏƒÎ¯ÎµÏ‚',
-        // CategorieÃ«n
-        'Camp': 'ÎšÎ±Î¼Ï€Î¹Î½Î³Îº',
-        'Drink': 'Î Î¿Ï„ÏŒ',
-        'Eat': 'Î¦Î±Î³Î·Ï„ÏŒ',
-        'Other': 'Î†Î»Î»Î¿',
-        'Rent' : 'Î•Î½Î¿Î¹ÎºÎ¹Î¬ÏƒÎµÎ¹Ï‚',
-        'Shop': 'Î¨ÏŽÎ½Î¹Î±',
-        'Sleep': 'Î”Î¹Î±Î¼Î¿Î½Î®',
-        'Travel': 'Î¤Î±Î¾Î¯Î´Î¹Î±',
+        'all': 'Όλα',
+        'all_locations': 'Όλες οι τοποθεσίες',
+        // Categorieën
+        'Camp': 'Καμπινγκ',
+        'Drink': 'Ποτό',
+        'Eat': 'Φαγητό',
+        'Other': 'Άλλο',
+        'Rent' : 'Ενοικιάσεις',
+        'Shop': 'Ψώνια',
+        'Sleep': 'Διαμονή',
+        'Travel': 'Ταξίδια',
         // Locaties
-        'Kala Nera': 'ÎšÎ±Î»Î¬ ÎÎµÏÎ¬',
-        'Kato Gatzea': 'ÎšÎ¬Ï„Ï‰ Î“Î±Ï„Î¶Î­Î±',
-        'Ano Gatzea': 'Î†Î½Ï‰ Î“Î±Ï„Î¶Î­Î±',
-        'Koropi': 'ÎšÎ¿ÏÏŽÏ€Î·',
-        'Milies': 'ÎœÎ·Î»Î¹Î­Ï‚',
-        'Vizitsa': 'Î’Ï…Î¶Î¯Ï„ÏƒÎ±',
-        'Afissos': 'Î†Ï†Î·ÏƒÏƒÎ¿Ï‚',
-        // Voeg hier de rest van je categorieÃ«n en locaties toe
-        'pwa_msg': 'Î•Î³ÎºÎ±Ï„Î±ÏƒÏ„Î®ÏƒÏ„Îµ Ï„Î·Î½ ÎµÏ†Î±ÏÎ¼Î¿Î³Î® Î³Î¹Î± ÎºÎ±Î»ÏÏ„ÎµÏÎ· ÎµÎ¼Ï€ÎµÎ¹ÏÎ¯Î±.',
-        'pwa_btn': 'Î•Î³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ·',
+        'Kala Nera': 'Καλά Νερά',
+        'Kato Gatzea': 'Κάτω Γατζέα',
+        'Ano Gatzea': 'Άνω Γατζέα',
+        'Koropi': 'Κορώπη',
+        'Milies': 'Μηλιές',
+        'Vizitsa': 'Βυζίτσα',
+        'Afissos': 'Άφησσος',
+        // Voeg hier de rest van je categorieën en locaties toe
+        'pwa_msg': 'Εγκαταστήστε την εφαρμογή για καλύτερη εμπειρία.',
+        'pwa_btn': 'Εγκατάσταση',
         // Bus
-        'bus_last_updated': 'Î¤ÎµÎ»ÎµÏ…Ï„Î±Î¯Î± ÎµÎ½Î·Î¼Î­ÏÏ‰ÏƒÎ·',
-        'bus_today_none': 'Î”ÎµÎ½ Ï…Ï€Î¬ÏÏ‡Î¿Ï…Î½ Î¬Î»Î»Î± Î´ÏÎ¿Î¼Î¿Î»ÏŒÎ³Î¹Î± ÏƒÎ®Î¼ÎµÏÎ±.',
-        'bus_unavailable': 'Î¤Î¿ Ï€ÏÏŒÎ³ÏÎ±Î¼Î¼Î± Î»ÎµÏ‰Ï†Î¿ÏÎµÎ¯Ï‰Î½ Î´ÎµÎ½ ÎµÎ¯Î½Î±Î¹ Î´Î¹Î±Î¸Î­ÏƒÎ¹Î¼Î¿ Î±Ï…Ï„Î® Ï„Î· ÏƒÏ„Î¹Î³Î¼Î®.',
-        'bus_arrival_prefix': 'Î†Ï†Î¹Î¾Î·',
-        'bus_from': 'Î‘Ï€ÏŒ',
-        'bus_stop_label': 'Î£Ï„Î¬ÏƒÎ·',
-        'bus_stop_highway_bakery': 'ÎšÎµÎ½Ï„ÏÎ¹ÎºÏŒÏ‚ Î´ÏÏŒÎ¼Î¿Ï‚',
-        'bus_stop_village_butcher': 'ÎšÎ­Î½Ï„ÏÎ¿/Ï€Î±ÏÎ±Î»Î¯Î±',
-        'bus_showing': 'Î•Î¼Ï†Î¬Î½Î¹ÏƒÎ·',
-        'bus_runs': 'Î”ÏÎ¿Î¼Î¿Î»ÏŒÎ³Î¹Î±',
-        'bus_frequency': 'Î£Ï…Ï‡Î½ÏŒÏ„Î·Ï„Î±',
-        'bus_departure_el_l1': 'ÎÏÎ± ÏƒÏ„Î· ÏƒÏ„Î¬ÏƒÎ·',
-        'bus_departure_el_l2': 'ÎšÎ±Î»Î¬ ÎÎµÏÎ¬',
-        'bus_low_freq': 'Î¡Ï‰Ï„Î®ÏƒÏ„Îµ Ï„Î¿Î½ Î¿Î´Î·Î³ÏŒ Î³Î¹Î± ÎµÏ€Î¹ÏƒÏ„ÏÎ¿Ï†Î®',
-        'bus_also_prefix': 'Î•Ï€Î¯ÏƒÎ·Ï‚:',
-        'bus_line_berg': 'ÎŸÏÎµÎ¹Î½Î® Î³ÏÎ±Î¼Î¼Î® â€” ÎºÎ±Î¸Î·Î¼ÎµÏÎ¹Î½Î¬, ÏƒÏ„Î¬ÏƒÎ· ÏƒÏ„Î¿ ÎºÎ­Î½Ï„ÏÎ¿ Ï„Î¿Ï… Ï‡Ï‰ÏÎ¹Î¿Ï.',
-        'bus_line_coast': 'Î Î±ÏÎ¬ÎºÏ„Î¹Î± Î³ÏÎ±Î¼Î¼Î® â€” ÎºÎ±Î¸Î·Î¼ÎµÏÎ¹Î½Î¬, Î¹Î´Î±Î½Î¹ÎºÎ® Î³Î¹Î± Ï€Î±ÏÎ±Î»Î¯ÎµÏ‚.',
-        'bus_line_south': 'ÎÏŒÏ„Î¹Î± Î³ÏÎ±Î¼Î¼Î® â€” ÎºÎ±Î¸Î·Î¼ÎµÏÎ¹Î½Î¬.',
-        'bus_line_south_east': 'ÎÏŒÏ„Î¹Î± Î³ÏÎ±Î¼Î¼Î® (Î±Î½Î±Ï„Î¿Î»Î¹ÎºÎ¬) â€” Î”ÎµÏ…â€“Î Î±Ï.',
-        'bus_heading_today': 'Î£Î—ÎœÎ•Î¡Î‘',
-        'bus_heading_tomorrow_upper': 'Î‘ÎŽÎ¡Î™ÎŸ',
-        'bus_heading_tomorrow': 'Î‘ÏÏÎ¹Î¿',
+        'bus_last_updated': 'Τελευταία ενημέρωση',
+        'bus_today_none': 'Δεν υπάρχουν άλλα δρομολόγια σήμερα.',
+        'bus_unavailable': 'Το πρόγραμμα λεωφορείων δεν είναι διαθέσιμο αυτή τη στιγμή.',
+        'bus_arrival_prefix': 'Άφιξη',
+        'bus_from': 'Από',
+        'bus_stop_label': 'Στάση',
+        'bus_stop_highway_bakery': 'Κεντρικός δρόμος',
+        'bus_stop_village_butcher': 'Κέντρο/παραλία',
+        'bus_showing': 'Εμφάνιση',
+        'bus_runs': 'Δρομολόγια',
+        'bus_frequency': 'Συχνότητα',
+        'bus_departure_el_l1': 'Ώρα στη στάση',
+        'bus_departure_el_l2': 'Καλά Νερά',
+        'bus_low_freq': 'Ρωτήστε τον οδηγό για επιστροφή',
+        'bus_also_prefix': 'Επίσης:',
+        'bus_line_berg': 'Ορεινή γραμμή — καθημερινά, στάση στο κέντρο του χωριού.',
+        'bus_line_coast': 'Παράκτια γραμμή — καθημερινά, ιδανική για παραλίες.',
+        'bus_line_south': 'Νότια γραμμή — καθημερινά.',
+        'bus_line_south_east': 'Νότια γραμμή (ανατολικά) — Δευ–Παρ.',
+        'bus_heading_today': 'ΣΗΜΕΡΑ',
+        'bus_heading_tomorrow_upper': 'ΑΎΡΙΟ',
+        'bus_heading_tomorrow': 'Αύριο',
         'bus_heading_weekday_date': '{weekday} {date}',
-        'bus_full_title_date': 'Î‘Î½Î±Ï‡Ï‰ÏÎ®ÏƒÎµÎ¹Ï‚ Â· {date}',
-        'bus_full_title_today': 'Î‘Î½Î±Ï‡Ï‰ÏÎ®ÏƒÎµÎ¹Ï‚ ÏƒÎ®Î¼ÎµÏÎ±',
-        'bus_timeline_list_aria_date': 'Î‘Î½Î±Ï‡Ï‰ÏÎ®ÏƒÎµÎ¹Ï‚ {date} ÏƒÎµ Ï‡ÏÎ¿Î½Î¹ÎºÎ® ÏƒÎµÎ¹ÏÎ¬',
-        'bus_first_departure_title': 'Î Î¡Î©Î¤ÎŸ',
-        'bus_day_none': 'Î”ÎµÎ½ Ï…Ï€Î¬ÏÏ‡Î¿Ï…Î½ Î´ÏÎ¿Î¼Î¿Î»ÏŒÎ³Î¹Î± Î±Ï…Ï„Î® Ï„Î·Î½ Î·Î¼Î­ÏÎ±.',
-        'bus_day_strip_aria': 'Î•Ï€Î¹Î»Î¿Î³Î® Î·Î¼Î­ÏÎ±Ï‚ (Î‘Î¸Î®Î½Î±, Î­Ï‰Ï‚ 7 Î·Î¼Î­ÏÎµÏ‚)',
-        'bus_day_strip_hint': '7 Î·Î¼Î­ÏÎµÏ‚ Â· Ï„Î¿Ï€Î¹ÎºÎ¬',
-        'bus_pick_day': 'Î•Ï€Î¹Î»Î¿Î³Î® Î·Î¼Î­ÏÎ±Ï‚',
-        'bus_day_input_aria': 'Î•Ï€Î¹Î»Î¿Î³Î® Î·Î¼Î­ÏÎ±Ï‚ Î³Î¹Î± Ï„Î¿ Ï€ÏÏŒÎ³ÏÎ±Î¼Î¼Î± â€” ÏƒÎ®Î¼ÎµÏÎ± Î­Ï‰Ï‚ Î­Î¾Î¹ Î·Î¼Î­ÏÎµÏ‚ Î¼Ï€ÏÎ¿ÏƒÏ„Î¬ (Ï„Î¿Ï€Î¹ÎºÏŒ Î·Î¼ÎµÏÎ¿Î»ÏŒÎ³Î¹Î¿ Î Î·Î»Î¯Î¿Ï…)',
-        'bus_trust_about_times': 'Î“Î¹Î± Ï„Î¹Ï‚ ÏŽÏÎµÏ‚',
-        'bus_trust_sheet_title': 'Î£Ï‡ÎµÏ„Î¹ÎºÎ¬ Î¼Îµ Ï„Î¹Ï‚ ÎµÎºÏ„Î¹Î¼Î®ÏƒÎµÎ¹Ï‚ Ï‰ÏÏŽÎ½',
-        'bus_trust_dialog_close': 'ÎšÎ»ÎµÎ¯ÏƒÎ¹Î¼Î¿',
-        'bus_trust_open_sheet_hint': 'Î‘Î½Î¿Î¯Î³ÎµÎ¹ Î»ÎµÏ€Ï„Î¿Î¼Î­ÏÎµÎ¹ÎµÏ‚ ÎºÎ±Î¹ ÎµÏ€Î¯ÏƒÎ·Î¼Î¿ ÏƒÏÎ½Î´ÎµÏƒÎ¼Î¿ ÎšÎ¤Î•Î›.',
-        'bus_next_heading': 'Î•Î ÎŸÎœÎ•ÎÎŸ',
-        'bus_origin_kala_nera': 'ÎšÎ±Î»Î¬ ÎÎµÏÎ¬',
-        'bus_route_from_to': 'Î‘Ï€ÏŒ: {origin} Ï€ÏÎ¿Ï‚: {dest}',
-        'bus_route_origin_only': 'Î‘Ï€ÏŒ {origin}'
+        'bus_full_title_date': 'Αναχωρήσεις · {date}',
+        'bus_full_title_today': 'Αναχωρήσεις σήμερα',
+        'bus_timeline_list_aria_date': 'Αναχωρήσεις {date} σε χρονική σειρά',
+        'bus_first_departure_title': 'ΠΡΩΤΟ',
+        'bus_day_none': 'Δεν υπάρχουν δρομολόγια αυτή την ημέρα.',
+        'bus_day_strip_aria': 'Επιλογή ημέρας (Αθήνα, έως 7 ημέρες)',
+        'bus_day_strip_hint': '7 ημέρες · τοπικά',
+        'bus_pick_day': 'Επιλογή ημέρας',
+        'bus_day_input_aria': 'Επιλογή ημέρας για το πρόγραμμα — σήμερα έως έξι ημέρες μπροστά (τοπικό ημερολόγιο Πηλίου)',
+        'bus_trust_about_times': 'Για τις ώρες',
+        'bus_trust_sheet_title': 'Σχετικά με τις εκτιμήσεις ωρών',
+        'bus_trust_dialog_close': 'Κλείσιμο',
+        'bus_trust_open_sheet_hint': 'Ανοίγει λεπτομέρειες και επίσημο σύνδεσμο ΚΤΕΛ.',
+        'bus_next_heading': 'ΕΠΟΜΕΝΟ',
+        'bus_origin_kala_nera': 'Καλά Νερά',
+        'bus_route_from_to': 'Από: {origin} προς: {dest}',
+        'bus_route_origin_only': 'Από {origin}'
     }
 };
 
@@ -269,7 +269,7 @@ let hubCategoryBeforeSearch;
 let deferredPrompt; // Global variabele voor PWA
 let listMode = (localStorage.getItem('kalanera_list_mode') || 'categories'); // 'categories' | 'az'
 
-/** Webhook: platte array Ã³f `{ rows|data|items: [...] }` (cache-/Respond-node verschillen). */
+/** Webhook: platte array óf `{ rows|data|items: [...] }` (cache-/Respond-node verschillen). */
 function normalizeBusinessWebhookPayload(parsed) {
     if (parsed == null) return [];
     if (typeof parsed === 'string') return null;
@@ -296,7 +296,7 @@ function businessRowIsActive(biz) {
     return String(sheetLikeStatusValue(biz) ?? '').trim().toLowerCase() === 'active';
 }
 
-// Icon Map voor categorieÃ«n
+// Icon Map voor categorieën
 const iconMap = {
     'Bakery': 'fa-bread-slice', 'Bakker': 'fa-bread-slice', 'Coffee': 'fa-coffee', 'Koffie': 'fa-coffee',
     'Eat': 'fa-utensils', 'Eten': 'fa-utensils', 'Drink': 'fa-glass-cheers', 'Pub': 'fa-beer',
@@ -308,7 +308,7 @@ const iconMap = {
 
 const SITE_ORIGIN = location.origin;
 
-/** Same-origin /pix/ path â€” avoids apexâ†”www cross-origin blocks (Edge, Play Store TWA on kalanera.gr). */
+/** Same-origin /pix/ path — avoids apex↔www cross-origin blocks (Edge, Play Store TWA on kalanera.gr). */
 function sameOriginPixUrl(photoField) {
     const fallback = '/pix/nophoto.jpg';
     const raw = String(photoField ?? '').trim();
@@ -332,7 +332,7 @@ function absolutePhotoUrl(photoField) {
     return sameOriginPixUrl(photoField);
 }
 
-/** Static business HTML may still ship https://www.kalanera.gr/pix/â€¦ â€” rewrite before Smart Crop / display. */
+/** Static business HTML may still ship https://www.kalanera.gr/pix/… — rewrite before Smart Crop / display. */
 function rewriteDomPixImagesToSameOrigin(root = document) {
     root.querySelectorAll('img[src*="kalanera.gr/pix/"]').forEach((img) => {
         const next = sameOriginPixUrl(img.getAttribute('src') || '');
@@ -341,7 +341,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.36'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.37'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -377,7 +377,7 @@ async function init() {
     const isWishlistPage = document.getElementById('empty-wishlist') !== null;
 
     // Functie om de juiste weergave te kiezen
-    /** Voorkom eeuwig â€œloadingâ€¦â€ als fetch faalt zonder geldige cache of bij alleen !response.ok */
+    /** Voorkom eeuwig “loading…” als fetch faalt zonder geldige cache of bij alleen !response.ok */
     let directoryUiRendered = false;
     const showData = () => {
         if (!isWishlistPage) directoryUiRendered = true;
@@ -426,7 +426,7 @@ async function init() {
                 console.warn(
                     'Businesses webhook: lege response body (HTTP',
                     response.status,
-                    ') â€” meestal n8n Respond zonder body of $json.rows undefined. Check workflow / cache branch.'
+                    ') — meestal n8n Respond zonder body of $json.rows undefined. Check workflow / cache branch.'
                 );
                 payload = [];
             } else {
@@ -463,18 +463,18 @@ async function init() {
             if (rawData.length > 0 && freshData.length === 0) {
                 const sample = rawData[0];
                 console.warn(
-                    'Businesses webhook: alle rijen uitgefilterd op Statusâ‰ Active. Voorbeeld Status-waarde:',
+                    'Businesses webhook: alle rijen uitgefilterd op Status≠Active. Voorbeeld Status-waarde:',
                     sheetLikeStatusValue(sample),
                     '| sleutels:',
                     sample && typeof sample === 'object' ? Object.keys(sample).slice(0, 20) : sample
                 );
             }
             if (rawData.length === 0) {
-                console.warn('Businesses webhook: lege array â€” check n8n Google Sheets bereik/tab en workflow.');
+                console.warn('Businesses webhook: lege array — check n8n Google Sheets bereik/tab en workflow.');
             }
 
             if (freshData.length === 0 && allBusinesses.length > 0) {
-                console.warn('Businesses webhook: lege lijst genegeerd â€” bestaande cache behouden.');
+                console.warn('Businesses webhook: lege lijst genegeerd — bestaande cache behouden.');
                 showData();
             } else {
                 allBusinesses = freshData;
@@ -497,7 +497,7 @@ async function init() {
             }
         }
     } catch (error) {
-        console.warn('Bedrijven ophalen mislukt â€” cache gebruikt indien aanwezig.', error?.message || error);
+        console.warn('Bedrijven ophalen mislukt — cache gebruikt indien aanwezig.', error?.message || error);
     }
 
     if (!isWishlistPage && businessList && !directoryUiRendered) {
@@ -570,7 +570,7 @@ function isAppStandalone() {
         || window.navigator.standalone === true;
 }
 
-/** Only our Play package â€” not Google Lens / other apps (android-app://â€¦). */
+/** Only our Play package — not Google Lens / other apps (android-app://…). */
 function isOpenedFromKalaneraTwa() {
     const ref = document.referrer || '';
     return ref.includes(`android-app://${TWA_ANDROID_PACKAGE}`);
@@ -649,22 +649,22 @@ function getInstallDoneMessageHtml(situation) {
     const isEl = (document.documentElement.lang || '').toLowerCase().startsWith('el');
     const icon = '<i class="fa fa-check-circle" aria-hidden="true"></i> ';
     const copy = isEl ? {
-        'running-twa': 'Î§ÏÎ·ÏƒÎ¹Î¼Î¿Ï€Î¿Î¹ÎµÎ¯Ï„Îµ Î®Î´Î· Ï„Î·Î½ ÎµÏ†Î±ÏÎ¼Î¿Î³Î® <strong>ÎšÎ±Î»Î¬ ÎÎµÏÎ¬</strong> Î±Ï€ÏŒ Ï„Î¿ Google Play. Î¤Î·Î½ ÎµÏ€ÏŒÎ¼ÎµÎ½Î· Ï†Î¿ÏÎ¬ Î±Î½Î¿Î¯Î¾Ï„Îµ Ï„Î·Î½ Î±Ï€ÏŒ Ï„Î¿ Î¼ÎµÎ½Î¿Ï ÎµÏ†Î±ÏÎ¼Î¿Î³ÏŽÎ½.',
-        'running-pwa': 'Î§ÏÎ·ÏƒÎ¹Î¼Î¿Ï€Î¿Î¹ÎµÎ¯Ï„Îµ Î®Î´Î· Ï„Î·Î½ ÎµÏ†Î±ÏÎ¼Î¿Î³Î® Î±Ï€ÏŒ Ï„Î·Î½ <strong>Î±ÏÏ‡Î¹ÎºÎ® Î¿Î¸ÏŒÎ½Î·</strong>. Î¤Î·Î½ ÎµÏ€ÏŒÎ¼ÎµÎ½Î· Ï†Î¿ÏÎ¬ Î±Î½Î¿Î¯Î¾Ï„Îµ Ï„Î·Î½ Î±Ï€ÏŒ Ï„Î¿ ÎµÎ¹ÎºÎ¿Î½Î¯Î´Î¹Î¿.',
-        'browser-play-installed': 'Î— ÎµÏ†Î±ÏÎ¼Î¿Î³Î® <strong>ÎšÎ±Î»Î¬ ÎÎµÏÎ¬</strong> ÎµÎ¯Î½Î±Î¹ Î®Î´Î· ÎµÎ³ÎºÎ±Ï„ÎµÏƒÏ„Î·Î¼Î­Î½Î· Î¼Î­ÏƒÏ‰ <strong>Google Play</strong>. Î‘Î½Î¿Î¯Î¾Ï„Îµ Ï„Î·Î½ Î±Ï€ÏŒ Ï„Î¿ Î¼ÎµÎ½Î¿Ï ÎµÏ†Î±ÏÎ¼Î¿Î³ÏŽÎ½ â€” Î´ÎµÎ½ Ï‡ÏÎµÎ¹Î¬Î¶ÎµÏ„Î±Î¹ ÎµÎ³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ· Î¼Î­ÏƒÏ‰ Chrome.',
-        'install-success': 'Î— ÎµÎ³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ· Î¿Î»Î¿ÎºÎ»Î·ÏÏŽÎ¸Î·ÎºÎµ. Î‘Î½Î¿Î¯Î¾Ï„Îµ Ï„Î·Î½ ÎµÏ†Î±ÏÎ¼Î¿Î³Î® Î±Ï€ÏŒ Ï„Î¿ ÎµÎ¹ÎºÎ¿Î½Î¯Î´Î¹Î¿ <strong>ÎšÎ±Î»Î¬ ÎÎµÏÎ¬</strong> ÏƒÏ„Î·Î½ Î±ÏÏ‡Î¹ÎºÎ® Î¿Î¸ÏŒÎ½Î·.'
+        'running-twa': 'Χρησιμοποιείτε ήδη την εφαρμογή <strong>Καλά Νερά</strong> από το Google Play. Την επόμενη φορά ανοίξτε την από το μενού εφαρμογών.',
+        'running-pwa': 'Χρησιμοποιείτε ήδη την εφαρμογή από την <strong>αρχική οθόνη</strong>. Την επόμενη φορά ανοίξτε την από το εικονίδιο.',
+        'browser-play-installed': 'Η εφαρμογή <strong>Καλά Νερά</strong> είναι ήδη εγκατεστημένη μέσω <strong>Google Play</strong>. Ανοίξτε την από το μενού εφαρμογών — δεν χρειάζεται εγκατάσταση μέσω Chrome.',
+        'install-success': 'Η εγκατάσταση ολοκληρώθηκε. Ανοίξτε την εφαρμογή από το εικονίδιο <strong>Καλά Νερά</strong> στην αρχική οθόνη.'
     } : {
         'running-twa': 'You are already using the <strong>Kala Nera</strong> app from <strong>Google Play</strong>. Next time, open it from your app drawer.',
         'running-pwa': 'You are already using the app from your <strong>home screen</strong>. Next time, open it from that icon.',
-        'browser-play-installed': 'The <strong>Kala Nera</strong> app is already installed via <strong>Google Play</strong>. Open it from your app drawer â€” no browser install needed.',
+        'browser-play-installed': 'The <strong>Kala Nera</strong> app is already installed via <strong>Google Play</strong>. Open it from your app drawer — no browser install needed.',
         'install-success': 'Installation complete. Open the app from the <strong>Kala Nera</strong> icon on your home screen.'
     };
     const text = copy[situation] || copy['running-pwa'];
     let html = icon + text;
     if (situation === 'install-success') {
-        const reinstallLabel = isEl ? 'Î•Î³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ· Î¾Î±Î½Î¬' : 'Install again';
+        const reinstallLabel = isEl ? 'Εγκατάσταση ξανά' : 'Install again';
         const reinstallHint = isEl
-            ? 'Î‘Ï†Î±Î¹ÏÎ­ÏƒÎ±Ï„Îµ Ï„Î¿ ÎµÎ¹ÎºÎ¿Î½Î¯Î´Î¹Î¿ Î±Ï€ÏŒ Ï„Î·Î½ Î±ÏÏ‡Î¹ÎºÎ® Î¿Î¸ÏŒÎ½Î·;'
+            ? 'Αφαιρέσατε το εικονίδιο από την αρχική οθόνη;'
             : 'Removed the icon from your home screen?';
         html += `<p class="install-landing-reinstall-wrap">`
             + `<button type="button" class="install-landing-reinstall-btn" id="install-landing-reinstall">${reinstallLabel}</button>`
@@ -717,7 +717,7 @@ function isChromeOnAndroid() {
         && !/EdgA|Edg\/|OPR\/|SamsungBrowser/i.test(navigator.userAgent);
 }
 
-/** Chrome or Edge (Chromium) on Android â€” both support PWA install. */
+/** Chrome or Edge (Chromium) on Android — both support PWA install. */
 function isChromiumInstallBrowserOnAndroid() {
     return isAndroidDevice()
         && (/Chrome/i.test(navigator.userAgent) || /EdgA/i.test(navigator.userAgent))
@@ -735,11 +735,11 @@ function isLikelyDesktopInstallContext() {
     return finePointer && !coarsePointer;
 }
 
-/** Shared copy: QR page, hub banner, More sheet â€” do not block install on stale storage. */
+/** Shared copy: QR page, hub banner, More sheet — do not block install on stale storage. */
 function getInstallAwarenessHtml() {
     const isEl = (document.documentElement.lang || '').toLowerCase().startsWith('el');
     if (isEl) {
-        return 'ÎˆÏ‡ÎµÏ„Îµ Î®Î´Î· Ï„Î¿ ÎµÎ¹ÎºÎ¿Î½Î¯Î´Î¹Î¿ <strong>ÎšÎ±Î»Î¬ ÎÎµÏÎ¬</strong> ÏƒÏ„Î·Î½ Î±ÏÏ‡Î¹ÎºÎ® Î¿Î¸ÏŒÎ½Î·; Î‘Î½Î¿Î¯Î¾Ï„Îµ Ï„Î·Î½ ÎµÏ†Î±ÏÎ¼Î¿Î³Î® Î±Ï€ÏŒ ÎµÎºÎµÎ¯. Î Î±Ï„Î®ÏƒÏ„Îµ <strong>Î•Î³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ·</strong> Î¼ÏŒÎ½Î¿ Î³Î¹Î± Ï€ÏÏŽÏ„Î· ÎµÎ³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ· Î® Î±Î½ Î±Ï†Î±Î¹ÏÎ­ÏƒÎ±Ï„Îµ Ï„Î¿ ÎµÎ¹ÎºÎ¿Î½Î¯Î´Î¹Î¿.';
+        return 'Έχετε ήδη το εικονίδιο <strong>Καλά Νερά</strong> στην αρχική οθόνη; Ανοίξτε την εφαρμογή από εκεί. Πατήστε <strong>Εγκατάσταση</strong> μόνο για πρώτη εγκατάσταση ή αν αφαιρέσατε το εικονίδιο.';
     }
     return 'Already have the <strong>Kala Nera</strong> icon on your home screen? Open the app from there. Tap <strong>Install</strong> only for a first install, or if you removed the icon.';
 }
@@ -760,72 +760,72 @@ function getInstallGuidance(scenario) {
 
     const copy = isEl ? {
         alreadyInstalled: {
-            title: 'Î— ÎµÏ†Î±ÏÎ¼Î¿Î³Î® ÎµÎ¯Î½Î±Î¹ Î®Î´Î· ÎµÎ³ÎºÎ±Ï„ÎµÏƒÏ„Î·Î¼Î­Î½Î·.',
-            steps: ['Î‘Î½Î¿Î¯Î¾Ï„Îµ Ï„Î·Î½ Î±Ï€ÏŒ Ï„Î¿ ÎµÎ¹ÎºÎ¿Î½Î¯Î´Î¹Î¿ ÏƒÏ„Î·Î½ Î±ÏÏ‡Î¹ÎºÎ® Î¿Î¸ÏŒÎ½Î· ÏƒÎ±Ï‚.']
+            title: 'Η εφαρμογή είναι ήδη εγκατεστημένη.',
+            steps: ['Ανοίξτε την από το εικονίδιο στην αρχική οθόνη σας.']
         },
         runningTwa: {
-            title: 'Î§ÏÎ·ÏƒÎ¹Î¼Î¿Ï€Î¿Î¹ÎµÎ¯Ï„Îµ Î®Î´Î· Ï„Î·Î½ ÎµÏ†Î±ÏÎ¼Î¿Î³Î® Î±Ï€ÏŒ Ï„Î¿ Google Play.',
-            steps: ['Î¤Î·Î½ ÎµÏ€ÏŒÎ¼ÎµÎ½Î· Ï†Î¿ÏÎ¬ Î±Î½Î¿Î¯Î¾Ï„Îµ Ï„Î·Î½ Î±Ï€ÏŒ Ï„Î¿ Î¼ÎµÎ½Î¿Ï ÎµÏ†Î±ÏÎ¼Î¿Î³ÏŽÎ½ Ï„Î¿Ï… ÎºÎ¹Î½Î·Ï„Î¿Ï.']
+            title: 'Χρησιμοποιείτε ήδη την εφαρμογή από το Google Play.',
+            steps: ['Την επόμενη φορά ανοίξτε την από το μενού εφαρμογών του κινητού.']
         },
         runningPwa: {
-            title: 'Î§ÏÎ·ÏƒÎ¹Î¼Î¿Ï€Î¿Î¹ÎµÎ¯Ï„Îµ Î®Î´Î· Ï„Î·Î½ ÎµÏ†Î±ÏÎ¼Î¿Î³Î® Î±Ï€ÏŒ Ï„Î·Î½ Î±ÏÏ‡Î¹ÎºÎ® Î¿Î¸ÏŒÎ½Î·.',
-            steps: ['Î¤Î·Î½ ÎµÏ€ÏŒÎ¼ÎµÎ½Î· Ï†Î¿ÏÎ¬ Î±Î½Î¿Î¯Î¾Ï„Îµ Ï„Î·Î½ Î±Ï€ÏŒ Ï„Î¿ ÎµÎ¹ÎºÎ¿Î½Î¯Î´Î¹Î¿ Kala Nera.']
+            title: 'Χρησιμοποιείτε ήδη την εφαρμογή από την αρχική οθόνη.',
+            steps: ['Την επόμενη φορά ανοίξτε την από το εικονίδιο Kala Nera.']
         },
         browserPlayInstalled: {
-            title: 'Î— ÎµÏ†Î±ÏÎ¼Î¿Î³Î® ÎµÎ¯Î½Î±Î¹ Î®Î´Î· ÎµÎ³ÎºÎ±Ï„ÎµÏƒÏ„Î·Î¼Î­Î½Î· Î¼Î­ÏƒÏ‰ Google Play.',
+            title: 'Η εφαρμογή είναι ήδη εγκατεστημένη μέσω Google Play.',
             steps: [
-                'Î‘Î½Î¿Î¯Î¾Ï„Îµ Ï„Î·Î½ Î±Ï€ÏŒ Ï„Î¿ Î¼ÎµÎ½Î¿Ï ÎµÏ†Î±ÏÎ¼Î¿Î³ÏŽÎ½ â€” ÏŒÏ‡Î¹ Î¾Î±Î½Î¬ Î¼Î­ÏƒÏ‰ Chrome.',
-                'Î”ÎµÎ½ Ï‡ÏÎµÎ¹Î¬Î¶ÎµÏ„Î±Î¹ Î´ÎµÏÏ„ÎµÏÎ· ÎµÎ³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ·.'
+                'Ανοίξτε την από το μενού εφαρμογών — όχι ξανά μέσω Chrome.',
+                'Δεν χρειάζεται δεύτερη εγκατάσταση.'
             ]
         },
         browserPwaInstalled: {
-            title: 'Î— ÎµÏ†Î±ÏÎ¼Î¿Î³Î® ÎµÎ¯Î½Î±Î¹ Î®Î´Î· ÏƒÏ„Î·Î½ Î±ÏÏ‡Î¹ÎºÎ® Î¿Î¸ÏŒÎ½Î·.',
-            steps: ['Î‘Î½Î¿Î¯Î¾Ï„Îµ Ï„Î¿ ÎµÎ¹ÎºÎ¿Î½Î¯Î´Î¹Î¿ <strong>Kala Nera</strong> ÏƒÏ„Î·Î½ Î±ÏÏ‡Î¹ÎºÎ® Î¿Î¸ÏŒÎ½Î· ÏƒÎ±Ï‚.']
+            title: 'Η εφαρμογή είναι ήδη στην αρχική οθόνη.',
+            steps: ['Ανοίξτε το εικονίδιο <strong>Kala Nera</strong> στην αρχική οθόνη σας.']
         },
         browserBothInstalled: {
-            title: 'ÎˆÏ‡ÎµÏ„Îµ Î®Î´Î· Ï„Î·Î½ ÎµÏ†Î±ÏÎ¼Î¿Î³Î® (Play Store Î® Î±ÏÏ‡Î¹ÎºÎ® Î¿Î¸ÏŒÎ½Î·).',
-            steps: ['Î‘ÏÎºÎµÎ¯ Î­Î½Î± ÎµÎ¹ÎºÎ¿Î½Î¯Î´Î¹Î¿ â€” Î±Î½Î¿Î¯Î¾Ï„Îµ ÏŒ,Ï„Î¹ Ï€ÏÎ¿Ï„Î¹Î¼Î¬Ï„Îµ.']
+            title: 'Έχετε ήδη την εφαρμογή (Play Store ή αρχική οθόνη).',
+            steps: ['Αρκεί ένα εικονίδιο — ανοίξτε ό,τι προτιμάτε.']
         },
         desktop: {
-            title: 'Î•Î³ÎºÎ±Ï„Î±ÏƒÏ„Î®ÏƒÏ„Îµ Ï„Î·Î½ ÎµÏ†Î±ÏÎ¼Î¿Î³Î® <strong>ÎšÎ±Î»Î¬ ÎÎµÏÎ¬</strong> Guide ÏƒÏ„Î¿ ÎºÎ¹Î½Î·Ï„ÏŒ ÏƒÎ±Ï‚.',
+            title: 'Εγκαταστήστε την εφαρμογή <strong>Καλά Νερά</strong> Guide στο κινητό σας.',
             steps: [
-                'Î‘Î½Î¿Î¯Î¾Ï„Îµ Chrome (Android) Î® Safari (iPhone).',
-                `ÎœÎµÏ„Î±Î²ÎµÎ¯Ï„Îµ ÏƒÏ„Î¿ <strong>${liveUrl.replace('https://', '')}</strong> Î® ÏƒÎ±ÏÏŽÏƒÏ„Îµ Ï„Î¿Î½ QR ÎºÏ‰Î´Î¹ÎºÏŒ.`,
-                'Î Î±Ï„Î®ÏƒÏ„Îµ <strong>Î•Î³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ·</strong> â€” Ï„Î¿ ÎµÎ¹ÎºÎ¿Î½Î¯Î´Î¹Î¿ ÏƒÏ„Î·Î½ Î±ÏÏ‡Î¹ÎºÎ® Î¿Î¸ÏŒÎ½Î·.'
+                'Ανοίξτε Chrome (Android) ή Safari (iPhone).',
+                `Μεταβείτε στο <strong>${liveUrl.replace('https://', '')}</strong> ή σαρώστε τον QR κωδικό.`,
+                'Πατήστε <strong>Εγκατάσταση</strong> — το εικονίδιο στην αρχική οθόνη.'
             ],
-            landingHint: 'Î— ÎµÏ†Î±ÏÎ¼Î¿Î³Î® Î´ÎµÎ½ ÎµÎ³ÎºÎ±Î¸Î¯ÏƒÏ„Î±Ï„Î±Î¹ ÏƒÏ„Î¿Î½ Ï…Ï€Î¿Î»Î¿Î³Î¹ÏƒÏ„Î® â€” Î¼ÏŒÎ½Î¿ ÏƒÏ„Î¿ Ï„Î·Î»Î­Ï†Ï‰Î½Î¿.'
+            landingHint: 'Η εφαρμογή δεν εγκαθίσταται στον υπολογιστή — μόνο στο τηλέφωνο.'
         },
         localDev: {
-            title: 'Î”Î¿ÎºÎ¹Î¼Î® Î±Ï€ÏŒ Ï…Ï€Î¿Î»Î¿Î³Î¹ÏƒÏ„Î® â€” Î· ÎµÎ³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ· Î»ÎµÎ¹Ï„Î¿Ï…ÏÎ³ÎµÎ¯ Î¼ÏŒÎ½Î¿ ÏƒÏ„Î¿ live site.',
+            title: 'Δοκιμή από υπολογιστή — η εγκατάσταση λειτουργεί μόνο στο live site.',
             steps: [
-                `Î£Ï„Î¿ ÎºÎ¹Î½Î·Ï„ÏŒ Î±Î½Î¿Î¯Î¾Ï„Îµ <strong>${liveUrl.replace('https://', '')}</strong> (ÏŒÏ‡Î¹ Î´Î¹ÎµÏÎ¸Ï…Î½ÏƒÎ· 192.168â€¦).`,
-                'Î Î±Ï„Î®ÏƒÏ„Îµ <strong>Î•Î³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ· Ï„ÏŽÏÎ±</strong>.',
-                'Î•Î½Î±Î»Î»Î±ÎºÏ„Î¹ÎºÎ¬: Î¼ÎµÎ½Î¿Ï Chrome (â‹®) â†’ <strong>Î•Î³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ· ÎµÏ†Î±ÏÎ¼Î¿Î³Î®Ï‚</strong>.'
+                `Στο κινητό ανοίξτε <strong>${liveUrl.replace('https://', '')}</strong> (όχι διεύθυνση 192.168…).`,
+                'Πατήστε <strong>Εγκατάσταση τώρα</strong>.',
+                'Εναλλακτικά: μενού Chrome (⋮) → <strong>Εγκατάσταση εφαρμογής</strong>.'
             ],
-            landingHint: `Î“Î¹Î± Ï€ÏÎ±Î³Î¼Î±Ï„Î¹ÎºÎ® ÎµÎ³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ· Î±Î½Î¿Î¯Î¾Ï„Îµ <strong>${liveUrl.replace('https://', '')}</strong> ÏƒÏ„Î¿ Ï„Î·Î»Î­Ï†Ï‰Î½ÏŒ ÏƒÎ±Ï‚.`
+            landingHint: `Για πραγματική εγκατάσταση ανοίξτε <strong>${liveUrl.replace('https://', '')}</strong> στο τηλέφωνό σας.`
         },
         androidOtherBrowser: {
-            title: 'Î§ÏÎ·ÏƒÎ¹Î¼Î¿Ï€Î¿Î¹Î®ÏƒÏ„Îµ Ï„Î¿ <strong>Chrome</strong> ÏƒÏ„Î¿ Android.',
+            title: 'Χρησιμοποιήστε το <strong>Chrome</strong> στο Android.',
             steps: [
-                'Î‘Î½Ï„Î¹Î³ÏÎ¬ÏˆÏ„Îµ Ï„Î· Î´Î¹ÎµÏÎ¸Ï…Î½ÏƒÎ· ÎºÎ±Î¹ ÎµÏ€Î¹ÎºÎ¿Î»Î»Î®ÏƒÏ„Îµ Ï„Î·Î½ ÏƒÏ„Î¿ Chrome.',
-                'Î Î±Ï„Î®ÏƒÏ„Îµ Î¾Î±Î½Î¬ <strong>Î•Î³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ· Ï„ÏŽÏÎ±</strong>.',
-                'Î‰: <strong>Î ÎµÏÎ¹ÏƒÏƒÏŒÏ„ÎµÏÎ±</strong> (Â·Â·Â·) ÎºÎ¬Ï„Ï‰ â†’ <strong>Î•Î³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ·</strong>.'
+                'Αντιγράψτε τη διεύθυνση και επικολλήστε την στο Chrome.',
+                'Πατήστε ξανά <strong>Εγκατάσταση τώρα</strong>.',
+                'Ή: <strong>Περισσότερα</strong> (···) κάτω → <strong>Εγκατάσταση</strong>.'
             ]
         },
         androidManual: {
-            title: 'Î Î±Ï„Î®ÏƒÏ„Îµ <strong>Î•Î³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ· Ï„ÏŽÏÎ±</strong> Î¾Î±Î½Î¬ ÏƒÎµ Î»Î¯Î³Î± Î´ÎµÏ…Ï„ÎµÏÏŒÎ»ÎµÏ€Ï„Î±.',
+            title: 'Πατήστε <strong>Εγκατάσταση τώρα</strong> ξανά σε λίγα δευτερόλεπτα.',
             steps: [
-                'Î‘Î½ Î´ÎµÎ½ ÎµÎ¼Ï†Î±Î½Î¹ÏƒÏ„ÎµÎ¯ Ï€Î±ÏÎ¬Î¸Ï…ÏÎ¿: <strong>Î ÎµÏÎ¹ÏƒÏƒÏŒÏ„ÎµÏÎ±</strong> (Â·Â·Â·) ÏƒÏ„Î¿ ÎºÎ¬Ï„Ï‰ Î¼ÎµÎ½Î¿Ï.',
-                'Î•Ï€Î¹Î»Î­Î¾Ï„Îµ <strong>Î•Î³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ·</strong>.',
-                'Î¤Î¿ ÎµÎ¹ÎºÎ¿Î½Î¯Î´Î¹Î¿ ÎµÎ¼Ï†Î±Î½Î¯Î¶ÎµÏ„Î±Î¹ ÏƒÏ„Î·Î½ Î±ÏÏ‡Î¹ÎºÎ® Î¿Î¸ÏŒÎ½Î·.'
+                'Αν δεν εμφανιστεί παράθυρο: <strong>Περισσότερα</strong> (···) στο κάτω μενού.',
+                'Επιλέξτε <strong>Εγκατάσταση</strong>.',
+                'Το εικονίδιο εμφανίζεται στην αρχική οθόνη.'
             ],
-            landingHint: 'Î”ÎµÎ½ ÎµÎ¼Ï†Î±Î½Î¯ÏƒÏ„Î·ÎºÎµ Ï€Î±ÏÎ¬Î¸Ï…ÏÎ¿; <strong>Î ÎµÏÎ¹ÏƒÏƒÏŒÏ„ÎµÏÎ±</strong> (Â·Â·Â·) ÎºÎ¬Ï„Ï‰ â†’ <strong>Î•Î³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ·</strong>.'
+            landingHint: 'Δεν εμφανίστηκε παράθυρο; <strong>Περισσότερα</strong> (···) κάτω → <strong>Εγκατάσταση</strong>.'
         },
         promptFailed: {
-            title: 'Î— Î±Ï…Ï„ÏŒÎ¼Î±Ï„Î· ÎµÎ³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ· Î´ÎµÎ½ Î¾ÎµÎºÎ¯Î½Î·ÏƒÎµ.',
+            title: 'Η αυτόματη εγκατάσταση δεν ξεκίνησε.',
             steps: [
-                '<strong>Î ÎµÏÎ¹ÏƒÏƒÏŒÏ„ÎµÏÎ±</strong> (Â·Â·Â·) ÎºÎ¬Ï„Ï‰ â†’ <strong>Î•Î³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ·</strong>.',
-                `Î‰ Î±Î½Î¿Î¯Î¾Ï„Îµ <strong>${liveUrl.replace('https://', '')}</strong> ÎºÎ±Î¹ Î´Î¿ÎºÎ¹Î¼Î¬ÏƒÏ„Îµ Î¾Î±Î½Î¬.`
+                '<strong>Περισσότερα</strong> (···) κάτω → <strong>Εγκατάσταση</strong>.',
+                `Ή ανοίξτε <strong>${liveUrl.replace('https://', '')}</strong> και δοκιμάστε ξανά.`
             ]
         }
     } : {
@@ -835,17 +835,17 @@ function getInstallGuidance(scenario) {
         },
         runningTwa: {
             title: 'You are already using the app from Google Play.',
-            steps: ['Next time, open it from your phoneâ€™s app drawer.']
+            steps: ['Next time, open it from your phone app drawer.']
         },
         runningPwa: {
             title: 'You are already using the app from your home screen.',
-            steps: ['Next time, open the Kala Nera icon on your home screen.']
+            steps: ['Next time, open it from the Kala Nera icon.']
         },
         browserPlayInstalled: {
             title: 'The app is already installed via Google Play.',
             steps: [
-                'Open it from your app drawer â€” not via Chrome again.',
-                'You do not need a second install.'
+                'Open it from your app drawer — not again through Chrome.',
+                'No second install needed.'
             ]
         },
         browserPwaInstalled: {
@@ -854,23 +854,23 @@ function getInstallGuidance(scenario) {
         },
         browserBothInstalled: {
             title: 'You already have the app (Play Store or home screen).',
-            steps: ['One icon is enough â€” open whichever you prefer.']
+            steps: ['One icon is enough — open whichever you prefer.']
         },
         desktop: {
             title: 'Install the <strong>Kala Nera Guide</strong> mobile app on your phone.',
             steps: [
                 'Open Chrome (Android) or Safari (iPhone).',
                 `Go to <strong>${liveUrl.replace('https://', '')}</strong> or scan the QR code.`,
-                'Tap <strong>Install</strong> â€” the app icon appears on your home screen.'
+                'Tap <strong>Install</strong> — the app icon appears on your home screen.'
             ],
             landingHint: 'The app installs on your phone only, not on this computer.'
         },
         localDev: {
-            title: 'You are testing locally â€” install only works on the live site.',
+            title: 'You are testing locally — install only works on the live site.',
             steps: [
-                `On your phone open <strong>${liveUrl.replace('https://', '')}</strong> (not a 192.168â€¦ address).`,
+                `On your phone open <strong>${liveUrl.replace('https://', '')}</strong> (not a 192.168… address).`,
                 'Tap <strong>Install now</strong>.',
-                'Or: Chrome menu (â‹®) â†’ <strong>Install app</strong>.'
+                'Or: Chrome menu (⋮) → <strong>Install app</strong>.'
             ],
             landingHint: `For a real install, open <strong>${liveUrl.replace('https://', '')}</strong> on your phone.`
         },
@@ -879,22 +879,22 @@ function getInstallGuidance(scenario) {
             steps: [
                 'Copy this page address and open it in Chrome.',
                 'Tap <strong>Install now</strong> again.',
-                'Or: <strong>More</strong> (Â·Â·Â·) at the bottom â†’ <strong>Install</strong>.'
+                'Or: <strong>More</strong> (···) at the bottom → <strong>Install</strong>.'
             ]
         },
         androidManual: {
             title: 'Tap <strong>Install now</strong> again in a few seconds.',
             steps: [
-                'If no popup appears: tap <strong>More</strong> (Â·Â·Â·) in the bottom menu.',
+                'If no popup appears: tap <strong>More</strong> (···) in the bottom menu.',
                 'Choose <strong>Install</strong>.',
                 'The icon appears on your home screen.'
             ],
-            landingHint: 'No popup? <strong>More</strong> (Â·Â·Â·) at the bottom â†’ <strong>Install</strong>.'
+            landingHint: 'No popup? <strong>More</strong> (···) at the bottom → <strong>Install</strong>.'
         },
         promptFailed: {
             title: 'Automatic install did not start.',
             steps: [
-                '<strong>More</strong> (Â·Â·Â·) at the bottom â†’ <strong>Install</strong>.',
+                '<strong>More</strong> (···) at the bottom → <strong>Install</strong>.',
                 `Or open <strong>${liveUrl.replace('https://', '')}</strong> and try again.`
             ]
         }
@@ -986,7 +986,7 @@ function showInstallGuidance(scenario) {
     }
 
     if (!banner && !landingHint) {
-        const plain = [content.title.replace(/<[^>]+>/g, ''), ...(content.steps || [])].join('\nâ€¢ ');
+        const plain = [content.title.replace(/<[^>]+>/g, ''), ...(content.steps || [])].join('\n• ');
         window.alert(plain);
     }
 
@@ -1064,7 +1064,7 @@ function locationBtnAppearsOn(loc) {
 
 function hubLocationLabel(loc) {
     if (currentLang === 'el') {
-        const short = { 'Kala Nera': 'ÎšÎ±Î»Î¬ ÎÎµÏÎ¬', 'Kato Gatzea': 'Î“Î±Ï„Î¶Î­Î±', Koropi: 'ÎšÎ¿ÏÏŽÏ€Î·' };
+        const short = { 'Kala Nera': 'Καλά Νερά', 'Kato Gatzea': 'Γατζέα', Koropi: 'Κορώπη' };
         return short[loc] || t(loc);
     }
     return t(loc);
@@ -1073,10 +1073,10 @@ function hubLocationLabel(loc) {
 function hubFilterResetLabels() {
     const isEl = currentLang === 'el';
     return {
-        areas: isEl ? 'ÎŒÎ»ÎµÏ‚' : 'All areas',
-        areasTitle: isEl ? 'ÎŒÎ»ÎµÏ‚ Î¿Î¹ Ï€ÎµÏÎ¹Î¿Ï‡Î­Ï‚' : 'Show businesses in all areas',
-        categories: isEl ? 'ÎšÎ±Î¸Î±ÏÎ¹ÏƒÎ¼ÏŒÏ‚' : 'Clear',
-        categoriesTitle: isEl ? 'Î‘Ï†Î±Î¯ÏÎµÏƒÎ· ÎµÏ€Î¹Î»Î¿Î³Î®Ï‚ ÎºÎ±Ï„Î·Î³Î¿ÏÎ¯Î±Ï‚' : 'Clear category filter',
+        areas: isEl ? 'Όλες' : 'All areas',
+        areasTitle: isEl ? 'Όλες οι περιοχές' : 'Show businesses in all areas',
+        categories: isEl ? 'Καθαρισμός' : 'Clear',
+        categoriesTitle: isEl ? 'Αφαίρεση επιλογής κατηγορίας' : 'Clear category filter',
     };
 }
 
@@ -1122,23 +1122,23 @@ function renderHubDirectoryLoadError() {
     let hint;
     if (isLocalDevHost()) {
         hint = isEl
-            ? 'Î”Î¿ÎºÎ¹Î¼Î±ÏƒÏ„Î¹ÎºÏŒÏ‚ server: Î±Î½ Î´ÎµÎ½ Ï†Î¿ÏÏ„ÏŽÎ½ÎµÎ¹, Î²ÎµÎ²Î±Î¹Ï‰Î¸ÎµÎ¯Ï„Îµ ÏŒÏ„Î¹ Ï…Ï€Î¬ÏÏ‡Î¿Ï…Î½ dev/local-businesses.json ÎºÎ±Î¹ dev/bus-schedule-next-volos.json ÏƒÏ„Î¿ project.'
+            ? 'Δοκιμαστικός server: αν δεν φορτώνει, βεβαιωθείτε ότι υπάρχουν dev/local-businesses.json και dev/bus-schedule-next-volos.json στο project.'
             : 'Test server: if loading fails, ensure dev/local-businesses.json and dev/bus-schedule-next-volos.json are in the project folder.';
     } else if (isKalaneraProductionOrigin()) {
         hint = isEl
-            ? 'Î•Î»Î­Î³Î¾Ï„Îµ Ï„Î· ÏƒÏÎ½Î´ÎµÏƒÎ® ÏƒÎ±Ï‚ ÎºÎ±Î¹ Î´Î¿ÎºÎ¹Î¼Î¬ÏƒÏ„Îµ Î¾Î±Î½Î¬.'
+            ? 'Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.'
             : 'Check your connection and try again.';
     } else {
         hint = isEl
-            ? 'Î”Î¿ÎºÎ¹Î¼Î¬ÏƒÏ„Îµ Î¾Î±Î½Î¬ Î® Î±Î½Î¿Î¯Î¾Ï„Îµ https://www.kalanera.gr.'
+            ? 'Δοκιμάστε ξανά ή ανοίξτε https://www.kalanera.gr.'
             : 'Try again, or open https://www.kalanera.gr.';
     }
 
     container.innerHTML = `
         <p class="status-msg hub-load-error">
-            ${isEl ? 'Î”ÎµÎ½ Î®Ï„Î±Î½ Î´Ï…Î½Î±Ï„Î® Î· Ï†ÏŒÏÏ„Ï‰ÏƒÎ· Ï„Ï‰Î½ ÎµÏ€Î¹Ï‡ÎµÎ¹ÏÎ®ÏƒÎµÏ‰Î½.' : 'Could not load businesses.'}
+            ${isEl ? 'Δεν ήταν δυνατή η φόρτωση των επιχειρήσεων.' : 'Could not load businesses.'}
             ${hint}
-            <button type="button" class="hub-load-retry">${isEl ? 'Î”Î¿ÎºÎ¹Î¼Î® Î¾Î±Î½Î¬' : 'Try again'}</button>
+            <button type="button" class="hub-load-retry">${isEl ? 'Δοκιμή ξανά' : 'Try again'}</button>
         </p>`;
 
     const btn = container.querySelector('.hub-load-retry');
@@ -1156,14 +1156,14 @@ function syncHubResultsLine(count) {
     const isEl = currentLang === 'el';
     const unlocked = hubListUnlocked();
     const n = unlocked ? (Number(count) || 0) : 0;
-    const bizWord = n === 1 ? (isEl ? 'ÎµÏ€Î¹Ï‡ÎµÎ¯ÏÎ·ÏƒÎ·' : 'business') : (isEl ? 'ÎµÏ€Î¹Ï‡ÎµÎ¹ÏÎ®ÏƒÎµÎ¹Ï‚' : 'businesses');
+    const bizWord = n === 1 ? (isEl ? 'επιχείρηση' : 'business') : (isEl ? 'επιχειρήσεις' : 'businesses');
     const parts = [`<strong>${n}</strong> ${bizWord}`];
 
     if (!unlocked) {
         parts.push(
             isEl
-                ? '<span class="hub-results-hint">â€” ÎµÏ€Î¹Î»Î­Î¾Ï„Îµ ÎºÎ±Ï„Î·Î³Î¿ÏÎ¯Î± Ï€Î±ÏÎ±Ï€Î¬Î½Ï‰</span>'
-                : '<span class="hub-results-hint">â€” select a category above</span>'
+                ? '<span class="hub-results-hint">— επιλέξτε κατηγορία παραπάνω</span>'
+                : '<span class="hub-results-hint">— select a category above</span>'
         );
     } else {
         const searchInput = document.getElementById('search-input');
@@ -1171,21 +1171,21 @@ function syncHubResultsLine(count) {
         if (searchTermRaw) {
             parts.push(
                 isEl
-                    ? `Î³Î¹Î± Â«<em>${escapeHtml(searchTermRaw)}</em>Â»`
-                    : `for â€œ<em>${escapeHtml(searchTermRaw)}</em>â€`
+                    ? `για «<em>${escapeHtml(searchTermRaw)}</em>»`
+                    : `for “<em>${escapeHtml(searchTermRaw)}</em>”`
             );
         } else if (activeCategory) {
-            parts.push(isEl ? `ÏƒÏ„Î·Î½ <em>${escapeHtml(t(activeCategory))}</em>` : `in <em>${escapeHtml(t(activeCategory))}</em>`);
+            parts.push(isEl ? `στην <em>${escapeHtml(t(activeCategory))}</em>` : `in <em>${escapeHtml(t(activeCategory))}</em>`);
         }
         if (!locationFilterShowsAllBusinesses()) {
             const locs = SITE_LOCATION_FILTERS.filter((loc) => activeLocations.has(loc)).map((loc) => t(loc));
             if (locs.length) {
-                parts.push(isEl ? `ÏƒÏ„Î·Î½ ${escapeHtml(locs.join(', '))}` : `in ${escapeHtml(locs.join(', '))}`);
+                parts.push(isEl ? `στην ${escapeHtml(locs.join(', '))}` : `in ${escapeHtml(locs.join(', '))}`);
             }
         }
     }
 
-    countEl.innerHTML = parts.join(' Â· ');
+    countEl.innerHTML = parts.join(' · ');
     line.hidden = false;
 }
 
@@ -1372,7 +1372,7 @@ function renderBusinesses(data) {
                 renderHubDirectoryLoadError();
                 return;
             }
-            const noResultsMsg = (currentLang === 'el') ? 'Î”ÎµÎ½ Î²ÏÎ­Î¸Î·ÎºÎ±Î½ ÎµÏ€Î¹Ï‡ÎµÎ¹ÏÎ®ÏƒÎµÎ¹Ï‚.' : 'No businesses found matching your criteria.';
+            const noResultsMsg = (currentLang === 'el') ? 'Δεν βρέθηκαν επιχειρήσεις.' : 'No businesses found matching your criteria.';
             container.innerHTML = `<p class="status-msg">${noResultsMsg}</p>`;
             return;
         }
@@ -1521,8 +1521,8 @@ grid.innerHTML += `
             hubCategoryScrollPending = false;
             requestAnimationFrame(() => scrollToBusinessList());
         }
-        const syncLabel = (currentLang === 'el') ? 'Î¤ÎµÎ»ÎµÏ…Ï„Î±Î¯Î¿Ï‚ ÏƒÏ…Î³Ï‡ÏÎ¿Î½Î¹ÏƒÎ¼ÏŒÏ‚' : 'Last sync';
-        const lastSync = localStorage.getItem('kalanera_last_sync') || (currentLang === 'el' ? 'Î†Î³Î½Ï‰ÏƒÏ„Î¿' : 'Unknown');
+        const syncLabel = (currentLang === 'el') ? 'Τελευταίος συγχρονισμός' : 'Last sync';
+        const lastSync = localStorage.getItem('kalanera_last_sync') || (currentLang === 'el' ? 'Άγνωστο' : 'Unknown');
         const syncDiv = document.createElement('div');
         syncDiv.className = 'sync-info';
         syncDiv.innerHTML = `<small style="display:block; text-align:center; margin-top:20px; color:var(--muted); font-size:11px;">${syncLabel}: ${lastSync}</small>`;
@@ -1584,7 +1584,7 @@ grid.innerHTML += `
         });
         expandActiveCategorySection();
     } else {
-        // Mode B: global Aâ€“Z list (best for alpha index)
+        // Mode B: global A–Z list (best for alpha index)
         const grid = document.createElement('div');
         grid.className = 'business-grid';
 
@@ -1603,12 +1603,12 @@ grid.innerHTML += `
         requestAnimationFrame(() => scrollToBusinessList());
     }
 
-    // Fast-scroll Aâ€“Z index (mobile): build after list is in DOM
+    // Fast-scroll A–Z index (mobile): build after list is in DOM
     buildAlphaIndex();
 
     // NIEUW: Vertaal "Last sync"
-    const syncLabel = (currentLang === 'el') ? 'Î¤ÎµÎ»ÎµÏ…Ï„Î±Î¯Î¿Ï‚ ÏƒÏ…Î³Ï‡ÏÎ¿Î½Î¹ÏƒÎ¼ÏŒÏ‚' : 'Last sync';
-    const lastSync = localStorage.getItem('kalanera_last_sync') || (currentLang === 'el' ? 'Î†Î³Î½Ï‰ÏƒÏ„Î¿' : 'Unknown');
+    const syncLabel = (currentLang === 'el') ? 'Τελευταίος συγχρονισμός' : 'Last sync';
+    const lastSync = localStorage.getItem('kalanera_last_sync') || (currentLang === 'el' ? 'Άγνωστο' : 'Unknown');
     const syncDiv = document.createElement('div');
     syncDiv.className = 'sync-info';
     syncDiv.innerHTML = `<small style="display:block; text-align:center; margin-top:20px; color:var(--muted); font-size:11px;">${syncLabel}: ${lastSync}</small>`;
@@ -1638,7 +1638,7 @@ function buildAlphaIndex() {
     const existingToast = document.querySelector('.alpha-toast');
     if (existingToast) existingToast.remove();
 
-    // Only on the directory page (not wishlist/forms) and only in Aâ€“Z mode
+    // Only on the directory page (not wishlist/forms) and only in A–Z mode
     if (listMode !== 'az') return;
     if (!document.getElementById('business-list')) return;
 
@@ -1895,7 +1895,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3a. Bottom nav: vaste volgorde Home â†’ Bus â†’ Favorites â†’ Guide â†’ More
+    // 3a. Bottom nav: vaste volgorde Home → Bus → Favorites → Guide → More
     ensureBottomNavOrder();
 
     // 3b. Mobile "More" tab (bottom nav)
@@ -1951,7 +1951,7 @@ function ensureBottomNavOrder() {
         ? (isEl ? '../info-el.html' : '../info.html')
         : (isEl ? 'info-el.html' : 'info.html');
 
-    const busLabel = isEl ? 'Î›ÎµÏ‰Ï†Î¿ÏÎµÎ¯Î¿' : (isNl ? 'Busschema' : 'Bus');
+    const busLabel = isEl ? 'Λεωφορείο' : (isNl ? 'Busschema' : 'Bus');
 
     const getByExactHref = (href) => Array.from(inner.querySelectorAll('a[href]'))
         .find(a => (a.getAttribute('href') || '').toLowerCase() === href.toLowerCase());
@@ -1979,7 +1979,7 @@ function ensureBottomNavOrder() {
         if (span) span.textContent = busLabel;
     }
 
-    // Force exact order (Guide must be included â€” old code targeted t-form and left Guide first in DOM)
+    // Force exact order (Guide must be included — old code targeted t-form and left Guide first in DOM)
     const ordered = [homeA, busA, favA, guideA, moreA].filter(Boolean);
     ordered.forEach(a => inner.appendChild(a));
 
@@ -2011,7 +2011,7 @@ function busText(key, { en, nl, el }) {
     return (en || '');
 }
 
-/** OfficiÃ«le KTEL-routelijst â€” zelfde pad als bus.html / bus-el.html (fase 0.3). */
+/** Officiële KTEL-routelijst — zelfde pad als bus.html / bus-el.html (fase 0.3). */
 const BUS_KTEL_TIMETABLE_URL_EN = 'https://ktelvolou.gr/en/routes/list/';
 const BUS_KTEL_TIMETABLE_URL_EL = 'https://ktelvolou.gr/el/routes/list/';
 
@@ -2020,8 +2020,8 @@ function busKtelTimetableUrl() {
 }
 
 /**
- * Fase 0.2 â€” trustteksten in locales/bus-strings.json (+ embedded fallback).
- * Zichtbaar: dialoog = trustPrimary; â“˜ title-tooltip = trustUltraCompact.
+ * Fase 0.2 — trustteksten in locales/bus-strings.json (+ embedded fallback).
+ * Zichtbaar: dialoog = trustPrimary; ⓘ title-tooltip = trustUltraCompact.
  */
 
 let busUiStringsResolved = null;
@@ -2056,7 +2056,7 @@ function busUiString(key, repl = {}) {
 }
 
 /**
- * Fase 1 trust: dialoog + â“˜-knop (volledige trustPrimary + KTEL); tooltip via title (trustUltraCompact).
+ * Fase 1 trust: dialoog + ⓘ-knop (volledige trustPrimary + KTEL); tooltip via title (trustUltraCompact).
  */
 function refreshBusTrustUi() {
     const dialogCopy = document.getElementById('bus-trust-dialog-copy');
@@ -2072,7 +2072,7 @@ function refreshBusTrustUi() {
     const openHint = busText('bus_trust_open_sheet_hint', {
         en: 'Opens details about these times.',
         nl: 'Opent uitleg over deze tijden.',
-        el: busT('bus_trust_open_sheet_hint', 'Î‘Î½Î¿Î¯Î³ÎµÎ¹ Î»ÎµÏ€Ï„Î¿Î¼Î­ÏÎµÎ¹ÎµÏ‚ Î³Î¹Î± Ï„Î¹Ï‚ ÏŽÏÎµÏ‚.'),
+        el: busT('bus_trust_open_sheet_hint', 'Ανοίγει λεπτομέρειες για τις ώρες.'),
     });
 
     const primary = busUiString(isToVolos ? 'trustPrimaryToVolos' : 'trustPrimaryFromVolos') || busUiString('trustPrimary');
@@ -2102,14 +2102,14 @@ function refreshBusTrustUi() {
         dialogTitle.textContent = busText('bus_trust_sheet_title', {
             en: 'About these times',
             nl: 'Over deze tijden',
-            el: busT('bus_trust_sheet_title', 'Î£Ï‡ÎµÏ„Î¹ÎºÎ¬ Î¼Îµ Ï„Î¹Ï‚ ÎµÎºÏ„Î¹Î¼Î®ÏƒÎµÎ¹Ï‚ Ï‰ÏÏŽÎ½'),
+            el: busT('bus_trust_sheet_title', 'Σχετικά με τις εκτιμήσεις ωρών'),
         });
     }
     if (btnTxt) {
         btnTxt.textContent = busText('bus_trust_about_times', {
             en: 'About times',
             nl: 'Over de tijden',
-            el: busT('bus_trust_about_times', 'Î“Î¹Î± Ï„Î¹Ï‚ ÏŽÏÎµÏ‚'),
+            el: busT('bus_trust_about_times', 'Για τις ώρες'),
         });
     }
     if (btn) {
@@ -2124,7 +2124,7 @@ function refreshBusTrustUi() {
         el.setAttribute('aria-label', busText('bus_trust_dialog_close', {
             en: 'Close',
             nl: 'Sluiten',
-            el: busT('bus_trust_dialog_close', 'ÎšÎ»ÎµÎ¯ÏƒÎ¹Î¼Î¿'),
+            el: busT('bus_trust_dialog_close', 'Κλείσιμο'),
         }));
     });
 }
@@ -2161,14 +2161,14 @@ function busStopLabel(stopKey) {
         return busText('stop_highway_bakery', {
             en: 'Highway stop (bakery)',
             nl: 'Hoofdweg (bij de bakker)',
-            el: busT('bus_stop_highway_bakery', 'ÎšÎµÎ½Ï„ÏÎ¹ÎºÏŒÏ‚ Î´ÏÏŒÎ¼Î¿Ï‚'),
+            el: busT('bus_stop_highway_bakery', 'Κεντρικός δρόμος'),
         });
     }
     if (key === 'village_butcher') {
         return busText('stop_village_butcher', {
             en: 'Village stop (butcher)',
             nl: 'Dorp/kustweg (bij de slager)',
-            el: busT('bus_stop_village_butcher', 'ÎšÎ­Î½Ï„ÏÎ¿/Ï€Î±ÏÎ±Î»Î¯Î±'),
+            el: busT('bus_stop_village_butcher', 'Κέντρο/παραλία'),
         });
     }
     // Unknown: show raw key
@@ -2182,26 +2182,26 @@ function busDaysLabel(daysValue) {
     const key = raw.toLowerCase();
     // Huidige sheet: weekdays | daily | weekend
     if (key === 'daily') {
-        return busText('runs_daily', { en: 'Daily', nl: 'Dagelijks', el: 'ÎšÎ±Î¸Î·Î¼ÎµÏÎ¹Î½Î¬' });
+        return busText('runs_daily', { en: 'Daily', nl: 'Dagelijks', el: 'Καθημερινά' });
     }
     if (key === 'weekdays') {
-        return busText('runs_weekdays', { en: 'Weekdays', nl: 'Doordeweeks', el: 'Î”ÎµÏ…â€“Î Î±Ï' });
+        return busText('runs_weekdays', { en: 'Weekdays', nl: 'Doordeweeks', el: 'Δευ–Παρ' });
     }
     if (key === 'weekend') {
-        return busText('runs_weekend', { en: 'Weekend', nl: 'Weekend', el: 'Î£Î±Î²â€“ÎšÏ…Ï' });
+        return busText('runs_weekend', { en: 'Weekend', nl: 'Weekend', el: 'Σαβ–Κυρ' });
     }
     // Legacy patronen
     if (raw === '1-7') {
-        return busText('runs_daily', { en: 'Daily', nl: 'Dagelijks', el: 'ÎšÎ±Î¸Î·Î¼ÎµÏÎ¹Î½Î¬' });
+        return busText('runs_daily', { en: 'Daily', nl: 'Dagelijks', el: 'Καθημερινά' });
     }
     if (raw === '1-5') {
-        return busText('runs_mon_fri', { en: 'Monâ€“Fri', nl: 'Maâ€“Vr', el: 'Î”ÎµÏ…â€“Î Î±Ï' });
+        return busText('runs_mon_fri', { en: 'Mon–Fri', nl: 'Ma–Vr', el: 'Δευ–Παρ' });
     }
     if (raw === '1-6') {
-        return busText('runs_mon_sat', { en: 'Monâ€“Sat', nl: 'Maâ€“Za', el: 'Î”ÎµÏ…â€“Î£Î±Î²' });
+        return busText('runs_mon_sat', { en: 'Mon–Sat', nl: 'Ma–Za', el: 'Δευ–Σαβ' });
     }
     if (raw === '7') {
-        return busText('runs_sun', { en: 'Sun', nl: 'Zo', el: 'ÎšÏ…Ï' });
+        return busText('runs_sun', { en: 'Sun', nl: 'Zo', el: 'Κυρ' });
     }
 
     return raw;
@@ -2213,16 +2213,16 @@ function busFrequencyLabel(freqValue) {
 
     // Normalize a few common Dutch values used in the sheet
     const v = raw.toLowerCase();
-    if (v === 'dagelijks') return busText('freq_daily', { en: 'Daily', nl: 'Dagelijks', el: 'ÎšÎ±Î¸Î·Î¼ÎµÏÎ¹Î½Î¬' });
-    if (v === 'ma-vr' || v === 'maâ€“vr') return busText('freq_mon_fri', { en: 'Monâ€“Fri', nl: 'Maâ€“Vr', el: 'Î”ÎµÏ…â€“Î Î±Ï' });
-    if (v === 'ma-za' || v === 'maâ€“za') return busText('freq_mon_sat', { en: 'Monâ€“Sat', nl: 'Maâ€“Za', el: 'Î”ÎµÏ…â€“Î£Î±Î²' });
-    if (v === 'zo' || v === 'zondag') return busText('freq_sun', { en: 'Sun', nl: 'Zo', el: 'ÎšÏ…Ï' });
+    if (v === 'dagelijks') return busText('freq_daily', { en: 'Daily', nl: 'Dagelijks', el: 'Καθημερινά' });
+    if (v === 'ma-vr' || v === 'ma–vr') return busText('freq_mon_fri', { en: 'Mon–Fri', nl: 'Ma–Vr', el: 'Δευ–Παρ' });
+    if (v === 'ma-za' || v === 'ma–za') return busText('freq_mon_sat', { en: 'Mon–Sat', nl: 'Ma–Za', el: 'Δευ–Σαβ' });
+    if (v === 'zo' || v === 'zondag') return busText('freq_sun', { en: 'Sun', nl: 'Zo', el: 'Κυρ' });
 
     // Fallback: show as-is
     return raw;
 }
 
-/** Font Awesome (solid) icoon voor patronen uit de sheet â€” Daily / Monâ€“Fri / weekend (legenda bus.html Â· bus-el.html). */
+/** Font Awesome (solid) icoon voor patronen uit de sheet — Daily / Mon–Fri / weekend (legenda bus.html · bus-el.html). */
 function busScheduleFaIconClass(pattern) {
     const p = String(pattern || '').toLowerCase();
     if (p === 'daily') return 'fa-arrows-rotate';
@@ -2252,15 +2252,15 @@ function busNormalizeSchedulePattern(daysRaw) {
 function busScheduleShortLabel(pattern) {
     switch (pattern) {
         case 'daily':
-            return busText('runs_short_daily', { en: 'Daily', nl: 'Dagelijks', el: 'ÎšÎ±Î¸Î·Î¼ÎµÏÎ¹Î½Î¬' });
+            return busText('runs_short_daily', { en: 'Daily', nl: 'Dagelijks', el: 'Καθημερινά' });
         case 'weekdays':
-            return busText('runs_short_weekdays', { en: 'Monâ€“Fri', nl: 'Maâ€“vr', el: 'Î”ÎµÏ…â€“Î Î±Ï' });
+            return busText('runs_short_weekdays', { en: 'Mon–Fri', nl: 'Ma–vr', el: 'Δευ–Παρ' });
         case 'weekend':
-            return busText('runs_short_weekend', { en: 'Satâ€“Sun', nl: 'Zaâ€“zo', el: 'Î£Î±Î²â€“ÎšÏ…Ï' });
+            return busText('runs_short_weekend', { en: 'Sat–Sun', nl: 'Za–zo', el: 'Σαβ–Κυρ' });
         case 'mon_sat':
-            return busText('runs_short_mon_sat', { en: 'Monâ€“Sat', nl: 'Maâ€“za', el: 'Î”ÎµÏ…â€“Î£Î±Î²' });
+            return busText('runs_short_mon_sat', { en: 'Mon–Sat', nl: 'Ma–za', el: 'Δευ–Σαβ' });
         case 'sun':
-            return busText('runs_short_sun', { en: 'Sundays', nl: 'Alleen zo', el: 'ÎšÏ…ÏÎ¹Î±ÎºÎ­Ï‚' });
+            return busText('runs_short_sun', { en: 'Sundays', nl: 'Alleen zo', el: 'Κυριακές' });
         default:
             return '';
     }
@@ -2272,31 +2272,31 @@ function busScheduleLongPlain(pattern) {
             return busText('sched_plain_daily', {
                 en: 'Every day',
                 nl: 'Elke dag',
-                el: 'ÎšÎ¬Î¸Îµ Î¼Î­ÏÎ±',
+                el: 'Κάθε μέρα',
             });
         case 'weekdays':
             return busText('sched_plain_weekdays', {
                 en: 'Mon to Fri',
                 nl: 'Maandag t/m vrijdag',
-                el: 'Î”ÎµÏ…Ï„Î­ÏÎ± Î­Ï‰Ï‚ Î Î±ÏÎ±ÏƒÎºÎµÏ…Î®',
+                el: 'Δευτέρα έως Παρασκευή',
             });
         case 'weekend':
             return busText('sched_plain_weekend', {
                 en: 'Saturday and Sunday',
                 nl: 'Zaterdag en zondag',
-                el: 'Î£Î¬Î²Î²Î±Ï„Î¿ ÎºÎ±Î¹ ÎšÏ…ÏÎ¹Î±ÎºÎ®',
+                el: 'Σάββατο και Κυριακή',
             });
         case 'mon_sat':
             return busText('sched_plain_mon_sat', {
                 en: 'Monday to Saturday',
                 nl: 'Maandag t/m zaterdag',
-                el: 'Î”ÎµÏ…Ï„Î­ÏÎ± Î­Ï‰Ï‚ Î£Î¬Î²Î²Î±Ï„Î¿',
+                el: 'Δευτέρα έως Σάββατο',
             });
         case 'sun':
             return busText('sched_plain_sun', {
                 en: 'Sundays only',
                 nl: 'Alleen op zondag',
-                el: 'ÎœÏŒÎ½Î¿ Ï„Î¹Ï‚ ÎšÏ…ÏÎ¹Î±ÎºÎ­Ï‚',
+                el: 'Μόνο τις Κυριακές',
             });
         default:
             return '';
@@ -2315,20 +2315,20 @@ function busScheduleFqAddsInfo(pattern, daysRaw, frequency, longPlain) {
     return fqDisp;
 }
 
-/** Platte beschrijving (aria, kopiÃ«ren): volledige zin waar mogelijk. */
+/** Platte beschrijving (aria, kopiëren): volledige zin waar mogelijk. */
 function busScheduleDetailPlain(days, frequency) {
     const pattern = busNormalizeSchedulePattern(days);
     if (!pattern) {
         const dayL = busDaysLabel(days);
         const fqL = busFrequencyLabel(frequency);
-        return [dayL, fqL].filter(Boolean).join(' Â· ') || 'â€”';
+        return [dayL, fqL].filter(Boolean).join(' · ') || '—';
     }
     const long = busScheduleLongPlain(pattern);
     const extra = busScheduleFqAddsInfo(pattern, days, frequency, long);
-    return extra ? `${long} Â· ${extra}` : long;
+    return extra ? `${long} · ${extra}` : long;
 }
 
-/** Visueel: alleen pictogram bij de bestemming; legenda verklaart. Optioneel Â· extra kolom frequency. */
+/** Visueel: alleen pictogram bij de bestemming; legenda verklaart. Optioneel · extra kolom frequency. */
 function busScheduleDetailHtml(days, frequency) {
     const pattern = busNormalizeSchedulePattern(days);
     if (!pattern) {
@@ -2340,7 +2340,7 @@ function busScheduleDetailHtml(days, frequency) {
     let inner = glyph;
     if (extraFq) {
         if (glyph) {
-            inner += `<span class="bus-runs-caption__sep" aria-hidden="true">\u00A0Â·\u00A0</span>`;
+            inner += `<span class="bus-runs-caption__sep" aria-hidden="true">\u00A0·\u00A0</span>`;
         }
         inner += `<span class="bus-runs-caption__extra">${busEscapeHtml(extraFq)}</span>`;
     }
@@ -2355,16 +2355,16 @@ function busOriginKalaNera() {
     return busText('bus_origin_kala_nera', {
         en: 'Kala Nera',
         nl: 'Kala Nera',
-        el: busT('bus_origin_kala_nera', 'ÎšÎ±Î»Î¬ ÎÎµÏÎ¬'),
+        el: busT('bus_origin_kala_nera', 'Καλά Νερά'),
     });
 }
 
-/** Regel naast TODAY: alleen vertrekplaats â€” bestemming staat al in picker + hero (geen dubbele Â«naar â€¦Â»). */
+/** Regel naast TODAY: alleen vertrekplaats — bestemming staat al in picker + hero (geen dubbele «naar …»). */
 function busRouteSummaryLine(_dir) {
     const tpl = busText('bus_route_origin_only', {
         en: 'From {origin}',
         nl: 'Van {origin}',
-        el: busT('bus_route_origin_only', 'Î‘Ï€ÏŒ {origin}'),
+        el: busT('bus_route_origin_only', 'Από {origin}'),
     });
     return tpl.replace('{origin}', busOriginKalaNera());
 }
@@ -2384,23 +2384,23 @@ function busLineHintText(dir) {
     if (!key) return '';
     const lines = {
         berg: {
-            en: 'Mountain line â€” daily, village centre stops.',
-            nl: 'Berglijn â€” dagelijks, halte in het dorpscentrum.',
+            en: 'Mountain line — daily, village centre stops.',
+            nl: 'Berglijn — dagelijks, halte in het dorpscentrum.',
             el: '',
         },
         coast: {
-            en: 'Coast line â€” daily, ideal for beaches.',
-            nl: 'Kustlijn â€” dagelijks, geschikt voor stranden.',
+            en: 'Coast line — daily, ideal for beaches.',
+            nl: 'Kustlijn — dagelijks, geschikt voor stranden.',
             el: '',
         },
         south: {
-            en: 'South line â€” daily.',
-            nl: 'Zuidlijn â€” dagelijks.',
+            en: 'South line — daily.',
+            nl: 'Zuidlijn — dagelijks.',
             el: '',
         },
         south_east: {
-            en: 'South line (east) â€” Monâ€“Fri.',
-            nl: 'Zuidlijn (oost) â€” maâ€“vr.',
+            en: 'South line (east) — Mon–Fri.',
+            nl: 'Zuidlijn (oost) — ma–vr.',
             el: '',
         },
     };
@@ -2446,7 +2446,7 @@ function busClampDayOffset(n) {
     return Math.max(0, Math.min(BUS_DAY_OFFSET_MAX, Math.floor(x)));
 }
 
-/** Athens kalenderdatum YYYY-MM-DD voor strip-offset â€” zelfde civil-logica als n8n (addDaysToGregorianYmd). */
+/** Athens kalenderdatum YYYY-MM-DD voor strip-offset — zelfde civil-logica als n8n (addDaysToGregorianYmd). */
 function busScheduleTargetYmd(dayOffset) {
     const off = busClampDayOffset(dayOffset);
     const today = busNowAthensParts();
@@ -2462,7 +2462,7 @@ function busScheduleSlotKey(dir, dayOffset) {
     return `${dir}:${busScheduleTargetYmd(dayOffset)}`;
 }
 
-/** Verschil in kalenderdagen tussen twee YYYY-MM-DD (Gregoriaans, UTC-middag niet nodig â€” alleen datum). */
+/** Verschil in kalenderdagen tussen twee YYYY-MM-DD (Gregoriaans, UTC-middag niet nodig — alleen datum). */
 function busGregorianYmdDiffDays(fromYmd, toYmd) {
     const parse = (ymd) => {
         const p = String(ymd || '').split('-').map(Number);
@@ -2518,14 +2518,14 @@ function busHeadingPrimaryLine(dayOffset) {
         return busText('bus_heading_today', {
             en: 'TODAY',
             nl: 'VANDAAG',
-            el: busT('bus_heading_today', 'Î£Î—ÎœÎ•Î¡Î‘'),
+            el: busT('bus_heading_today', 'ΣΗΜΕΡΑ'),
         });
     }
     if (off === 1) {
         return busText('bus_heading_tomorrow_upper', {
             en: 'TOMORROW',
             nl: 'MORGEN',
-            el: busT('bus_heading_tomorrow_upper', 'Î‘ÎŽÎ¡Î™ÎŸ'),
+            el: busT('bus_heading_tomorrow_upper', 'ΑΎΡΙΟ'),
         });
     }
     const { weekday, dayMonthTitle } = busAthensTargetLabels(off);
@@ -2544,14 +2544,14 @@ function busFilterSummaryDatePhrase(dayOffset) {
         return busText('bus_filter_summary_today', {
             en: 'Today',
             nl: 'Vandaag',
-            el: busT('bus_filter_summary_today', 'Î£Î®Î¼ÎµÏÎ±'),
+            el: busT('bus_filter_summary_today', 'Σήμερα'),
         });
     }
     if (off === 1) {
         return busText('bus_filter_summary_tomorrow', {
             en: 'Tomorrow',
             nl: 'Morgen',
-            el: busT('bus_filter_summary_tomorrow', 'Î‘ÏÏÎ¹Î¿'),
+            el: busT('bus_filter_summary_tomorrow', 'Αύριο'),
         });
     }
     const { weekday, dayMonthTitle } = busAthensTargetLabels(off);
@@ -2564,15 +2564,15 @@ function busFullTimetableTitle(dayOffset) {
         return busText('bus_full_title_today', {
             en: 'Departures today',
             nl: 'Vertrektijden vandaag',
-            el: busT('bus_full_title_today', 'Î‘Î½Î±Ï‡Ï‰ÏÎ®ÏƒÎµÎ¹Ï‚ ÏƒÎ®Î¼ÎµÏÎ±'),
+            el: busT('bus_full_title_today', 'Αναχωρήσεις σήμερα'),
         });
     }
     const { weekday, dayMonthTitle } = busAthensTargetLabels(off);
     const dateStr = `${weekday} ${dayMonthTitle}`;
     const tpl = busText('bus_full_title_date', {
-        en: 'Departures Â· {date}',
-        nl: 'Vertrektijden Â· {date}',
-        el: busT('bus_full_title_date', 'Î‘Î½Î±Ï‡Ï‰ÏÎ®ÏƒÎµÎ¹Ï‚ Â· {date}'),
+        en: 'Departures · {date}',
+        nl: 'Vertrektijden · {date}',
+        el: busT('bus_full_title_date', 'Αναχωρήσεις · {date}'),
     });
     return tpl.replace('{date}', dateStr);
 }
@@ -2617,7 +2617,7 @@ function busTimelineTimeSectionHtml(bandKey) {
     const anchorId = busEscapeHtml(busTimeBandAnchorId(bandKey));
     const titlePlain = busUiString(tk);
     const rangePlain = busUiString(rk);
-    const sectionAria = busEscapeHtml(`${titlePlain} Â· ${rangePlain}`);
+    const sectionAria = busEscapeHtml(`${titlePlain} · ${rangePlain}`);
     const title = busEscapeHtml(titlePlain);
     const range = busEscapeHtml(rangePlain);
     return `<li class="bus-timeline__section" id="${anchorId}" aria-label="${sectionAria}"><div class="bus-timeline__section-head" aria-hidden="true"><span class="bus-timeline__section-title">${title}</span><span class="bus-timeline__section-range">${range}</span></div></li>`;
@@ -2627,7 +2627,7 @@ function busTimelineTimeBandAllLabel() {
     return busText('bus_timeline_timeband_all', {
         en: 'All',
         nl: 'Alles',
-        el: busT('bus_timeline_timeband_all', 'ÎŒÎ»Î±'),
+        el: busT('bus_timeline_timeband_all', 'Όλα'),
     });
 }
 
@@ -2635,7 +2635,7 @@ function busTimelineTimeBandNavLabel() {
     return busText('bus_timeline_timeband_nav', {
         en: 'Filter by time of day',
         nl: 'Filter op dagdeel',
-        el: busT('bus_timeline_timeband_nav', 'Î¦Î¯Î»Ï„ÏÎ¿ Î±Î½Î¬ ÏŽÏÎ± Î·Î¼Î­ÏÎ±Ï‚'),
+        el: busT('bus_timeline_timeband_nav', 'Φίλτρο ανά ώρα ημέρας'),
     });
 }
 
@@ -2645,7 +2645,7 @@ function busTimelineBandDisabledTitle(bandKey) {
     return busText('bus_timeline_timeband_none', {
         en: `No departures in ${name}`,
         nl: `Geen ritten in ${name}`,
-        el: busT('bus_timeline_timeband_none', 'Î”ÎµÎ½ Ï…Ï€Î¬ÏÏ‡Î¿Ï…Î½ Î´ÏÎ¿Î¼Î¿Î»ÏŒÎ³Î¹Î± ÏƒÎµ Î±Ï…Ï„ÏŒ Ï„Î¿ Î´Î¹Î¬ÏƒÏ„Î·Î¼Î±'),
+        el: busT('bus_timeline_timeband_none', 'Δεν υπάρχουν δρομολόγια σε αυτό το διάστημα'),
     });
 }
 
@@ -2677,7 +2677,7 @@ function busTimelineJumpbarHtml(timeBandCounts, activeBandKey, { isAuto } = {}) 
             const disabledAttr = disabled ? ' disabled aria-disabled="true"' : '';
             const disabledTitle = disabled ? ` title="${busEscapeHtml(busTimelineBandDisabledTitle(bandKey))}"` : '';
             const autoIco = '';
-            const autoTitle = (isAuto && isActive) ? ` title="${busEscapeHtml(busText('bus_timeline_timeband_auto', { en: 'Auto (based on current time)', nl: 'Auto (op basis van huidige tijd)', el: busT('bus_timeline_timeband_auto', 'Î‘Ï…Ï„ÏŒÎ¼Î±Ï„Î± (Î¼Îµ Î²Î¬ÏƒÎ· Ï„Î·Î½ ÏŽÏÎ±)') }))}"` : '';
+            const autoTitle = (isAuto && isActive) ? ` title="${busEscapeHtml(busText('bus_timeline_timeband_auto', { en: 'Auto (based on current time)', nl: 'Auto (op basis van huidige tijd)', el: busT('bus_timeline_timeband_auto', 'Αυτόματα (με βάση την ώρα)') }))}"` : '';
             const titleAttr = disabled ? disabledTitle : autoTitle;
             return `<button type="button" class="${cls}" aria-pressed="${pressed}" data-bus-band="${busEscapeHtml(String(bandKey))}"${disabledAttr}${titleAttr}>${autoIco}${label}</button>`;
         }).join('');
@@ -2694,7 +2694,7 @@ function busTimelineJumpbarHtml(timeBandCounts, activeBandKey, { isAuto } = {}) 
     const menuOpenAria = busEscapeHtml(busText('bus_timeband_menu_open', {
         en: 'Choose time of day filter',
         nl: 'Kies dagdeel-filter',
-        el: busT('bus_timeband_menu_open', 'Î•Ï€Î¹Î»Î¿Î³Î® Ï†Î¯Î»Ï„ÏÎ¿Ï… ÏŽÏÎ±Ï‚ Î·Î¼Î­ÏÎ±Ï‚'),
+        el: busT('bus_timeband_menu_open', 'Επιλογή φίλτρου ώρας ημέρας'),
     }));
     const menuOpen = `<button type="button" class="bus-timeband-menu__open" aria-haspopup="dialog" aria-controls="bus-timeband-menu-dialog" aria-label="${menuOpenAria}"><span class="bus-timeband-menu__open-label">${menuLbl}</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>`;
     const menuItems = [
@@ -2709,7 +2709,7 @@ function busTimelineJumpbarHtml(timeBandCounts, activeBandKey, { isAuto } = {}) 
             const disabledAttr = disabled ? ' disabled aria-disabled="true"' : '';
             const disabledTitle = disabled ? ` title="${busEscapeHtml(busTimelineBandDisabledTitle(bandKey))}"` : '';
             const autoIco = '';
-            const autoTitle = (isAuto && isActive) ? ` title="${busEscapeHtml(busText('bus_timeline_timeband_auto', { en: 'Auto (based on current time)', nl: 'Auto (op basis van huidige tijd)', el: busT('bus_timeline_timeband_auto', 'Î‘Ï…Ï„ÏŒÎ¼Î±Ï„Î± (Î¼Îµ Î²Î¬ÏƒÎ· Ï„Î·Î½ ÏŽÏÎ±)') }))}"` : '';
+            const autoTitle = (isAuto && isActive) ? ` title="${busEscapeHtml(busText('bus_timeline_timeband_auto', { en: 'Auto (based on current time)', nl: 'Auto (op basis van huidige tijd)', el: busT('bus_timeline_timeband_auto', 'Αυτόματα (με βάση την ώρα)') }))}"` : '';
             const titleAttr = disabled ? disabledTitle : autoTitle;
             return `<button type="button" class="bus-timeband-menu__item${isActive ? ' is-active' : ''}" data-bus-band="${busEscapeHtml(String(bandKey))}"${disabledAttr}${titleAttr}${isActive ? ' aria-current="true"' : ''}>${autoIco}${label}</button>`;
         })
@@ -2720,19 +2720,19 @@ function busTimelineJumpbarHtml(timeBandCounts, activeBandKey, { isAuto } = {}) 
 }
 
 const BUS_DIR_LABELS = {
-    volos: { en: 'Volos', el: 'Î’ÏŒÎ»Î¿Ï‚' },
-    milies: { en: 'Milies', el: 'ÎœÎ·Î»Î¹Î­Ï‚' },
-    argalasti: { en: 'Argalasti', el: 'Î‘ÏÎ³Î±Î»Î±ÏƒÏ„Î®' },
-    afissos: { en: 'Afissos', el: 'Î†Ï†Î·ÏƒÏƒÎ¿Ï‚' },
-    vyzitsa: { en: 'Vyzitsa', el: 'Î’Ï…Î¶Î¯Ï„ÏƒÎ±' },
-    pinakates: { en: 'Pinakates', el: 'Î Î¹Î½Î±ÎºÎ¬Ï„ÎµÏ‚' },
-    neochori: { en: 'Neochori', el: 'ÎÎµÎ¿Ï‡ÏŽÏÎ¹' },
-    siki: { en: 'Siki', el: 'Î£Î®ÎºÎ¹' },
-    promiri: { en: 'Promiri', el: 'Î ÏÎ¿Î¼Î®ÏÎ¹' },
-    katigiorgis: { en: 'Katigiorgis', el: 'ÎšÎ±Ï„Î·Î³Î¹ÏŽÏÎ³Î·Ï‚' },
-    milina: { en: 'Milina', el: 'ÎœÎ·Î»Î¯Î½Î±' },
-    platanias: { en: 'Platanias', el: 'Î Î»Î±Ï„Î±Î½Î¹Î¬Ï‚' },
-    trikeri: { en: 'Trikeri', el: 'Î¤ÏÎ¯ÎºÎµÏÎ¹' },
+    volos: { en: 'Volos', el: 'Βόλος' },
+    milies: { en: 'Milies', el: 'Μηλιές' },
+    argalasti: { en: 'Argalasti', el: 'Αργαλαστή' },
+    afissos: { en: 'Afissos', el: 'Άφησσος' },
+    vyzitsa: { en: 'Vyzitsa', el: 'Βυζίτσα' },
+    pinakates: { en: 'Pinakates', el: 'Πινακάτες' },
+    neochori: { en: 'Neochori', el: 'Νεοχώρι' },
+    siki: { en: 'Siki', el: 'Σήκι' },
+    promiri: { en: 'Promiri', el: 'Προμήρι' },
+    katigiorgis: { en: 'Katigiorgis', el: 'Κατηγιώργης' },
+    milina: { en: 'Milina', el: 'Μηλίνα' },
+    platanias: { en: 'Platanias', el: 'Πλατανιάς' },
+    trikeri: { en: 'Trikeri', el: 'Τρίκερι' },
 };
 
 function busDirLabel(dir) {
@@ -2752,36 +2752,36 @@ function busFold(s) {
 }
 
 /**
- * Sheet Â«originÂ» is usually the stop in Kala Nera â€” treat as repeated so we can show destination only.
- * Latin / Greek spellings; empty origin â†’ default stop.
+ * Sheet «origin» is usually the stop in Kala Nera — treat as repeated so we can show destination only.
+ * Latin / Greek spellings; empty origin → default stop.
  */
 function busIsKalaNeraOrigin(bus) {
     const raw = String(bus && bus.origin || '').trim();
     if (!raw) return true;
     const compact = busFold(raw).replace(/\s+/g, '');
     if (compact === 'kalanera' || (compact.includes('kala') && compact.includes('nera'))) return true;
-    if (/ÎºÎ±Î»/.test(raw) && /Î½ÎµÏ/.test(raw)) return true;
+    if (/καλ/.test(raw) && /νερ/.test(raw)) return true;
     return false;
 }
 
 /**
- * Primary direction line for timetable rows â€” destination only when origin is the Kala Nera stop.
+ * Primary direction line for timetable rows — destination only when origin is the Kala Nera stop.
  */
 function busTripDestinationLine(bus) {
     const dest = String(bus && bus.destination || '').trim();
     const origin = String(bus && bus.origin || '').trim();
     if (busIsKalaNeraOrigin(bus)) {
-        return dest || origin || 'â€”';
+        return dest || origin || '—';
     }
-    if (origin && dest) return `${origin} âž” ${dest}`;
-    return dest || origin || 'â€”';
+    if (origin && dest) return `${origin} ➔ ${dest}`;
+    return dest || origin || '—';
 }
 
 function busFullTimetableOriginNoteText() {
     return busText('bus_full_timetable_origin', {
-        en: 'Departures Â· Kala Nera stop',
-        nl: 'Vertrek Â· halte Kala Nera',
-        el: busT('bus_full_timetable_origin', 'Î‘Ï€ÏŒ ÏƒÏ„Î¬ÏƒÎ· ÎšÎ±Î»Î¬ ÎÎµÏÎ¬'),
+        en: 'Departures · Kala Nera stop',
+        nl: 'Vertrek · halte Kala Nera',
+        el: busT('bus_full_timetable_origin', 'Από στάση Καλά Νερά'),
     });
 }
 
@@ -2795,7 +2795,7 @@ function busComputeRunsMeta(rows, routeDirKey) {
         const detailPlain = busScheduleDetailPlain(r.days, r.frequency);
         const detailHtml = busScheduleDetailHtml(r.days, r.frequency);
         const sortPri = d === routeDir ? 0 : (d ? 1 : 2);
-        return { label: label || 'â€”', detailPlain, detailHtml, sortPri, d };
+        return { label: label || '—', detailPlain, detailHtml, sortPri, d };
     }).sort((a, b) => {
         if (a.sortPri !== b.sortPri) return a.sortPri - b.sortPri;
         return String(a.label).localeCompare(String(b.label), undefined, { sensitivity: 'base' });
@@ -2804,7 +2804,7 @@ function busComputeRunsMeta(rows, routeDirKey) {
 }
 
 /**
- * destination_also (Also: â€¦) lists extra passenger stops served on the same departure as the primary row â€”
+ * destination_also (Also: …) lists extra passenger stops served on the same departure as the primary row —
  * repeat the same Runs detail for each listed place (sheet seldom has separate rows per Via-stop).
  */
 function busExpandRunsMetaWithAlsoStops(bus, meta) {
@@ -2819,7 +2819,7 @@ function busExpandRunsMetaWithAlsoStops(bus, meta) {
     if (!(meta.segments.length === 1 || allSegmentsSameFreq)) return meta;
 
     const templatePlain = meta.segments[0].detailPlain;
-    const detailTemplate = templatePlain ? String(templatePlain).trim() : 'â€”';
+    const detailTemplate = templatePlain ? String(templatePlain).trim() : '—';
     const templateHtml = meta.segments[0].detailHtml;
 
     const seenLabels = new Set();
@@ -2832,7 +2832,7 @@ function busExpandRunsMetaWithAlsoStops(bus, meta) {
     alsoRaw.split(/[,;|]/).forEach((chunk) => {
         let lab = chunk.trim().replace(/^also\s*[:\uff1a]/i, '').trim();
         if (!lab) return;
-        lab = lab.replace(/^ÎµÏ€Î¯ÏƒÎ·Ï‚\s*[:\uff1a]\s*/i, '').trim();
+        lab = lab.replace(/^επίσης\s*[:\uff1a]\s*/i, '').trim();
         const fk = busFold(lab);
         if (!fk || seenLabels.has(fk)) return;
         seenLabels.add(fk);
@@ -2872,7 +2872,7 @@ function busUnifiedDestinationsList(bus, routeDirKey) {
         const lab = String(s.label || '').trim();
         const fk = busFold(lab);
         if (!fk) continue;
-        const detailPlain = String(s.detailPlain || s.detail || '').trim() || 'â€”';
+        const detailPlain = String(s.detailPlain || s.detail || '').trim() || '—';
         const detailHtml = s.detailHtml != null ? s.detailHtml : busEscapeHtml(detailPlain);
         if (!map.has(fk)) map.set(fk, { label: lab, detailPlain, detailHtml });
     }
@@ -2882,7 +2882,7 @@ function busUnifiedDestinationsList(bus, routeDirKey) {
         const p = String(busTripDestinationLine(bus)).trim();
         const detailPlain = busScheduleDetailPlain(bus.days, bus.frequency);
         const detailHtml = busScheduleDetailHtml(bus.days, bus.frequency);
-        list = [{ label: p || 'â€”', detailPlain, detailHtml }];
+        list = [{ label: p || '—', detailPlain, detailHtml }];
     }
 
     return list;
@@ -2891,10 +2891,10 @@ function busUnifiedDestinationsList(bus, routeDirKey) {
 /** Platte tekst (aria-label, kopie): alleen bestemmingsnamen; rooster is al gefilterd op gekozen dag. */
 function busUnifiedDestinationsPlain(bus, routeDirKey) {
     const list = busUnifiedDestinationsList(bus, routeDirKey);
-    return list.map(({ label }) => String(label || '').trim()).filter(Boolean).join(' Â· ');
+    return list.map(({ label }) => String(label || '').trim()).filter(Boolean).join(' · ');
 }
 
-/** Bestemmingen als doorlopende tekst (geen pills, geen frequentie â€” dagfilter dekt dat al). */
+/** Bestemmingen als doorlopende tekst (geen pills, geen frequentie — dagfilter dekt dat al). */
 function busUnifiedDestinationsHtml(bus, routeDirKey) {
     const list = busUnifiedDestinationsList(bus, routeDirKey);
     if (!list.length) return '';
@@ -2902,7 +2902,7 @@ function busUnifiedDestinationsHtml(bus, routeDirKey) {
     return labels
         .map((esc, i) => {
             if (i === labels.length - 1) return `<span class="bus-route-compact-unit">${esc}</span>`;
-            return `<span class="bus-route-compact-unit">${esc}<span class="bus-route-compact-sep" aria-hidden="true">\u00A0Â· </span></span>`;
+            return `<span class="bus-route-compact-unit">${esc}<span class="bus-route-compact-sep" aria-hidden="true">\u00A0· </span></span>`;
         })
         .join('');
 }
@@ -2925,7 +2925,7 @@ function busSheetField(row, aliases) {
     return undefined;
 }
 
-/** Map Ã©Ã©n token uit Destinations_Served naar een `dir`-slug. */
+/** Map één token uit Destinations_Served naar een `dir`-slug. */
 function busSlugFromDestinationToken(token) {
     const raw = String(token || '').trim();
     if (!raw) return '';
@@ -2999,7 +2999,7 @@ function busLowFreqNoticeText() {
     return busText('bus_low_freq', {
         en: 'Check return times with the driver',
         nl: 'Controleer terugreis bij de chauffeur',
-        el: busT('bus_low_freq', 'Î¡Ï‰Ï„Î®ÏƒÏ„Îµ Ï„Î¿Î½ Î¿Î´Î·Î³ÏŒ Î³Î¹Î± ÎµÏ€Î¹ÏƒÏ„ÏÎ¿Ï†Î®'),
+        el: busT('bus_low_freq', 'Ρωτήστε τον οδηγό για επιστροφή'),
     });
 }
 
@@ -3026,7 +3026,7 @@ function busRenderEmpty(container, dayOffset = 0) {
         : busText('bus_day_none', {
             en: 'No departures on this day.',
             nl: 'Geen ritten op deze dag.',
-            el: busT('bus_day_none', 'Î”ÎµÎ½ Ï…Ï€Î¬ÏÏ‡Î¿Ï…Î½ Î´ÏÎ¿Î¼Î¿Î»ÏŒÎ³Î¹Î± Î±Ï…Ï„Î® Ï„Î·Î½ Î·Î¼Î­ÏÎ±.'),
+            el: busT('bus_day_none', 'Δεν υπάρχουν δρομολόγια αυτή την ημέρα.'),
         });
     container.innerHTML = `<div class="bus-empty">${busEscapeHtml(msg)}</div>`;
 }
@@ -3107,7 +3107,7 @@ function busTripIdKey(raw) {
 }
 
 /**
- * Vouwt sheet-rijen met dezelfde Trip_ID samen tot Ã©Ã©n kaart (Kala Nera-perspectief).
+ * Vouwt sheet-rijen met dezelfde Trip_ID samen tot één kaart (Kala Nera-perspectief).
  * Lege trip_id: rij blijft los staan (geen merge).
  */
 function busMergeTripsByTripId(buses, routeDir) {
@@ -3187,7 +3187,7 @@ function busMergeTripGroup(rows, dirKey) {
     const arrival = arrVals.length === 1 ? arrVals[0] : String(primary.arrival || '').trim();
 
     const noteParts = [...new Set(rows.map(r => String(r.note || '').trim()).filter(Boolean))];
-    const note = noteParts.join(' Â· ');
+    const note = noteParts.join(' · ');
 
     const runs_meta = busComputeRunsMeta(rows, dirKey);
 
@@ -3219,7 +3219,7 @@ function busFilterRemainingToday(buses, minMinutesNow) {
     });
 }
 
-/** Index van de eerste bus die nog niet gepasseerd is (zelfde buffer als â€žNext busâ€œ). */
+/** Index van de eerste bus die nog niet gepasseerd is (zelfde buffer als „Next bus“). */
 function busNextDepartureIndex(sortedBuses, minMinutesNow) {
     const nowParts = busNowAthensParts();
     const nowMin = busParseHHMMToMinutes(nowParts.hm);
@@ -3304,13 +3304,13 @@ function busSortByDeparture(buses) {
     });
 }
 
-/** Label above departure time: always two short lines (stack) so card height matches across languages and avoids awkward wraps (e.g. Â«main-roadÂ») in narrow columns or after browser translation. */
+/** Label above departure time: always two short lines (stack) so card height matches across languages and avoids awkward wraps (e.g. «main-road») in narrow columns or after browser translation. */
 function busDepartureCaptionParts() {
     let l1;
     let l2;
     if (busLang() === 'el') {
-        l1 = busT('bus_departure_el_l1', 'Î‘Î½Î±Ï‡ÏŽÏÎ·ÏƒÎ·');
-        l2 = busT('bus_departure_el_l2', 'ÎšÎ±Î»Î¬ ÎÎµÏÎ¬');
+        l1 = busT('bus_departure_el_l1', 'Αναχώρηση');
+        l2 = busT('bus_departure_el_l2', 'Καλά Νερά');
     } else {
         l1 = busText('bus_departure_l1', {
             en: 'Time at stop',
@@ -3358,7 +3358,7 @@ function busRenderList(container, buses, { limit, routeDir, dayOffset } = {}) {
         const arr = bus.arrival ? busEscapeHtml(`${arrivalPrefix}: ${bus.arrival}`) : '';
         const stopText = busStopLabel(bus.stop_kalanera);
         const stopLabel = stopText
-            ? busEscapeHtml(`${busText('stop_label', { en: 'Stop', nl: 'Halte', el: busT('bus_stop_label', 'Î£Ï„Î¬ÏƒÎ·') })}: ${stopText}`)
+            ? busEscapeHtml(`${busText('stop_label', { en: 'Stop', nl: 'Halte', el: busT('bus_stop_label', 'Στάση') })}: ${stopText}`)
             : '';
         return `
             <div class="bus-card">
@@ -3383,7 +3383,7 @@ function busRenderTimelineList(container, buses, {
     limit, routeDir, dayOffset,
     /** Live ETA span under time column (combined NEXT slot with limit 1) */
     showNextEta,
-    /** Ol label + spacing for single NEXT row â€“ same visuals as full timetable rows */
+    /** Ol label + spacing for single NEXT row – same visuals as full timetable rows */
     nextPreview,
     /** Sticky Morning / Midday / Evening (etc.) koppen in de volledige lijst */
     timeSections = true,
@@ -3445,12 +3445,12 @@ function busRenderTimelineList(container, buses, {
             ? busText('bus_next_heading_verbose', {
                 en: 'Next bus',
                 nl: 'Volgende bus',
-                el: 'Î•Ï€ÏŒÎ¼ÎµÎ½Î¿ Î»ÎµÏ‰Ï†Î¿ÏÎµÎ¯Î¿',
+                el: 'Επόμενο λεωφορείο',
             })
             : busText('bus_first_departure_verbose', {
                 en: 'First departure',
                 nl: 'Eerste vertrek',
-                el: 'Î ÏÏŽÏ„Î¿ Î´ÏÎ¿Î¼Î¿Î»ÏŒÎ³Î¹Î¿',
+                el: 'Πρώτο δρομολόγιο',
             });
     } else {
         const { weekday, dayMonthTitle } = busAthensTargetLabels(off);
@@ -3459,12 +3459,12 @@ function busRenderTimelineList(container, buses, {
             ? busText('bus_timeline_list_aria', {
                 en: 'Today\'s departures in time order',
                 nl: 'Vertrektijden van vandaag op volgorde',
-                el: busT('bus_timeline_list_aria', 'Î£Î·Î¼ÎµÏÎ¹Î½Î­Ï‚ Î±Î½Î±Ï‡Ï‰ÏÎ®ÏƒÎµÎ¹Ï‚ ÏƒÎµ Ï‡ÏÎ¿Î½Î¹ÎºÎ® ÏƒÎµÎ¹ÏÎ¬'),
+                el: busT('bus_timeline_list_aria', 'Σημερινές αναχωρήσεις σε χρονική σειρά'),
             })
             : busText('bus_timeline_list_aria_date', {
                 en: `Departures on ${dateStr} in time order`,
                 nl: `Vertrektijden op ${dateStr} op volgorde`,
-                el: busT('bus_timeline_list_aria_date', 'Î‘Î½Î±Ï‡Ï‰ÏÎ®ÏƒÎµÎ¹Ï‚ {date} ÏƒÎµ Ï‡ÏÎ¿Î½Î¹ÎºÎ® ÏƒÎµÎ¹ÏÎ¬').replace('{date}', dateStr),
+                el: busT('bus_timeline_list_aria_date', 'Αναχωρήσεις {date} σε χρονική σειρά').replace('{date}', dateStr),
             });
     }
     const listAria = busEscapeHtml(listAriaPlain);
@@ -3481,7 +3481,7 @@ function busRenderTimelineList(container, buses, {
     /**
      * Highlight at most one row: match `nextDepartureKey` in this list when set
      * (today = global next departure; other days = first departure of that day).
-     * Never use "index 0" on a filtered list â€” that marks the wrong trip for daypart views.
+     * Never use "index 0" on a filtered list — that marks the wrong trip for daypart views.
      */
     let nextIdx = -1;
     if (nextDepartureKey) {
@@ -3495,12 +3495,12 @@ function busRenderTimelineList(container, buses, {
     const nextLblPlain = busText('bus_timeline_next_badge', {
         en: 'Next bus',
         nl: 'Volgende bus',
-        el: busT('bus_timeline_next_badge', 'Î•Ï€ÏŒÎ¼ÎµÎ½Î¿'),
+        el: busT('bus_timeline_next_badge', 'Επόμενο'),
     });
     const firstDepartureAria = busText('bus_first_departure_verbose', {
         en: 'First departure',
         nl: 'Eerste vertrek',
-        el: busT('bus_first_departure_verbose', 'Î ÏÏŽÏ„Î¿ Î´ÏÎ¿Î¼Î¿Î»ÏŒÎ³Î¹Î¿'),
+        el: busT('bus_first_departure_verbose', 'Πρώτο δρομολόγιο'),
     });
 
     const list = buses.slice(0, Math.max(0, max));
@@ -3537,7 +3537,7 @@ function busRenderTimelineList(container, buses, {
         const arrivalLine = bus.arrival ? busEscapeHtml(`${arrivalPrefix}: ${bus.arrival}`) : '';
         const stopText = busStopLabel(bus.stop_kalanera);
         const stopLabel = stopText
-            ? busEscapeHtml(`${busText('stop_label', { en: 'Stop', nl: 'Halte', el: busT('bus_stop_label', 'Î£Ï„Î¬ÏƒÎ·') })}: ${stopText}`)
+            ? busEscapeHtml(`${busText('stop_label', { en: 'Stop', nl: 'Halte', el: busT('bus_stop_label', 'Στάση') })}: ${stopText}`)
             : '';
         const metaLine = stopLabel || '';
         let etaTimelineHtml = '';
@@ -3551,8 +3551,8 @@ function busRenderTimelineList(container, buses, {
             }
         }
         const nextBadgePlain = nextPreview && isNext
-            ? (off === 0 ? busText('bus_next_heading', { en: 'NEXT', nl: 'VOLGENDE', el: busT('bus_next_heading', 'Î•Î ÎŸÎœÎ•ÎÎŸ') })
-                : busText('bus_first_departure_title', { en: 'FIRST', nl: 'EERSTE', el: busT('bus_first_departure_title', 'Î Î¡Î©Î¤ÎŸ') }))
+            ? (off === 0 ? busText('bus_next_heading', { en: 'NEXT', nl: 'VOLGENDE', el: busT('bus_next_heading', 'ΕΠΟΜΕΝΟ') })
+                : busText('bus_first_departure_title', { en: 'FIRST', nl: 'EERSTE', el: busT('bus_first_departure_title', 'ΠΡΩΤΟ') }))
             : '';
         const nextBadgeHtml = nextBadgePlain ? `<span class="bus-timeline__badge" aria-hidden="true">${busEscapeHtml(nextBadgePlain)}</span>` : '';
         const nextBadgeBodyHtml = nextBadgePlain ? `<span class="bus-timeline__badge bus-timeline__badge--col" aria-hidden="true">${busEscapeHtml(nextBadgePlain)}</span>` : '';
@@ -3652,7 +3652,7 @@ function busRenderFullTimetable(container, buses, { routeDir, dayOffset } = {}) 
 
 async function busFetchSchedule(dir, dayOffset) {
     const url = new URL(N8N_WEBHOOK_URL_BUS_SCHEDULE_NEXT);
-    // ?from=Kala%20Nera&dir=â€¦&remaining=0|1&dayOffset=0..6 (Athens calendar day; n8n filters days column for that weekday)
+    // ?from=Kala%20Nera&dir=…&remaining=0|1&dayOffset=0..6 (Athens calendar day; n8n filters days column for that weekday)
     url.searchParams.set('from', 'Kala Nera');
     url.searchParams.set('dir', dir || BUS_DEFAULT_DIR);
     url.searchParams.set('remaining', '0');
@@ -3724,7 +3724,7 @@ function busGetSlotsFromStorage() {
     }
 }
 
-/** Shims for callers that only cache â€œtodayâ€ (offset 0). */
+/** Shims for callers that only cache “today” (offset 0). */
 function busReadCache(dir) {
     const s = busReadCacheSlot(dir, 0);
     if (!s) return null;
@@ -3868,7 +3868,7 @@ async function initBusSchedule() {
         pickLab.textContent = busText('bus_pick_day', {
             en: 'Pick day',
             nl: 'Kies dag',
-            el: busT('bus_pick_day', 'Î•Ï€Î¹Î»Î¿Î³Î® Î·Î¼Î­ÏÎ±Ï‚'),
+            el: busT('bus_pick_day', 'Επιλογή ημέρας'),
         });
     }
 
@@ -3880,28 +3880,28 @@ async function initBusSchedule() {
         tripChooserTitleEl.textContent = busText('bus_trip_chooser_title', {
             en: 'Schedule options',
             nl: 'Schema-opties',
-            el: busT('bus_trip_chooser_title', 'Î•Ï€Î¹Î»Î¿Î³Î­Ï‚ Ï€ÏÎ¿Î³ÏÎ¬Î¼Î¼Î±Ï„Î¿Ï‚'),
+            el: busT('bus_trip_chooser_title', 'Επιλογές προγράμματος'),
         });
     }
     if (tripChooserDoneEl) {
         tripChooserDoneEl.textContent = busText('bus_trip_chooser_done', {
             en: 'Done',
             nl: 'Gereed',
-            el: busT('bus_trip_chooser_done', 'ÎˆÏ„Î¿Î¹Î¼Î¿'),
+            el: busT('bus_trip_chooser_done', 'Έτοιμο'),
         });
     }
     if (dirSelectLabEl) {
         dirSelectLabEl.textContent = busText('bus_where_to', {
             en: 'Where to?',
             nl: 'Waarheen?',
-            el: busT('bus_where_to', 'Î Î¿Ï Ï€Î¬Î¼Îµ;'),
+            el: busT('bus_where_to', 'Πού πάμε;'),
         });
     }
     if (filterBarEl) {
         filterBarEl.setAttribute('aria-label', busText('bus_filter_toolbar_aria', {
             en: 'Timetable filters',
             nl: 'Schemafilters',
-            el: busT('bus_filter_toolbar_aria', 'Î¦Î¯Î»Ï„ÏÎ± Î´ÏÎ¿Î¼Î¿Î»Î¿Î³Î¯Ï‰Î½'),
+            el: busT('bus_filter_toolbar_aria', 'Φίλτρα δρομολογίων'),
         }));
     }
 
@@ -3912,7 +3912,7 @@ async function initBusSchedule() {
         if (!filterSummaryEl) return;
         const dest = busDirLabel(activeDir);
         const datePhrase = busFilterSummaryDatePhrase(activeDayOffset);
-        filterSummaryEl.textContent = `${dest} Â· ${datePhrase}`;
+        filterSummaryEl.textContent = `${dest} · ${datePhrase}`;
         if (todayBtn) {
             const isToday = busClampDayOffset(activeDayOffset) === 0;
             todayBtn.disabled = isToday;
@@ -3920,24 +3920,24 @@ async function initBusSchedule() {
             todayBtn.textContent = busText('bus_now_short', {
                 en: 'Now',
                 nl: 'Nu',
-                el: busT('bus_now_short', 'Î¤ÏŽÏÎ±'),
+                el: busT('bus_now_short', 'Τώρα'),
             });
             todayBtn.setAttribute('title', busText('bus_today', {
                 en: 'Today',
                 nl: 'Vandaag',
-                el: busT('bus_today', 'Î£Î®Î¼ÎµÏÎ±'),
+                el: busT('bus_today', 'Σήμερα'),
             }));
             todayBtn.setAttribute('aria-label', busText('bus_today_select', {
                 en: 'Select today',
                 nl: 'Selecteer vandaag',
-                el: busT('bus_today_select', 'Î•Ï€Î¹Î»Î¿Î³Î® ÏƒÎ®Î¼ÎµÏÎ±'),
+                el: busT('bus_today_select', 'Επιλογή σήμερα'),
             }));
         }
         if (tripChooserOpenBtn) {
             const ariaTpl = busText('bus_filter_bar_aria', {
                 en: 'Timetable: {dest}, {date}. Change destination or day.',
                 nl: 'Dienstregeling: {dest}, {date}. Wijzig bestemming of dag.',
-                el: busT('bus_filter_bar_aria', 'Î”ÏÎ¿Î¼Î¿Î»ÏŒÎ³Î¹Î±: {dest}, {date}. Î‘Î»Î»Î±Î³Î® Ï€ÏÎ¿Î¿ÏÎ¹ÏƒÎ¼Î¿Ï Î® Î·Î¼Î­ÏÎ±Ï‚.'),
+                el: busT('bus_filter_bar_aria', 'Δρομολόγια: {dest}, {date}. Αλλαγή προορισμού ή ημέρας.'),
             });
             tripChooserOpenBtn.setAttribute('aria-label', ariaTpl.replace('{dest}', dest).replace('{date}', datePhrase));
         }
@@ -3964,9 +3964,9 @@ async function initBusSchedule() {
         if (!dayInputEl || dayInputEl.dataset.mounted === '1') return;
         dayInputEl.dataset.mounted = '1';
         dayInputEl.setAttribute('aria-label', busText('bus_day_input_aria', {
-            en: 'Choose timetable day â€” today through six days ahead (Pelion local calendar)',
-            nl: 'Kies dag voor het schema â€” vandaag tot en met zes dagen vooruit (lokale datum Pelion)',
-            el: busT('bus_day_input_aria', 'Î•Ï€Î¹Î»Î¿Î³Î® Î·Î¼Î­ÏÎ±Ï‚ Î³Î¹Î± Ï„Î¿ Ï€ÏÏŒÎ³ÏÎ±Î¼Î¼Î± â€” ÏƒÎ®Î¼ÎµÏÎ± Î­Ï‰Ï‚ Î­Î¾Î¹ Î·Î¼Î­ÏÎµÏ‚ Î¼Ï€ÏÎ¿ÏƒÏ„Î¬ (Ï„Î¿Ï€Î¹ÎºÏŒ Î·Î¼ÎµÏÎ¿Î»ÏŒÎ³Î¹Î¿ Î Î·Î»Î¯Î¿Ï…)'),
+            en: 'Choose timetable day — today through six days ahead (Pelion local calendar)',
+            nl: 'Kies dag voor het schema — vandaag tot en met zes dagen vooruit (lokale datum Pelion)',
+            el: busT('bus_day_input_aria', 'Επιλογή ημέρας για το πρόγραμμα — σήμερα έως έξι ημέρες μπροστά (τοπικό ημερολόγιο Πηλίου)'),
         }));
         syncDayPickerFromOffset();
         dayInputEl.addEventListener('change', () => {
@@ -4006,23 +4006,23 @@ async function initBusSchedule() {
                 ? busText('bus_next_heading', {
                     en: 'NEXT',
                     nl: 'VOLGENDE',
-                    el: busT('bus_next_heading', 'Î•Î ÎŸÎœÎ•ÎÎŸ'),
+                    el: busT('bus_next_heading', 'ΕΠΟΜΕΝΟ'),
                 })
                 : busText('bus_first_departure_title', {
                     en: 'FIRST',
                     nl: 'EERSTE',
-                    el: busT('bus_first_departure_title', 'Î Î¡Î©Î¤ÎŸ'),
+                    el: busT('bus_first_departure_title', 'ΠΡΩΤΟ'),
                 });
             const ariaVerbose = activeDayOffset === 0
                 ? busText('bus_next_heading_verbose', {
                     en: 'Next bus',
                     nl: 'Volgende bus',
-                    el: 'Î•Ï€ÏŒÎ¼ÎµÎ½Î¿ Î»ÎµÏ‰Ï†Î¿ÏÎµÎ¯Î¿',
+                    el: 'Επόμενο λεωφορείο',
                 })
                 : busText('bus_first_departure_verbose', {
                     en: 'First departure',
                     nl: 'Eerste vertrek',
-                    el: 'Î ÏÏŽÏ„Î¿ Î´ÏÎ¿Î¼Î¿Î»ÏŒÎ³Î¹Î¿',
+                    el: 'Πρώτο δρομολόγιο',
                 });
             nextTitleEl.setAttribute('aria-label', ariaVerbose);
             nextTitleEl.innerHTML = `<span class="bus-next-heading-label">${busEscapeHtml(plain)}</span><i class="fa-solid fa-bus bus-subsection-icon" aria-hidden="true"></i>`;
@@ -4444,7 +4444,7 @@ function waitForImageReady(img) {
     });
 }
 
-/** Cross-origin pix URLs break canvas (localhost â†’ kalanera.gr). Prefer same-origin relative /pix/ path. */
+/** Cross-origin pix URLs break canvas (localhost → kalanera.gr). Prefer same-origin relative /pix/ path. */
 function normalizeImageSrcForSmartCrop(src) {
     try {
         const url = new URL(src, location.href);
@@ -4612,7 +4612,7 @@ function initSmartCropForBizDetail() {
     });
 }
 
-/** Business detail: tap photo â†’ full-size original in native <dialog> lightbox */
+/** Business detail: tap photo → full-size original in native <dialog> lightbox */
 function initBizDetailPhotoLightbox() {
     if (!document.body.classList.contains('biz-detail-page')) return;
 
@@ -4627,8 +4627,8 @@ function initBizDetailPhotoLightbox() {
 
     const lang = (document.documentElement.lang || 'en').toLowerCase();
     const isEl = lang === 'el' || lang.startsWith('el');
-    const labelOpen = isEl ? 'Î ÏÎ¿Î²Î¿Î»Î® Ï€Î»Î®ÏÎ¿Ï…Ï‚ Ï†Ï‰Ï„Î¿Î³ÏÎ±Ï†Î¯Î±Ï‚' : 'View full photo';
-    const labelClose = isEl ? 'ÎšÎ»ÎµÎ¯ÏƒÎ¹Î¼Î¿' : 'Close';
+    const labelOpen = isEl ? 'Προβολή πλήρους φωτογραφίας' : 'View full photo';
+    const labelClose = isEl ? 'Κλείσιμο' : 'Close';
 
     let dialog = document.getElementById('biz-detail-photo-lightbox');
     if (!dialog) {
@@ -4712,13 +4712,13 @@ function openMoreSheet() {
         sheet.setAttribute('aria-modal', 'true');
 
         const isEl = (document.documentElement.lang || 'en') === 'el';
-        const title = isEl ? 'Î ÎµÏÎ¹ÏƒÏƒÏŒÏ„ÎµÏÎ±' : 'More';
+        const title = isEl ? 'Περισσότερα' : 'More';
 
         sheet.innerHTML = `
             <div class="more-sheet-handle" aria-hidden="true"></div>
             <header class="more-sheet-header">
                 <div class="more-sheet-title"><i class="fa-solid fa-ellipsis"></i> ${title}</div>
-                <button type="button" class="more-sheet-close" id="more-sheet-close" aria-label="Close">âœ•</button>
+                <button type="button" class="more-sheet-close" id="more-sheet-close" aria-label="Close">✕</button>
             </header>
             <div class="more-sheet-content" id="more-sheet-content"></div>
         `;
@@ -4756,30 +4756,30 @@ function renderMoreSheetContent() {
     if (!container) return;
 
     const isEl = (document.documentElement.lang || 'en') === 'el';
-    const brandName = isEl ? 'ÎšÎ¬Î½Ï„ÎµÎšÎ»Î¹Îº' : 'KanteKlik';
+    const brandName = isEl ? 'ΚάντεΚλικ' : 'KanteKlik';
     const labels = {
-        install: isEl ? 'Î•Î³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ· ÎµÏ†Î±ÏÎ¼Î¿Î³Î®Ï‚' : 'Install App',
-        about: isEl ? 'Î£Ï‡ÎµÏ„Î¹ÎºÎ¬ Î¼Îµ ÎµÎ¼Î¬Ï‚' : 'About us',
-        follow: isEl ? 'Î‘ÎºÎ¿Î»Î¿Ï…Î¸Î®ÏƒÏ„Îµ Î¼Î±Ï‚' : 'Follow us',
-        contact: isEl ? 'Î•Ï€Î¹ÎºÎ¿Î¹Î½Ï‰Î½Î¯Î±' : 'Contact',
-        privacy: isEl ? 'Î Î¿Î»Î¹Ï„Î¹ÎºÎ® Î±Ï€Î¿ÏÏÎ®Ï„Î¿Ï…' : 'Privacy policy',
-        developer: isEl ? 'ÎœÎµ Ï„Î·Î½ Ï…Ï€Î¿ÏƒÏ„Î®ÏÎ¹Î¾Î·' : 'Powered by',
-        travelTitle: isEl ? 'ÎŸÎ´Î·Î³ÏŒÏ‚ Î Î·Î»Î¯Î¿Ï…' : 'Pelion guide',
-        travelHub: isEl ? 'ÎŸÎ´Î·Î³ÏŒÏ‚ Î Î·Î»Î¯Î¿Ï…' : 'Pelion guide',
-        travelFlights: isEl ? 'Î Ï„Î®ÏƒÎµÎ¹Ï‚ (Î±ÎµÏÎ¿Î´ÏÏŒÎ¼Î¹Î¿ Î’ÏŒÎ»Î¿Ï… - VOL)' : 'Flights (Volos airport - VOL)',
-        travelEvents: isEl ? 'Î¤Î¿Ï€Î¹ÎºÎ­Ï‚ ÎµÎºÎ´Î·Î»ÏŽÏƒÎµÎ¹Ï‚' : 'Regional events',
-        travelWalking: isEl ? 'Î ÎµÏÏ€Î±Ï„Î®Î¼Î±Ï„Î± (Î±Î³Î³Î»Î¹ÎºÏŒÏ‚ Î¿Î´Î·Î³ÏŒÏ‚)' : 'Walking routes (English guide)',
-        travelExternal: isEl ? 'Î•Î¾Ï‰Ï„ÎµÏÎ¹ÎºÏŒÏ‚ Î¹ÏƒÏ„ÏŒÏ„Î¿Ï€Î¿Ï‚' : 'External site',
-        travelNumbers: isEl ? 'Î§ÏÎ®ÏƒÎ¹Î¼Î± Ï„Î·Î»Î­Ï†Ï‰Î½Î±' : 'Useful numbers',
-        travelNumbersSub: isEl ? 'Î¤Î¿Ï€Î¹ÎºÎ¿Î¯ & Î­ÎºÏ„Î±ÎºÏ„Î¿Î¹' : 'Local & emergency',
-        travelBus: isEl ? 'Î›ÎµÏ‰Ï†Î¿ÏÎµÎ¯Î¿ (ÎšÎ±Î»Î¬ ÎÎµÏÎ¬)' : 'Bus (Kala Nera)',
-        travelBusSub: isEl ? 'Î”ÏÎ¿Î¼Î¿Î»ÏŒÎ³Î¹Î± & ÎºÎ±Ï„ÎµÏ…Î¸ÏÎ½ÏƒÎµÎ¹Ï‚' : 'Timetables & directions',
-        addBusiness: isEl ? 'Î ÏÎ¿ÏƒÎ¸Î­ÏƒÏ„Îµ Ï„Î·Î½ ÎµÏ€Î¹Ï‡ÎµÎ¯ÏÎ·ÏƒÎ® ÏƒÎ±Ï‚' : 'Add your Business',
-        addBusinessSub: isEl ? 'Î”Ï‰ÏÎµÎ¬Î½' : 'Free'
+        install: isEl ? 'Εγκατάσταση εφαρμογής' : 'Install App',
+        about: isEl ? 'Σχετικά με εμάς' : 'About us',
+        follow: isEl ? 'Ακολουθήστε μας' : 'Follow us',
+        contact: isEl ? 'Επικοινωνία' : 'Contact',
+        privacy: isEl ? 'Πολιτική απορρήτου' : 'Privacy policy',
+        developer: isEl ? 'Με την υποστήριξη' : 'Powered by',
+        travelTitle: isEl ? 'Οδηγός Πηλίου' : 'Pelion guide',
+        travelHub: isEl ? 'Οδηγός Πηλίου' : 'Pelion guide',
+        travelFlights: isEl ? 'Πτήσεις (αεροδρόμιο Βόλου - VOL)' : 'Flights (Volos airport - VOL)',
+        travelEvents: isEl ? 'Τοπικές εκδηλώσεις' : 'Regional events',
+        travelWalking: isEl ? 'Περπατήματα (αγγλικός οδηγός)' : 'Walking routes (English guide)',
+        travelExternal: isEl ? 'Εξωτερικός ιστότοπος' : 'External site',
+        travelNumbers: isEl ? 'Χρήσιμα τηλέφωνα' : 'Useful numbers',
+        travelNumbersSub: isEl ? 'Τοπικοί & έκτακτοι' : 'Local & emergency',
+        travelBus: isEl ? 'Λεωφορείο (Καλά Νερά)' : 'Bus (Kala Nera)',
+        travelBusSub: isEl ? 'Δρομολόγια & κατευθύνσεις' : 'Timetables & directions',
+        addBusiness: isEl ? 'Προσθέστε την επιχείρησή σας' : 'Add your Business',
+        addBusinessSub: isEl ? 'Δωρεάν' : 'Free'
     };
 
     const aboutText = getFooterAboutText() || (isEl
-        ? 'Î’Î¿Î·Î¸Î¬Î¼Îµ Ï„Î¿Ï…Ï‚ Ï„Î±Î¾Î¹Î´Î¹ÏŽÏ„ÎµÏ‚ Î½Î± Î±Î½Î±ÎºÎ±Î»ÏÏˆÎ¿Ï…Î½ Ï„Î± ÎºÎ±Î»ÏÏ„ÎµÏÎ± Î¼Î­ÏÎ· ÏƒÏ„Î·Î½ Ï€ÎµÏÎ¹Î¿Ï‡Î®.'
+        ? 'Βοηθάμε τους ταξιδιώτες να ανακαλύψουν τα καλύτερα μέρη στην περιοχή.'
         : 'We help travelers discover the best places in the area.'
     );
 
@@ -4790,7 +4790,7 @@ function renderMoreSheetContent() {
     const year = new Date().getFullYear();
     const footerCopyright = getFooterCopyrightText();
     const copyrightFallback = isEl
-        ? `${year} ÎŸÎ´Î·Î³ÏŒÏ‚ ÎšÎ±Î»ÏŽÎ½ ÎÎµÏÏŽÎ½. E-Project ÏŒÎ»Î± Ï„Î± Î´Î¹ÎºÎ±Î¹ÏŽÎ¼Î±Ï„Î± Î´Î¹Î±Ï„Î·ÏÎ¿ÏÎ½Ï„Î±Î¹.`
+        ? `${year} Οδηγός Καλών Νερών. E-Project όλα τα δικαιώματα διατηρούνται.`
         : `${year} Kala Nera Guide. E-Project all rights reserved.`;
     const copyrightRaw = (footerCopyright && footerCopyright.trim()) ? footerCopyright.trim() : copyrightFallback;
 
@@ -4813,8 +4813,8 @@ function renderMoreSheetContent() {
     const walkingPelionHref = 'https://walking-pelion.blogspot.com/';
 
     const formattedCopyright = (() => {
-        // Avoid double copyright symbol (some pages already include "Â©")
-        const withoutLeading = copyrightRaw.replace(/^\s*Â©+\s*/g, '').trim();
+        // Avoid double copyright symbol (some pages already include "©")
+        const withoutLeading = copyrightRaw.replace(/^\s*©+\s*/g, '').trim();
         const escaped = escapeHtml(withoutLeading);
         return escaped.replace(/\sE-Project\b/g, '<br>E-Project');
     })();
@@ -4862,8 +4862,8 @@ function renderMoreSheetContent() {
             <p class="install-aware more-install-aware">${getInstallAwarenessHtml()}</p>
             <div class="more-links">
                 <button type="button" onclick="if(typeof triggerManualInstall === 'function'){ triggerManualInstall(event); }">
-                    <span class="more-link-leading"><i class="fa fa-download"></i><span class="more-link-label">${isEl ? 'Î•Î³ÎºÎ±Ï„Î¬ÏƒÏ„Î±ÏƒÎ·' : 'Install'}</span></span>
-                    <small>${isEl ? 'Î£Ï„Î·Î½ Î±ÏÏ‡Î¹ÎºÎ® Î¿Î¸ÏŒÎ½Î·' : 'Add to home screen'}</small>
+                    <span class="more-link-leading"><i class="fa fa-download"></i><span class="more-link-label">${isEl ? 'Εγκατάσταση' : 'Install'}</span></span>
+                    <small>${isEl ? 'Στην αρχική οθόνη' : 'Add to home screen'}</small>
                 </button>
             </div>
         </section>
@@ -4893,7 +4893,7 @@ function renderMoreSheetContent() {
                             <div class="meta-version"><code>v${version}</code></div>
                         </div>
                     </div>
-                    ${formattedCopyright ? `<div class="copyright-row"><span class="copyright-text">Â© ${formattedCopyright}</span><img class="meta-logo" src="${pathPrefix}logo-72x72.png" alt="Kalanera InPhoto" width="28" height="28" loading="lazy"></div>` : ``}
+                    ${formattedCopyright ? `<div class="copyright-row"><span class="copyright-text">© ${formattedCopyright}</span><img class="meta-logo" src="${pathPrefix}logo-72x72.png" alt="Kalanera InPhoto" width="28" height="28" loading="lazy"></div>` : ``}
                 </div>
             </div>
         </section>
@@ -4944,20 +4944,18 @@ async function updateWeather() {
     if (!tempEl) return;
 
     try {
-        // Coordinaten van Kala Nera
         const lat = 39.30;
         const lon = 23.12;
         const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
         const data = await response.json();
-        
+
         const temp = Math.round(data.current_weather.temperature);
         const code = data.current_weather.weathercode;
 
-        // Use Font Awesome icons to avoid encoding/emoji issues across servers.
-        let iconHtml = '<i class="fa-solid fa-sun" aria-hidden="true" style="color:#f59e0b"></i>'; // amber
+        let iconHtml = '<i class="fa-solid fa-sun" aria-hidden="true" style="color:#f59e0b"></i>';
         if (code > 0) iconHtml = '<i class="fa-solid fa-cloud-sun" aria-hidden="true" style="color:#f59e0b"></i>';
-        if (code > 3) iconHtml = '<i class="fa-solid fa-cloud" aria-hidden="true" style="color:#64748b"></i>'; // slate
-        if (code > 60) iconHtml = '<i class="fa-solid fa-cloud-rain" aria-hidden="true" style="color:#0ea5e9"></i>'; // sky
+        if (code > 3) iconHtml = '<i class="fa-solid fa-cloud" aria-hidden="true" style="color:#64748b"></i>';
+        if (code > 60) iconHtml = '<i class="fa-solid fa-cloud-rain" aria-hidden="true" style="color:#0ea5e9"></i>';
 
         tempEl.innerText = `${temp}°C`;
         if (iconEl) iconEl.innerHTML = iconHtml;
@@ -4966,7 +4964,6 @@ async function updateWeather() {
         tempEl.style.display = 'none';
     }
 }
-
 
 // --- WISHLIST LOGICA ---
 
@@ -4978,14 +4975,14 @@ function syncWishlistToolbar(count) {
 
     const isEl = currentLang === 'el';
     const n = Number(count) || 0;
-    const savedWord = n === 1 ? (isEl ? 'Î±Î³Î±Ï€Î·Î¼Î­Î½Î¿' : 'saved place') : (isEl ? 'Î±Î³Î±Ï€Î·Î¼Î­Î½Î±' : 'saved places');
+    const savedWord = n === 1 ? (isEl ? 'αγαπημένο' : 'saved place') : (isEl ? 'αγαπημένα' : 'saved places');
     countEl.innerHTML = `<strong>${n}</strong> ${savedWord}`;
     toolbar.hidden = false;
 
     if (clearBtn) {
         clearBtn.hidden = n === 0;
-        clearBtn.textContent = isEl ? 'Î•ÎºÎºÎ±Î¸Î¬ÏÎ¹ÏƒÎ·' : 'Clear wishlist';
-        clearBtn.title = isEl ? 'Î‘Ï†Î±Î¯ÏÎµÏƒÎ· ÏŒÎ»Ï‰Î½ Ï„Ï‰Î½ Î±Î³Î±Ï€Î·Î¼Î­Î½Ï‰Î½' : 'Remove all saved places';
+        clearBtn.textContent = isEl ? 'Εκκαθάριση' : 'Clear wishlist';
+        clearBtn.title = isEl ? 'Αφαίρεση όλων των αγαπημένων' : 'Remove all saved places';
     }
 }
 
@@ -4997,7 +4994,7 @@ function bindClearWishlistButton() {
         e.preventDefault();
         const isEl = currentLang === 'el';
         const msg = isEl
-            ? 'Î˜Î­Î»ÎµÏ„Îµ ÏƒÎ¯Î³Î¿Ï…ÏÎ± Î½Î± Î´Î¹Î±Î³ÏÎ¬ÏˆÎµÏ„Îµ ÏŒÎ»Î± Ï„Î± Î±Î³Î±Ï€Î·Î¼Î­Î½Î±;'
+            ? 'Θέλετε σίγουρα να διαγράψετε όλα τα αγαπημένα;'
             : 'Are you sure you want to clear your entire wishlist?';
         if (!confirm(msg)) return;
         localStorage.setItem('kalanera_wishlist', JSON.stringify([]));
@@ -5035,7 +5032,7 @@ function updateWishlistCount() {
     
     // Check de taal (Engels is standaard, tenzij de pagina op 'el' staat)
     const isEl = (currentLang === 'el');
-    const label = isEl ? 'Î‘Î³Î±Ï€Î·Î¼Î­Î½Î±' : 'Favorites';
+    const label = isEl ? 'Αγαπημένα' : 'Favorites';
     const path = (location.pathname || '').toLowerCase();
     const isInSubdir = path.includes('/business/') || path.includes('/n8n/');
     const targetPage = isInSubdir
