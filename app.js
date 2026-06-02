@@ -341,7 +341,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.38'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.39'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -5401,6 +5401,10 @@ window.addEventListener('appinstalled', () => {
     if (/privacy(?:-el)?\.html$/i.test(window.location.pathname || '')) {
         return;
     }
+    // n8n kdbd-app-tracking (app-stats) is deprecated: GA is now used.
+    // Keep the implementation available for future diagnostics, but disable by default.
+    const ENABLE_N8N_APP_STATS = false;
+    if (!ENABLE_N8N_APP_STATS) return;
     const WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/app-stats';
 
     function checkStatusAndSend() {
@@ -5457,14 +5461,6 @@ window.addEventListener('appinstalled', () => {
                 return text ? JSON.parse(text) : {};
             } catch (e) {
                 return {};
-            }
-        })
-        .then(res => {
-            if (res.greeting) {
-                // Wacht 2 seconden extra na de stats-verzending voor de begroeting
-                setTimeout(() => {
-                    triggerAutoGreeting(res.greeting);
-                }, 2000);
             }
         })
         .catch(err => console.error("Stats Fetch error:", err));
