@@ -79,6 +79,213 @@ async function loadLocalDevBusSnapshot(dir, dayOffset) {
 }
 
 const N8N_WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/local-businesses';
+
+/**
+ * Bedrijven-databron (zie docs/static-business-json-rollout.md).
+ * - 'webhook' — huidige productie (alle bezoekers zonder override).
+ * - 'json'    — same-origin /data/local-businesses.json, webhook als fallback.
+ * - 'auto'    — json eerst, daarna webhook (bedoeld voor productie-cutover).
+ *
+ * Test zonder impact op andere bezoekers:
+ *   ?bizData=json  of  ?bizData=webhook  (zet ook localStorage kalanera_biz_data_source)
+ *   ?bizData=reset — verwijdert override, terug naar BUSINESS_DATA_SOURCE_DEFAULT
+ */
+const BUSINESS_DATA_SOURCE_DEFAULT = 'webhook';
+const BUSINESS_JSON_RELATIVE_PATH = 'data/local-businesses.json';
+const BUSINESS_JSON_STAGING_RELATIVE_PATH = 'data/local-businesses.staging.json';
+
+function getBusinessDataSourceMode() {
+    try {
+        const q = new URLSearchParams(location.search);
+        const qMode = String(q.get('bizData') || q.get('bizSource') || '').trim().toLowerCase();
+        if (qMode === 'reset' || qMode === 'default') {
+            try { localStorage.removeItem('kalanera_biz_data_source'); } catch { /* ignore */ }
+            console.info('[Kalanera] bizData=reset — databron terug naar standaard:', BUSINESS_DATA_SOURCE_DEFAULT);
+            return BUSINESS_DATA_SOURCE_DEFAULT;
+        }
+        if (qMode === 'json' || qMode === 'static') {
+            try { localStorage.setItem('kalanera_biz_data_source', 'json'); } catch { /* ignore */ }
+            return 'json';
+        }
+        if (qMode === 'webhook' || qMode === 'n8n') {
+            try { localStorage.setItem('kalanera_biz_data_source', 'webhook'); } catch { /* ignore */ }
+            return 'webhook';
+        }
+        if (qMode === 'auto') {
+            try { localStorage.setItem('kalanera_biz_data_source', 'auto'); } catch { /* ignore */ }
+            return 'auto';
+        }
+        const ls = localStorage.getItem('kalanera_biz_data_source');
+        if (ls === 'json' || ls === 'webhook' || ls === 'auto') return ls;
+    } catch { /* ignore */ }
+    return BUSINESS_DATA_SOURCE_DEFAULT;
+}
+
+/** @returns {string[]} volgorde van bronnen om te proberen */
+function businessDataSourceTryOrder(mode) {
+    if (mode === 'json') return ['json', 'webhook'];
+    if (mode === 'auto') return ['json', 'webhook'];
+    return ['webhook'];
+}
+
+function businessJsonFetchUrls() {
+    const urls = [sameOriginDataUrl(BUSINESS_JSON_RELATIVE_PATH)];
+    try {
+        const q = new URLSearchParams(location.search);
+        if (q.get('bizStaging') === '1') {
+            urls.unshift(sameOriginDataUrl(BUSINESS_JSON_STAGING_RELATIVE_PATH));
+        }
+    } catch { /* ignore */ }
+    if (isLocalDevHost()) {
+        urls.push(devSnapshotUrl('dev/local-businesses.json'));
+    }
+    return urls;
+}
+
+function sameOriginDataUrl(relativePath) {
+    return new URL(String(relativePath || '').replace(/^\//, ''), location.origin).href;
+}
+
+async function parseBusinessDirectoryHttpResponse(response, sourceLabel) {
+    if (!response.ok) {
+        const bodySnippet = await response.text().catch(() => '');
+        console.warn(
+            `Businesses ${sourceLabel} niet OK:`,
+            response.status,
+            bodySnippet.slice(0, 400)
+        );
+        return null;
+    }
+    const bodyText = await response.text();
+    const trimmed = bodyText.trim();
+    let payload;
+    if (!trimmed) {
+        console.warn(
+            `Businesses ${sourceLabel}: lege body (HTTP ${response.status})`
+        );
+        payload = [];
+    } else {
+        try {
+            payload = JSON.parse(trimmed);
+        } catch (parseErr) {
+            console.warn(
+                `Businesses ${sourceLabel}: geen geldige JSON`,
+                parseErr,
+                '| snippet:',
+                trimmed.slice(0, 400)
+            );
+            return null;
+        }
+    }
+    if (typeof payload === 'string') {
+        try {
+            payload = JSON.parse(payload);
+        } catch (parseErr) {
+            console.warn(`Businesses ${sourceLabel}: dubbele JSON-parse mislukt`, parseErr);
+            return null;
+        }
+    }
+    const rawData = normalizeBusinessWebhookPayload(payload);
+    if (!Array.isArray(rawData)) {
+        console.warn(
+            `Businesses ${sourceLabel}: verwacht array of rows[], ontving:`,
+            typeof payload,
+            payload && typeof payload === 'object' ? Object.keys(payload).slice(0, 15) : payload
+        );
+        return null;
+    }
+    return rawData;
+}
+
+async function fetchBusinessDirectoryRawRows() {
+    const mode = getBusinessDataSourceMode();
+    const order = businessDataSourceTryOrder(mode);
+    let lastError = null;
+
+    for (const kind of order) {
+        if (kind === 'json') {
+            const urls = businessJsonFetchUrls();
+            for (const url of urls) {
+                try {
+                    const res = await fetch(url, { cache: 'no-cache' });
+                    const raw = await parseBusinessDirectoryHttpResponse(res, `JSON ${url}`);
+                    if (raw && raw.length > 0) {
+                        console.info('[Kalanera] Bedrijven geladen via statische JSON:', url);
+                        return { rawData: raw, source: 'json', mode };
+                    }
+                    if (raw && raw.length === 0) {
+                        console.warn('[Kalanera] Statische JSON leeg — volgende bron:', url);
+                    }
+                } catch (e) {
+                    lastError = e;
+                    console.warn('[Kalanera] Statische JSON fetch mislukt:', url, e?.message || e);
+                }
+            }
+            continue;
+        }
+        if (kind === 'webhook') {
+            try {
+                const res = await fetch(N8N_WEBHOOK_URL);
+                const raw = await parseBusinessDirectoryHttpResponse(res, 'n8n webhook');
+                if (raw) {
+                    return { rawData: raw, source: 'webhook', mode };
+                }
+            } catch (e) {
+                lastError = e;
+                console.warn('Businesses webhook fetch mislukt:', e?.message || e);
+            }
+        }
+    }
+
+    if (lastError) throw lastError;
+    return null;
+}
+
+/**
+ * @param {object[]} rawData
+ * @param {{ source?: string }} meta
+ * @param {() => void} showData
+ */
+function applyBusinessDirectoryRows(rawData, meta, showData) {
+    const freshData = rawData.filter(businessRowIsActive);
+    if (rawData.length > 0 && freshData.length === 0) {
+        const sample = rawData[0];
+        console.warn(
+            'Businesses: alle rijen uitgefilterd op Status≠Active. Voorbeeld Status-waarde:',
+            sheetLikeStatusValue(sample),
+            '| sleutels:',
+            sample && typeof sample === 'object' ? Object.keys(sample).slice(0, 20) : sample
+        );
+    }
+    if (rawData.length === 0) {
+        console.warn('Businesses: lege array — check Sheet/tab, n8n of /data/local-businesses.json.');
+    }
+
+    if (freshData.length === 0 && allBusinesses.length > 0) {
+        console.warn('Businesses: lege lijst genegeerd — bestaande cache behouden.');
+        showData();
+        return;
+    }
+
+    allBusinesses = freshData;
+
+    const now = new Date();
+    const locale = (currentLang === 'el') ? 'el-GR' : 'en-GB';
+    const timeString = now.toLocaleDateString(locale) + ' '
+        + now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+    const sourceTag = meta && meta.source === 'json' ? ' (static JSON)' : '';
+
+    try {
+        if (freshData.length > 0) {
+            localStorage.setItem('kalanera_last_sync', timeString + sourceTag);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
+        }
+    } catch (storageErr) {
+        console.warn('Bedrijven-cache opslaan mislukt (localStorage):', storageErr);
+    }
+
+    showData();
+}
 // Bus timetable (n8n path bus-schedule-next). Query: from, dir, remaining=0|1, dayOffset=0..6 (Athens calendar).
 // Legacy webhook /webhook/bus-schedule blijft in n8n actief voor oudere app.js die nog niet via service worker is bijgewerkt.
 const N8N_WEBHOOK_URL_BUS_SCHEDULE_NEXT = 'https://n8n.vanlaar.cloud/webhook/bus-schedule-next';
@@ -341,7 +548,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.39'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.41'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -405,96 +612,19 @@ async function init() {
         }
     }
 
-// --- STAP 3: Haal verse data op via n8n (ook op LAN proberen; bij CORS-fout val terug op cache) ---
+// --- STAP 3: Verse data (statische JSON en/of n8n — zie getBusinessDataSourceMode) ---
     try {
+        const bizMode = getBusinessDataSourceMode();
         if (isLocalDevHost()) {
-            logDevWebhookSkipOnce('LAN: n8n wordt geprobeerd; bij CORS-fout wordt cache gebruikt');
-        }
-        const response = await fetch(N8N_WEBHOOK_URL);
-        if (!response.ok) {
-            const bodySnippet = await response.text().catch(() => '');
-            console.warn(
-                'Businesses webhook niet OK:',
-                response.status,
-                bodySnippet.slice(0, 400)
+            logDevWebhookSkipOnce(
+                `LAN: bizData-modus="${bizMode}" (webhook|json|auto via ?bizData= of localStorage)`
             );
-        } else {
-            const bodyText = await response.text();
-            const trimmed = bodyText.trim();
-            let payload;
-            if (!trimmed) {
-                console.warn(
-                    'Businesses webhook: lege response body (HTTP',
-                    response.status,
-                    ') — meestal n8n Respond zonder body of $json.rows undefined. Check workflow / cache branch.'
-                );
-                payload = [];
-            } else {
-                try {
-                    payload = JSON.parse(trimmed);
-                } catch (parseErr) {
-                    console.warn(
-                        'Businesses webhook: body is geen geldige JSON',
-                        parseErr,
-                        '| snippet:',
-                        trimmed.slice(0, 400)
-                    );
-                    throw parseErr;
-                }
-            }
-            if (typeof payload === 'string') {
-                try {
-                    payload = JSON.parse(payload);
-                } catch (parseErr) {
-                    console.warn('Businesses webhook: body is string maar geen geldige JSON', parseErr);
-                    throw new Error('Invalid businesses payload shape');
-                }
-            }
-            const rawData = normalizeBusinessWebhookPayload(payload);
-            if (!Array.isArray(rawData)) {
-                console.warn(
-                    'Businesses webhook: verwacht array of object.rows[], ontving:',
-                    typeof payload,
-                    payload && typeof payload === 'object' ? Object.keys(payload).slice(0, 15) : payload
-                );
-                throw new Error('Invalid businesses payload shape');
-            }
-            const freshData = rawData.filter(businessRowIsActive);
-            if (rawData.length > 0 && freshData.length === 0) {
-                const sample = rawData[0];
-                console.warn(
-                    'Businesses webhook: alle rijen uitgefilterd op Status≠Active. Voorbeeld Status-waarde:',
-                    sheetLikeStatusValue(sample),
-                    '| sleutels:',
-                    sample && typeof sample === 'object' ? Object.keys(sample).slice(0, 20) : sample
-                );
-            }
-            if (rawData.length === 0) {
-                console.warn('Businesses webhook: lege array — check n8n Google Sheets bereik/tab en workflow.');
-            }
-
-            if (freshData.length === 0 && allBusinesses.length > 0) {
-                console.warn('Businesses webhook: lege lijst genegeerd — bestaande cache behouden.');
-                showData();
-            } else {
-                allBusinesses = freshData;
-
-                const now = new Date();
-                const locale = (currentLang === 'el') ? 'el-GR' : 'en-GB';
-                const timeString = now.toLocaleDateString(locale) + ' '
-                    + now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
-
-                try {
-                    if (freshData.length > 0) {
-                        localStorage.setItem('kalanera_last_sync', timeString);
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(freshData));
-                    }
-                } catch (storageErr) {
-                    console.warn('Bedrijven-cache opslaan mislukt (localStorage):', storageErr);
-                }
-
-                showData();
-            }
+        } else if (bizMode !== BUSINESS_DATA_SOURCE_DEFAULT) {
+            console.info('[Kalanera] Bedrijven-databron (override):', bizMode);
+        }
+        const loaded = await fetchBusinessDirectoryRawRows();
+        if (loaded && Array.isArray(loaded.rawData)) {
+            applyBusinessDirectoryRows(loaded.rawData, { source: loaded.source }, showData);
         }
     } catch (error) {
         console.warn('Bedrijven ophalen mislukt — cache gebruikt indien aanwezig.', error?.message || error);

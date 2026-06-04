@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Generated from Sheet (seed script or n8n publish) — keep dev/local-businesses.json as source
+data/local-businesses.json
+data/local-businesses.staging.json
+data/local-businesses.meta.json
+
+# Android TWA (Gradle cache — not source)
+kalanera-twa/.gradle/
+kalanera-twa/local.properties
