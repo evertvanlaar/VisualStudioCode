@@ -90,7 +90,7 @@ const N8N_WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/local-businesses';
  *   ?bizData=json  of  ?bizData=webhook  (zet ook localStorage kalanera_biz_data_source)
  *   ?bizData=reset — verwijdert override, terug naar BUSINESS_DATA_SOURCE_DEFAULT
  */
-const BUSINESS_DATA_SOURCE_DEFAULT = 'webhook';
+const BUSINESS_DATA_SOURCE_DEFAULT = 'auto'; /** deze aanpassen als switching to json */
 const BUSINESS_JSON_RELATIVE_PATH = 'data/local-businesses.json';
 const BUSINESS_JSON_STAGING_RELATIVE_PATH = 'data/local-businesses.staging.json';
 
@@ -548,7 +548,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.41'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.42'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -5068,30 +5068,83 @@ function escapeHtml(str) {
 
 
 
+const WEATHER_CACHE_KEY = 'kalanera_weather_cache_v1';
+const WEATHER_CACHE_TTL_MS = 30 * 60 * 1000;
+
+function weatherIconHtml(code) {
+    const c = Number(code) || 0;
+    if (c > 60) {
+        return '<i class="fa-solid fa-cloud-rain" aria-hidden="true" style="color:#0ea5e9"></i>';
+    }
+    if (c > 3) {
+        return '<i class="fa-solid fa-cloud" aria-hidden="true" style="color:#64748b"></i>';
+    }
+    if (c > 0) {
+        return '<i class="fa-solid fa-cloud-sun" aria-hidden="true" style="color:#f59e0b"></i>';
+    }
+    return '<i class="fa-solid fa-sun" aria-hidden="true" style="color:#f59e0b"></i>';
+}
+
+function applyWeatherUi(tempEl, iconEl, temp, code) {
+    tempEl.innerText = `${temp}°C`;
+    tempEl.style.display = '';
+    if (iconEl) iconEl.innerHTML = weatherIconHtml(code);
+}
+
+function readWeatherCache() {
+    try {
+        const raw = sessionStorage.getItem(WEATHER_CACHE_KEY);
+        if (!raw) return null;
+        const o = JSON.parse(raw);
+        if (!o || typeof o.temp !== 'number' || typeof o.ts !== 'number') return null;
+        if (Date.now() - o.ts > WEATHER_CACHE_TTL_MS) return null;
+        return o;
+    } catch {
+        return null;
+    }
+}
+
+function writeWeatherCache(temp, code) {
+    try {
+        sessionStorage.setItem(
+            WEATHER_CACHE_KEY,
+            JSON.stringify({ temp, code: Number(code) || 0, ts: Date.now() })
+        );
+    } catch { /* ignore */ }
+}
+
 async function updateWeather() {
     const tempEl = document.getElementById('weather-temp');
     const iconEl = document.getElementById('weather-icon');
     if (!tempEl) return;
 
-    try {
-        const lat = 39.30;
-        const lon = 23.12;
-        const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
-        const data = await response.json();
+    const cached = readWeatherCache();
+    if (cached) {
+        applyWeatherUi(tempEl, iconEl, cached.temp, cached.code);
+    }
 
+    const url =
+        'https://api.open-meteo.com/v1/forecast?latitude=39.30&longitude=23.12&current_weather=true';
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        const data = await response.json();
         const temp = Math.round(data.current_weather.temperature);
         const code = data.current_weather.weathercode;
-
-        let iconHtml = '<i class="fa-solid fa-sun" aria-hidden="true" style="color:#f59e0b"></i>';
-        if (code > 0) iconHtml = '<i class="fa-solid fa-cloud-sun" aria-hidden="true" style="color:#f59e0b"></i>';
-        if (code > 3) iconHtml = '<i class="fa-solid fa-cloud" aria-hidden="true" style="color:#64748b"></i>';
-        if (code > 60) iconHtml = '<i class="fa-solid fa-cloud-rain" aria-hidden="true" style="color:#0ea5e9"></i>';
-
-        tempEl.innerText = `${temp}°C`;
-        if (iconEl) iconEl.innerHTML = iconHtml;
+        writeWeatherCache(temp, code);
+        applyWeatherUi(tempEl, iconEl, temp, code);
     } catch (e) {
-        console.warn("Weer kon niet worden geladen");
-        tempEl.style.display = 'none';
+        if (cached) {
+            console.warn('Weer live mislukt — laatste cache getoond', e?.message || e);
+            return;
+        }
+        console.warn('Weer kon niet worden geladen', e?.message || e);
+        tempEl.innerText = '--°C';
+        tempEl.style.display = '';
+        if (iconEl) iconEl.innerHTML = weatherIconHtml(0);
     }
 }
 
