@@ -82,15 +82,15 @@ const N8N_WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/local-businesses';
 
 /**
  * Bedrijven-databron (zie docs/static-business-json-rollout.md).
- * - 'webhook' — huidige productie (alle bezoekers zonder override).
- * - 'json'    — same-origin /data/local-businesses.json, webhook als fallback.
- * - 'auto'    — json eerst, daarna webhook (bedoeld voor productie-cutover).
+ * - 'auto'    — productiestandaard: /data/local-businesses.json, webhook als fallback.
+ * - 'json'    — altijd statische JSON (zelfde pad), webhook als fallback.
+ * - 'webhook' — alleen n8n-webhook (debug of als JSON ontbreekt).
  *
- * Test zonder impact op andere bezoekers:
- *   ?bizData=json  of  ?bizData=webhook  (zet ook localStorage kalanera_biz_data_source)
+ * Override voor testen (zet ook localStorage kalanera_biz_data_source):
+ *   ?bizData=json | ?bizData=webhook
  *   ?bizData=reset — verwijdert override, terug naar BUSINESS_DATA_SOURCE_DEFAULT
  */
-const BUSINESS_DATA_SOURCE_DEFAULT = 'auto'; /** deze aanpassen als switching to json */
+const BUSINESS_DATA_SOURCE_DEFAULT = 'auto';
 const BUSINESS_JSON_RELATIVE_PATH = 'data/local-businesses.json';
 const BUSINESS_JSON_STAGING_RELATIVE_PATH = 'data/local-businesses.staging.json';
 
@@ -548,7 +548,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.42'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.43'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -5652,6 +5652,61 @@ window.addEventListener('appinstalled', () => {
     window.addEventListener('load', () => {
         setTimeout(checkStatusAndSend, 1500);
     });
+})();
+
+/**
+ * Core Web Vitals → GA4 event `web_vitals` (production only).
+ * GA4 Admin → Custom definitions → event-scoped: metric_name, metric_rating, display_mode, app_version.
+ * Exploration: event = web_vitals, metric = Average metric_value, breakdown metric_name + page_path.
+ * CLS metric_value is score (0–1); LCP/INP/FCP/TTFB are milliseconds.
+ */
+(function initWebVitalsGa4() {
+    if (/privacy(?:-el)?\.html$/i.test(window.location.pathname || '')) return;
+    if (!isKalaneraProductionOrigin()) return;
+
+    function sendWebVitalToGa(metric) {
+        if (typeof gtag !== 'function' || !metric || !metric.name) return;
+        const raw = metric.value;
+        const valueForGa = metric.name === 'CLS'
+            ? Math.round(raw * 1000)
+            : Math.round(raw);
+        gtag('event', 'web_vitals', {
+            value: valueForGa,
+            metric_name: metric.name,
+            metric_value: raw,
+            metric_rating: metric.rating || 'not-rated',
+            page_path: window.location.pathname || '/',
+            display_mode: (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone)
+                ? 'standalone'
+                : 'browser',
+            app_version: typeof APP_VERSION !== 'undefined' ? APP_VERSION : 'unknown',
+            non_interaction: true,
+        });
+    }
+
+    function startWebVitals() {
+        const wv = window.webVitals;
+        if (!wv) return;
+        wv.onLCP(sendWebVitalToGa);
+        wv.onINP(sendWebVitalToGa);
+        wv.onCLS(sendWebVitalToGa);
+        wv.onFCP(sendWebVitalToGa);
+        wv.onTTFB(sendWebVitalToGa);
+    }
+
+    if (window.webVitals) {
+        startWebVitals();
+        return;
+    }
+
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://cdn.jsdelivr.net/npm/web-vitals@4.2.4/dist/web-vitals.iife.js';
+    script.onload = startWebVitals;
+    script.onerror = function () {
+        console.warn('[Kalanera] web-vitals niet geladen — CWV-meting overgeslagen');
+    };
+    document.head.appendChild(script);
 })();
 
 // 1. DIRECT UITVOEREN (Tegen het flitsen van wit licht bij laden)
