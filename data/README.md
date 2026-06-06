@@ -6,6 +6,7 @@
 | `local-businesses.json` | n8n publish-workflow (Google Sheet) | `app.js` (modus `json` / `auto`) |
 | `local-businesses.staging.json` | Zelfde workflow, staging deploy | Test via `?bizData=json&bizStaging=1` |
 | `local-businesses.meta.json` | Optioneel | Monitoring / deploy-scripts |
+| `visitkalanera-sitemap.json` | GitHub Actions / `scripts/refresh-visitkalanera-sitemap.mjs` | n8n directory-vergelijking (incognito: geen directe fetch vanaf n8n) |
 
 ## Lokaal aanmaken (test)
 
