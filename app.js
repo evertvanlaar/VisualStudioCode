@@ -39,7 +39,7 @@ async function loadLocalDevBusinessSnapshot() {
         const payload = await res.json();
         const rawData = normalizeBusinessWebhookPayload(payload);
         if (!Array.isArray(rawData)) return false;
-        const freshData = rawData.filter(businessRowIsActive);
+        const freshData = activeBusinessRows(rawData);
         if (!freshData.length) return false;
         allBusinesses = freshData;
         try {
@@ -247,7 +247,7 @@ async function fetchBusinessDirectoryRawRows() {
  * @param {() => void} showData
  */
 function applyBusinessDirectoryRows(rawData, meta, showData) {
-    const freshData = rawData.filter(businessRowIsActive);
+    const freshData = activeBusinessRows(rawData);
     if (rawData.length > 0 && freshData.length === 0) {
         const sample = rawData[0];
         console.warn(
@@ -503,6 +503,19 @@ function businessRowIsActive(biz) {
     return String(sheetLikeStatusValue(biz) ?? '').trim().toLowerCase() === 'active';
 }
 
+/** Trim Sheet-velden zodat locatie-/categoriefilters exact matchen (bijv. "Kato Gatzea "). */
+function normalizeBusinessDirectoryRow(biz) {
+    if (!biz || typeof biz !== 'object') return biz;
+    const row = { ...biz };
+    if (row.Location != null) row.Location = String(row.Location).trim();
+    if (row.Category != null) row.Category = String(row.Category).trim() || 'Other';
+    return row;
+}
+
+function activeBusinessRows(rawData) {
+    return rawData.filter(businessRowIsActive).map(normalizeBusinessDirectoryRow);
+}
+
 // Icon Map voor categorieën
 const iconMap = {
     'Bakery': 'fa-bread-slice', 'Bakker': 'fa-bread-slice', 'Coffee': 'fa-coffee', 'Koffie': 'fa-coffee',
@@ -548,7 +561,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.43'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.44'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
