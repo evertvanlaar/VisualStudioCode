@@ -19,7 +19,7 @@
     <meta name="theme-color" content="#4a6c4a">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=3.1.45">
+    <link id="main-stylesheet" rel="stylesheet" href="style.css?v=3.1.55">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -120,21 +120,16 @@
             </a>
             <p class="footer-tagline">Kala Nera · Pelion, Greece</p>
             <p class="footer-lead">We help travelers discover the best places—from authentic taverns to wonderful stays—in Kala Nera and the wider Pelion area.</p>
-            <div class="footer-install-strip">
-                <a href="install.html" class="install-badge install-badge--footer" aria-label="Install Kala Nera Guide on your phone">
-                    <span class="install-badge__icon" aria-hidden="true"><i class="fa-solid fa-mobile-screen-button"></i></span>
-                    <span class="install-badge__text">
-                        <span class="install-badge__title">Install on your phone</span>
-                        <span class="install-badge__note">Free · Browser install · Not in App Store or Google Play</span>
-                    </span>
-                    <i class="fa-solid fa-chevron-right install-badge__chevron" aria-hidden="true"></i>
-                </a>
-                <div class="footer-install-qr">
-                    <img src="pix/install-qr-en.png" width="72" height="72" alt="QR: install Kala Nera Guide at kalanera.gr/install.html" loading="lazy">
-                    <span class="footer-install-qr__label">Scan</span>
+            <div class="footer-install-strip footer-install-strip--compact">
+                <div class="footer-install-strip__stack">
+                    <span class="footer-install-strip__label">Get the app</span>
+                    <div class="footer-install-strip__actions">
+                        <a href="https://play.google.com/store/apps/details?id=com.kalanera.app" class="play-store-badge play-store-badge--footer js-play-store-promo js-play-store-android" target="_blank" rel="noopener noreferrer" aria-label="Get Kala Nera Guide on Google Play"><img src="pix/google-play-badge-en.png" width="135" height="40" alt="Get it on Google Play" loading="lazy"></a>
+                        <a href="https://play.google.com/store/apps/details?id=com.kalanera.app" class="footer-install-qr footer-install-qr--play footer-install-qr--icon-only js-play-store-promo js-play-store-android" aria-label="Scan QR code — open Kala Nera Guide on Google Play"><img src="pix/play-store-qr-en.png" width="76" height="76" alt="QR code: Google Play — Kala Nera Guide" loading="eager" decoding="sync"></a>
+                    </div>
                 </div>
-            </div>
-        </div>
+                <a href="install.html" class="install-badge install-badge--footer install-badge--ios-only js-install-ios-promo" aria-label="Install Kala Nera Guide on iPhone via Safari"><span class="install-badge__icon" aria-hidden="true"><i class="fa-brands fa-safari"></i></span><span class="install-badge__text"><span class="install-badge__title">Add via Safari</span><span class="install-badge__note">Free · No App Store</span></span><i class="fa-solid fa-chevron-right install-badge__chevron" aria-hidden="true"></i></a>
+            </div></div>
 
         <div class="footer-aside">
             <div class="footer-aside-cols">
@@ -177,7 +172,7 @@
     <i class="fa-solid fa-map-location-dot"></i>
 </a>
 
-<script src="app.js?v=3.1.45"></script>
+<script src="app.js?v=3.1.55"></script>
 <nav class="bottom-nav" aria-label="Primary">
     <div class="bottom-nav-inner">
         <a href="index.html"><i class="fa-solid fa-house"></i><span>Home</span></a>

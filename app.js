@@ -561,7 +561,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.45'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.55'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -699,6 +699,7 @@ function wantsInstallDeepLink() {
 }
 
 const TWA_ANDROID_PACKAGE = 'com.kalanera.app';
+const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.kalanera.app';
 const PWA_INSTALLED_STORAGE_KEY = 'kalanera_pwa_installed';
 /** QR install page: show success panel after Install accepted in this tab (session only). */
 const PWA_INSTALL_SUCCESS_SESSION_KEY = 'kalanera_pwa_install_success';
@@ -887,6 +888,121 @@ function getInstallAwarenessHtml() {
     return 'Already have the <strong>Kala Nera</strong> icon on your home screen? Open the app from there. Tap <strong>Install</strong> only for a first install, or if you removed the icon.';
 }
 
+function getMoreInstallPlatform() {
+    if (isAppStandalone() || isOpenedFromKalaneraTwa()) return 'installed';
+    if (_installDetectReady && installSituationBlocksBrowserInstall()) return 'installed';
+    if (isIOSInstallDevice()) return 'ios';
+    if (isAndroidDevice()) return 'android';
+    if (isLikelyDesktopInstallContext()) return 'desktop';
+    return 'unknown';
+}
+
+function isPwaInstallTrigger(event) {
+    return Boolean(event?.target?.closest?.('[data-install-mode="pwa"]'));
+}
+
+function openPlayStoreListing() {
+    window.open(PLAY_STORE_URL, '_blank', 'noopener,noreferrer');
+}
+
+function syncInstallMenuItemLabel() {
+    const item = document.getElementById('menu-install-item');
+    if (!item) return;
+
+    const platform = getMoreInstallPlatform();
+    if (platform === 'installed') {
+        hideInstallMenuItem();
+        return;
+    }
+
+    const isEl = (document.documentElement.lang || '').toLowerCase().startsWith('el');
+    let label;
+    let iconClass;
+    if (platform === 'ios') {
+        label = isEl ? 'Μέσω Safari' : 'Add via Safari';
+        iconClass = 'fa-brands fa-safari';
+    } else if (platform === 'android') {
+        label = isEl ? 'Λήψη εφαρμογής' : 'Get the app';
+        iconClass = 'fa-brands fa-google-play';
+    } else {
+        label = isEl ? 'Εγκατάσταση Εφαρμογής' : 'Install App';
+        iconClass = 'fa fa-download';
+    }
+
+    const link = item.querySelector('a');
+    if (!link) return;
+    link.innerHTML = `<i class="${iconClass}" style="color: var(--install-color) !important;"></i> ${escapeHtml(label)}`;
+    link.onclick = (e) => {
+        if (typeof window.triggerManualInstall === 'function') window.triggerManualInstall(e);
+    };
+    enableInstallMenuItem();
+}
+
+function getMoreInstallSectionHtml() {
+    const isEl = (document.documentElement.lang || '').toLowerCase().startsWith('el');
+    const sectionTitle = isEl ? 'Εγκατάσταση εφαρμογής' : 'Install App';
+    const platform = getMoreInstallPlatform();
+
+    if (platform === 'installed') {
+        const situation = _installDetectReady && _installSituation !== 'browser-can-install'
+            ? _installSituation
+            : (isOpenedFromKalaneraTwa() ? 'running-twa' : 'running-pwa');
+        return `
+        <section class="more-section more-section--install more-section--install-done">
+            <h3>${sectionTitle}</h3>
+            <p class="more-install-done">${getInstallDoneMessageHtml(situation)}</p>
+        </section>`;
+    }
+
+    const copy = platform === 'ios'
+        ? (isEl ? {
+            awareness: 'Δωρεάν στην <strong>αρχική οθόνη</strong> μέσω Safari — χωρίς App Store.',
+            label: 'Μέσω Safari',
+            sub: 'Δωρεάν · Χωρίς App Store',
+            icon: 'fa-brands fa-safari'
+        } : {
+            awareness: 'Free on your <strong>home screen</strong> via Safari — no App Store.',
+            label: 'Add via Safari',
+            sub: 'Free · No App Store',
+            icon: 'fa-brands fa-safari'
+        })
+        : platform === 'android'
+            ? (isEl ? {
+                awareness: 'Δωρεάν εφαρμογή στο <strong>Google Play</strong>. Πατήστε <strong>Εγκατάσταση</strong> στο Play Store.',
+                label: 'Λήψη εφαρμογής',
+                sub: 'Google Play',
+                icon: 'fa-brands fa-google-play'
+            } : {
+                awareness: 'Free app on <strong>Google Play</strong>. Tap <strong>Install</strong> in the store.',
+                label: 'Get the app',
+                sub: 'Google Play',
+                icon: 'fa-brands fa-google-play'
+            })
+            : (isEl ? {
+                awareness: 'Η εφαρμογή εγκαθίσταται στο <strong>κινητό</strong> — όχι στον υπολογιστή.',
+                label: 'Οδηγίες εγκατάστασης',
+                sub: 'Android & iPhone',
+                icon: 'fa fa-download'
+            } : {
+                awareness: 'Install on your <strong>phone</strong> — not on a desktop computer.',
+                label: 'Install instructions',
+                sub: 'Android & iPhone',
+                icon: 'fa fa-download'
+            });
+
+    return `
+        <section class="more-section more-section--install">
+            <h3>${sectionTitle}</h3>
+            <p class="install-aware more-install-aware">${copy.awareness}</p>
+            <div class="more-links">
+                <button type="button" onclick="if(typeof triggerManualInstall === 'function'){ triggerManualInstall(event); }">
+                    <span class="more-link-leading"><i class="${copy.icon}"></i><span class="more-link-label">${copy.label}</span></span>
+                    <small>${copy.sub}</small>
+                </button>
+            </div>
+        </section>`;
+}
+
 const INSTALL_GUIDANCE_NO_AWARENESS = new Set([
     'runningTwa', 'runningPwa', 'browserPlayInstalled', 'browserPwaInstalled',
     'browserBothInstalled', 'alreadyInstalled'
@@ -932,11 +1048,11 @@ function getInstallGuidance(scenario) {
         desktop: {
             title: 'Εγκαταστήστε την εφαρμογή <strong>Καλά Νερά</strong> Guide στο κινητό σας.',
             steps: [
-                'Ανοίξτε Chrome (Android) ή Safari (iPhone).',
-                `Μεταβείτε στο <strong>${liveUrl.replace('https://', '')}</strong> ή σαρώστε τον QR κωδικό.`,
-                'Πατήστε <strong>Εγκατάσταση</strong> — το εικονίδιο στην αρχική οθόνη.'
+                '<strong>Android:</strong> σαρώστε τον QR Google Play στη σελίδα εγκατάστασης ή ανοίξτε το Google Play.',
+                '<strong>iPhone:</strong> Safari → <strong>' + liveUrl.replace('https://', '') + '</strong> → Κοινή χρήση → Προσθήκη στην αρχική οθόνη.',
+                'Η εφαρμογή δεν εγκαθίσταται στον υπολογιστή.'
             ],
-            landingHint: 'Η εφαρμογή δεν εγκαθίσταται στον υπολογιστή — μόνο στο τηλέφωνο.'
+            landingHint: 'Ανοίξτε <strong>' + liveUrl.replace('https://', '') + '</strong> στο κινητό για οδηγίες.'
         },
         localDev: {
             title: 'Δοκιμή από υπολογιστή — η εγκατάσταση λειτουργεί μόνο στο live site.',
@@ -1002,11 +1118,11 @@ function getInstallGuidance(scenario) {
         desktop: {
             title: 'Install the <strong>Kala Nera Guide</strong> mobile app on your phone.',
             steps: [
-                'Open Chrome (Android) or Safari (iPhone).',
-                `Go to <strong>${liveUrl.replace('https://', '')}</strong> or scan the QR code.`,
-                'Tap <strong>Install</strong> — the app icon appears on your home screen.'
+                '<strong>Android:</strong> scan the Google Play QR on the install page, or open Google Play and search Kala Nera Guide.',
+                '<strong>iPhone:</strong> open Safari → <strong>' + liveUrl.replace('https://', '') + '</strong> → Share → Add to Home Screen.',
+                'The app does not install on a desktop computer.'
             ],
-            landingHint: 'The app installs on your phone only, not on this computer.'
+            landingHint: 'Open <strong>' + liveUrl.replace('https://', '') + '</strong> on your phone for step-by-step help.'
         },
         localDev: {
             title: 'You are testing locally — install only works on the live site.',
@@ -1972,6 +2088,8 @@ function copyToClipboard(text, el) {
 // --- EVENT LISTENERS ---
 
 document.addEventListener('DOMContentLoaded', () => {
+    applyPlayStorePromoUi();
+
     rewriteDomPixImagesToSameOrigin();
 
     // 1. Dark Mode
@@ -4827,11 +4945,11 @@ function initMoreTab() {
 
     moreBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        openMoreSheet();
+        void openMoreSheet();
     });
 }
 
-function openMoreSheet() {
+async function openMoreSheet() {
     // Only relevant on mobile where bottom nav is shown
     if (window.innerWidth >= 992) return;
 
@@ -4868,6 +4986,9 @@ function openMoreSheet() {
         document.body.appendChild(sheet);
     }
 
+    if (!isAppStandalone()) {
+        await refreshInstallSituation();
+    }
     renderMoreSheetContent();
 
     backdrop.hidden = false;
@@ -5000,16 +5121,7 @@ function renderMoreSheetContent() {
             </div>
         </section>
 
-        <section class="more-section">
-            <h3>${labels.install}</h3>
-            <p class="install-aware more-install-aware">${getInstallAwarenessHtml()}</p>
-            <div class="more-links">
-                <button type="button" onclick="if(typeof triggerManualInstall === 'function'){ triggerManualInstall(event); }">
-                    <span class="more-link-leading"><i class="fa fa-download"></i><span class="more-link-label">${isEl ? 'Εγκατάσταση' : 'Install'}</span></span>
-                    <small>${isEl ? 'Στην αρχική οθόνη' : 'Add to home screen'}</small>
-                </button>
-            </div>
-        </section>
+        ${getMoreInstallSectionHtml()}
 
         <section class="more-section more-about">
             <h3>${labels.about}</h3>
@@ -5394,6 +5506,46 @@ function getInstallPlatform() {
     return 'unknown';
 }
 
+function applyPlayStorePromoUi() {
+    const hideInApp = isAppStandalone() || isOpenedFromKalaneraTwa();
+    const onIos = isIOSInstallDevice();
+    const onDesktop = isLikelyDesktopInstallContext();
+
+    document.querySelectorAll('.js-play-store-promo').forEach((el) => {
+        let hide = hideInApp || (onIos && el.classList.contains('js-play-store-android'));
+        if (!hide && el.classList.contains('js-play-store-android')) {
+            const isQr = el.classList.contains('footer-install-qr');
+            const isFooterBadge = el.classList.contains('play-store-badge--footer');
+            if (isQr) hide = !onDesktop;
+            else if (isFooterBadge || el.classList.contains('play-store-badge--hero')) hide = false;
+            else if (el.classList.contains('play-store-badge')) hide = onDesktop;
+        }
+        el.hidden = hide;
+        el.setAttribute('aria-hidden', hide ? 'true' : 'false');
+    });
+
+    document.querySelectorAll('.js-install-ios-promo').forEach((el) => {
+        const hide = hideInApp || !onIos;
+        el.hidden = hide;
+        el.setAttribute('aria-hidden', hide ? 'true' : 'false');
+    });
+
+    document.querySelectorAll('.footer-install-strip').forEach((strip) => {
+        const promos = strip.querySelectorAll('.js-play-store-promo, .js-install-ios-promo');
+        const hasVisibleChild = promos.length
+            ? [...promos].some((child) => !child.hidden)
+            : [...strip.children].some((child) => !child.hidden);
+        const hide = hideInApp || !hasVisibleChild;
+        strip.hidden = hide;
+        strip.setAttribute('aria-hidden', hide ? 'true' : 'false');
+    });
+
+    const root = document.documentElement;
+    root.classList.toggle('ua-ios', onIos);
+    root.classList.toggle('ua-desktop', onDesktop && !onIos);
+    root.classList.toggle('ua-mobile', !onDesktop && !onIos);
+}
+
 function applyInstallPlatformUi() {
     const platform = getInstallPlatform();
     const uiKey = platform === 'installed' ? null : (platform === 'unknown' ? 'desktop' : platform);
@@ -5454,6 +5606,8 @@ function applyInstallPlatformUi() {
             iosBanner.style.display = 'none';
         }
     }
+
+    applyPlayStorePromoUi();
 }
 
 function bodyWantsInstallPromo() {
@@ -5501,10 +5655,13 @@ async function initInstallPromo() {
 
     applyInstallPlatformUi();
 
-    if (!shouldPromoteInstall()) {
-        if (isAppStandalone() || installSituationBlocksBrowserInstall()) hideInstallMenuItem();
-        return;
+    if (isAppStandalone() || installSituationBlocksBrowserInstall()) {
+        hideInstallMenuItem();
+    } else if (isAndroidDevice() || isIOSInstallDevice()) {
+        syncInstallMenuItemLabel();
     }
+
+    if (!shouldPromoteInstall()) return;
 
     if (wantsInstallDeepLink() && !isInstallLandingPage()) {
         showInstallPromoForPlatform();
@@ -5516,7 +5673,9 @@ window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     hadDeferredInstallPrompt = true;
     deferredPrompt = e;
-    enableInstallMenuItem();
+    if (isInstallLandingPage()) {
+        enableInstallMenuItem();
+    }
 });
 
 window.triggerManualInstall = async function(event) {
@@ -5533,6 +5692,16 @@ window.triggerManualInstall = async function(event) {
 
     if (isIOSInstallDevice()) {
         revealIosInstallPanel();
+        return;
+    }
+
+    if (isLikelyDesktopInstallContext() && !isAndroidDevice()) {
+        showInstallGuidance('desktop');
+        return;
+    }
+
+    if (isAndroidDevice() && !isPwaInstallTrigger(event)) {
+        openPlayStoreListing();
         return;
     }
 
@@ -5868,4 +6037,8 @@ function exportSitemap(businesses) {
     link.href = window.URL.createObjectURL(blob);
     link.download = 'sitemap.xml';
     link.click();
+}
+
+if (document.readyState !== 'loading') {
+    applyPlayStorePromoUi();
 }
