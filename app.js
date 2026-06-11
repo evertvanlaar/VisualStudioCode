@@ -58,11 +58,28 @@ async function loadLocalDevBusinessSnapshot() {
     }
 }
 
-/** LAN-mobiel: zelfde origin als de pagina (n8n cross-origin vaak geblokkeerd). Alleen volos + vandaag in repo. */
+/** LAN-mobiel: zelfde origin als de pagina (n8n cross-origin vaak geblokkeerd). */
 async function loadLocalDevBusSnapshot(dir, dayOffset) {
     if (!isLocalDevHost()) return null;
     const d = String(dir || BUS_DEFAULT_DIR).toLowerCase();
     const off = busClampDayOffset(dayOffset);
+    try {
+        const res = await fetch(devSnapshotUrl('dev/bus-schedule.json'), { cache: 'no-store' });
+        if (res.ok) {
+            const payload = await res.json();
+            const rows = normalizeBusScheduleRawRows(payload);
+            if (rows && rows.length) {
+                const meta = parseBusScheduleEnvelopeMeta(payload);
+                console.info('[Kalanera] Bus via dev/bus-schedule.json (LAN-mobiel fallback).');
+                return busFilterRawRowsToResponse(rows, d, off, {
+                    generatedAt: meta.generatedAt,
+                    source: 'dev-json',
+                });
+            }
+        }
+    } catch (e) {
+        console.warn('[Kalanera] Dev-snapshot bus (raw JSON) mislukt', e);
+    }
     if (d !== 'volos' || off !== 0) return null;
     try {
         const res = await fetch(devSnapshotUrl('dev/bus-schedule-next-volos.json'), { cache: 'no-store' });
@@ -70,7 +87,7 @@ async function loadLocalDevBusSnapshot(dir, dayOffset) {
         const data = await res.json();
         const list = Array.isArray(data) ? data : (data && data.items ? data.items : []);
         if (!list.length) return null;
-        console.info('[Kalanera] Bus via dev/bus-schedule-next-volos.json (LAN-mobiel fallback).');
+        console.info('[Kalanera] Bus via dev/bus-schedule-next-volos.json (LAN legacy fallback).');
         return data;
     } catch (e) {
         console.warn('[Kalanera] Dev-snapshot bus mislukt', e);
@@ -286,10 +303,9 @@ function applyBusinessDirectoryRows(rawData, meta, showData) {
 
     showData();
 }
-// Bus timetable (n8n path bus-schedule-next). Query: from, dir, remaining=0|1, dayOffset=0..6 (Athens calendar).
-// Legacy webhook /webhook/bus-schedule blijft in n8n actief voor oudere app.js die nog niet via service worker is bijgewerkt.
+// Bus timetable — primair /data/bus-schedule.json (zie docs/static-bus-json-rollout.md); fallback n8n bus-schedule-next.
+// Query fallback: from, dir, remaining=0|1, dayOffset=0..6 (Athens calendar).
 const N8N_WEBHOOK_URL_BUS_SCHEDULE_NEXT = 'https://n8n.vanlaar.cloud/webhook/bus-schedule-next';
-// Server-side cache (Sheet-regels): zie n8n/bus-schedule-next-cached-workflow.example.json (+ build-bus-schedule-next-cached-example.mjs).
 /** client-side slots: sleutel dir + Athens kalenderdatum doeldag (niet alleen offset), sync met n8n dayOffset-filter. */
 const BUS_STORAGE_KEY = 'kalanera_bus_schedule_cache_v3';
 const BUS_CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes
@@ -305,6 +321,89 @@ const BUS_VALID_DIRS = [
 ];
 /** Toon chauffeur-waarschuwing (lage frequentie) voor deze bestemmingen — uitbreidbaar. */
 const BUS_LOW_FREQ_DIRS = new Set(['trikeri', 'katigiorgis', 'platanias']);
+
+/**
+ * Bus-databron (zie docs/static-bus-json-rollout.md).
+ * - 'auto'    — productiestandaard: /data/bus-schedule.json, n8n-webhook als fallback.
+ * - 'json'    — altijd statische JSON (zelfde pad), webhook als fallback.
+ * - 'webhook' — alleen n8n-webhook (debug of als JSON ontbreekt).
+ *
+ * Override voor testen (zet ook localStorage kalanera_bus_data_source):
+ *   ?busData=json | ?busData=webhook
+ *   ?busData=reset — verwijdert override, terug naar BUS_DATA_SOURCE_DEFAULT
+ */
+const BUS_DATA_SOURCE_DEFAULT = 'auto';
+const BUS_JSON_RELATIVE_PATH = 'data/bus-schedule.json';
+const BUS_JSON_STAGING_RELATIVE_PATH = 'data/bus-schedule.staging.json';
+
+function getBusDataSourceMode() {
+    try {
+        const q = new URLSearchParams(location.search);
+        const qMode = String(q.get('busData') || q.get('busSource') || '').trim().toLowerCase();
+        if (qMode === 'reset' || qMode === 'default') {
+            try { localStorage.removeItem('kalanera_bus_data_source'); } catch { /* ignore */ }
+            console.info('[Kalanera] busData=reset — databron terug naar standaard:', BUS_DATA_SOURCE_DEFAULT);
+            return BUS_DATA_SOURCE_DEFAULT;
+        }
+        if (qMode === 'json' || qMode === 'static') {
+            try { localStorage.setItem('kalanera_bus_data_source', 'json'); } catch { /* ignore */ }
+            return 'json';
+        }
+        if (qMode === 'webhook' || qMode === 'n8n') {
+            try { localStorage.setItem('kalanera_bus_data_source', 'n8n'); } catch { /* ignore */ }
+            return 'webhook';
+        }
+        if (qMode === 'auto') {
+            try { localStorage.setItem('kalanera_bus_data_source', 'auto'); } catch { /* ignore */ }
+            return 'auto';
+        }
+        const ls = localStorage.getItem('kalanera_bus_data_source');
+        if (ls === 'json' || ls === 'webhook' || ls === 'auto' || ls === 'n8n') {
+            return ls === 'n8n' ? 'webhook' : ls;
+        }
+    } catch { /* ignore */ }
+    return BUS_DATA_SOURCE_DEFAULT;
+}
+
+/** @returns {string[]} volgorde van bronnen om te proberen */
+function busDataSourceTryOrder(mode) {
+    if (mode === 'json') return ['json', 'webhook'];
+    if (mode === 'auto') return ['json', 'webhook'];
+    return ['webhook'];
+}
+
+function busJsonFetchUrls() {
+    const urls = [sameOriginDataUrl(BUS_JSON_RELATIVE_PATH)];
+    try {
+        const q = new URLSearchParams(location.search);
+        if (q.get('busStaging') === '1') {
+            urls.unshift(sameOriginDataUrl(BUS_JSON_STAGING_RELATIVE_PATH));
+        }
+    } catch { /* ignore */ }
+    if (isLocalDevHost()) {
+        urls.push(devSnapshotUrl('dev/bus-schedule.json'));
+    }
+    return urls;
+}
+
+function normalizeBusScheduleRawRows(payload) {
+    if (payload == null) return null;
+    if (Array.isArray(payload)) return payload;
+    if (typeof payload === 'object' && Array.isArray(payload.rows)) return payload.rows;
+    if (typeof payload === 'object' && Array.isArray(payload.data)) return payload.data;
+    if (typeof payload === 'object' && Array.isArray(payload.items)) return payload.items;
+    return null;
+}
+
+function parseBusScheduleEnvelopeMeta(payload) {
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+        return { generatedAt: null, source: null };
+    }
+    return {
+        generatedAt: payload.generatedAt || null,
+        source: payload.source || null,
+    };
+}
 
 // <sync-bus-ui-strings>
 const BUS_UI_STRINGS_EMBEDDED = {
@@ -561,7 +660,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.55'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.56'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -3911,28 +4010,245 @@ function busRenderFullTimetable(container, buses, { routeDir, dayOffset } = {}) 
     busRenderTimelineList(container, buses, { limit: 500, routeDir, dayOffset });
 }
 
-async function busFetchSchedule(dir, dayOffset) {
+/** 1 = maandag .. 7 = zondag (zelfde als n8n matchesDays). */
+function busWeekdayNumFromGregorianYmd(ymdStr) {
+    const parts = String(ymdStr || '').split('-').map(Number);
+    if (parts.length !== 3 || parts.some((n) => !Number.isFinite(n))) return null;
+    const dow = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2])).getUTCDay();
+    return dow === 0 ? 7 : dow;
+}
+
+function busMatchesDays(daysValue, weekdayNum) {
+    const raw = String(daysValue || '').trim();
+    if (!raw) return true;
+    if (!weekdayNum) return true;
+    const days = raw.toLowerCase();
+    if (days === 'daily') return true;
+    if (days === 'weekdays') return weekdayNum >= 1 && weekdayNum <= 5;
+    if (days === 'weekend') return weekdayNum === 6 || weekdayNum === 7;
+    if (days === '1-7') return true;
+    if (days === '1-5') return weekdayNum <= 5;
+    if (days === '1-6') return weekdayNum <= 6;
+    if (days === '7') return weekdayNum === 7;
+    if (/^[1-7]$/.test(days)) return Number(days) === weekdayNum;
+    return true;
+}
+
+function busDepTimeRaw(row) {
+    return busSheetField(row, ['time_kalanera', 'Time_KalaNera', 'departure', 'Departure', 'Time'])
+        ?? row.Time_KalaNera ?? row.departure ?? row.Departure ?? row.Time ?? '';
+}
+
+function busRowMatchesDirLegacy(row, dir) {
+    const d = String(
+        busSheetField(row, ['dir', 'direction', 'route']) ?? row.dir ?? row.Direction ?? row.Route ?? '',
+    ).toLowerCase().trim();
+    if (d && BUS_VALID_DIRS.includes(d)) return d === dir;
+    const dest = String(busSheetField(row, ['destination', 'Destination']) ?? row.destination ?? row.Destination ?? '').toLowerCase();
+    const labels = BUS_DIR_LABELS[dir];
+    if (!labels) return false;
+    if (dest.includes(labels.en.toLowerCase())) return true;
+    if (dest.includes(busFold(labels.el))) return true;
+    const fe = busFold(labels.en);
+    const fel = busFold(labels.el);
+    const routeName = busFold(busSheetField(row, ['route_name', 'Route_Name']) ?? row.Route_Name ?? row.route_name ?? '');
+    if (routeName && (routeName.includes(fe) || routeName.includes(fel))) return true;
+    const destServed = busFold(busSheetField(row, ['destinations_served']) ?? row.Destinations_Served ?? row.destinations_served ?? '');
+    if (destServed && (destServed.includes(fe) || destServed.includes(fel))) return true;
+    return false;
+}
+
+function busRowMatchesDir(row, dir) {
+    const slugCol = busSheetField(row, ['dirs_served', 'Dirs_Served']) ?? row.dirs_served ?? row.Dirs_Served;
+    const nameCol = busSheetField(row, ['destinations_served', 'Destinations_Served']) ?? row.destinations_served ?? row.Destinations_Served;
+    const slugStr = slugCol != null ? String(slugCol).trim() : '';
+    const nameStr = nameCol != null ? String(nameCol).trim() : '';
+    let slugs = slugStr ? busParseDirsServedField(slugCol) : [];
+    if (!slugs.length && nameStr) slugs = busParseDirsServedField(nameCol);
+    if (slugs.length > 0) return slugs.includes(dir);
+    return busRowMatchesDirLegacy(row, dir);
+}
+
+function busParseHHMMToMinutes(hhmm) {
+    const m = String(hhmm || '').trim().match(/^(\d{1,2}):(\d{2})$/);
+    if (!m) return null;
+    const h = Number(m[1]);
+    const min = Number(m[2]);
+    if (!Number.isFinite(h) || !Number.isFinite(min) || h < 0 || h > 23 || min < 0 || min > 59) return null;
+    return h * 60 + min;
+}
+
+/**
+ * Filter ruwe sheet-rijen client-side (zelfde logica als n8n Filter + Normalize + Sort).
+ * @returns {{ meta: object, items: object[] }}
+ */
+function busFilterRawRowsToResponse(rawRows, dir, dayOffset, { generatedAt, source } = {}) {
+    const tz = 'Europe/Athens';
+    const requestedDir = BUS_VALID_DIRS.includes(String(dir || '').toLowerCase())
+        ? String(dir).toLowerCase()
+        : BUS_DEFAULT_DIR;
+    const off = busClampDayOffset(dayOffset);
+    const targetYmd = busScheduleTargetYmd(off);
+    const clock = busNowAthensParts();
+    const weekdayNum = busWeekdayNumFromGregorianYmd(targetYmd);
+    const rows = Array.isArray(rawRows) ? rawRows : [];
+
+    const filtered = rows
+        .filter((raw) => {
+            const daysVal = busSheetField(raw, ['days', 'Days']) ?? raw.Days ?? raw.days;
+            if (!busMatchesDays(daysVal, weekdayNum)) return false;
+            if (!busRowMatchesDir(raw, requestedDir)) return false;
+            return true;
+        })
+        .sort((a, b) => {
+            const am = busParseHHMMToMinutes(String(busDepTimeRaw(a)).trim());
+            const bm = busParseHHMMToMinutes(String(busDepTimeRaw(b)).trim());
+            if (am == null && bm == null) return 0;
+            if (am == null) return 1;
+            if (bm == null) return -1;
+            return am - bm;
+        });
+
+    return {
+        meta: {
+            tz,
+            now: { ymd: targetYmd, hm: clock.hm, todayNum: weekdayNum },
+            query: {
+                from: 'Kala Nera',
+                dir: requestedDir,
+                remaining: false,
+                minutesEarly: 10,
+                dayOffset: off,
+            },
+            generatedAt: generatedAt || new Date().toISOString(),
+            source: source || 'static-json',
+        },
+        items: filtered,
+    };
+}
+
+/** In-memory cache van het volledige bus-JSON-bestand (één fetch per pagina-load). */
+let busScheduleRawBundleCache = null;
+
+async function parseBusScheduleHttpResponse(response, sourceLabel) {
+    if (!response.ok) {
+        const bodySnippet = await response.text().catch(() => '');
+        console.warn(
+            `Bus ${sourceLabel} niet OK:`,
+            response.status,
+            bodySnippet.slice(0, 400)
+        );
+        return null;
+    }
+    const bodyText = await response.text();
+    const trimmed = bodyText.trim();
+    if (!trimmed) {
+        console.warn(`Bus ${sourceLabel}: lege body (HTTP ${response.status})`);
+        return null;
+    }
+    let payload;
+    try {
+        payload = JSON.parse(trimmed);
+    } catch (parseErr) {
+        console.warn(`Bus ${sourceLabel}: geen geldige JSON`, parseErr, '| snippet:', trimmed.slice(0, 400));
+        return null;
+    }
+    const rows = normalizeBusScheduleRawRows(payload);
+    if (!rows || !rows.length) {
+        console.warn(`Bus ${sourceLabel}: geen rijen in JSON`);
+        return null;
+    }
+    const meta = parseBusScheduleEnvelopeMeta(payload);
+    return { rows, generatedAt: meta.generatedAt, source: meta.source || 'json' };
+}
+
+async function loadBusScheduleRawBundle() {
+    if (busScheduleRawBundleCache && busScheduleRawBundleCache.rows?.length) {
+        return busScheduleRawBundleCache;
+    }
+    const mode = getBusDataSourceMode();
+    const order = busDataSourceTryOrder(mode);
+    let lastError = null;
+
+    for (const kind of order) {
+        if (kind === 'json') {
+            const urls = busJsonFetchUrls();
+            for (const url of urls) {
+                try {
+                    const res = await fetch(url, { cache: 'no-cache' });
+                    const bundle = await parseBusScheduleHttpResponse(res, `JSON ${url}`);
+                    if (bundle) {
+                        busScheduleRawBundleCache = bundle;
+                        console.info('[Kalanera] Bus-rijen geladen via statische JSON:', url, `(${bundle.rows.length} rijen)`);
+                        return bundle;
+                    }
+                } catch (e) {
+                    lastError = e;
+                    console.warn('[Kalanera] Statische bus-JSON fetch mislukt:', url, e?.message || e);
+                }
+            }
+            continue;
+        }
+        if (kind === 'webhook') {
+            break;
+        }
+    }
+
+    if (lastError) throw lastError;
+    return null;
+}
+
+async function busFetchScheduleFromWebhook(dir, dayOffset) {
     const url = new URL(N8N_WEBHOOK_URL_BUS_SCHEDULE_NEXT);
-    // ?from=Kala%20Nera&dir=…&remaining=0|1&dayOffset=0..6 (Athens calendar day; n8n filters days column for that weekday)
     url.searchParams.set('from', 'Kala Nera');
     url.searchParams.set('dir', dir || BUS_DEFAULT_DIR);
     url.searchParams.set('remaining', '0');
     url.searchParams.set('dayOffset', String(busClampDayOffset(dayOffset)));
 
-    try {
-        const res = await fetch(url.toString(), {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json'
+    const res = await fetch(url.toString(), {
+        method: 'GET',
+        headers: { Accept: 'application/json' },
+    });
+    if (!res.ok) throw new Error(`Bus schedule fetch failed: ${res.status}`);
+    return await res.json();
+}
+
+async function busFetchSchedule(dir, dayOffset) {
+    const mode = getBusDataSourceMode();
+    const order = busDataSourceTryOrder(mode);
+    let lastError = null;
+
+    for (const kind of order) {
+        if (kind === 'json') {
+            try {
+                const bundle = await loadBusScheduleRawBundle();
+                if (bundle && bundle.rows.length) {
+                    return busFilterRawRowsToResponse(bundle.rows, dir, dayOffset, {
+                        generatedAt: bundle.generatedAt,
+                        source: bundle.source || 'json',
+                    });
+                }
+            } catch (e) {
+                lastError = e;
+                console.warn('[Kalanera] Bus JSON-bron mislukt:', e?.message || e);
             }
-        });
-        if (!res.ok) throw new Error(`Bus schedule fetch failed: ${res.status}`);
-        return await res.json();
-    } catch (e) {
-        const snap = await loadLocalDevBusSnapshot(dir, dayOffset);
-        if (snap) return snap;
-        throw e;
+            continue;
+        }
+        if (kind === 'webhook') {
+            try {
+                const data = await busFetchScheduleFromWebhook(dir, dayOffset);
+                console.info('[Kalanera] Bus geladen via n8n-webhook (fallback).');
+                return data;
+            } catch (e) {
+                lastError = e;
+                const snap = await loadLocalDevBusSnapshot(dir, dayOffset);
+                if (snap) return snap;
+            }
+        }
     }
+
+    if (lastError) throw lastError;
+    throw new Error('Bus schedule unavailable');
 }
 
 function busReadCacheSlot(dir, dayOffset) {
