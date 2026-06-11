@@ -660,7 +660,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.56'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.57'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -3400,7 +3400,27 @@ function busEscapeHtml(str) {
         .replace(/'/g, '&#039;');
 }
 
-function busFormatLastUpdated(isoString) {
+/** 'json' = statisch /data/bus-schedule.json; 'webhook' = n8n fallback. */
+function busClassifyDataSource(data) {
+    const src = String((data && data.meta && data.meta.source) || '').toLowerCase();
+    if (src === 'static-json' || src === 'json' || src === 'google-sheets' || src === 'dev-json') return 'json';
+    return 'webhook';
+}
+
+function busSourceTag(dataSource) {
+    return dataSource === 'json' ? ' (static JSON)' : '';
+}
+
+function busSavedAtFromFetch(data) {
+    const g = data && data.meta && data.meta.generatedAt;
+    if (g) {
+        const d = new Date(g);
+        if (!Number.isNaN(d.getTime())) return d.toISOString();
+    }
+    return new Date().toISOString();
+}
+
+function busFormatLastUpdated(isoString, dataSource) {
     if (!isoString) return '';
     const d = new Date(isoString);
     if (Number.isNaN(d.getTime())) return '';
@@ -3408,7 +3428,7 @@ function busFormatLastUpdated(isoString) {
     const locale = isEl ? 'el-GR' : 'en-GB';
     const txt = d.toLocaleString(locale, { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
     const prefix = busT('bus_last_updated', 'Last updated');
-    return `${prefix}: ${txt}`;
+    return `${prefix}: ${txt}${busSourceTag(dataSource)}`;
 }
 
 function busNormalizeItem(item) {
@@ -4261,13 +4281,13 @@ function busReadCacheSlot(dir, dayOffset) {
         const key = busScheduleSlotKey(dir, dayOffset);
         const slot = parsed.slots[key];
         if (!slot || !Array.isArray(slot.items)) return null;
-        return { savedAt: slot.savedAt, items: slot.items };
+        return { savedAt: slot.savedAt, items: slot.items, dataSource: slot.dataSource || null };
     } catch (e) {
         return null;
     }
 }
 
-function busWriteCacheSlot(dir, dayOffset, items) {
+function busWriteCacheSlot(dir, dayOffset, items, dataSource) {
     try {
         let slots = {};
         const raw = localStorage.getItem(BUS_STORAGE_KEY);
@@ -4283,6 +4303,7 @@ function busWriteCacheSlot(dir, dayOffset, items) {
         slots[key] = {
             savedAt: new Date().toISOString(),
             items: Array.isArray(items) ? items : [],
+            ...(dataSource ? { dataSource } : {}),
         };
         localStorage.setItem(BUS_STORAGE_KEY, JSON.stringify({ version: 3, slots }));
     } catch (e) { /* ignore */ }
@@ -4335,7 +4356,7 @@ async function busPrefetchMissingDirs() {
         try {
             const data = await busFetchSchedule(dir, 0);
             const list = Array.isArray(data) ? data : (data && data.items ? data.items : []);
-            busWriteCacheSlot(dir, 0, list);
+            busWriteCacheSlot(dir, 0, list, busClassifyDataSource(data));
         } catch (e) { /* skip dir */ }
         await new Promise((r) => setTimeout(r, 150));
     }
@@ -4620,14 +4641,16 @@ async function initBusSchedule() {
 
     let lastNormalizedForRerender = null;
     let lastSavedAtForRerender = null;
+    let lastDataSourceForRerender = null;
     let activeTimeBand = (localStorage.getItem('kalanera_bus_timeband') || 'auto');
     let lastSortedAllForBands = null;
     let lastTimeBandCounts = null;
     let lastNextDepartureKey = null;
 
-    const renderFromNormalized = (normalized, savedAtIso) => {
+    const renderFromNormalized = (normalized, savedAtIso, dataSource) => {
         lastNormalizedForRerender = normalized;
         lastSavedAtForRerender = savedAtIso || null;
+        lastDataSourceForRerender = dataSource || null;
         const forDir = busApplyConsolidatedList(normalized, activeDir);
         const merged = busMergeTripsByTripId(forDir, activeDir);
         const off = busClampDayOffset(activeDayOffset);
@@ -4712,7 +4735,9 @@ async function initBusSchedule() {
                 dayOffset: off,
             });
         }
-        if (lastUpdatedEl && savedAtIso) lastUpdatedEl.textContent = busFormatLastUpdated(savedAtIso);
+        if (lastUpdatedEl && savedAtIso) {
+            lastUpdatedEl.textContent = busFormatLastUpdated(savedAtIso, dataSource);
+        }
         updateDayChrome();
         busRefreshNextEtaDom();
     };
@@ -4745,7 +4770,7 @@ async function initBusSchedule() {
         const slot = busReadCacheSlot(activeDir, activeDayOffset);
         if (!slot || !Array.isArray(slot.items)) return false;
         const normalized = slot.items.map(busNormalizeItem);
-        renderFromNormalized(normalized, slot.savedAt);
+        renderFromNormalized(normalized, slot.savedAt, slot.dataSource);
         return true;
     };
 
@@ -4784,18 +4809,20 @@ async function initBusSchedule() {
         try {
             const data = await busFetchSchedule(activeDir, activeDayOffset);
             const list = Array.isArray(data) ? data : (data && data.items ? data.items : []);
-            busWriteCacheSlot(activeDir, activeDayOffset, list);
+            const dataSource = busClassifyDataSource(data);
+            busWriteCacheSlot(activeDir, activeDayOffset, list, dataSource);
 
             const normalized = list.map(busNormalizeItem);
-            renderFromNormalized(normalized, new Date().toISOString());
+            renderFromNormalized(normalized, busSavedAtFromFetch(data), dataSource);
             void busPrefetchMissingDirs();
         } catch (e) {
             const snap = await loadLocalDevBusSnapshot(activeDir, activeDayOffset);
             if (snap) {
                 const list = Array.isArray(snap) ? snap : (snap.items || []);
-                busWriteCacheSlot(activeDir, activeDayOffset, list);
+                const dataSource = busClassifyDataSource(snap);
+                busWriteCacheSlot(activeDir, activeDayOffset, list, dataSource);
                 const normalized = list.map(busNormalizeItem);
-                renderFromNormalized(normalized, new Date().toISOString());
+                renderFromNormalized(normalized, busSavedAtFromFetch(snap), dataSource);
             } else if (!renderFromCacheIfAny()) {
                 if (isCombinedBusPage) {
                     if (nextContainer) busRenderError(nextContainer, retryBtn);
