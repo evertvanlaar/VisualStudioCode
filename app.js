@@ -660,7 +660,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.57'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.58'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -1000,7 +1000,164 @@ function isPwaInstallTrigger(event) {
     return Boolean(event?.target?.closest?.('[data-install-mode="pwa"]'));
 }
 
-function openPlayStoreListing() {
+const N8N_INSTALL_TRACKING_WEBHOOK_URL = 'https://n8n.vanlaar.cloud/webhook/kalanera-install-tracking';
+/** Optioneel: zelfde waarde als n8n Webhook Header Auth (X-Kalanera-Token). */
+const N8N_INSTALL_TRACKING_TOKEN = '';
+
+function isInstallTrackingExcludedPage() {
+    return /privacy(?:-el)?\.html$/i.test(window.location.pathname || '');
+}
+
+function getInstallTrackingPagePath() {
+    const p = window.location.pathname || '/';
+    return p.endsWith('/') && p.length > 1 ? p.slice(0, -1) : p;
+}
+
+function getInstallTrackingOs() {
+    const ua = navigator.userAgent || '';
+    if (/android/i.test(ua)) return 'Android';
+    if (/iPhone|iPad|iPod/i.test(ua)) return 'iOS';
+    return 'Desktop';
+}
+
+function getInstallTrackingDevice() {
+    return /Mobi|Android/i.test(navigator.userAgent || '') ? 'Mobile' : 'Desktop';
+}
+
+function getInstallTrackingDisplayMode() {
+    if (isOpenedFromKalaneraTwa()) return 'twa';
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+        return 'standalone';
+    }
+    return 'browser';
+}
+
+function getInstallTrackingReferrerInfo() {
+    const ref = document.referrer || '';
+    if (!ref) return { referrer: 'direct', referrer_host: '' };
+    try {
+        return { referrer: ref, referrer_host: new URL(ref).hostname };
+    } catch (e) {
+        return { referrer: ref, referrer_host: '' };
+    }
+}
+
+function getInstallTrackingUtmParams() {
+    const q = new URLSearchParams(window.location.search);
+    return {
+        utm_source: q.get('utm_source') || '',
+        utm_medium: q.get('utm_medium') || '',
+        utm_campaign: q.get('utm_campaign') || '',
+    };
+}
+
+function buildInstallTrackingPayload(event, extra = {}) {
+    const refInfo = getInstallTrackingReferrerInfo();
+    const now = new Date();
+    return {
+        event,
+        page_path: getInstallTrackingPagePath(),
+        page_title: document.title || '',
+        lang: (document.documentElement.lang || 'en').slice(0, 2),
+        os: getInstallTrackingOs(),
+        device: getInstallTrackingDevice(),
+        display_mode: getInstallTrackingDisplayMode(),
+        referrer: refInfo.referrer,
+        referrer_host: refInfo.referrer_host,
+        ...getInstallTrackingUtmParams(),
+        click_source: extra.click_source || '',
+        install_method: extra.install_method || '',
+        app_version: typeof APP_VERSION !== 'undefined' ? APP_VERSION : 'unknown',
+        screen: `${window.innerWidth}x${window.innerHeight}`,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+        timestamp_iso: now.toISOString(),
+        timestamp_local: now.toLocaleString('nl-NL', { timeZone: 'Europe/Athens' }),
+    };
+}
+
+function shouldDedupeInstallTracking(event) {
+    if (event !== 'landing_install' && event !== 'pwa_install') return false;
+    const key = `kn_install_track_${event}_${getInstallTrackingPagePath()}`;
+    const ttl = event === 'pwa_install' ? 60000 : 180000;
+    try {
+        const raw = sessionStorage.getItem(key);
+        if (raw && Date.now() - Number(raw) < ttl) return true;
+        sessionStorage.setItem(key, String(Date.now()));
+    } catch (e) { /* ignore */ }
+    return false;
+}
+
+function sendInstallTrackingWebhook(payload) {
+    if (!isKalaneraProductionOrigin() || shouldDedupeInstallTracking(payload.event)) return;
+
+    const headers = { 'Content-Type': 'application/json' };
+    if (N8N_INSTALL_TRACKING_TOKEN) headers['X-Kalanera-Token'] = N8N_INSTALL_TRACKING_TOKEN;
+
+    fetch(N8N_INSTALL_TRACKING_WEBHOOK_URL, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(payload),
+        keepalive: true,
+    }).catch(() => { /* ignore */ });
+}
+
+function trackInstallGa4Event(eventName, params = {}) {
+    if (!isKalaneraProductionOrigin() || typeof gtag !== 'function') return;
+    gtag('event', eventName, {
+        page_path: getInstallTrackingPagePath(),
+        os: getInstallTrackingOs(),
+        device: getInstallTrackingDevice(),
+        display_mode: getInstallTrackingDisplayMode(),
+        app_version: typeof APP_VERSION !== 'undefined' ? APP_VERSION : 'unknown',
+        ...params,
+    });
+}
+
+function resolvePlayStoreClickSource(el) {
+    if (!el) return 'unknown';
+    if (el.classList.contains('play-store-badge--footer') || el.classList.contains('footer-install-qr')) {
+        return 'footer';
+    }
+    if (el.classList.contains('play-store-badge--landing')) return 'install_landing';
+    if (el.classList.contains('play-store-badge--hero')) return 'hero';
+    return 'unknown';
+}
+
+function trackPlayStoreClick(clickSource) {
+    const payload = buildInstallTrackingPayload('play_store_click', { click_source: clickSource });
+    trackInstallGa4Event('play_store_click', { click_source: clickSource });
+    sendInstallTrackingWebhook(payload);
+}
+
+function trackPwaInstall(installMethod = 'browser_prompt') {
+    const payload = buildInstallTrackingPayload('pwa_install', { install_method: installMethod });
+    trackInstallGa4Event('pwa_install', { install_method: installMethod });
+    sendInstallTrackingWebhook(payload);
+}
+
+function trackInstallLandingIfRelevant() {
+    const path = getInstallTrackingPagePath();
+    if (path !== '/install.html' && path !== '/install-el.html') return;
+
+    const payload = buildInstallTrackingPayload('landing_install');
+    trackInstallGa4Event('landing_install', {
+        referrer_type: payload.referrer === 'direct' ? 'direct' : 'referral',
+    });
+    sendInstallTrackingWebhook(payload);
+}
+
+function wireInstallTrackingClickCapture() {
+    if (document.documentElement.dataset.installTrackingClick === '1') return;
+    document.documentElement.dataset.installTrackingClick = '1';
+    document.addEventListener('click', (e) => {
+        const el = e.target.closest('.js-play-store-promo');
+        if (!el || el.hidden) return;
+        trackPlayStoreClick(resolvePlayStoreClickSource(el));
+    }, true);
+}
+
+function openPlayStoreListing(clickSource = 'menu_android') {
+    trackPlayStoreClick(clickSource);
     window.open(PLAY_STORE_URL, '_blank', 'noopener,noreferrer');
 }
 
@@ -2188,6 +2345,7 @@ function copyToClipboard(text, el) {
 
 document.addEventListener('DOMContentLoaded', () => {
     applyPlayStorePromoUi();
+    wireInstallTrackingClickCapture();
 
     rewriteDomPixImagesToSameOrigin();
 
@@ -6092,6 +6250,7 @@ window.addEventListener('load', checkDisplayMode);
 
 window.addEventListener('appinstalled', () => {
     hadDeferredInstallPrompt = true;
+    trackPwaInstall('appinstalled_event');
     markPwaInstalledInBrowser();
     deferredPrompt = null;
     if (isInstallLandingPage()) {
@@ -6103,6 +6262,14 @@ window.addEventListener('appinstalled', () => {
         refreshInstallSituation().then(updateInstallLandingUi);
     }
 });
+
+/** Install-pad tracking: installpagina, Play Store-klik, PWA-install (geen homepage). */
+(function initInstallPathTracking() {
+    if (isInstallTrackingExcludedPage()) return;
+    window.addEventListener('load', () => {
+        setTimeout(trackInstallLandingIfRelevant, 800);
+    });
+})();
 
 // Trace app versie, OS, Device, Scherm, Referrer, Theme, Install/Update en SOURCE (Web vs App)
 (function() {
