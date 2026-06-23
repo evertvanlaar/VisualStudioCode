@@ -49,8 +49,9 @@
         colDay: 'Ημέρα',
         colRoute: 'Αεροπορική & διαδρομή',
         colArrives: 'Άφιξη',
-        colDeparts: 'Αναχώρηση',
-        colBusTo: 'Αεροδρόμιο',
+        colDeparts: 'Αναχ.',
+        colDepartsTitle: 'Αναχώρηση',
+        colBusTo: 'Αεροδρ.',
         colBusFrom: 'Βόλος',
         colBusFromTitle: 'Λεωφορείο ΚΤΕΛ αεροδρομίου προς Βόλο',
         colBusToTitle: 'Λεωφορείο ΚΤΕΛ από Βόλο προς αεροδρόμιο',
@@ -298,14 +299,10 @@
     var iconHtml = opts.icon
       ? '<i class="fa-solid ' + opts.icon + '" aria-hidden="true"></i>'
       : '';
-    var subHtml = opts.ktel
-      ? '<span class="flights-th-stack-sub">KTEL</span>'
-      : '<span class="flights-th-stack-sub flights-th-stack-sub--empty" aria-hidden="true">KTEL</span>';
-  return (
+    return (
       '<span class="flights-th-stack">' +
-      '<span class="flights-th-stack-icon">' + iconHtml + '</span>' +
+      '<span class="flights-th-stack-icon" aria-hidden="true">' + iconHtml + '</span>' +
       '<span class="flights-th-stack-label">' + esc(label) + '</span>' +
-      subHtml +
       '</span>'
     );
   }
@@ -314,16 +311,20 @@
     return '<th scope="col" class="' + thClass + '">' + thStack(label) + '</th>';
   }
 
-  function thFlight(label, kind) {
+  function thFlight(label, kind, title) {
     var icon = kind === 'arrives' ? 'fa-plane-arrival' : 'fa-plane-departure';
-    return '<th scope="col" class="flights-th-time">' + thStack(label, { icon: icon }) + '</th>';
+    var titleAttr = title ? ' title="' + esc(title) + '"' : '';
+    return '<th scope="col" class="flights-th-time"' + titleAttr + '>' + thStack(label, { icon: icon }) + '</th>';
   }
 
   function thBus(label, title) {
     return (
       '<th scope="col" class="flights-th-bus" title="' + esc(title) + '">' +
-      thStack(label, { icon: 'fa-bus', ktel: true }) +
-      '</th>'
+      '<span class="flights-th-stack flights-th-stack--bus">' +
+      '<span class="flights-th-stack-icon" aria-hidden="true"><i class="fa-solid fa-bus" aria-hidden="true"></i></span>' +
+      '<span class="flights-th-stack-label">' + esc(label) + '</span>' +
+      '<span class="flights-th-ktel-line">KTEL</span>' +
+      '</span></th>'
     );
   }
 
@@ -356,13 +357,13 @@
     if (direction === 'all') {
       html += thFlight(S.colArrives, 'arrives');
       html += thBus(S.colBusFrom, S.colBusFromTitle);
-      html += thFlight(S.colDeparts, 'departs');
+      html += thFlight(S.colDeparts, 'departs', S.colDepartsTitle || '');
       html += thBus(S.colBusTo, S.colBusToTitle);
     } else {
       if (showArrives) html += thFlight(S.colArrives, 'arrives');
       if (showBusFrom) html += thBus(S.colBusFrom, S.colBusFromTitle);
       if (showBusTo) html += thBus(S.colBusTo, S.colBusToTitle);
-      if (showDeparts) html += thFlight(S.colDeparts, 'departs');
+      if (showDeparts) html += thFlight(S.colDeparts, 'departs', S.colDepartsTitle || '');
     }
     html += thPlain(S.season, 'flights-th-season') + '</tr></thead>';
 

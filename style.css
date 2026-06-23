@@ -1,4 +1,4 @@
-/* version 3.1.88 */
+/* version 3.1.89 */
 @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
@@ -3912,33 +3912,32 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 .flights-card-season-line span{font-weight:700;text-transform:uppercase;letter-spacing:.03em;font-size:.58rem;margin-right:.25rem}
 .flights-bus-empty{color:var(--text-main,#334155);font-weight:700;font-size:.72rem;white-space:nowrap}
 .flights-schedule-table--shuttle{min-width:0;width:100%;table-layout:fixed}
-.flights-schedule-table--shuttle thead th{white-space:normal;line-height:1.2;padding:.5rem .45rem .55rem;font-size:.66rem;vertical-align:bottom}
+.flights-schedule-table--shuttle thead th{white-space:normal;line-height:1.2;padding:.5rem .35rem .55rem;font-size:.66rem;vertical-align:bottom;overflow:hidden}
 .flights-schedule-table--shuttle thead th.flights-th-time,
 .flights-schedule-table--shuttle thead th.flights-th-bus{text-align:center}
-.flights-th-stack{display:grid;grid-template-rows:.85rem minmax(1.15rem,1.55rem) .7rem;row-gap:.1rem;align-items:center;width:100%;box-sizing:border-box}
-.flights-th-stack-icon{display:flex;align-items:center;justify-content:center;height:.85rem;line-height:1;align-self:end}
-.flights-th-stack-label{line-height:1.15;align-self:center;text-align:inherit}
-.flights-th-stack-sub{align-self:start}
+.flights-th-stack{display:grid;grid-template-rows:.8rem auto;row-gap:.1rem;align-items:end;width:100%;max-width:100%;min-height:2.15rem;box-sizing:border-box}
+.flights-th-stack--bus{grid-template-rows:.8rem auto .55rem;min-height:2.35rem}
+.flights-th-stack-icon{display:flex;align-items:center;justify-content:center;height:.8rem;line-height:1;align-self:end}
+.flights-th-stack-label{display:block;line-height:1.15;align-self:end;text-align:inherit;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.flights-th-ktel-line{font-size:.52rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;opacity:.88;line-height:1;text-align:center;align-self:start}
 .flights-th-day .flights-th-stack,
 .flights-th-route .flights-th-stack{justify-items:start;text-align:left}
 .flights-th-season .flights-th-stack{justify-items:end;text-align:right}
 .flights-th-time .flights-th-stack,
-.flights-th-bus .flights-th-stack{justify-items:center;text-align:center}
+.flights-th-bus .flights-th-stack{justify-items:center;text-align:center;margin:0 auto}
 .flights-th-stack-icon .fa-solid{font-size:.72rem;opacity:.92;line-height:1}
-.flights-th-stack-sub{font-size:.54rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;opacity:.88;line-height:1.1}
-.flights-th-stack-sub--empty{visibility:hidden}
 .flights-schedule-table--shuttle .flights-col-day,
 .flights-schedule-table--shuttle .flights-th-day{width:6%;white-space:nowrap;font-size:.78rem}
 .flights-schedule-table--shuttle .flights-time,
 .flights-schedule-table--shuttle .flights-th-time{width:7%;white-space:nowrap;font-variant-numeric:tabular-nums;text-align:center}
 .flights-schedule-table--shuttle .flights-col-bus,
-.flights-schedule-table--shuttle .flights-th-bus{width:9%;white-space:nowrap;text-align:center}
+.flights-schedule-table--shuttle .flights-th-bus{width:10%;white-space:nowrap;text-align:center}
 .flights-schedule-table--shuttle .flights-col-season,
 .flights-schedule-table--shuttle .flights-th-season{width:22%;white-space:nowrap;font-size:.74rem;line-height:1.3;text-align:right;padding-right:.5rem}
 .flights-schedule-table--shuttle .flights-col-route,
 .flights-schedule-table--shuttle .flights-th-route{overflow-wrap:break-word;word-break:normal;hyphens:auto;-webkit-hyphens:auto}
 .flights-schedule-table--shuttle.flights-schedule-table--mode-all .flights-col-route,
-.flights-schedule-table--shuttle.flights-schedule-table--mode-all .flights-th-route{width:40%}
+.flights-schedule-table--shuttle.flights-schedule-table--mode-all .flights-th-route{width:38%}
 .flights-schedule-table--shuttle.flights-schedule-table--mode-arriving .flights-col-route,
 .flights-schedule-table--shuttle.flights-schedule-table--mode-arriving .flights-th-route,
 .flights-schedule-table--shuttle.flights-schedule-table--mode-departing .flights-col-route,
