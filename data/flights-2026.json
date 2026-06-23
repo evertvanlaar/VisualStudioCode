@@ -1,0 +1,145 @@
+{
+  "year": 2026,
+  "lastReviewed": "2026-05-12",
+  "flights": [
+    {
+      "id": "ryanair-crl-mon",
+      "weekday": 1,
+      "routeEn": "Ryanair — Brussels Charleroi",
+      "routeEl": "Ryanair — Βρυξέλλες Charleroi",
+      "iata": "CRL",
+      "arrives": "10:35",
+      "departs": "11:00",
+      "seasonEn": "1 June – 19 Oct",
+      "seasonEl": "1 Ιουν – 19 Οκτ",
+      "shuttle": {
+        "volosToAirport": "08:45",
+        "airportToVolos": "10:50",
+        "seasonEn": "1 June – 19 Oct",
+        "seasonEl": "1 Ιουν – 19 Οκτ"
+      }
+    },
+    {
+      "id": "sky-her-tue",
+      "weekday": 2,
+      "routeEn": "Sky Express — Heraklion",
+      "routeEl": "Sky Express — Ηράκλειο",
+      "iata": "HER",
+      "arrives": "23:20",
+      "departs": "23:50",
+      "seasonEn": "23 June – 29 Sept",
+      "seasonEl": "23 Ιουν – 29 Σεπτ",
+      "shuttle": {
+        "volosToAirport": "21:35",
+        "airportToVolos": "23:35",
+        "seasonEn": "23 June – 29 Sept",
+        "seasonEl": "23 Ιουν – 29 Σεπτ"
+      }
+    },
+    {
+      "id": "smartwings-ktw-wed",
+      "weekday": 3,
+      "routeEn": "Smartwings — Katowice, Poland",
+      "routeEl": "Smartwings — Κατοβίτσε, Πολωνία",
+      "iata": "KTW",
+      "arrives": "08:10",
+      "departs": "09:00",
+      "seasonEn": "3 June – 16 Sept",
+      "seasonEl": "3 Ιουν – 16 Σεπτ"
+    },
+    {
+      "id": "eurowings-dus-wed",
+      "weekday": 3,
+      "routeEn": "Eurowings — Düsseldorf",
+      "routeEl": "Eurowings — Ντίσελντορφ",
+      "iata": "DUS",
+      "arrives": "19:15",
+      "departs": "20:00",
+      "seasonEn": "22 June – 26 Aug",
+      "seasonEl": "22 Ιουν – 26 Αυγ",
+      "shuttle": {
+        "volosToAirport": "17:45",
+        "airportToVolos": "19:30",
+        "seasonEnVolos": "22 July – 26 Aug",
+        "seasonElVolos": "22 Ιουλ – 26 Αυγ",
+        "seasonEnAirport": "22 July – 26 Oct",
+        "seasonElAirport": "22 Ιουλ – 26 Οκτ"
+      }
+    },
+    {
+      "id": "smartwings-brq-thu",
+      "weekday": 4,
+      "routeEn": "Smartwings — Brno",
+      "routeEl": "Smartwings — Μπρνο",
+      "iata": "BRQ",
+      "arrives": "08:50",
+      "departs": "09:40",
+      "seasonEn": "11 June – 17 Sept",
+      "seasonEl": "11 Ιουν – 17 Σεπτ"
+    },
+    {
+      "id": "sky-her-fri",
+      "weekday": 5,
+      "routeEn": "Sky Express — Heraklion",
+      "routeEl": "Sky Express — Ηράκλειο",
+      "iata": "HER",
+      "arrives": "16:00",
+      "departs": "16:30",
+      "seasonEn": "19 June – 25 Sept",
+      "seasonEl": "19 Ιουν – 25 Σεπτ",
+      "shuttle": {
+        "volosToAirport": "14:15",
+        "airportToVolos": "16:15",
+        "seasonEn": "19 June – 25 Sept",
+        "seasonEl": "19 Ιουν – 25 Σεπτ"
+      }
+    },
+    {
+      "id": "ryanair-crl-fri",
+      "weekday": 5,
+      "routeEn": "Ryanair — Brussels Charleroi",
+      "routeEl": "Ryanair — Βρυξέλλες Charleroi",
+      "iata": "CRL",
+      "arrives": "18:45",
+      "departs": "19:10",
+      "seasonEn": "5 June – 23 Oct",
+      "seasonEl": "5 Ιουν – 23 Οκτ",
+      "shuttle": {
+        "volosToAirport": "16:55",
+        "airportToVolos": "19:00",
+        "seasonEn": "5 June – 23 Oct",
+        "seasonEl": "5 Ιουν – 23 Οκτ"
+      }
+    },
+    {
+      "id": "eurowings-dus-sat",
+      "weekday": 6,
+      "routeEn": "Eurowings — Düsseldorf",
+      "routeEl": "Eurowings — Ντίσελντορφ",
+      "iata": "DUS",
+      "arrives": "10:30",
+      "departs": "11:15",
+      "seasonEn": "9 May – 31 Oct",
+      "seasonEl": "9 Μαΐ – 31 Οκτ",
+      "shuttle": {
+        "volosToAirport": "09:00",
+        "airportToVolos": "10:45",
+        "seasonEn": "9 May – 31 Oct",
+        "seasonEl": "9 Μαΐ – 31 Οκτ"
+      }
+    },
+    {
+      "id": "transavia-ory-sat",
+      "weekday": 6,
+      "routeEn": "Transavia — Paris Orly",
+      "routeEl": "Transavia — Παρίσι Orly",
+      "iata": "ORY",
+      "arrives": "11:20",
+      "departs": "12:15",
+      "seasonEn": "6 June – 3 Oct",
+      "seasonEl": "6 Ιουν – 3 Οκτ",
+      "noteEn": "Club Med only",
+      "noteEl": "μόνο Club Med"
+    }
+  ]
+}

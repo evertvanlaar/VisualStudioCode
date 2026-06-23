@@ -1,4 +1,4 @@
-/* version 3.1.58 */
+/* version 3.1.88 */
 @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
@@ -3520,6 +3520,12 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 @media (prefers-reduced-motion:reduce){.info-hub-card,.info-hub-card::after,.info-hub-card h2{transition:none}.info-hub-card:hover::after,.info-hub-card:focus-visible::after{transform:translateY(-50%)}}
 .sheet-data-page{max-width:42rem;margin:0 auto;padding:24px 20px calc(var(--bottom-nav-h,64px)+40px);box-sizing:border-box}
 .sheet-data-page.flights-page{padding-top:clamp(32px,3.5vw,48px)}
+@media (min-width:768px){
+  .sheet-data-page.flights-page{max-width:min(100% - 2.5rem,56rem);padding-left:24px;padding-right:24px}
+}
+@media (min-width:1100px){
+  .sheet-data-page.flights-page{max-width:min(100% - 3rem,62rem)}
+}
 .sheet-data-page h1{font-size:clamp(1.35rem,4vw,1.65rem);margin:0 0 .5rem;color:var(--primary-olive,#4a6c4a)}
 .sheet-data-breadcrumb{margin:0 0 1rem;font-size:.9rem}
 .sheet-data-breadcrumb a{color:var(--muted,#64748b);text-decoration:underline;text-underline-offset:2px}
@@ -3539,6 +3545,7 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 .flights-schedule-hint .fa-calendar-days{flex-shrink:0;margin-top:.1rem;color:var(--primary-olive,#4a6c4a)}
 .flights-schedule-hint-text{min-width:0}
 .flights-table-scroll{margin:0 -2px;padding:0;border-radius:12px;border:1px solid var(--border,#e2e8f0);background:#fff;box-shadow:0 2px 14px rgba(0,0,0,.05);overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.flights-page .flights-schedule-table{min-width:0}
 .flights-schedule-table{width:100%;min-width:34rem;border-collapse:collapse;font-size:.8125rem;line-height:1.35}
 .flights-schedule-table caption{padding:.7rem .9rem .55rem;text-align:left;font-weight:700;font-size:.85rem;color:var(--primary-olive,#4a6c4a);border-bottom:1px solid var(--border,#e8eef0)}
 .flights-schedule-table thead th{padding:.55rem .65rem;text-align:left;font-weight:600;font-size:.72rem;letter-spacing:.02em;text-transform:uppercase;color:#fff;background:linear-gradient(180deg,#4a6c4a 0%,#3d5a3d 100%);border-bottom:1px solid rgba(0,0,0,.12);white-space:nowrap}
@@ -3820,6 +3827,7 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 .flights-maps-link:hover{border-bottom-color:var(--primary-olive,#4a6c4a)}
 .flights-airport-blurb{margin:0;font-size:.78rem;line-height:1.5;color:var(--muted,#64748b)}
 .flights-afterword{margin:1.1rem 0 0;padding:1rem .85rem 1rem;border-radius:12px;border:1px solid rgba(74,108,74,.18);background:linear-gradient(165deg,rgba(248,250,248,.95) 0%,#fff 55%);box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.flights-schedule-disclaimer{margin:0 0 .75rem;font-size:.78rem;line-height:1.45;color:var(--muted,#64748b)}
 .flights-crosslink-bottom{margin:.75rem 0 0;padding-top:.75rem;border-top:1px solid var(--border,#e8eef0);font-size:.8125rem;line-height:1.45}
 .flights-crosslink-bottom a{color:var(--primary-olive,#4a6c4a);font-weight:700;text-decoration:none;border-bottom:1px solid rgba(74,108,74,.35)}
 .flights-crosslink-bottom a:hover{border-bottom-color:var(--primary-olive,#4a6c4a)}
@@ -3845,6 +3853,7 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 .flights-card{border:1px solid var(--border,#e2e8f0);border-radius:10px;padding:.4rem .55rem .45rem;margin:0 0 .35rem;background:#fff;box-shadow:0 1px 8px rgba(0,0,0,.04)}
 .info-hub-page .info-hub-card.flights-card{padding:.38rem 1.55rem .38rem .5rem}
 .flights-card-route{margin:0 0 .3rem;font-size:.8125rem;font-weight:600;color:var(--text-main,#334155);line-height:1.3}
+.flights-route-iata{display:inline-block;margin-left:.15rem;padding:.06rem .32rem;border-radius:4px;font-size:.65rem;font-weight:800;letter-spacing:.05em;color:var(--primary-olive,#4a6c4a);background:rgba(74,108,74,.11);vertical-align:middle;line-height:1.2}
 .flights-card-meta{display:flex;align-items:stretch;gap:.35rem .4rem;margin:0}
 .flights-meta-pair{display:flex;flex:1 1 auto;gap:.28rem;min-width:0}
 .flights-meta-bit{flex:1;min-width:0}
@@ -3853,6 +3862,103 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 .flights-meta-season{flex:0 0 38%;max-width:9.5rem;margin:0;padding:0 0 0 .45rem;border-left:1px solid rgba(74,108,74,.2);display:flex;flex-direction:column;justify-content:center;text-align:right;min-width:0}
 .flights-meta-season dt{margin:0;font-size:.58rem;text-transform:uppercase;letter-spacing:.03em;color:var(--muted,#64748b);font-weight:700;line-height:1.15}
 .flights-meta-season dd{margin:.05rem 0 0;font-variant-numeric:tabular-nums;font-weight:600;color:var(--text-main,#334155);font-size:.72rem;line-height:1.25}
+
+/* Flights — KTEL shuttle + direction switch */
+.flights-direction-wrap{margin:0 8px .85rem;max-width:min(100% - 1.25rem,21.5rem);margin-left:auto;margin-right:auto}
+.flights-direction-toggle{margin:0!important;padding:0!important;max-width:100%}
+.flights-direction-toggle .view-toggle-btn{display:inline-flex;align-items:center;justify-content:center;gap:.3rem;font-size:11px;padding:8px 10px}
+.flights-direction-toggle .view-toggle-btn .fa-solid{font-size:.72rem;opacity:.9}
+.flights-schedule-grid{display:grid;grid-template-columns:1fr 1fr minmax(4.8rem,36%);gap:.3rem .35rem;align-items:stretch;margin:0}
+.flights-schedule-col{display:flex;flex-direction:column;gap:.28rem;min-width:0}
+.flights-schedule-col--season{border-left:1px solid rgba(74,108,74,.2);padding-left:.4rem;display:flex;flex-direction:column;justify-content:center;text-align:right;min-width:0}
+.flights-slot{padding:.32rem .38rem;border-radius:8px;border:1px solid var(--border,#e2e8f0);background:#fff;min-height:2.7rem;display:flex;flex-direction:column;justify-content:center;box-sizing:border-box}
+.flights-slot-label{display:block;margin:0 0 .12rem;font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--muted,#64748b);line-height:1.2}
+.flights-slot-label .fa-solid{margin-right:.18rem;color:var(--primary-olive,#4a6c4a);font-size:.58rem}
+.flights-slot-label--season{text-align:right}
+.flights-slot-value{display:block;margin:0;font-variant-numeric:tabular-nums;font-weight:800;font-size:.82rem;line-height:1.15;color:var(--text-main,#334155)}
+.flights-slot-value--season{font-size:.72rem;font-weight:600;line-height:1.25}
+.flights-slot--empty .flights-slot-value{font-size:.78rem;font-weight:800;color:var(--text-main,#334155)}
+.flights-card--timeline{padding:.42rem .55rem .45rem}
+.flights-timeline-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.45rem .32rem;margin:.1rem 0 .25rem}
+.flights-timeline-track{min-width:0;padding:.35rem .48rem .32rem .5rem;border-radius:8px;border:1px solid rgba(74,108,74,.14);background:rgba(248,250,248,.65);box-sizing:border-box}
+.flights-timeline-track-title{margin:0 0 .28rem;font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--primary-olive,#4a6c4a);line-height:1.2}
+.flights-timeline-pair .flights-timeline-track-title{font-size:.52rem;letter-spacing:.01em;line-height:1.2;white-space:nowrap}
+.flights-timeline-solo{margin:.1rem 0 .25rem}
+.flights-timeline-track--solo{width:100%;box-sizing:border-box}
+.flights-timeline{list-style:none;margin:0;padding:0}
+.flights-timeline-step{display:grid;grid-template-columns:2.45rem .5rem minmax(0,1fr);column-gap:.35rem;align-items:center;position:relative;padding:0 0 .34rem;min-height:1.25rem}
+.flights-timeline-pair .flights-timeline-step{grid-template-columns:2.2rem .48rem minmax(0,1fr);column-gap:.42rem}
+.flights-timeline-pair .flights-timeline-time{font-size:.74rem}
+.flights-timeline-step--last{padding-bottom:0}
+.flights-timeline-time-col{text-align:right;min-width:0;width:100%;line-height:1.15;padding-right:.1rem;box-sizing:border-box}
+.flights-timeline-pair .flights-timeline-time-col{padding-right:.18rem}
+.flights-timeline-step--empty .flights-timeline-time-col{visibility:hidden}
+.flights-timeline-rail{position:relative;align-self:stretch;display:flex;justify-content:center;min-height:100%}
+.flights-timeline-dot{width:.4rem;height:.4rem;align-self:center;margin:0;border-radius:50%;border:2px solid var(--primary-olive,#4a6c4a);background:#fff;box-sizing:border-box;position:relative;z-index:1;flex-shrink:0}
+.flights-timeline-step:not(.flights-timeline-step--last) .flights-timeline-rail::after{content:'';position:absolute;left:50%;top:calc(50% + .22rem);bottom:-.34rem;width:2px;margin-left:-1px;background:rgba(74,108,74,.22)}
+.flights-timeline-time{display:block;font-variant-numeric:tabular-nums;font-weight:800;font-size:.8rem;color:var(--text-main,#334155);line-height:1.15;white-space:nowrap}
+.flights-timeline-action{display:flex;align-items:flex-start;gap:.12rem;min-width:0;font-size:.68rem;font-weight:600;color:var(--muted,#64748b);line-height:1.2}
+.flights-timeline-action--empty{font-weight:800;color:var(--text-main,#334155)}
+.flights-timeline-action .fa-solid{flex-shrink:0;margin-top:.12rem;color:var(--primary-olive,#4a6c4a);font-size:.6rem}
+.flights-timeline-action-text{min-width:0;flex:1 1 auto;white-space:nowrap;overflow-wrap:normal;word-break:keep-all;line-height:1.15}
+.flights-timeline-pair .flights-timeline-action{font-size:.62rem}
+:lang(el) .flights-timeline-pair .flights-timeline-action{font-size:.59rem}
+.flights-card--timeline .flights-card-season-line{margin-top:.12rem}
+.flights-journey{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:.3rem;align-items:stretch;margin:.35rem 0 .25rem}
+.flights-journey .flights-slot{min-height:3.1rem}
+.flights-journey-arrow{display:flex;align-items:center;justify-content:center;align-self:center;font-weight:800;font-size:.85rem;color:rgba(74,108,74,.45);padding:0 .02rem}
+.flights-card--journey .flights-card-meta{display:none}
+.flights-card-season-line{margin:.35rem 0 0;font-size:.7rem;color:var(--muted,#64748b)}
+.flights-card-season-line span{font-weight:700;text-transform:uppercase;letter-spacing:.03em;font-size:.58rem;margin-right:.25rem}
+.flights-bus-empty{color:var(--text-main,#334155);font-weight:700;font-size:.72rem;white-space:nowrap}
+.flights-schedule-table--shuttle{min-width:0;width:100%;table-layout:fixed}
+.flights-schedule-table--shuttle thead th{white-space:normal;line-height:1.2;padding:.5rem .45rem .55rem;font-size:.66rem;vertical-align:bottom}
+.flights-schedule-table--shuttle thead th.flights-th-time,
+.flights-schedule-table--shuttle thead th.flights-th-bus{text-align:center}
+.flights-th-stack{display:grid;grid-template-rows:.85rem minmax(1.15rem,1.55rem) .7rem;row-gap:.1rem;align-items:center;width:100%;box-sizing:border-box}
+.flights-th-stack-icon{display:flex;align-items:center;justify-content:center;height:.85rem;line-height:1;align-self:end}
+.flights-th-stack-label{line-height:1.15;align-self:center;text-align:inherit}
+.flights-th-stack-sub{align-self:start}
+.flights-th-day .flights-th-stack,
+.flights-th-route .flights-th-stack{justify-items:start;text-align:left}
+.flights-th-season .flights-th-stack{justify-items:end;text-align:right}
+.flights-th-time .flights-th-stack,
+.flights-th-bus .flights-th-stack{justify-items:center;text-align:center}
+.flights-th-stack-icon .fa-solid{font-size:.72rem;opacity:.92;line-height:1}
+.flights-th-stack-sub{font-size:.54rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;opacity:.88;line-height:1.1}
+.flights-th-stack-sub--empty{visibility:hidden}
+.flights-schedule-table--shuttle .flights-col-day,
+.flights-schedule-table--shuttle .flights-th-day{width:6%;white-space:nowrap;font-size:.78rem}
+.flights-schedule-table--shuttle .flights-time,
+.flights-schedule-table--shuttle .flights-th-time{width:7%;white-space:nowrap;font-variant-numeric:tabular-nums;text-align:center}
+.flights-schedule-table--shuttle .flights-col-bus,
+.flights-schedule-table--shuttle .flights-th-bus{width:9%;white-space:nowrap;text-align:center}
+.flights-schedule-table--shuttle .flights-col-season,
+.flights-schedule-table--shuttle .flights-th-season{width:22%;white-space:nowrap;font-size:.74rem;line-height:1.3;text-align:right;padding-right:.5rem}
+.flights-schedule-table--shuttle .flights-col-route,
+.flights-schedule-table--shuttle .flights-th-route{overflow-wrap:break-word;word-break:normal;hyphens:auto;-webkit-hyphens:auto}
+.flights-schedule-table--shuttle.flights-schedule-table--mode-all .flights-col-route,
+.flights-schedule-table--shuttle.flights-schedule-table--mode-all .flights-th-route{width:40%}
+.flights-schedule-table--shuttle.flights-schedule-table--mode-arriving .flights-col-route,
+.flights-schedule-table--shuttle.flights-schedule-table--mode-arriving .flights-th-route,
+.flights-schedule-table--shuttle.flights-schedule-table--mode-departing .flights-col-route,
+.flights-schedule-table--shuttle.flights-schedule-table--mode-departing .flights-th-route{width:56%}
+.flights-schedule-table--shuttle .flights-route-iata{font-size:.58rem;padding:.04rem .24rem;white-space:nowrap}
+.flights-season-range{display:inline-block;font-variant-numeric:tabular-nums;white-space:nowrap}
+.flights-col-season{padding-right:.5rem!important}
+@media (min-width:768px){
+  .flights-page .flights-table-scroll{max-width:none;margin-left:0;margin-right:0;overflow-x:visible}
+  .flights-page .flights-afterword{max-width:none;margin-left:0;margin-right:0}
+  .flights-page .flights-direction-wrap{max-width:none;margin-left:0;margin-right:0}
+  .flights-page .flights-schedule-hint{margin-left:0;margin-right:0}
+  .flights-schedule-table--shuttle{font-size:.8rem}
+  .flights-schedule-table--shuttle thead th{font-size:.68rem}
+}
+@media screen and (max-width:767px){
+  .flights-page .flights-direction-wrap{margin:0 auto .75rem;max-width:min(100% - 1.25rem,21.5rem)}
+  .flights-card--journey{padding:.45rem .55rem .5rem}
+  .flights-schedule-grid{grid-template-columns:1fr 1fr minmax(4.2rem,34%)}
+}
 
 /* Pelion cultural events (events.html) — same table/stack pattern as flights */
 .flights-schedule-table.events-cultural-table{min-width:min(100%,40rem)}
