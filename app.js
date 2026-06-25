@@ -335,6 +335,8 @@ const BUS_LOW_FREQ_DIRS = new Set(['trikeri', 'katigiorgis', 'platanias']);
 const BUS_DATA_SOURCE_DEFAULT = 'auto';
 const BUS_JSON_RELATIVE_PATH = 'data/bus-schedule.json';
 const BUS_JSON_STAGING_RELATIVE_PATH = 'data/bus-schedule.staging.json';
+const BUS_JSON_WINTER_RELATIVE_PATH = 'data/bus-schedule.winter.json';
+const BUS_JSON_SUMMER_RELATIVE_PATH = 'data/bus-schedule.summer.json';
 
 function getBusDataSourceMode() {
     try {
@@ -373,14 +375,27 @@ function busDataSourceTryOrder(mode) {
 }
 
 function busJsonFetchUrls() {
-    const urls = [sameOriginDataUrl(BUS_JSON_RELATIVE_PATH)];
+    const urls = [];
+    let seasonOverride = '';
     try {
         const q = new URLSearchParams(location.search);
+        seasonOverride = String(q.get('busSeason') || q.get('busRoster') || '').trim().toLowerCase();
         if (q.get('busStaging') === '1') {
-            urls.unshift(sameOriginDataUrl(BUS_JSON_STAGING_RELATIVE_PATH));
+            urls.push(sameOriginDataUrl(BUS_JSON_STAGING_RELATIVE_PATH));
+        }
+        if (seasonOverride === 'summer') {
+            urls.push(sameOriginDataUrl(BUS_JSON_SUMMER_RELATIVE_PATH));
+        } else if (seasonOverride === 'winter') {
+            urls.push(sameOriginDataUrl(BUS_JSON_WINTER_RELATIVE_PATH));
         }
     } catch { /* ignore */ }
+    urls.push(sameOriginDataUrl(BUS_JSON_RELATIVE_PATH));
     if (isLocalDevHost()) {
+        if (seasonOverride === 'summer') {
+            urls.push(devSnapshotUrl('dev/bus-schedule.summer.json'));
+        } else if (seasonOverride === 'winter') {
+            urls.push(devSnapshotUrl('dev/bus-schedule.winter.json'));
+        }
         urls.push(devSnapshotUrl('dev/bus-schedule.json'));
     }
     return urls;
@@ -397,11 +412,15 @@ function normalizeBusScheduleRawRows(payload) {
 
 function parseBusScheduleEnvelopeMeta(payload) {
     if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
-        return { generatedAt: null, source: null };
+        return { generatedAt: null, source: null, scheduleId: null, scheduleLabel: null, validFrom: null, validUntil: null };
     }
     return {
         generatedAt: payload.generatedAt || null,
         source: payload.source || null,
+        scheduleId: payload.scheduleId || null,
+        scheduleLabel: payload.scheduleLabel || null,
+        validFrom: payload.validFrom || null,
+        validUntil: payload.validUntil || null,
     };
 }
 
@@ -660,7 +679,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.89'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.90'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -4204,6 +4223,8 @@ function busMatchesDays(daysValue, weekdayNum) {
     if (days === 'daily') return true;
     if (days === 'weekdays') return weekdayNum >= 1 && weekdayNum <= 5;
     if (days === 'weekend') return weekdayNum === 6 || weekdayNum === 7;
+    if (days === 'saturday' || days === 'sat') return weekdayNum === 6;
+    if (days === 'sunday' || days === 'sun') return weekdayNum === 7;
     if (days === '1-7') return true;
     if (days === '1-5') return weekdayNum <= 5;
     if (days === '1-6') return weekdayNum <= 6;
@@ -4337,7 +4358,138 @@ async function parseBusScheduleHttpResponse(response, sourceLabel) {
         return null;
     }
     const meta = parseBusScheduleEnvelopeMeta(payload);
-    return { rows, generatedAt: meta.generatedAt, source: meta.source || 'json' };
+    return {
+        rows,
+        generatedAt: meta.generatedAt,
+        source: meta.source || 'json',
+        scheduleId: meta.scheduleId,
+        scheduleLabel: meta.scheduleLabel,
+        validFrom: meta.validFrom,
+        validUntil: meta.validUntil,
+    };
+}
+
+function busScheduleSeasonQueryOverride() {
+    try {
+        const q = new URLSearchParams(location.search);
+        if (q.get('busStaging') === '1') return { season: 'summer', preview: true, reason: 'staging' };
+        const season = String(q.get('busSeason') || q.get('busRoster') || '').trim().toLowerCase();
+        if (season === 'summer' || season === 'winter') return { season, preview: true, reason: 'override' };
+    } catch { /* ignore */ }
+    return { season: null, preview: false, reason: null };
+}
+
+function busFormatScheduleYmd(ymd) {
+    const parts = String(ymd || '').split('-').map(Number);
+    if (parts.length !== 3 || parts.some((n) => !Number.isFinite(n))) return '';
+    const d = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    const lang = busLang();
+    const locale = lang === 'el' ? 'el-GR' : (lang === 'nl' ? 'nl-NL' : 'en-GB');
+    return d.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+}
+
+function busScheduleSeasonLabel(seasonId, validFrom, validUntil) {
+    const id = String(seasonId || '').toLowerCase();
+    let title = '';
+    if (id === 'summer') {
+        title = busText('bus_schedule_summer', {
+            en: 'Summer schedule',
+            nl: 'Zomerrooster',
+            el: busT('bus_schedule_summer', 'Θερινό δρομολόγιο'),
+        });
+    } else if (id === 'winter') {
+        title = busText('bus_schedule_winter', {
+            en: 'Winter schedule',
+            nl: 'Winterrooster',
+            el: busT('bus_schedule_winter', 'Χειμερινό δρομολόγιο'),
+        });
+    } else {
+        return '';
+    }
+    const from = busFormatScheduleYmd(validFrom);
+    const until = busFormatScheduleYmd(validUntil);
+    if (from && until) {
+        const range = busText('bus_schedule_valid_range', {
+            en: '{from} – {until}',
+            nl: '{from} – {until}',
+            el: '{from} – {until}',
+        }).replace('{from}', from).replace('{until}', until);
+        return `${title} · ${range}`;
+    }
+    return title;
+}
+
+async function fetchBusScheduleDeployMeta() {
+    try {
+        const res = await fetch(sameOriginDataUrl('data/bus-schedule.meta.json'), { cache: 'no-cache' });
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data && typeof data === 'object' ? data : null;
+    } catch {
+        return null;
+    }
+}
+
+async function refreshBusScheduleSeasonBadge() {
+    const el = document.getElementById('bus-schedule-badge');
+    if (!el) return;
+
+    const override = busScheduleSeasonQueryOverride();
+    let seasonId = override.season;
+    let validFrom = null;
+    let validUntil = null;
+    let preview = override.preview;
+    let activeSeasonId = null;
+
+    try {
+        const bundle = await loadBusScheduleRawBundle();
+        if (bundle) {
+            if (!seasonId) seasonId = bundle.scheduleId;
+            validFrom = bundle.validFrom || null;
+            validUntil = bundle.validUntil || null;
+        }
+    } catch { /* ignore */ }
+
+    const deployMeta = await fetchBusScheduleDeployMeta();
+    if (deployMeta && deployMeta.activeScheduleId) {
+        activeSeasonId = String(deployMeta.activeScheduleId).toLowerCase();
+        if (!seasonId) seasonId = activeSeasonId;
+    }
+
+    if (override.reason === 'staging') {
+        preview = true;
+    } else if (override.season && activeSeasonId && override.season !== activeSeasonId) {
+        preview = true;
+    } else if (override.season && !activeSeasonId) {
+        preview = true;
+    } else {
+        preview = false;
+    }
+
+    const label = busScheduleSeasonLabel(seasonId, validFrom, validUntil);
+    if (!label) {
+        el.hidden = true;
+        el.textContent = '';
+        el.classList.remove('bus-schedule-badge--preview');
+        return;
+    }
+
+    const previewSuffix = preview
+        ? ` (${busText('bus_schedule_preview', {
+            en: 'preview',
+            nl: 'voorbeeld',
+            el: busT('bus_schedule_preview', 'προεπισκόπηση'),
+        })})`
+        : '';
+
+    el.textContent = `${label}${previewSuffix}`;
+    el.hidden = false;
+    el.classList.toggle('bus-schedule-badge--preview', preview);
+    el.setAttribute('title', busText('bus_schedule_badge_title', {
+        en: 'Active bus timetable season for this page',
+        nl: 'Actief busrooster op deze pagina',
+        el: busT('bus_schedule_badge_title', 'Ενεργό δρομολόγιο λεωφορείου σε αυτή τη σελίδα'),
+    }));
 }
 
 async function loadBusScheduleRawBundle() {
@@ -4357,7 +4509,8 @@ async function loadBusScheduleRawBundle() {
                     const bundle = await parseBusScheduleHttpResponse(res, `JSON ${url}`);
                     if (bundle) {
                         busScheduleRawBundleCache = bundle;
-                        console.info('[Kalanera] Bus-rijen geladen via statische JSON:', url, `(${bundle.rows.length} rijen)`);
+                        const seasonHint = bundle.scheduleId ? ` [${bundle.scheduleId}]` : '';
+                        console.info('[Kalanera] Bus-rijen geladen via statische JSON:', url, `(${bundle.rows.length} rijen)${seasonHint}`);
                         return bundle;
                     }
                 } catch (e) {
@@ -4600,6 +4753,7 @@ async function initBusSchedule() {
     await ensureBusUiStrings();
 
     refreshBusTrustBanner();
+    void refreshBusScheduleSeasonBadge();
 
     const fullOriginNoteEl = document.getElementById('bus-full-origin-note');
     if (fullOriginNoteEl) {
@@ -4972,6 +5126,7 @@ async function initBusSchedule() {
 
             const normalized = list.map(busNormalizeItem);
             renderFromNormalized(normalized, busSavedAtFromFetch(data), dataSource);
+            void refreshBusScheduleSeasonBadge();
             void busPrefetchMissingDirs();
         } catch (e) {
             const snap = await loadLocalDevBusSnapshot(activeDir, activeDayOffset);

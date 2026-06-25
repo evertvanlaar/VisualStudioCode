@@ -1,4 +1,4 @@
-/* version 3.1.89 */
+/* version 3.1.90 */
 @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
@@ -3819,6 +3819,10 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 .flights-iata-badge{margin:0;padding:0;flex-shrink:0;line-height:1;margin-inline-end:max(2px, env(safe-area-inset-right, 0px))}
 .flights-iata-badge abbr{text-decoration:none;font-variant-numeric:tabular-nums;padding:.2rem .5rem;border-radius:999px;background:rgba(74,108,74,.14);color:var(--primary-olive,#4a6c4a);font-size:.75rem;font-weight:800;letter-spacing:.04em}
 .flights-page-kicker{margin:.28rem 0 0;font-size:.8125rem;font-weight:700;color:var(--text-main,#334155);letter-spacing:.02em;margin-inline-start:max(4px, env(safe-area-inset-left, 0px))}
+.bus-schedule-badge{display:inline-flex;align-items:center;gap:.35rem;margin:.45rem 0 0;padding:.22rem .55rem;font-size:.6875rem;font-weight:800;line-height:1.25;letter-spacing:.02em;color:rgba(55,65,81,.92);background:rgba(74,108,74,.1);border:1px solid rgba(74,108,74,.22);border-radius:999px;margin-inline-start:max(4px, env(safe-area-inset-left, 0px))}
+.bus-schedule-badge::before{content:"";width:.45rem;height:.45rem;border-radius:50%;background:var(--primary-olive,#4a6c4a);flex-shrink:0}
+.bus-schedule-badge--preview{border-color:rgba(180,83,9,.35);background:rgba(251,191,36,.14);color:rgba(120,53,15,.95)}
+.bus-schedule-badge--preview::before{background:#d97706}
 .flights-kicker-sep{opacity:.45;padding:0 .15rem}
 .flights-page-lead{margin:.55rem 0 0;font-size:.8125rem;line-height:1.45;color:var(--muted,#64748b);max-width:36em;margin-inline-start:max(4px, env(safe-area-inset-left, 0px))}
 .flights-page-lead--mobile{display:none}

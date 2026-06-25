@@ -1,0 +1,251 @@
+{
+  "generatedAt": "2026-06-25T15:01:51.727Z",
+  "source": "google-sheets",
+  "scheduleId": "winter",
+  "scheduleLabel": "Winterrooster Pelion (archief)",
+  "validFrom": null,
+  "validUntil": "2026-06-25",
+  "rowCount": 30,
+  "rows": [
+    {
+      "row_number": 2,
+      "ID": 1,
+      "Time_KalaNera": "4:30",
+      "Destinations_Served": "argalasti, milina, trikeri",
+      "dirs_served": "argalasti, milina, trikeri",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 3,
+      "ID": 2,
+      "Time_KalaNera": "4:45",
+      "Destinations_Served": "argalasti, katigiorgis, platanias, promiri",
+      "dirs_served": "argalasti, katigiorgis, platanias, promiri",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 4,
+      "ID": 3,
+      "Time_KalaNera": "5:45",
+      "Destinations_Served": "afissos, neochori, siki",
+      "dirs_served": "afissos, neochori, siki",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 5,
+      "ID": 4,
+      "Time_KalaNera": "6:15",
+      "Destinations_Served": "milies, vyzitsa",
+      "dirs_served": "milies, vyzitsa",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 6,
+      "ID": 5,
+      "Time_KalaNera": "6:30",
+      "Destinations_Served": "Pinakates",
+      "dirs_served": "pinakates",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 7,
+      "ID": 6,
+      "Time_KalaNera": "7:00",
+      "Destinations_Served": "argalasti",
+      "dirs_served": "argalasti",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 8,
+      "ID": 7,
+      "Time_KalaNera": "7:00",
+      "Destinations_Served": "milies, vyzitsa, pinakates",
+      "dirs_served": "milies, vyzitsa, pinakates",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 9,
+      "ID": 8,
+      "Time_KalaNera": "7:30",
+      "Destinations_Served": "afissos",
+      "dirs_served": "afissos",
+      "Days": "weekend"
+    },
+    {
+      "row_number": 10,
+      "ID": 9,
+      "Time_KalaNera": "9:00",
+      "Destinations_Served": "neochori",
+      "dirs_served": "neochori",
+      "Days": "daily"
+    },
+    {
+      "row_number": 11,
+      "ID": 10,
+      "Time_KalaNera": "13:00",
+      "Destinations_Served": "afissos, milies, neochori, vyzitsa",
+      "dirs_served": "afissos, milies, neochori, vyzitsa",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 12,
+      "ID": 11,
+      "Time_KalaNera": "13:00",
+      "Destinations_Served": "argalasti, katigiorgis, milina, platanias, promiri",
+      "dirs_served": "argalasti, katigiorgis, milina, platanias, promiri",
+      "Days": "daily"
+    },
+    {
+      "row_number": 13,
+      "ID": 12,
+      "Time_KalaNera": "14:00",
+      "Destinations_Served": "milies, vyzitsa, pinakates, neochori",
+      "dirs_served": "milies, vyzitsa, pinakates, neochori",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 14,
+      "ID": 13,
+      "Time_KalaNera": "14:30",
+      "Destinations_Served": "afissos",
+      "dirs_served": "afissos",
+      "Days": "daily"
+    },
+    {
+      "row_number": 15,
+      "ID": 14,
+      "Time_KalaNera": "15:00",
+      "Destinations_Served": "argalasti, milina, trikeri",
+      "dirs_served": "argalasti, milina, trikeri",
+      "Days": "daily"
+    },
+    {
+      "row_number": 16,
+      "ID": 15,
+      "Time_KalaNera": "17:00",
+      "Destinations_Served": "afissos, argalasti, neochori, promiri, siki",
+      "dirs_served": "afissos, argalasti, neochori, promiri, siki",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 17,
+      "ID": 16,
+      "Time_KalaNera": "19:30",
+      "Destinations_Served": "milies, vyzitsa",
+      "dirs_served": "milies, vyzitsa",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 18,
+      "ID": 17,
+      "Time_KalaNera": "21:30",
+      "Destinations_Served": "afissos",
+      "dirs_served": "afissos",
+      "Days": "daily"
+    },
+    {
+      "row_number": 19,
+      "ID": 18,
+      "Time_KalaNera": "7:30",
+      "Destinations_Served": "volos",
+      "dirs_served": "volos",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 20,
+      "ID": 19,
+      "Time_KalaNera": "7:40",
+      "Destinations_Served": "volos",
+      "dirs_served": "volos",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 21,
+      "ID": 20,
+      "Time_KalaNera": "8:15",
+      "Destinations_Served": "volos",
+      "dirs_served": "volos",
+      "Days": "weekend"
+    },
+    {
+      "row_number": 22,
+      "ID": 21,
+      "Time_KalaNera": "8:45",
+      "Destinations_Served": "volos",
+      "dirs_served": "volos",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 23,
+      "ID": 22,
+      "Time_KalaNera": "10:45",
+      "Destinations_Served": "volos",
+      "dirs_served": "volos",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 24,
+      "ID": 23,
+      "Time_KalaNera": "14:30",
+      "Destinations_Served": "volos",
+      "dirs_served": "volos",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 25,
+      "ID": 24,
+      "Time_KalaNera": "15:15",
+      "Destinations_Served": "volos",
+      "dirs_served": "volos",
+      "Days": "daily"
+    },
+    {
+      "row_number": 26,
+      "ID": 25,
+      "Time_KalaNera": "15:30",
+      "Destinations_Served": "volos",
+      "dirs_served": "volos",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 27,
+      "ID": 26,
+      "Time_KalaNera": "16:00",
+      "Destinations_Served": "volos",
+      "dirs_served": "volos",
+      "Days": "weekend"
+    },
+    {
+      "row_number": 28,
+      "ID": 27,
+      "Time_KalaNera": "17:00",
+      "Destinations_Served": "volos",
+      "dirs_served": "volos",
+      "Days": "daily"
+    },
+    {
+      "row_number": 29,
+      "ID": 28,
+      "Time_KalaNera": "19:30",
+      "Destinations_Served": "volos",
+      "dirs_served": "volos",
+      "Days": "daily"
+    },
+    {
+      "row_number": 30,
+      "ID": 29,
+      "Time_KalaNera": "20:45",
+      "Destinations_Served": "volos",
+      "dirs_served": "volos",
+      "Days": "weekdays"
+    },
+    {
+      "row_number": 31,
+      "ID": 30,
+      "Time_KalaNera": "22:15",
+      "Destinations_Served": "volos",
+      "dirs_served": "volos",
+      "Days": "daily"
+    }
+  ]
+}
