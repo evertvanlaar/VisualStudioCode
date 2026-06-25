@@ -308,6 +308,7 @@ function applyBusinessDirectoryRows(rawData, meta, showData) {
 const N8N_WEBHOOK_URL_BUS_SCHEDULE_NEXT = 'https://n8n.vanlaar.cloud/webhook/bus-schedule-next';
 /** client-side slots: sleutel dir + Athens kalenderdatum doeldag (niet alleen offset), sync met n8n dayOffset-filter. */
 const BUS_STORAGE_KEY = 'kalanera_bus_schedule_cache_v3';
+const BUS_JSON_GENERATED_AT_KEY = 'kalanera_bus_json_generated_at';
 const BUS_CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes
 /** Today + 6 days: seven consecutive Athens calendar days */
 const BUS_DAY_OFFSET_MAX = 6;
@@ -679,7 +680,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.90'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.91'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -4329,6 +4330,21 @@ function busFilterRawRowsToResponse(rawRows, dir, dayOffset, { generatedAt, sour
 /** In-memory cache van het volledige bus-JSON-bestand (één fetch per pagina-load). */
 let busScheduleRawBundleCache = null;
 
+function busClearScheduleLocalCache() {
+    try { localStorage.removeItem(BUS_STORAGE_KEY); } catch { /* ignore */ }
+    busScheduleRawBundleCache = null;
+}
+
+function busSyncJsonGeneratedAt(generatedAt) {
+    const epoch = generatedAt ? String(generatedAt) : '';
+    if (!epoch) return;
+    try {
+        const prev = localStorage.getItem(BUS_JSON_GENERATED_AT_KEY);
+        if (prev && prev !== epoch) busClearScheduleLocalCache();
+        localStorage.setItem(BUS_JSON_GENERATED_AT_KEY, epoch);
+    } catch { /* ignore */ }
+}
+
 async function parseBusScheduleHttpResponse(response, sourceLabel) {
     if (!response.ok) {
         const bodySnippet = await response.text().catch(() => '');
@@ -4508,6 +4524,7 @@ async function loadBusScheduleRawBundle() {
                     const res = await fetch(url, { cache: 'no-cache' });
                     const bundle = await parseBusScheduleHttpResponse(res, `JSON ${url}`);
                     if (bundle) {
+                        busSyncJsonGeneratedAt(bundle.generatedAt);
                         busScheduleRawBundleCache = bundle;
                         const seasonHint = bundle.scheduleId ? ` [${bundle.scheduleId}]` : '';
                         console.info('[Kalanera] Bus-rijen geladen via statische JSON:', url, `(${bundle.rows.length} rijen)${seasonHint}`);
@@ -5091,7 +5108,21 @@ async function initBusSchedule() {
         setActiveDirUi(activeDir);
 
         const slot = busReadCacheSlot(activeDir, activeDayOffset);
-        const canUseCache = slot && busCacheFresh(slot.savedAt) && Array.isArray(slot.items);
+        let canUseCache = slot && busCacheFresh(slot.savedAt) && Array.isArray(slot.items);
+
+        if (!force && canUseCache) {
+            try {
+                const bundle = await loadBusScheduleRawBundle();
+                const epoch = bundle?.generatedAt ? String(bundle.generatedAt) : '';
+                const storedEpoch = localStorage.getItem(BUS_JSON_GENERATED_AT_KEY);
+                if (epoch && storedEpoch && epoch !== storedEpoch) {
+                    busClearScheduleLocalCache();
+                    canUseCache = false;
+                } else if (epoch) {
+                    busSyncJsonGeneratedAt(epoch);
+                }
+            } catch { /* ignore */ }
+        }
 
         if (!force && canUseCache) {
             renderFromCacheIfAny();

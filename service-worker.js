@@ -1,7 +1,7 @@
 // service-worker.js
-const VERSION = '3.1.90'; // Dit sturen we naar de Sheet
-const CACHE_NAME = 'kalanera-cache-v3.1.90'; // Dit dwingt de code-update af
-const IMAGE_CACHE = 'kalanera-images-v3.1.90'; // Afbeeldingen apart cachen voor snelheid
+const VERSION = '3.1.91'; // Dit sturen we naar de Sheet
+const CACHE_NAME = 'kalanera-cache-v3.1.91'; // Dit dwingt de code-update af
+const IMAGE_CACHE = 'kalanera-images-v3.1.91'; // Afbeeldingen apart cachen voor snelheid
 
 // VOEG DIT TOE: Luister naar vragen van de app
 self.addEventListener('message', (event) => {
@@ -174,6 +174,38 @@ self.addEventListener('fetch', event => {
         .catch(() =>
           caches.match(event.request).then((cached) => cached || caches.match('/offline.html'))
         ),
+    );
+    return;
+  }
+
+  // Statische datasets (/data/*.json): network-first — na rooster-wissel geen oude bus-schedule.json uit SW-cache (vooral PWA/mobiel).
+  if (url.pathname.startsWith('/data/') && /\.json$/i.test(pathname)) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse.status === 200) {
+            const copy = networkResponse.clone();
+            event.waitUntil(
+              copy
+                .arrayBuffer()
+                .then((body) =>
+                  caches.open(CACHE_NAME).then((cache) =>
+                    cache.put(
+                      event.request,
+                      new Response(body, {
+                        status: networkResponse.status,
+                        statusText: networkResponse.statusText,
+                        headers: networkResponse.headers,
+                      }),
+                    ),
+                  ),
+                )
+                .catch(() => {}),
+            );
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request)),
     );
     return;
   }
