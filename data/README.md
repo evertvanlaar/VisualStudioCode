@@ -10,7 +10,7 @@
 | `bus-schedule.winter.json` | Archief winter (`dev/bus-schedule.winter.json`) | Test via `?busData=json&busSeason=winter` |
 | `bus-schedule.summer.json` | Zomerrooster (`dev/bus-schedule.summer.json`) | Test via `?busData=json&busSeason=summer` |
 | `bus-schedule.staging.json` | Kopie zomer voor veilige test | Test via `?busData=json&busStaging=1` |
-| `bus-schedule.meta.json` | `scripts/switch-bus-season.mjs` | Welk seizoen actief is |
+| `bus-schedule.meta.json` | `scripts/switch-bus-season.mjs` | Welk seizoen actief is; `validFrom` / `validUntil` voor badge op bus-pagina |
 | `visitkalanera-sitemap.json` | GitHub Actions / `scripts/refresh-visitkalanera-sitemap.mjs` | n8n directory-vergelijking (incognito: geen directe fetch vanaf n8n) |
 
 ## Lokaal aanmaken (test)

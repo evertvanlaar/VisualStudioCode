@@ -680,7 +680,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.91'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.92'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -4470,6 +4470,19 @@ async function refreshBusScheduleSeasonBadge() {
     if (deployMeta && deployMeta.activeScheduleId) {
         activeSeasonId = String(deployMeta.activeScheduleId).toLowerCase();
         if (!seasonId) seasonId = activeSeasonId;
+    }
+
+    if (deployMeta && seasonId) {
+        const sid = String(seasonId).toLowerCase();
+        const seasonMeta = deployMeta.seasons && deployMeta.seasons[sid];
+        if (seasonMeta) {
+            if (!validFrom && seasonMeta.validFrom) validFrom = seasonMeta.validFrom;
+            if (!validUntil && seasonMeta.validUntil) validUntil = seasonMeta.validUntil;
+        }
+        if (sid === activeSeasonId) {
+            if (!validFrom && deployMeta.validFrom) validFrom = deployMeta.validFrom;
+            if (!validUntil && deployMeta.validUntil) validUntil = deployMeta.validUntil;
+        }
     }
 
     if (override.reason === 'staging') {

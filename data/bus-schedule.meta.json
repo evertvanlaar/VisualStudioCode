@@ -2,6 +2,18 @@
   "activeScheduleId": "summer",
   "activeFile": "bus-schedule.json",
   "updatedAt": "2026-06-25T21:50:00.000Z",
+  "validFrom": "2026-06-26",
+  "validUntil": "2026-09-10",
+  "seasons": {
+    "summer": {
+      "validFrom": "2026-06-26",
+      "validUntil": "2026-09-10"
+    },
+    "winter": {
+      "validFrom": null,
+      "validUntil": "2026-06-25"
+    }
+  },
   "winterFile": "bus-schedule.winter.json",
   "summerFile": "bus-schedule.summer.json",
   "testSummerUrl": "https://www.kalanera.gr/bus.html?busData=json&busSeason=summer",
