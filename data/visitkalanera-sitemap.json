@@ -1,8 +1,14 @@
 {
-  "generatedAt": "2026-06-22T12:15:12.403Z",
+  "generatedAt": "2026-06-29T10:59:21.234Z",
   "sitemapLastmod": "2026-05-07T13:24:31+00:00",
   "urlCount": 29,
   "pages": [
+    {
+      "title": "εδέμ ταβέρνα",
+      "url": "https://visitkalanera.gr/%ce%b5%ce%b4%ce%ad%ce%bc-%cf%84%ce%b1%ce%b2%ce%ad%cf%81%ce%bd%ce%b1/",
+      "slug": "%ce%b5%ce%b4%ce%ad%ce%bc-%cf%84%ce%b1%ce%b2%ce%ad%cf%81%ce%bd%ce%b1",
+      "normTitle": "εδεμ ταβερνα"
+    },
     {
       "title": "oceanis water sports rentals",
       "url": "https://visitkalanera.gr/oceanis-water-sports-rentals/",
@@ -26,12 +32,6 @@
       "url": "https://visitkalanera.gr/edem-tavern/",
       "slug": "edem-tavern",
       "normTitle": "edem tavern"
-    },
-    {
-      "title": "εδέμ ταβέρνα",
-      "url": "https://visitkalanera.gr/%ce%b5%ce%b4%ce%ad%ce%bc-%cf%84%ce%b1%ce%b2%ce%ad%cf%81%ce%bd%ce%b1/",
-      "slug": "%ce%b5%ce%b4%ce%ad%ce%bc-%cf%84%ce%b1%ce%b2%ce%ad%cf%81%ce%bd%ce%b1",
-      "normTitle": "εδεμ ταβερνα"
     },
     {
       "title": "1900 παραδοσιακό ταβερνείο",
