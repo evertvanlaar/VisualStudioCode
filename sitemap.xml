@@ -311,16 +311,6 @@
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://www.kalanera.gr/business/giros-snackbar.html</loc>
-        <lastmod>2026-07-03</lastmod>
-        <priority>0.8</priority>
-    </url>
-    <url>
-        <loc>https://www.kalanera.gr/business/giros-snackbar-el.html</loc>
-        <lastmod>2026-07-03</lastmod>
-        <priority>0.8</priority>
-    </url>
-    <url>
         <loc>https://www.kalanera.gr/business/golden-trust.html</loc>
         <lastmod>2026-07-02</lastmod>
         <priority>0.8</priority>
@@ -328,6 +318,16 @@
     <url>
         <loc>https://www.kalanera.gr/business/golden-trust-el.html</loc>
         <lastmod>2026-07-02</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://www.kalanera.gr/business/gyrokomeiou-gevseis.html</loc>
+        <lastmod>2026-07-03</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://www.kalanera.gr/business/gyrokomeiou-gevseis-el.html</loc>
+        <lastmod>2026-07-03</lastmod>
         <priority>0.8</priority>
     </url>
     <url>
