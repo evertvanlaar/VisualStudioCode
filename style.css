@@ -1,4 +1,4 @@
-/* version 3.1.93 */
+/* version 3.1.97 */
 @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
@@ -84,6 +84,7 @@ body{font-family:'Inter', sans-serif;background:var(--bg);margin:0;padding:0;col
 
 .more-section{margin-top:12px;padding:12px;border-radius:16px;border:1px solid rgba(15, 23, 42, 0.08);background:rgba(148,163,184,0.08);overflow:hidden}
 .more-section.more-section--cta{margin-top:0;padding:0;border:none;background:transparent}
+.more-section.more-section--share{margin-top:0;padding:0;border:none;background:transparent}
 .more-links a.more-link--add-business{
   background:linear-gradient(165deg,#4a6c4a 0%,#2d5a27 100%);
   border-color:rgba(45,90,39,.45);color:#fff;
@@ -1776,6 +1777,11 @@ html[lang="el"] .bus-page-title.bus-page-title--border-pill{
   top:8px;right:8px;width:32px;height:32px;background:rgba(255,255,255,.92)!important;
   border:1px solid rgba(15,23,42,.08)!important;box-shadow:0 2px 8px rgba(0,0,0,.12)
 }
+.page-home-hub .biz-card-mini--magazine .share-btn, .page-wishlist .biz-card-mini--magazine .share-btn{
+  top:8px;left:8px;width:32px;height:32px;background:rgba(255,255,255,.92)!important;
+  border:1px solid rgba(15,23,42,.08)!important;box-shadow:0 2px 8px rgba(0,0,0,.12)
+}
+.page-home-hub .biz-card-mini--magazine .share-btn i, .page-wishlist .biz-card-mini--magazine .share-btn i{color:#64748b!important}
 .page-home-hub .biz-card-mini--magazine .wishlist-btn i, .page-wishlist .biz-card-mini--magazine .wishlist-btn i{color:#64748b!important}
 .page-home-hub .biz-card-mini--magazine .wishlist-btn.active i, .page-wishlist .biz-card-mini--magazine .wishlist-btn.active i{color:#2d5a27!important}
 .page-home-hub .biz-card-mini--magazine .magazine-body, .page-wishlist .biz-card-mini--magazine .magazine-body{
@@ -1989,6 +1995,7 @@ html[lang="el"] .bus-page-title.bus-page-title--border-pill{
     width:24px;height:24px;min-width:24px;max-width:24px;border-radius:6px;font-size:11px
   }
   .page-home-hub .biz-card-mini--magazine .wishlist-btn, .page-wishlist .biz-card-mini--magazine .wishlist-btn{width:28px;height:28px;top:6px;right:6px}
+  .page-home-hub .biz-card-mini--magazine .share-btn, .page-wishlist .biz-card-mini--magazine .share-btn{width:28px;height:28px;top:6px;left:6px}
   .page-home-hub .biz-card-mini--magazine .magazine-location, .page-wishlist .biz-card-mini--magazine .magazine-location{font-size:10px}
   .page-home-hub .biz-card-mini--magazine, .page-wishlist .biz-card-mini--magazine{border-radius:11px}
 }
@@ -2537,6 +2544,10 @@ h1{font-size:1.35rem;margin-bottom:10px;line-height:1.15}
 .biz-card-mini.is-media .media-overlay .action-right{flex:0 0 auto;flex-shrink:0;display:flex;gap:6px;justify-content:flex-end;align-items:center}
 
 .biz-card-mini.is-media .wishlist-btn{top:8px;right:8px;width:32px;height:32px;z-index:5;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(255,255,255,0.18) !important;border:1px solid rgba(255,255,255,0.22);box-shadow:0 2px 12px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.35)}
+
+.biz-card-mini.is-media .share-btn{top:8px;left:8px;width:32px;height:32px;z-index:5;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(255,255,255,0.18) !important;border:1px solid rgba(255,255,255,0.22);box-shadow:0 2px 12px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.35)}
+
+.biz-card-mini.is-media .share-btn i{filter:drop-shadow(0 1px 2px rgba(0,0,0,0.45));color:#fff !important;opacity:0.95}
 
 .biz-card-mini.is-media .wishlist-btn i{filter:drop-shadow(0 1px 2px rgba(0,0,0,0.45))}
 
@@ -3125,6 +3136,23 @@ body.wotai-nightmode .install-landing-qr{background:rgba(30,42,30,.9)}
 .wishlist-btn.active i{color:#2d5a27 !important}
 
 .wishlist-btn:active{transform:scale(0.9)}
+
+.share-btn{
+  position:absolute;top:2px;left:2px;width:20px;height:20px;
+  background:rgba(255,255,255,0.95);border:none;border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 1px 3px rgba(0,0,0,0.3);z-index:100;transition:all 0.2s ease;padding:0
+}
+.share-btn i{font-size:10px;color:#64748b}
+.share-btn:active{transform:scale(0.9)}
+
+.share-toast{
+  position:fixed;left:50%;bottom:calc(var(--bottom-nav-h,64px) + 16px);transform:translateX(-50%) translateY(12px);
+  z-index:10050;padding:10px 16px;border-radius:999px;font-size:13px;font-weight:600;
+  color:#fff;background:rgba(15,23,42,.88);box-shadow:0 8px 24px rgba(2,6,23,.28);
+  opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;white-space:nowrap
+}
+.share-toast.is-visible{opacity:1;transform:translateX(-50%) translateY(0)}
 
 .menu-heart{color:#4a6c4a !important;margin-right:10px !important;filter:none;display:inline-block}
 
@@ -3787,9 +3815,15 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
   box-shadow:none!important;font-size:14px;transition:background .15s ease,color .15s ease,border-color .15s ease
 }
 .biz-detail-page .biz-detail-actions .btn-icon.review-btn,
-.biz-detail-page .biz-detail-actions .btn-icon.nav-btn-action{
+.biz-detail-page .biz-detail-actions .btn-icon.nav-btn-action,
+.biz-detail-page .biz-detail-actions .btn-icon.share-btn-action{
   color:#475569!important;background:rgba(15,23,42,.04)!important
 }
+.biz-detail-page .biz-detail-actions .share-btn{
+  position:static;top:auto;left:auto;width:34px;height:34px;min-width:34px;max-width:34px;
+  border-radius:8px;padding:0
+}
+.biz-detail-page .biz-detail-actions .share-btn i{font-size:14px;color:inherit!important}
 @media (hover:hover) and (pointer:fine){
   .biz-detail-page .biz-detail-actions .btn-icon:hover{
     background:rgba(74,108,74,.12)!important;border-color:rgba(74,108,74,.28)!important;

@@ -680,7 +680,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.93'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.97'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -1959,6 +1959,7 @@ function renderBusinesses(data) {
             const locDisplay = t(biz.Location) || t('Kala Nera');
             const locDisplaySafe = escapeHtml(locDisplay);
             const detailHref = `business/${bizId}${currentLang === 'el' ? '-el' : ''}.html`;
+            const shareHtml = renderShareButton(businessSharePayload(biz), 'home_card');
             const phoneHtml = (biz.Phone && biz.Phone.trim() !== "" && biz.Phone !== "-")
                 ? `<a href="tel:${biz.Phone}" class="btn-icon phone-btn" title="${escapeHtml(biz.Phone)}" onclick="gtag('event', 'click_phone', {'biz_name': '${safeBizName}'})"><i class="fa fa-phone"></i></a>`
                 : '';
@@ -1970,6 +1971,7 @@ function renderBusinesses(data) {
             <a class="magazine-link" href="${detailHref}" onclick="gtag('event', 'click_image', {'biz_name': '${safeBizName}'})">
                 <img src="${finalImageUrl}" onerror="this.onerror=null;this.src='/pix/nophoto.jpg'" alt="${escapeHtml(displayName)}">
             </a>
+            ${shareHtml}
             <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeBizName}', this)" aria-label="Toggle favorite">
                 <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
             </button>
@@ -2015,6 +2017,7 @@ grid.innerHTML += `
                 </div>
                 </div>
             </div>
+            ${shareHtml}
             <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeBizName}', this)" aria-label="Toggle favorite">
                 <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
             </button>
@@ -2362,11 +2365,134 @@ function copyToClipboard(text, el) {
     });
 }
 
+function absolutePageUrl(relativePath) {
+    try {
+        return new URL(relativePath, window.location.href).href;
+    } catch {
+        return relativePath;
+    }
+}
+
+function getCurrentPageSharePayload() {
+    const url = document.querySelector('link[rel="canonical"]')?.href || window.location.href;
+    const title = document.querySelector('meta[property="og:title"]')?.content || document.title;
+    const text = document.querySelector('meta[property="og:description"]')?.content
+        || document.querySelector('meta[name="description"]')?.content
+        || '';
+    return { title, text: String(text).trim(), url };
+}
+
+function businessSharePayload(biz) {
+    const displayName = (currentLang === 'el' && biz.Name_EL) ? biz.Name_EL : biz.Name;
+    const bizId = String(biz.Name || '').toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+    const detailPath = `business/${bizId}${currentLang === 'el' ? '-el' : ''}.html`;
+    const summary = (currentLang === 'el' && biz.Summary_el_imp) ? biz.Summary_el_imp : biz.Summary_en_imp;
+    return {
+        title: displayName,
+        text: String(summary || '').trim(),
+        url: absolutePageUrl(detailPath),
+    };
+}
+
+function renderShareButton(payload, source = 'home_card') {
+    const label = currentLang === 'el' ? 'Κοινοποίηση' : 'Share';
+    return `<button type="button" class="share-btn" data-share-title="${escapeHtml(payload.title)}" data-share-text="${escapeHtml(payload.text)}" data-share-url="${escapeHtml(payload.url)}" data-share-source="${escapeHtml(source)}" aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i></button>`;
+}
+
+function showShareToast(message) {
+    let toast = document.getElementById('share-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'share-toast';
+        toast.className = 'share-toast';
+        toast.setAttribute('role', 'status');
+        toast.setAttribute('aria-live', 'polite');
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add('is-visible');
+    clearTimeout(showShareToast._timer);
+    showShareToast._timer = setTimeout(() => toast.classList.remove('is-visible'), 2500);
+}
+
+async function sharePage({ title, text, url, source } = {}) {
+    const shareUrl = url || window.location.href;
+    const shareTitle = title || document.title;
+    const shareText = String(text || '').trim();
+    const payload = { title: shareTitle, url: shareUrl };
+    if (shareText) payload.text = shareText;
+
+    if (navigator.share) {
+        try {
+            await navigator.share(payload);
+            if (typeof gtag === 'function') {
+                gtag('event', 'share', { method: 'web_share_api', page_type: source || 'unknown' });
+            }
+            return true;
+        } catch (err) {
+            if (err && err.name === 'AbortError') return false;
+        }
+    }
+
+    try {
+        await navigator.clipboard.writeText(shareUrl);
+        showShareToast(currentLang === 'el' ? 'Ο σύνδεσμος αντιγράφηκε' : 'Link copied');
+        if (typeof gtag === 'function') {
+            gtag('event', 'share', { method: 'clipboard', page_type: source || 'unknown' });
+        }
+        return true;
+    } catch {
+        showShareToast(currentLang === 'el' ? 'Αποτυχία κοινοποίησης' : 'Could not share');
+        return false;
+    }
+}
+
+function wireShareButtons() {
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.share-btn, .more-link--share');
+        if (!btn) return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (btn.classList.contains('more-link--share')) closeMoreSheet();
+        void sharePage({
+            title: btn.dataset.shareTitle,
+            text: btn.dataset.shareText,
+            url: btn.dataset.shareUrl,
+            source: btn.dataset.shareSource,
+        });
+    });
+}
+
+function initBizDetailShareButton() {
+    if (!document.body.classList.contains('biz-detail-page')) return;
+    const actions = document.querySelector('.biz-detail-actions');
+    if (!actions || actions.querySelector('.share-btn')) return;
+
+    const { title, text, url } = getCurrentPageSharePayload();
+    const label = currentLang === 'el' ? 'Κοινοποίηση' : 'Share';
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'share-btn btn-icon share-btn-action';
+    btn.setAttribute('aria-label', label);
+    btn.setAttribute('title', label);
+    btn.dataset.shareTitle = title;
+    btn.dataset.shareText = text;
+    btn.dataset.shareUrl = url;
+    btn.dataset.shareSource = 'biz_detail';
+    btn.innerHTML = '<i class="fa-solid fa-share-nodes" aria-hidden="true"></i>';
+
+    actions.prepend(btn);
+}
+
 // --- EVENT LISTENERS ---
 
 document.addEventListener('DOMContentLoaded', () => {
     applyPlayStorePromoUi();
     wireInstallTrackingClickCapture();
+    wireShareButtons();
 
     rewriteDomPixImagesToSameOrigin();
 
@@ -2443,6 +2569,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3c. Business detail: smart crop + enlarge photo on tap
     initSmartCropForBizDetail();
     initBizDetailPhotoLightbox();
+    initBizDetailShareButton();
 
     // 4. Wishlist teller bijwerken
     updateWishlistCount();
@@ -5740,8 +5867,12 @@ function renderMoreSheetContent() {
         travelBus: isEl ? 'Λεωφορείο (Καλά Νερά)' : 'Bus (Kala Nera)',
         travelBusSub: isEl ? 'Δρομολόγια & κατευθύνσεις' : 'Timetables & directions',
         addBusiness: isEl ? 'Προσθέστε την επιχείρησή σας' : 'Add your Business',
-        addBusinessSub: isEl ? 'Δωρεάν' : 'Free'
+        addBusinessSub: isEl ? 'Δωρεάν' : 'Free',
+        sharePage: isEl ? 'Κοινοποίηση σελίδας' : 'Share this page',
+        sharePageSub: isEl ? 'Σύνδεσμος' : 'Link'
     };
+
+    const pageShare = getCurrentPageSharePayload();
 
     const aboutText = getFooterAboutText() || (isEl
         ? 'Βοηθάμε τους ταξιδιώτες να ανακαλύψουν τα καλύτερα μέρη στην περιοχή.'
@@ -5785,6 +5916,15 @@ function renderMoreSheetContent() {
     })();
 
     container.innerHTML = `
+        <section class="more-section more-section--share">
+            <div class="more-links">
+                <button type="button" class="more-link--share" data-share-title="${escapeHtml(pageShare.title)}" data-share-text="${escapeHtml(pageShare.text)}" data-share-url="${escapeHtml(pageShare.url)}" data-share-source="more_menu">
+                    <span class="more-link-leading"><i class="fa-solid fa-share-nodes"></i><span class="more-link-label">${labels.sharePage}</span></span>
+                    <small>${labels.sharePageSub}</small>
+                </button>
+            </div>
+        </section>
+
         <section class="more-section more-section--cta">
             <div class="more-links">
                 <a href="${pathPrefix}${tFormHref}" class="more-link--add-business">
