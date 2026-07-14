@@ -680,7 +680,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.98'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.100'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -2497,11 +2497,10 @@ async function sharePage({ title, text, url, source } = {}) {
 
 function wireShareButtons() {
     document.addEventListener('click', (e) => {
-        const btn = e.target.closest('.share-btn, .more-link--share');
+        const btn = e.target.closest('.share-btn');
         if (!btn) return;
         e.preventDefault();
         e.stopPropagation();
-        if (btn.classList.contains('more-link--share')) closeMoreSheet();
         void sharePage({
             title: btn.dataset.shareTitle,
             text: btn.dataset.shareText,
@@ -2509,6 +2508,40 @@ function wireShareButtons() {
             source: btn.dataset.shareSource,
         });
     });
+}
+
+function initPageHeaderShareButton() {
+    if (document.body.classList.contains('page-home-hub')) return;
+    if (document.body.classList.contains('biz-detail-page')) return;
+
+    const headMain = document.querySelector('.flights-page-head .flights-page-head-main');
+    if (!headMain || headMain.querySelector('.share-btn--page-head')) return;
+
+    const badge = headMain.querySelector('.flights-iata-badge');
+    if (!badge) return;
+
+    const { title, text, url } = getCurrentPageSharePayload();
+    const label = currentLang === 'el' ? 'Κοινοποίηση' : 'Share';
+
+    let actionsWrap = headMain.querySelector('.flights-page-head-actions');
+    if (!actionsWrap) {
+        actionsWrap = document.createElement('div');
+        actionsWrap.className = 'flights-page-head-actions';
+        badge.parentNode.insertBefore(actionsWrap, badge);
+        actionsWrap.appendChild(badge);
+    }
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'share-btn share-btn--page-head';
+    btn.setAttribute('aria-label', label);
+    btn.setAttribute('title', label);
+    btn.dataset.shareTitle = title;
+    btn.dataset.shareText = text;
+    btn.dataset.shareUrl = url;
+    btn.dataset.shareSource = 'page_header';
+    btn.innerHTML = '<i class="fa-solid fa-share-nodes" aria-hidden="true"></i>';
+    actionsWrap.appendChild(btn);
 }
 
 function initBizDetailShareButton() {
@@ -2616,6 +2649,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initSmartCropForBizDetail();
     initBizDetailPhotoLightbox();
     initBizDetailShareButton();
+    initPageHeaderShareButton();
 
     // 4. Wishlist teller bijwerken
     updateWishlistCount();
@@ -5914,11 +5948,7 @@ function renderMoreSheetContent() {
         travelBusSub: isEl ? 'Δρομολόγια & κατευθύνσεις' : 'Timetables & directions',
         addBusiness: isEl ? 'Προσθέστε την επιχείρησή σας' : 'Add your Business',
         addBusinessSub: isEl ? 'Δωρεάν' : 'Free',
-        sharePage: isEl ? 'Κοινοποίηση σελίδας' : 'Share this page',
-        sharePageSub: isEl ? 'Σύνδεσμος' : 'Link'
     };
-
-    const pageShare = getCurrentPageSharePayload();
 
     const aboutText = getFooterAboutText() || (isEl
         ? 'Βοηθάμε τους ταξιδιώτες να ανακαλύψουν τα καλύτερα μέρη στην περιοχή.'
@@ -5962,15 +5992,6 @@ function renderMoreSheetContent() {
     })();
 
     container.innerHTML = `
-        <section class="more-section more-section--share">
-            <div class="more-links">
-                <button type="button" class="more-link--share" data-share-title="${escapeHtml(pageShare.title)}" data-share-text="${escapeHtml(pageShare.text)}" data-share-url="${escapeHtml(pageShare.url)}" data-share-source="more_menu">
-                    <span class="more-link-leading"><i class="fa-solid fa-share-nodes"></i><span class="more-link-label">${labels.sharePage}</span></span>
-                    <small>${labels.sharePageSub}</small>
-                </button>
-            </div>
-        </section>
-
         <section class="more-section more-section--cta">
             <div class="more-links">
                 <a href="${pathPrefix}${tFormHref}" class="more-link--add-business">

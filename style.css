@@ -1,4 +1,4 @@
-/* version 3.1.98 */
+/* version 3.1.100 */
 @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
@@ -84,7 +84,6 @@ body{font-family:'Inter', sans-serif;background:var(--bg);margin:0;padding:0;col
 
 .more-section{margin-top:12px;padding:12px;border-radius:16px;border:1px solid rgba(15, 23, 42, 0.08);background:rgba(148,163,184,0.08);overflow:hidden}
 .more-section.more-section--cta{margin-top:0;padding:0;border:none;background:transparent}
-.more-section.more-section--share{margin-top:0;padding:0;border:none;background:transparent}
 .more-links a.more-link--add-business{
   background:linear-gradient(165deg,#4a6c4a 0%,#2d5a27 100%);
   border-color:rgba(45,90,39,.45);color:#fff;
@@ -3849,6 +3848,12 @@ body.is-offline .map-wrapper::after{content:"📍 Kaart niet beschikbaar in offl
 /* Flights — page chrome */
 .flights-page-head{margin:0 0 1rem;padding:0 0 1rem;border-bottom:1px solid rgba(74,108,74,.2);background:linear-gradient(180deg,rgba(74,108,74,.06) 0%,transparent 100%);border-radius:12px 12px 0 0;margin-left:-4px;margin-right:-4px;padding-left:12px;padding-right:12px;padding-top:.35rem}
 .flights-page-head-main{display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:.65rem;width:100%;box-sizing:border-box}
+.flights-page-head-actions{display:flex;flex-shrink:0;align-items:center;gap:.45rem;margin-inline-end:max(2px, env(safe-area-inset-right, 0px))}
+.flights-page-head-actions .flights-iata-badge{margin-inline-end:0}
+.share-btn--page-head{position:relative;top:auto;left:auto;width:auto;height:auto;min-width:1.85rem;min-height:1.85rem;flex-shrink:0;padding:.2rem .45rem;background:rgba(74,108,74,.14);border:none;box-shadow:none;border-radius:999px}
+.share-btn--page-head i{font-size:.72rem;color:var(--primary-olive,#4a6c4a)}
+.share-btn--page-head:hover,.share-btn--page-head:focus-visible{background:rgba(74,108,74,.22)}
+.share-btn--page-head:active{transform:scale(.96)}
 .flights-page .flights-page-title{flex:1 1 auto;min-width:0;font-size:clamp(1.25rem,3.8vw,1.55rem);margin:0;color:var(--primary-olive,#4a6c4a);letter-spacing:-.02em;text-align:left;margin-inline-start:max(4px, env(safe-area-inset-left, 0px))}
 .flights-iata-badge{margin:0;padding:0;flex-shrink:0;line-height:1;margin-inline-end:max(2px, env(safe-area-inset-right, 0px))}
 .flights-iata-badge abbr{text-decoration:none;font-variant-numeric:tabular-nums;padding:.2rem .5rem;border-radius:999px;background:rgba(74,108,74,.14);color:var(--primary-olive,#4a6c4a);font-size:.75rem;font-weight:800;letter-spacing:.04em}
