@@ -680,7 +680,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.97'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.98'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -2417,23 +2417,69 @@ function showShareToast(message) {
     showShareToast._timer = setTimeout(() => toast.classList.remove('is-visible'), 2500);
 }
 
-async function sharePage({ title, text, url, source } = {}) {
-    const shareUrl = url || window.location.href;
-    const shareTitle = title || document.title;
-    const shareText = String(text || '').trim();
-    const payload = { title: shareTitle, url: shareUrl };
-    if (shareText) payload.text = shareText;
+function normalizeShareUrl(url) {
+    const raw = String(url || window.location.href).trim();
+    try {
+        return new URL(raw, window.location.href).href;
+    } catch {
+        return raw;
+    }
+}
 
-    if (navigator.share) {
-        try {
-            await navigator.share(payload);
-            if (typeof gtag === 'function') {
-                gtag('event', 'share', { method: 'web_share_api', page_type: source || 'unknown' });
+function canWebSharePayload(payload) {
+    if (typeof navigator.canShare !== 'function') return true;
+    try {
+        return navigator.canShare(payload);
+    } catch {
+        return false;
+    }
+}
+
+function buildSharePayloadVariants(title, text, url) {
+    const shareUrl = normalizeShareUrl(url);
+    const shareTitle = String(title || document.title || '').trim();
+    const shareText = String(text || '').trim();
+    const candidates = [
+        { url: shareUrl },
+        shareTitle ? { title: shareTitle, url: shareUrl } : null,
+        shareText ? { text: shareText, url: shareUrl } : null,
+        shareTitle && shareText ? { title: shareTitle, text: shareText, url: shareUrl } : null,
+        shareTitle && shareText
+            ? { text: `${shareTitle}\n\n${shareText}\n\n${shareUrl}`.trim() }
+            : { text: shareUrl },
+    ].filter(Boolean);
+
+    const seen = new Set();
+    return candidates.filter((payload) => {
+        const key = JSON.stringify(payload);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return canWebSharePayload(payload);
+    });
+}
+
+async function sharePage({ title, text, url, source } = {}) {
+    const shareUrl = normalizeShareUrl(url);
+    const hasWebShare = typeof navigator.share === 'function';
+
+    if (hasWebShare) {
+        const variants = buildSharePayloadVariants(title, text, shareUrl);
+        const payloads = variants.length ? variants : [{ url: shareUrl }];
+
+        for (const payload of payloads) {
+            try {
+                await navigator.share(payload);
+                if (typeof gtag === 'function') {
+                    gtag('event', 'share', { method: 'web_share_api', page_type: source || 'unknown' });
+                }
+                return true;
+            } catch (err) {
+                if (err && err.name === 'AbortError') return false;
             }
-            return true;
-        } catch (err) {
-            if (err && err.name === 'AbortError') return false;
         }
+
+        showShareToast(currentLang === 'el' ? 'Αποτυχία κοινοποίησης' : 'Could not open share menu');
+        return false;
     }
 
     try {
