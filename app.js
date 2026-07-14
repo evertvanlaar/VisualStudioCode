@@ -680,7 +680,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.100'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.101'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -5962,8 +5962,8 @@ function renderMoreSheetContent() {
     const year = new Date().getFullYear();
     const footerCopyright = getFooterCopyrightText();
     const copyrightFallback = isEl
-        ? `${year} Οδηγός Καλών Νερών. E-Project όλα τα δικαιώματα διατηρούνται.`
-        : `${year} Kala Nera Guide. E-Project all rights reserved.`;
+        ? `${year} Οδηγός Καλών Νερών. E-Project όλα τα δικαιώματα διατηρούνται - Developed by Evert van Laar`
+        : `${year} Kala Nera Guide. E-Project all rights reserved - Developed by Evert van Laar`;
     const copyrightRaw = (footerCopyright && footerCopyright.trim()) ? footerCopyright.trim() : copyrightFallback;
 
     const version = (typeof APP_VERSION !== 'undefined') ? APP_VERSION : '';
