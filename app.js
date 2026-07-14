@@ -680,7 +680,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.101'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.102'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -5962,8 +5962,8 @@ function renderMoreSheetContent() {
     const year = new Date().getFullYear();
     const footerCopyright = getFooterCopyrightText();
     const copyrightFallback = isEl
-        ? `${year} Οδηγός Καλών Νερών. E-Project όλα τα δικαιώματα διατηρούνται - Developed by Evert van Laar`
-        : `${year} Kala Nera Guide. E-Project all rights reserved - Developed by Evert van Laar`;
+        ? `${year} Οδηγός Καλών Νερών E-Project όλα τα δικαιώματα διατηρούνται\nDeveloped by Evert van Laar`
+        : `${year} Kala Nera Guide E-Project all rights reserved\nDeveloped by Evert van Laar`;
     const copyrightRaw = (footerCopyright && footerCopyright.trim()) ? footerCopyright.trim() : copyrightFallback;
 
     const version = (typeof APP_VERSION !== 'undefined') ? APP_VERSION : '';
@@ -5987,8 +5987,12 @@ function renderMoreSheetContent() {
     const formattedCopyright = (() => {
         // Avoid double copyright symbol (some pages already include "©")
         const withoutLeading = copyrightRaw.replace(/^\s*©+\s*/g, '').trim();
-        const escaped = escapeHtml(withoutLeading);
-        return escaped.replace(/\sE-Project\b/g, '<br>E-Project');
+        const withoutGuideDot = withoutLeading.replace(/(Kala Nera Guide|Οδηγός Καλών Νερών)\./g, '$1');
+        const withDeveloperBreak = withoutGuideDot.replace(/\s*-\s*Developed by Evert van Laar/g, '\nDeveloped by Evert van Laar');
+        const escaped = escapeHtml(withDeveloperBreak);
+        return escaped
+            .replace(/\n/g, '<br>')
+            .replace(/\sE-Project\b/g, '<br>E-Project');
     })();
 
     container.innerHTML = `
