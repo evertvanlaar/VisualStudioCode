@@ -680,7 +680,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.102'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.103'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -5950,11 +5950,6 @@ function renderMoreSheetContent() {
         addBusinessSub: isEl ? 'Δωρεάν' : 'Free',
     };
 
-    const aboutText = getFooterAboutText() || (isEl
-        ? 'Βοηθάμε τους ταξιδιώτες να ανακαλύψουν τα καλύτερα μέρη στην περιοχή.'
-        : 'We help travelers discover the best places in the area.'
-    );
-
     const fb = getFooterFacebookLink();
     const fbHref = (fb && fb.href) ? fb.href : 'https://www.facebook.com/kalanera.info';
     const fbLabel = (fb && fb.label) ? fb.label : labels.follow;
@@ -5976,6 +5971,7 @@ function renderMoreSheetContent() {
         }
     })();
     const privacyHref = isEl ? 'privacy-el.html' : 'privacy.html';
+    const aboutHref = isEl ? 'about-el.html' : 'about.html';
     const infoHref = isEl ? 'info-el.html' : 'info.html';
     const flightsHref = isEl ? 'flights-el.html' : 'flights.html';
     const eventsHref = isEl ? 'events-el.html' : 'events.html';
@@ -6037,8 +6033,11 @@ function renderMoreSheetContent() {
 
         <section class="more-section more-about">
             <h3>${labels.about}</h3>
-            <p>${escapeHtml(aboutText)}</p>
-            <div class="more-links" style="margin-top:10px;">
+            <div class="more-links">
+                <a href="${pathPrefix}${aboutHref}">
+                    <span class="more-link-leading"><i class="fa-solid fa-circle-info"></i><span class="more-link-label">${labels.about}</span></span>
+                    <small>kalanera.gr</small>
+                </a>
                 <a href="${fbHref}" target="_blank" rel="noopener">
                     <span class="more-link-leading"><i class="fab fa-facebook-f"></i><span class="more-link-label">${fbLabel}</span></span>
                     <small>Facebook</small>
