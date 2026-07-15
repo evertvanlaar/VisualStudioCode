@@ -6,6 +6,16 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://www.kalanera.gr/index.html</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.kalanera.gr/offline.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
     <loc>https://www.kalanera.gr/wishlist.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
@@ -457,6 +467,16 @@
     </url>
     <url>
         <loc>https://www.kalanera.gr/business/levantes-el.html</loc>
+        <lastmod>2026-07-15</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://www.kalanera.gr/business/les-petites-sir-nes.html</loc>
+        <lastmod>2026-07-15</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://www.kalanera.gr/business/les-petites-sir-nes-el.html</loc>
         <lastmod>2026-07-15</lastmod>
         <priority>0.8</priority>
     </url>
