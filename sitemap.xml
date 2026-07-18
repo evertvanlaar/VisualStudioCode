@@ -221,6 +221,16 @@
         <priority>0.7</priority>
     </url>
     <url>
+        <loc>https://www.kalanera.gr/business/bakery.html</loc>
+        <lastmod>2026-07-15</lastmod>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.kalanera.gr/business/bakery-el.html</loc>
+        <lastmod>2026-07-15</lastmod>
+        <priority>0.7</priority>
+    </url>
+    <url>
         <loc>https://www.kalanera.gr/business/butcher-lazaros.html</loc>
         <lastmod>2026-07-15</lastmod>
         <priority>0.7</priority>
@@ -257,6 +267,16 @@
     </url>
     <url>
         <loc>https://www.kalanera.gr/business/edem-el.html</loc>
+        <lastmod>2026-07-15</lastmod>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.kalanera.gr/business/edem-paradise-on-earth.html</loc>
+        <lastmod>2026-07-15</lastmod>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.kalanera.gr/business/edem-paradise-on-earth-el.html</loc>
         <lastmod>2026-07-15</lastmod>
         <priority>0.7</priority>
     </url>
@@ -547,6 +567,16 @@
     </url>
     <url>
         <loc>https://www.kalanera.gr/business/minelska-el.html</loc>
+        <lastmod>2026-07-15</lastmod>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.kalanera.gr/business/nagual.html</loc>
+        <lastmod>2026-07-15</lastmod>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.kalanera.gr/business/nagual-el.html</loc>
         <lastmod>2026-07-15</lastmod>
         <priority>0.7</priority>
     </url>
@@ -867,6 +897,16 @@
     </url>
     <url>
         <loc>https://www.kalanera.gr/business/takos-el.html</loc>
+        <lastmod>2026-07-15</lastmod>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.kalanera.gr/business/to-kyma.html</loc>
+        <lastmod>2026-07-15</lastmod>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.kalanera.gr/business/to-kyma-el.html</loc>
         <lastmod>2026-07-15</lastmod>
         <priority>0.7</priority>
     </url>
