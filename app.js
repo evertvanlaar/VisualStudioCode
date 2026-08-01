@@ -680,7 +680,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.103'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.108'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -1554,6 +1554,7 @@ function setActiveCategory(cat, { updateUrl = true, scrollToList = false } = {})
     }
     syncHeroCategoryTilesUI();
     syncHubFilterBar();
+    syncLangSwitchLinks();
     applyFilters();
     if (scrollToList) scrollToBusinessList();
 }
@@ -1785,6 +1786,72 @@ function categorySectionSlug(cat) {
         .replace(/(^-|-$)/g, '') || 'other';
 }
 
+/** Display name used for sorting / alpha index (EL prefers Name_EL when set). */
+function businessDisplayName(biz) {
+    if (!biz) return '';
+    if (currentLang === 'el') {
+        const el = String(biz.Name_EL || '').trim();
+        if (el) return el;
+    }
+    return String(biz.Name || '').trim();
+}
+
+function nameHasGreekScript(name) {
+    return /[\u0370-\u03FF\u1F00-\u1FFF]/.test(String(name || ''));
+}
+
+/**
+ * Sort for listings:
+ * - EL UI: Greek-script names first (α–ω), then Latin (A–Z)
+ * - EN UI: Latin/English names first (A–Z), then Greek (α–ω)
+ */
+function compareBusinessDisplayNames(a, b) {
+    const nameA = businessDisplayName(a);
+    const nameB = businessDisplayName(b);
+    const greekA = nameHasGreekScript(nameA);
+    const greekB = nameHasGreekScript(nameB);
+    const greekFirst = currentLang === 'el';
+    const bucketA = greekA ? (greekFirst ? 0 : 1) : (greekFirst ? 1 : 0);
+    const bucketB = greekB ? (greekFirst ? 0 : 1) : (greekFirst ? 1 : 0);
+    if (bucketA !== bucketB) return bucketA - bucketB;
+    const locale = greekA || greekB ? 'el' : 'en';
+    return nameA.localeCompare(nameB, locale, { sensitivity: 'base', numeric: true });
+}
+
+/** Keep ?cat= when switching EN ↔ EL on the home hub. */
+function syncLangSwitchLinks() {
+    if (!isHomeHubPage()) return;
+    const links = document.querySelectorAll('a.lang-link, a.lang-link-mobile');
+    if (!links.length) return;
+
+    const catSlug =
+        activeCategory && SITE_CATEGORY_TILES.includes(activeCategory)
+            ? categorySectionSlug(activeCategory)
+            : '';
+
+    links.forEach((a) => {
+        const href = a.getAttribute('href');
+        if (!href || href.startsWith('mailto:') || href.startsWith('http')) return;
+        let url;
+        try {
+            url = new URL(href, window.location.href);
+        } catch {
+            return;
+        }
+        const path = (url.pathname || '').toLowerCase();
+        const isHubTarget =
+            path.endsWith('/index.html') ||
+            path.endsWith('/index-el.html') ||
+            path.endsWith('/') ||
+            /(^|\/)index(-el)?\.html$/i.test(path);
+        if (!isHubTarget) return;
+        if (catSlug) url.searchParams.set('cat', catSlug);
+        else url.searchParams.delete('cat');
+        const next = url.pathname.split('/').pop() + url.search + url.hash;
+        a.setAttribute('href', next || href);
+    });
+}
+
 function locationFilterShowsAllBusinesses() {
     if (activeLocations.size === 0) return true;
     if (SITE_LOCATION_FILTERS.length === 0) return true;
@@ -1840,6 +1907,7 @@ function syncHubCategoryForSearch(filtered, isSearching) {
         history.replaceState(null, '', url);
         syncHeroCategoryTilesUI();
         syncHubFilterBar();
+        syncLangSwitchLinks();
         return;
     }
 
@@ -1857,6 +1925,7 @@ function syncHubCategoryForSearch(filtered, isSearching) {
     history.replaceState(null, '', url);
     syncHeroCategoryTilesUI();
     syncHubFilterBar();
+    syncLangSwitchLinks();
 }
 
 function applyFilters() {
@@ -2029,11 +2098,7 @@ grid.innerHTML += `
     if (isWishlistPage()) {
         const grid = document.createElement('div');
         grid.className = 'business-grid hub-category-grid';
-        const sorted = [...data].sort((a, b) => {
-            const nameA = (currentLang === 'el' && a.Name_EL) ? a.Name_EL : (a.Name || '');
-            const nameB = (currentLang === 'el' && b.Name_EL) ? b.Name_EL : (b.Name || '');
-            return (nameA || '').localeCompare(nameB || '');
-        });
+        const sorted = [...data].sort(compareBusinessDisplayNames);
         sorted.forEach((biz) => renderCardInto(grid, biz, biz.Category || 'Other'));
         container.appendChild(grid);
         syncWishlistToolbar(data.length);
@@ -2049,11 +2114,7 @@ grid.innerHTML += `
     if (isHomeHubPage() && activeCategory && listMode !== 'az') {
         const grid = document.createElement('div');
         grid.className = 'business-grid hub-category-grid';
-        const sorted = [...data].sort((a, b) => {
-            const nameA = (currentLang === 'el' && a.Name_EL) ? a.Name_EL : (a.Name || '');
-            const nameB = (currentLang === 'el' && b.Name_EL) ? b.Name_EL : (b.Name || '');
-            return (nameA || '').localeCompare(nameB || '');
-        });
+        const sorted = [...data].sort(compareBusinessDisplayNames);
         sorted.forEach((biz) => renderCardInto(grid, biz, activeCategory));
         container.appendChild(grid);
         if (hubCategoryScrollPending && activeCategory) {
@@ -2114,7 +2175,7 @@ grid.innerHTML += `
             const grid = document.createElement('div');
             grid.className = 'business-grid category-section-grid';
             grouped[category]
-                .sort((a, b) => (a.Name || "").localeCompare(b.Name || ""))
+                .sort(compareBusinessDisplayNames)
                 .forEach(biz => renderCardInto(grid, biz, category));
 
             details.appendChild(summary);
@@ -2127,11 +2188,7 @@ grid.innerHTML += `
         const grid = document.createElement('div');
         grid.className = 'business-grid';
 
-        const sorted = [...data].sort((a, b) => {
-            const nameA = (currentLang === 'el' && a.Name_EL) ? a.Name_EL : (a.Name || '');
-            const nameB = (currentLang === 'el' && b.Name_EL) ? b.Name_EL : (b.Name || '');
-            return (nameA || '').localeCompare(nameB || '');
-        });
+        const sorted = [...data].sort(compareBusinessDisplayNames);
 
         sorted.forEach(biz => renderCardInto(grid, biz, biz.Category || 'Other'));
         container.appendChild(grid);
@@ -2596,6 +2653,7 @@ document.addEventListener('DOMContentLoaded', () => {
         generateHeroCategoryTiles();
         syncHeroCategoryTilesUI();
         syncHubFilterBar();
+        syncLangSwitchLinks();
         initHubWebcam();
         const clearCatBtn = document.getElementById('clear-category-filter');
         if (clearCatBtn) {
@@ -2613,6 +2671,7 @@ document.addEventListener('DOMContentLoaded', () => {
             activeCategory = readCategoryFromUrl() || HUB_DEFAULT_CATEGORY;
             syncHeroCategoryTilesUI();
             syncHubFilterBar();
+            syncLangSwitchLinks();
             applyFilters();
         });
     }
