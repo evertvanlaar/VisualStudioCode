@@ -680,7 +680,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.108'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.109'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -728,7 +728,7 @@ async function init() {
 
         // --- NIEUW: Vertel Analytics dat de pagina (inclusief anker #) geladen is ---
         if (typeof gtag === 'function') {
-            gtag('config', 'G-XXXXXXXXXX', {
+            gtag('config', 'G-12LDX13JG6', {
                 'page_path': window.location.pathname + window.location.hash
             });
         }
