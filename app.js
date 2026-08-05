@@ -628,7 +628,126 @@ function normalizeBusinessDirectoryRow(biz) {
     const row = { ...biz };
     if (row.Location != null) row.Location = String(row.Location).trim();
     if (row.Category != null) row.Category = String(row.Category).trim() || 'Other';
+    if (row.HighlightUntil != null) row.HighlightUntil = String(row.HighlightUntil).trim();
+    if (row.IsNew != null) row.IsNew = String(row.IsNew).trim();
     return row;
+}
+
+/** Calendar date YYYY-MM-DD in Europe/Athens (Sheet dates are local Greece). */
+function todayYmdAthens() {
+    try {
+        return new Intl.DateTimeFormat('en-CA', {
+            timeZone: 'Europe/Athens',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+        }).format(new Date());
+    } catch (e) {
+        return new Date().toISOString().slice(0, 10);
+    }
+}
+
+/** Parse Sheet date cells: ISO, DD-MM-YYYY, or D/M/YYYY (+ optional time). */
+function parseSheetDate(raw) {
+    const s = String(raw ?? '').trim();
+    if (!s) return null;
+    const iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (iso) {
+        return `${iso[1]}-${iso[2].padStart(2, '0')}-${iso[3].padStart(2, '0')}`;
+    }
+    const eu = s.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})/);
+    if (!eu) return null;
+    const [, day, month, year] = eu;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+}
+
+function sheetTruthyFlag(raw) {
+    const s = String(raw ?? '').trim().toLowerCase();
+    return s === 'yes' || s === 'y' || s === 'true' || s === '1' || s === 'x';
+}
+
+/**
+ * Editorial highlight from Google Sheet (via n8n JSON, no code change per business):
+ * - HighlightUntil: last day inclusive (DD-MM-YYYY or YYYY-MM-DD)
+ * - IsNew: yes/true while set (optional; prefer HighlightUntil so it expires)
+ */
+function businessIsHighlighted(biz) {
+    if (!biz) return false;
+    const until = parseSheetDate(biz.HighlightUntil);
+    if (until) return until >= todayYmdAthens();
+    return sheetTruthyFlag(biz.IsNew);
+}
+
+function compareBusinessHighlightThenName(a, b) {
+    const ha = businessIsHighlighted(a) ? 0 : 1;
+    const hb = businessIsHighlighted(b) ? 0 : 1;
+    if (ha !== hb) return ha - hb;
+    return compareBusinessDisplayNames(a, b);
+}
+
+function businessDirectorySlug(biz) {
+    return String(biz && biz.Name ? biz.Name : '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+}
+
+function getJustAddedBusinesses() {
+    let list = allBusinesses.filter(businessIsHighlighted);
+    if (!locationFilterShowsAllBusinesses()) {
+        list = list.filter((biz) => activeLocations.has(biz.Location));
+    }
+    list.sort((a, b) => {
+        const ua = parseSheetDate(a.HighlightUntil) || '';
+        const ub = parseSheetDate(b.HighlightUntil) || '';
+        if (ua !== ub) return ub.localeCompare(ua);
+        return compareBusinessDisplayNames(a, b);
+    });
+    return list.slice(0, 8);
+}
+
+function renderJustAddedStrip() {
+    const host = document.getElementById('just-added');
+    if (!host) return;
+    if (!isHomeHubPage()) {
+        host.hidden = true;
+        host.innerHTML = '';
+        return;
+    }
+
+    const items = getJustAddedBusinesses();
+    if (!items.length) {
+        host.hidden = true;
+        host.innerHTML = '';
+        return;
+    }
+
+    const isEl = currentLang === 'el';
+    const title = isEl ? 'Πρόσφατα' : 'Just added';
+    const labelNew = isEl ? 'Νέο' : 'New';
+    const cards = items.map((biz) => {
+        const displayName = (isEl && biz.Name_EL) ? biz.Name_EL : biz.Name;
+        const bizId = businessDirectorySlug(biz);
+        const detailHref = `business/${bizId}${isEl ? '-el' : ''}.html`;
+        const img = absolutePhotoUrl(biz.PhotoURL);
+        const safeName = String(biz.Name || '').replace(/'/g, "\\'");
+        return `
+            <a class="just-added-card" href="${detailHref}" onclick="gtag('event', 'click_just_added', {'biz_name': '${safeName}'})">
+                <span class="just-added-card__media">
+                    <img src="${img}" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/pix/nophoto.jpg'">
+                    <span class="biz-new-badge" aria-hidden="true">${labelNew}</span>
+                </span>
+                <span class="just-added-card__name">${escapeHtml(displayName)}</span>
+            </a>`;
+    }).join('');
+
+    host.hidden = false;
+    host.setAttribute('aria-label', title);
+    host.innerHTML = `
+        <div class="just-added__head">
+            <h2 class="just-added__title">${title}</h2>
+        </div>
+        <div class="just-added__rail" role="list">${cards}</div>`;
 }
 
 function activeBusinessRows(rawData) {
@@ -680,7 +799,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.109'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.118'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -1954,6 +2073,7 @@ function applyFilters() {
 
     syncHubCategoryForSearch(filtered, isSearching);
     syncHubFilterBar();
+    renderJustAddedStrip();
     if (isHomeHubPage() && !hubListUnlocked()) {
         syncHubResultsLine(0);
         renderHubIdlePrompt();
@@ -2032,14 +2152,20 @@ function renderBusinesses(data) {
             const phoneHtml = (biz.Phone && biz.Phone.trim() !== "" && biz.Phone !== "-")
                 ? `<a href="tel:${biz.Phone}" class="btn-icon phone-btn" title="${escapeHtml(biz.Phone)}" onclick="gtag('event', 'click_phone', {'biz_name': '${safeBizName}'})"><i class="fa fa-phone"></i></a>`
                 : '';
+            const highlighted = businessIsHighlighted(biz);
+            const newBadgeHtml = highlighted
+                ? `<span class="biz-new-badge">${currentLang === 'el' ? 'Νέο' : 'New'}</span>`
+                : '';
+            const highlightClass = highlighted ? ' is-highlighted' : '';
 
             if (useMagazineCardLayout()) {
                 grid.innerHTML += `
-    <div class="biz-card-mini biz-card-mini--magazine" id="${bizId}">
+    <div class="biz-card-mini biz-card-mini--magazine${highlightClass}" id="${bizId}">
         <div class="magazine-preview">
             <a class="magazine-link" href="${detailHref}" onclick="gtag('event', 'click_image', {'biz_name': '${safeBizName}'})">
                 <img src="${finalImageUrl}" onerror="this.onerror=null;this.src='/pix/nophoto.jpg'" alt="${escapeHtml(displayName)}">
             </a>
+            ${newBadgeHtml}
             ${shareHtml}
             <button class="wishlist-btn ${isFavorite ? 'active' : ''}" onclick="toggleWishlist('${safeBizName}', this)" aria-label="Toggle favorite">
                 <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
@@ -2062,11 +2188,12 @@ function renderBusinesses(data) {
 
   // 3. De Grid HTML
 grid.innerHTML += `
-    <div class="biz-card-mini is-media" id="${bizId}" style="border-left: 4px solid ${catColor}">
+    <div class="biz-card-mini is-media${highlightClass}" id="${bizId}" style="border-left: 4px solid ${catColor}">
         <div class="mini-preview">
             <a class="media-link" href="business/${bizId}${currentLang === 'el' ? '-el' : ''}.html" onclick="gtag('event', 'click_image', {'biz_name': '${safeBizName}'})">
                 <img src="${finalImageUrl}" onerror="this.onerror=null;this.src='/pix/nophoto.jpg'" alt="${displayName}">
             </a>
+            ${newBadgeHtml}
             <div class="media-overlay">
                 <div class="media-title">${displayName}</div>
                 <div class="mini-actions mini-actions-media">
@@ -2114,7 +2241,7 @@ grid.innerHTML += `
     if (isHomeHubPage() && activeCategory && listMode !== 'az') {
         const grid = document.createElement('div');
         grid.className = 'business-grid hub-category-grid';
-        const sorted = [...data].sort(compareBusinessDisplayNames);
+        const sorted = [...data].sort(compareBusinessHighlightThenName);
         sorted.forEach((biz) => renderCardInto(grid, biz, activeCategory));
         container.appendChild(grid);
         if (hubCategoryScrollPending && activeCategory) {
@@ -2175,7 +2302,7 @@ grid.innerHTML += `
             const grid = document.createElement('div');
             grid.className = 'business-grid category-section-grid';
             grouped[category]
-                .sort(compareBusinessDisplayNames)
+                .sort(compareBusinessHighlightThenName)
                 .forEach(biz => renderCardInto(grid, biz, category));
 
             details.appendChild(summary);
@@ -2188,7 +2315,7 @@ grid.innerHTML += `
         const grid = document.createElement('div');
         grid.className = 'business-grid';
 
-        const sorted = [...data].sort(compareBusinessDisplayNames);
+        const sorted = [...data].sort(compareBusinessHighlightThenName);
 
         sorted.forEach(biz => renderCardInto(grid, biz, biz.Category || 'Other'));
         container.appendChild(grid);
@@ -5906,9 +6033,107 @@ function initBizDetailPhotoLightbox() {
     });
 }
 
+/**
+ * Announce new items in the More sheet (mobile tip + New labels).
+ *
+ * Control (edit only this object, then bump asset-version):
+ * - `id`     — change this to re-show the tip for everyone who already dismissed it
+ * - `keys`   — which More rows get a New label (`beaches`, `walking`, …)
+ * - `until`  — optional last day (DD-MM-YYYY / YYYY-MM-DD, Athens). After that: no tip.
+ *
+ * The tip stays until the visitor taps a New-marked item (not merely opening More).
+ * Local retest: localStorage.removeItem('kn_more_whats_new_seen')
+ */
+const MORE_WHATS_NEW = {
+    id: '2026-08-beaches-v2',
+    keys: ['beaches'],
+    until: '31-08-2026',
+};
+const MORE_WHATS_NEW_STORAGE_KEY = 'kn_more_whats_new_seen';
+const MORE_WHATS_NEW_LINK_KEYS = {
+    beachatlas: 'beaches',
+    walking_pelion: 'walking',
+};
+
+function trackExternalGuideClick(linkId, source) {
+    if (typeof gtag === 'function') {
+        try {
+            gtag('event', 'click_external_guide', {
+                link_id: linkId,
+                source: source || 'unknown',
+            });
+        } catch (e) { /* ignore */ }
+    }
+    acknowledgeMoreWhatsNewForLink(linkId);
+}
+
+function getMoreWhatsNewSeenId() {
+    try {
+        return localStorage.getItem(MORE_WHATS_NEW_STORAGE_KEY) || '';
+    } catch (e) {
+        return '';
+    }
+}
+
+function isMoreWhatsNewCampaignActive() {
+    const cfg = MORE_WHATS_NEW;
+    if (!cfg || !cfg.id) return false;
+    const until = parseSheetDate(cfg.until);
+    if (until && until < todayYmdAthens()) return false;
+    return true;
+}
+
+function isMoreWhatsNewUnread() {
+    if (!isMoreWhatsNewCampaignActive()) return false;
+    return getMoreWhatsNewSeenId() !== MORE_WHATS_NEW.id;
+}
+
+function markMoreWhatsNewSeen() {
+    const id = MORE_WHATS_NEW && MORE_WHATS_NEW.id;
+    if (!id) return;
+    try {
+        localStorage.setItem(MORE_WHATS_NEW_STORAGE_KEY, id);
+    } catch (e) { /* ignore */ }
+}
+
+function acknowledgeMoreWhatsNewForLink(linkId) {
+    const key = MORE_WHATS_NEW_LINK_KEYS[linkId];
+    if (!key || !isMoreWhatsNewKey(key) || !isMoreWhatsNewUnread()) return;
+    markMoreWhatsNewSeen();
+    updateMoreWhatsNewBadge();
+}
+
+function isMoreWhatsNewKey(key) {
+    const keys = MORE_WHATS_NEW && Array.isArray(MORE_WHATS_NEW.keys) ? MORE_WHATS_NEW.keys : [];
+    return keys.indexOf(key) !== -1;
+}
+
+function moreNewLabelHtml(isEl, show) {
+    if (!show) return '';
+    const label = isEl ? 'Νέο' : 'New';
+    return `<span class="more-link-new">${label}</span>`;
+}
+
+function updateMoreWhatsNewBadge() {
+    const moreBtn = document.querySelector('.bottom-nav a[data-more]');
+    if (!moreBtn) return;
+
+    const unread = isMoreWhatsNewUnread();
+    moreBtn.classList.toggle('has-whats-new', unread);
+
+    const isEl = (document.documentElement.lang || 'en') === 'el';
+    if (unread) {
+        moreBtn.setAttribute('aria-label', isEl ? 'Περισσότερα, νέες επιλογές' : 'More, new items');
+    } else if (moreBtn.getAttribute('aria-label')) {
+        moreBtn.removeAttribute('aria-label');
+    }
+}
+
 function initMoreTab() {
     const moreBtn = document.querySelector('.bottom-nav a[data-more]');
     if (!moreBtn) return;
+
+    updateMoreWhatsNewBadge();
 
     moreBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -5956,7 +6181,10 @@ async function openMoreSheet() {
     if (!isAppStandalone()) {
         await refreshInstallSituation();
     }
-    renderMoreSheetContent();
+
+    // Keep tip until visitor taps a New-marked item (see acknowledgeMoreWhatsNewForLink).
+    renderMoreSheetContent({ showWhatsNewLabels: isMoreWhatsNewUnread() });
+    updateMoreWhatsNewBadge();
 
     backdrop.hidden = false;
     sheet.hidden = false;
@@ -5982,10 +6210,11 @@ function closeMoreSheet() {
     document.body.classList.remove('sheet-open');
 }
 
-function renderMoreSheetContent() {
+function renderMoreSheetContent(options) {
     const container = document.getElementById('more-sheet-content');
     if (!container) return;
 
+    const showWhatsNewLabels = !!(options && options.showWhatsNewLabels);
     const isEl = (document.documentElement.lang || 'en') === 'el';
     const brandName = isEl ? 'ΚάντεΚλικ' : 'KanteKlik';
     const labels = {
@@ -6000,6 +6229,7 @@ function renderMoreSheetContent() {
         travelFlights: isEl ? 'Πτήσεις (αεροδρόμιο Βόλου - VOL)' : 'Flights (Volos airport - VOL)',
         travelEvents: isEl ? 'Τοπικές εκδηλώσεις' : 'Regional events',
         travelWalking: isEl ? 'Περπατήματα (αγγλικός οδηγός)' : 'Walking routes (English guide)',
+        travelBeaches: isEl ? 'Παραλίες (BeachAtlas)' : 'Beaches (BeachAtlas)',
         travelExternal: isEl ? 'Εξωτερικός ιστότοπος' : 'External site',
         travelNumbers: isEl ? 'Χρήσιμα τηλέφωνα' : 'Useful numbers',
         travelNumbersSub: isEl ? 'Τοπικοί & έκτακτοι' : 'Local & emergency',
@@ -6008,6 +6238,10 @@ function renderMoreSheetContent() {
         addBusiness: isEl ? 'Προσθέστε την επιχείρησή σας' : 'Add your Business',
         addBusinessSub: isEl ? 'Δωρεάν' : 'Free',
     };
+    const newBeaches = showWhatsNewLabels && isMoreWhatsNewKey('beaches');
+    const newWalking = showWhatsNewLabels && isMoreWhatsNewKey('walking');
+    const beachesAside = `${moreNewLabelHtml(isEl, newBeaches)}<span class="more-link-aside-meta">${labels.travelExternal}</span>`;
+    const walkingAside = `${moreNewLabelHtml(isEl, newWalking)}<span class="more-link-aside-meta">${labels.travelExternal}</span>`;
 
     const fb = getFooterFacebookLink();
     const fbHref = (fb && fb.href) ? fb.href : 'https://www.facebook.com/kalanera.info';
@@ -6038,6 +6272,7 @@ function renderMoreSheetContent() {
     const busHref = isEl ? 'bus-el.html' : 'bus.html';
     const tFormHref = isEl ? 't-form-el.html' : 't-form.html';
     const walkingPelionHref = 'https://walking-pelion.blogspot.com/';
+    const beachAtlasHref = 'https://www.beachatlas.com/kala-nera';
 
     const formattedCopyright = (() => {
         // Avoid double copyright symbol (some pages already include "©")
@@ -6073,9 +6308,13 @@ function renderMoreSheetContent() {
                 <a href="${pathPrefix}${eventsHref}">
                     <span class="more-link-leading"><i class="fa-solid fa-calendar-days"></i><span class="more-link-label">${labels.travelEvents}</span></span>
                 </a>
-                <a href="${walkingPelionHref}" target="_blank" rel="noopener noreferrer">
+                <a href="${walkingPelionHref}" target="_blank" rel="noopener noreferrer" onclick="trackExternalGuideClick('walking_pelion','more_sheet')">
                     <span class="more-link-leading"><i class="fa-solid fa-person-hiking"></i><span class="more-link-label">${labels.travelWalking}</span></span>
-                    <small>${labels.travelExternal}</small>
+                    <small class="more-link-aside">${walkingAside}</small>
+                </a>
+                <a href="${beachAtlasHref}" target="_blank" rel="noopener noreferrer" onclick="trackExternalGuideClick('beachatlas','more_sheet')">
+                    <span class="more-link-leading"><i class="fa-solid fa-umbrella-beach"></i><span class="more-link-label">${labels.travelBeaches}</span></span>
+                    <small class="more-link-aside">${beachesAside}</small>
                 </a>
                 <a href="${pathPrefix}${usefulNumbersHref}">
                     <span class="more-link-leading"><i class="fa-solid fa-phone"></i><span class="more-link-label">${labels.travelNumbers}</span></span>
