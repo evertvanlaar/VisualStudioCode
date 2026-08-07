@@ -799,7 +799,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.129'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.130'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -6147,10 +6147,27 @@ function initPhotoGalleryLightbox() {
     };
 
     const applyImage = (thumb) => {
-        fullImg.src = thumb.currentSrc || thumb.getAttribute('src') || '';
+        const fullSrc =
+            thumb.getAttribute('data-full-src') ||
+            thumb.currentSrc ||
+            thumb.getAttribute('src') ||
+            '';
+        fullImg.src = fullSrc;
         fullImg.alt = thumb.alt || '';
         counterEl.textContent = `${index + 1} / ${items.length}`;
         syncStrip();
+    };
+
+    const preloadFullAt = (i) => {
+        const total = items.length;
+        if (!total) return;
+        const safe = ((i % total) + total) % total;
+        const thumb = items[safe].querySelector('img');
+        const src = thumb && thumb.getAttribute('data-full-src');
+        if (!src) return;
+        const pre = new Image();
+        pre.decoding = 'async';
+        pre.src = src;
     };
 
     const showAt = (nextIndex, animate) => {
@@ -6163,6 +6180,8 @@ function initPhotoGalleryLightbox() {
         if (!animate || reduceMotion) {
             fullImg.classList.remove('is-switching');
             applyImage(thumb);
+            preloadFullAt(index + 1);
+            preloadFullAt(index - 1);
             return;
         }
 
@@ -6170,6 +6189,8 @@ function initPhotoGalleryLightbox() {
         window.clearTimeout(switchTimer);
         switchTimer = window.setTimeout(() => {
             applyImage(thumb);
+            preloadFullAt(index + 1);
+            preloadFullAt(index - 1);
             requestAnimationFrame(() => {
                 fullImg.classList.remove('is-switching');
             });
@@ -6255,8 +6276,8 @@ function initPhotoGalleryReveal(items) {
  * Local retest: localStorage.removeItem('kn_more_whats_new_seen')
  */
 const MORE_WHATS_NEW = {
-    id: '2026-08-gallery-v1',
-    keys: ['gallery'],
+    id: '2026-08-gallery-beaches-v1',
+    keys: ['gallery', 'beaches'],
     until: '30-09-2026',
 };
 const MORE_WHATS_NEW_STORAGE_KEY = 'kn_more_whats_new_seen';
