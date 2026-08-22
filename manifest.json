@@ -22,7 +22,7 @@
       "url": "/manifest.json"
     }
   ],
-  "prefer_related_applications": false,
+  "prefer_related_applications": true,
   "shortcuts": [
     {
       "name": "Bus timetable",

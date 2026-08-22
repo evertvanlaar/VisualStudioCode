@@ -678,13 +678,6 @@ function businessIsHighlighted(biz) {
     return sheetTruthyFlag(biz.IsNew);
 }
 
-function compareBusinessHighlightThenName(a, b) {
-    const ha = businessIsHighlighted(a) ? 0 : 1;
-    const hb = businessIsHighlighted(b) ? 0 : 1;
-    if (ha !== hb) return ha - hb;
-    return compareBusinessDisplayNames(a, b);
-}
-
 function businessDirectorySlug(biz) {
     return String(biz && biz.Name ? biz.Name : '')
         .toLowerCase()
@@ -799,7 +792,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.130'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.131'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -2241,7 +2234,7 @@ grid.innerHTML += `
     if (isHomeHubPage() && activeCategory && listMode !== 'az') {
         const grid = document.createElement('div');
         grid.className = 'business-grid hub-category-grid';
-        const sorted = [...data].sort(compareBusinessHighlightThenName);
+        const sorted = [...data].sort(compareBusinessDisplayNames);
         sorted.forEach((biz) => renderCardInto(grid, biz, activeCategory));
         container.appendChild(grid);
         if (hubCategoryScrollPending && activeCategory) {
@@ -2302,7 +2295,7 @@ grid.innerHTML += `
             const grid = document.createElement('div');
             grid.className = 'business-grid category-section-grid';
             grouped[category]
-                .sort(compareBusinessHighlightThenName)
+                .sort(compareBusinessDisplayNames)
                 .forEach(biz => renderCardInto(grid, biz, category));
 
             details.appendChild(summary);
@@ -2315,7 +2308,7 @@ grid.innerHTML += `
         const grid = document.createElement('div');
         grid.className = 'business-grid';
 
-        const sorted = [...data].sort(compareBusinessHighlightThenName);
+        const sorted = [...data].sort(compareBusinessDisplayNames);
 
         sorted.forEach(biz => renderCardInto(grid, biz, biz.Category || 'Other'));
         container.appendChild(grid);
