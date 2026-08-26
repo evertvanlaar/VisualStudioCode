@@ -792,7 +792,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.132'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.133'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -823,9 +823,9 @@ if ('serviceWorker' in navigator) {
  * OneSignal Web SDK (push) — alleen na expliciete test-opt-in.
  * Bezoekers laden geen SDK, geen bel, geen OneSignal-requests.
  *
- * Zelf testen op https://www.kalanera.gr/?onesignal=1
+ * Zelf testen op https://kalanera.gr/?onesignal=1
  * Uitzetten: ?onesignal=0
- * Custom Code + subdirectory-worker zodat de PWA-SW op scope "/" blijft.
+ * Live origin is apex (www redirect naar kalanera.gr). Site URL in OneSignal: https://kalanera.gr
  */
 const ONESIGNAL_APP_ID = '27aaf812-9fa9-4509-9890-1165428dc023';
 const ONESIGNAL_SDK_SRC = 'https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js';
@@ -849,26 +849,116 @@ function isOneSignalTesterEnabled() {
     }
 }
 
+function onesignalLiveHost() {
+    return isKalaneraProductionOrigin();
+}
+
+function setOneSignalTesterBanner(message, actionLabel, onAction) {
+    let el = document.getElementById('kalanera-onesignal-test-banner');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'kalanera-onesignal-test-banner';
+        el.setAttribute('role', 'status');
+        el.style.cssText = [
+            'position:fixed',
+            'top:8px',
+            'left:8px',
+            'right:8px',
+            'z-index:10050',
+            'display:flex',
+            'flex-wrap:wrap',
+            'align-items:center',
+            'gap:8px',
+            'padding:10px 12px',
+            'border-radius:10px',
+            'background:#1e293b',
+            'color:#fff',
+            'font:600 13px/1.35 Inter,system-ui,sans-serif',
+            'box-sizing:border-box',
+        ].join(';');
+        const text = document.createElement('span');
+        text.id = 'kalanera-onesignal-test-banner-text';
+        text.style.flex = '1 1 180px';
+        el.appendChild(text);
+        document.body.appendChild(el);
+    }
+    const text = document.getElementById('kalanera-onesignal-test-banner-text');
+    if (text) text.textContent = message;
+    let btn = document.getElementById('kalanera-onesignal-test-banner-btn');
+    if (actionLabel && typeof onAction === 'function') {
+        if (!btn) {
+            btn = document.createElement('button');
+            btn.id = 'kalanera-onesignal-test-banner-btn';
+            btn.type = 'button';
+            btn.style.cssText = 'border:0;border-radius:8px;padding:8px 12px;background:#D3F527;color:#1e293b;font:700 13px Inter,system-ui,sans-serif;cursor:pointer';
+            el.appendChild(btn);
+        }
+        btn.hidden = false;
+        btn.textContent = actionLabel;
+        btn.onclick = onAction;
+    } else if (btn) {
+        btn.hidden = true;
+        btn.onclick = null;
+    }
+}
+
 function initOneSignalWebPush() {
     if (!isOneSignalTesterEnabled()) return;
     if (/privacy(?:-el)?\.html$/i.test(window.location.pathname || '')) return;
-    if ((window.location.hostname || '').toLowerCase() !== 'www.kalanera.gr') return;
-    if (!('serviceWorker' in navigator)) return;
-    if (document.querySelector('script[src*="OneSignalSDK.page.js"]')) return;
+
+    if (!onesignalLiveHost()) {
+        console.warn('[Kalanera] OneSignal-test: alleen op kalanera.gr / www.kalanera.gr.');
+        setOneSignalTesterBanner('OneSignal-test: open https://kalanera.gr/?onesignal=1');
+        return;
+    }
+    if (!('serviceWorker' in navigator)) {
+        setOneSignalTesterBanner('OneSignal-test: deze browser heeft geen service worker.');
+        return;
+    }
+
+    setOneSignalTesterBanner('OneSignal-test aan — SDK laden…');
 
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     window.OneSignalDeferred.push(async function (OneSignal) {
-        await OneSignal.init({
-            appId: ONESIGNAL_APP_ID,
-            serviceWorkerPath: 'push/onesignal/OneSignalSDKWorker.js',
-            serviceWorkerParam: { scope: '/push/onesignal/' },
-            notifyButton: { enable: true },
-        });
+        try {
+            await OneSignal.init({
+                appId: ONESIGNAL_APP_ID,
+                serviceWorkerPath: 'push/onesignal/OneSignalSDKWorker.js',
+                serviceWorkerParam: { scope: '/push/onesignal/' },
+                notifyButton: {
+                    enable: true,
+                    size: 'large',
+                    position: 'bottom-right',
+                    offset: { bottom: '24px', right: '24px' },
+                },
+            });
+            const style = document.createElement('style');
+            style.textContent = '#onesignal-bell-container,.onesignal-bell-launcher{z-index:10050 !important}';
+            document.head.appendChild(style);
+            setOneSignalTesterBanner(
+                'OneSignal-test klaar. Bel rechtsonder, of meldingen toestaan via de knop.',
+                'Meldingen toestaan',
+                function () {
+                    try {
+                        OneSignal.Slidedown.promptPush({ force: true });
+                    } catch (e) {
+                        console.warn('[Kalanera] OneSignal prompt mislukt', e);
+                    }
+                }
+            );
+        } catch (e) {
+            console.warn('[Kalanera] OneSignal.init mislukt', e);
+            setOneSignalTesterBanner('OneSignal-test: init mislukt (zie F12 Console).');
+        }
     });
 
+    if (document.querySelector('script[src*="OneSignalSDK.page.js"]')) return;
     const script = document.createElement('script');
     script.src = ONESIGNAL_SDK_SRC;
-    script.defer = true;
+    script.async = true;
+    script.onerror = function () {
+        setOneSignalTesterBanner('OneSignal-test: SDK geblokkeerd (Edge Tracking Prevention / adblocker?).');
+    };
     document.head.appendChild(script);
 }
 
