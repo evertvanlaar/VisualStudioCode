@@ -792,7 +792,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.131'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.132'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -818,6 +818,61 @@ if ('serviceWorker' in navigator) {
         navigator.serviceWorker.controller.postMessage({type: 'GET_VERSION'}, [mc.port2]);
     });
 }
+
+/**
+ * OneSignal Web SDK (push) — alleen na expliciete test-opt-in.
+ * Bezoekers laden geen SDK, geen bel, geen OneSignal-requests.
+ *
+ * Zelf testen op https://www.kalanera.gr/?onesignal=1
+ * Uitzetten: ?onesignal=0
+ * Custom Code + subdirectory-worker zodat de PWA-SW op scope "/" blijft.
+ */
+const ONESIGNAL_APP_ID = '27aaf812-9fa9-4509-9890-1165428dc023';
+const ONESIGNAL_SDK_SRC = 'https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js';
+const ONESIGNAL_TEST_STORAGE_KEY = 'kalanera_onesignal_test';
+
+function isOneSignalTesterEnabled() {
+    try {
+        const q = new URLSearchParams(window.location.search || '');
+        const flag = String(q.get('onesignal') || '').trim().toLowerCase();
+        if (flag === '1' || flag === 'true' || flag === 'on') {
+            localStorage.setItem(ONESIGNAL_TEST_STORAGE_KEY, '1');
+            return true;
+        }
+        if (flag === '0' || flag === 'false' || flag === 'off') {
+            localStorage.removeItem(ONESIGNAL_TEST_STORAGE_KEY);
+            return false;
+        }
+        return localStorage.getItem(ONESIGNAL_TEST_STORAGE_KEY) === '1';
+    } catch {
+        return false;
+    }
+}
+
+function initOneSignalWebPush() {
+    if (!isOneSignalTesterEnabled()) return;
+    if (/privacy(?:-el)?\.html$/i.test(window.location.pathname || '')) return;
+    if ((window.location.hostname || '').toLowerCase() !== 'www.kalanera.gr') return;
+    if (!('serviceWorker' in navigator)) return;
+    if (document.querySelector('script[src*="OneSignalSDK.page.js"]')) return;
+
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    window.OneSignalDeferred.push(async function (OneSignal) {
+        await OneSignal.init({
+            appId: ONESIGNAL_APP_ID,
+            serviceWorkerPath: 'push/onesignal/OneSignalSDKWorker.js',
+            serviceWorkerParam: { scope: '/push/onesignal/' },
+            notifyButton: { enable: true },
+        });
+    });
+
+    const script = document.createElement('script');
+    script.src = ONESIGNAL_SDK_SRC;
+    script.defer = true;
+    document.head.appendChild(script);
+}
+
+initOneSignalWebPush();
 
 // --- INITIALISATIE ---
 async function init() {
