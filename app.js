@@ -792,7 +792,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.138'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.140'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -835,6 +835,10 @@ const ONESIGNAL_BANNER_DISMISS_KEY = 'kalanera_onesignal_banner';
 const ONESIGNAL_BANNER_SESSION_KEY = 'kalanera_onesignal_banner_session';
 const ONESIGNAL_BANNER_SNOOZE_MS = 7 * 24 * 60 * 60 * 1000;
 const ONESIGNAL_BANNER_MAX_DISMISSES = 2;
+const ONESIGNAL_FORCE_OPTOUT_KEY = 'kalanera_onesignal_force_optout';
+
+let oneSignalPermissionsState = null;
+let oneSignalPermissionWatchBound = false;
 
 function isOneSignalTesterEnabled() {
     try {
@@ -898,11 +902,30 @@ function getOneSignalUiCopy() {
 
 function getBrowserNotificationPermission() {
     try {
-        if (typeof Notification === 'undefined') return 'default';
-        return Notification.permission || 'default';
+        const n = (typeof Notification !== 'undefined' && Notification.permission) || 'default';
+        const q = oneSignalPermissionsState;
+        if (n === 'denied' || q === 'denied') return 'denied';
+        if (q === 'prompt') return 'default';
+        if (n === 'granted') return 'granted';
+        return 'default';
     } catch {
         return 'default';
     }
+}
+
+async function refreshBrowserNotificationPermissionCache() {
+    try {
+        if (!navigator.permissions || !navigator.permissions.query) return;
+        const status = await navigator.permissions.query({ name: 'notifications' });
+        oneSignalPermissionsState = status.state || null;
+        if (!oneSignalPermissionWatchBound && status && typeof status.addEventListener === 'function') {
+            oneSignalPermissionWatchBound = true;
+            status.addEventListener('change', () => {
+                oneSignalPermissionsState = status.state || null;
+                refreshOneSignalCustomUi();
+            });
+        }
+    } catch { /* Edge/Safari zonder Notifications-permission query */ }
 }
 
 function getOneSignalUiState() {
@@ -1036,6 +1059,7 @@ function consumeOneSignalBannerQuery() {
         if (flag === 'reset' || flag === '1') {
             localStorage.removeItem(ONESIGNAL_BANNER_DISMISS_KEY);
             sessionStorage.removeItem(ONESIGNAL_BANNER_SESSION_KEY);
+            sessionStorage.setItem(ONESIGNAL_FORCE_OPTOUT_KEY, '1');
         }
     } catch { /* ignore */ }
 }
@@ -1108,9 +1132,9 @@ function ensureOneSignalPushBanner() {
     const laterBtn = document.getElementById('kalanera-push-banner-later');
     if (allowBtn) {
         allowBtn.addEventListener('click', () => {
+            void handleOneSignalUiToggle();
             markOneSignalBannerSessionSeen();
             hideOneSignalPushBanner();
-            void handleOneSignalUiToggle();
         });
     }
     if (laterBtn) {
@@ -1150,20 +1174,39 @@ function scheduleOneSignalPushBanner() {
     }, 1200);
 }
 
+async function requestBrowserNotificationPermissionNow() {
+    if (typeof Notification === 'undefined') return 'denied';
+    const current = Notification.permission || 'default';
+    if (current === 'granted' || current === 'denied') return current;
+    try {
+        return await Notification.requestPermission();
+    } catch (e) {
+        console.warn('[Kalanera] Notification.requestPermission mislukt', e);
+        return Notification.permission || 'default';
+    }
+}
+
 async function handleOneSignalUiToggle() {
     const os = kalaneraOneSignal;
     if (!os) return;
     const state = getOneSignalUiState();
-    const browserGranted = getBrowserNotificationPermission() === 'granted';
     try {
         if (state === 'on') {
             await os.User.PushSubscription.optOut();
-        } else if (state === 'blocked') {
+            refreshOneSignalCustomUi();
+            return;
+        }
+        if (state === 'blocked') {
             console.warn('[Kalanera] OneSignal: meldingen geblokkeerd in de browser.');
-        } else if (browserGranted) {
+            refreshOneSignalCustomUi();
+            return;
+        }
+        const perm = await requestBrowserNotificationPermissionNow();
+        await refreshBrowserNotificationPermissionCache();
+        if (perm === 'granted') {
             await os.User.PushSubscription.optIn();
         } else {
-            await os.Notifications.requestPermission();
+            console.info('[Kalanera] Browsertoestemming na Allow:', perm);
         }
     } catch (e) {
         console.warn('[Kalanera] OneSignal toggle mislukt', e);
@@ -1192,9 +1235,11 @@ function initOneSignalWebPush() {
                 serviceWorkerPath: 'push/onesignal/OneSignalSDKWorker.js',
                 serviceWorkerParam: { scope: '/push/onesignal/' },
                 notifyButton: { enable: false },
+                autoResubscribe: false,
             });
             kalaneraOneSignal = OneSignal;
             hideOneSignalVendorChrome();
+            await refreshBrowserNotificationPermissionCache();
             try {
                 OneSignal.User.PushSubscription.addEventListener('change', () => {
                     refreshOneSignalCustomUi();
@@ -1202,11 +1247,24 @@ function initOneSignalWebPush() {
             } catch { /* oudere SDK zonder listener */ }
             try {
                 OneSignal.Notifications.addEventListener('permissionChange', () => {
-                    refreshOneSignalCustomUi();
-                    scheduleOneSignalPushBanner();
+                    void refreshBrowserNotificationPermissionCache().then(() => {
+                        refreshOneSignalCustomUi();
+                        scheduleOneSignalPushBanner();
+                    });
                 });
             } catch { /* oudere SDK zonder listener */ }
-            if (getBrowserNotificationPermission() !== 'granted') {
+            const forceOptOut = (() => {
+                try {
+                    return sessionStorage.getItem(ONESIGNAL_FORCE_OPTOUT_KEY) === '1';
+                } catch {
+                    return false;
+                }
+            })();
+            if (forceOptOut) {
+                try { sessionStorage.removeItem(ONESIGNAL_FORCE_OPTOUT_KEY); } catch { /* ignore */ }
+            }
+            const shouldOptOut = forceOptOut || getBrowserNotificationPermission() !== 'granted';
+            if (shouldOptOut) {
                 try {
                     if (OneSignal.User && OneSignal.User.PushSubscription
                         && OneSignal.User.PushSubscription.optedIn) {
@@ -6821,6 +6879,8 @@ async function openMoreSheet() {
     if (!isAppStandalone()) {
         await refreshInstallSituation();
     }
+
+    await refreshBrowserNotificationPermissionCache();
 
     // Keep tip until visitor taps a New-marked item (see acknowledgeMoreWhatsNewForLink).
     renderMoreSheetContent({ showWhatsNewLabels: isMoreWhatsNewUnread() });
