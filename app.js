@@ -792,7 +792,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.136'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.138'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -896,13 +896,23 @@ function getOneSignalUiCopy() {
     };
 }
 
+function getBrowserNotificationPermission() {
+    try {
+        if (typeof Notification === 'undefined') return 'default';
+        return Notification.permission || 'default';
+    } catch {
+        return 'default';
+    }
+}
+
 function getOneSignalUiState() {
     if (!kalaneraOneSignal) return 'loading';
     try {
+        const browserPerm = getBrowserNotificationPermission();
+        if (browserPerm === 'denied') return 'blocked';
         const optedIn = !!(kalaneraOneSignal.User && kalaneraOneSignal.User.PushSubscription
             && kalaneraOneSignal.User.PushSubscription.optedIn);
-        if (optedIn) return 'on';
-        if (typeof Notification !== 'undefined' && Notification.permission === 'denied') return 'blocked';
+        if (browserPerm === 'granted' && optedIn) return 'on';
         return 'off';
     } catch {
         return 'off';
@@ -1144,12 +1154,13 @@ async function handleOneSignalUiToggle() {
     const os = kalaneraOneSignal;
     if (!os) return;
     const state = getOneSignalUiState();
+    const browserGranted = getBrowserNotificationPermission() === 'granted';
     try {
         if (state === 'on') {
             await os.User.PushSubscription.optOut();
         } else if (state === 'blocked') {
             console.warn('[Kalanera] OneSignal: meldingen geblokkeerd in de browser.');
-        } else if (os.Notifications && os.Notifications.permission) {
+        } else if (browserGranted) {
             await os.User.PushSubscription.optIn();
         } else {
             await os.Notifications.requestPermission();
@@ -1189,6 +1200,20 @@ function initOneSignalWebPush() {
                     refreshOneSignalCustomUi();
                 });
             } catch { /* oudere SDK zonder listener */ }
+            try {
+                OneSignal.Notifications.addEventListener('permissionChange', () => {
+                    refreshOneSignalCustomUi();
+                    scheduleOneSignalPushBanner();
+                });
+            } catch { /* oudere SDK zonder listener */ }
+            if (getBrowserNotificationPermission() !== 'granted') {
+                try {
+                    if (OneSignal.User && OneSignal.User.PushSubscription
+                        && OneSignal.User.PushSubscription.optedIn) {
+                        await OneSignal.User.PushSubscription.optOut();
+                    }
+                } catch { /* ignore */ }
+            }
             injectOneSignalFooterLink();
             refreshOneSignalCustomUi();
             scheduleOneSignalPushBanner();
