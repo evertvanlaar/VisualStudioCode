@@ -1,4 +1,4 @@
-/* version 3.1.134 */
+/* version 3.1.136 */
 @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
 @keyframes slideDown{from{transform: translateY(-100%)}to{transform: translateY(0)}}
 
@@ -88,6 +88,11 @@ body{font-family:'Inter', sans-serif;background:var(--bg);margin:0;padding:0;col
 
 .more-section{margin-top:12px;padding:12px;border-radius:16px;border:1px solid rgba(15, 23, 42, 0.08);background:rgba(148,163,184,0.08);overflow:hidden}
 .more-section.more-section--cta{margin-top:0;padding:0;border:none;background:transparent}
+
+#kalanera-push-footer-item{display:none}
+@media (min-width: 992px){
+  #kalanera-push-footer-item{display:list-item}
+}
 .more-links a.more-link--add-business{
   background:linear-gradient(165deg,#4a6c4a 0%,#2d5a27 100%);
   border-color:rgba(45,90,39,.45);color:#fff;
@@ -3012,7 +3017,8 @@ body.is-offline .map-section{display:none !important}
 
 /* Boven sticky .main-nav (9999) / .site-header (10001), onder More-sheet (10030+) */
 #install-banner,
-#ios-install-instructions{
+#ios-install-instructions,
+#kalanera-push-banner{
   position:fixed;
   top:max(calc(env(safe-area-inset-top, 0px) + 72px), 80px);
   left:50%;
@@ -3031,7 +3037,8 @@ body.is-offline .map-section{display:none !important}
 }
 
 #install-banner p,
-#ios-install-instructions p{margin:0 0 12px 0;font-size:15px;line-height:1.4;color:var(--text)}
+#ios-install-instructions p,
+#kalanera-push-banner p{margin:0 0 12px 0;font-size:15px;line-height:1.4;color:var(--text)}
 
 .banner-buttons{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap}
 
@@ -3055,13 +3062,15 @@ body.is-offline .map-section{display:none !important}
 
 #install-banner.is-visible,
 body.install-promo-active #install-banner,
-#ios-install-instructions.is-visible{display:block !important}
+#ios-install-instructions.is-visible,
+#kalanera-push-banner.is-visible{display:block !important}
 
 /* Desktop: banner mag hoger; mobiel blijft onder de witte menubalk */
 @media (min-width: 768px){
   #install-banner.is-visible,
   body.install-promo-active #install-banner,
-  #ios-install-instructions.is-visible{
+  #ios-install-instructions.is-visible,
+  #kalanera-push-banner.is-visible{
     top:max(calc(env(safe-area-inset-top, 0px) + 12px), 16px);
   }
 }
