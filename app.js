@@ -792,7 +792,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.140'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.144'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -819,478 +819,25 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-/**
- * OneSignal Web SDK (push) — alleen na expliciete test-opt-in.
- * Bezoekers laden geen SDK, geen bel, geen OneSignal-requests.
- *
- * Zelf testen op https://kalanera.gr/?onesignal=1
- * Uitzetten: ?onesignal=0
- * UI: More → Notifications (mobiel) / footer Info (desktop) / eerste-opt-in kaart.
- * Live origin is apex (www redirect naar kalanera.gr). Site URL in OneSignal: https://kalanera.gr
- */
-const ONESIGNAL_APP_ID = '27aaf812-9fa9-4509-9890-1165428dc023';
-const ONESIGNAL_SDK_SRC = 'https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js';
-const ONESIGNAL_TEST_STORAGE_KEY = 'kalanera_onesignal_test';
-const ONESIGNAL_BANNER_DISMISS_KEY = 'kalanera_onesignal_banner';
-const ONESIGNAL_BANNER_SESSION_KEY = 'kalanera_onesignal_banner_session';
-const ONESIGNAL_BANNER_SNOOZE_MS = 7 * 24 * 60 * 60 * 1000;
-const ONESIGNAL_BANNER_MAX_DISMISSES = 2;
-const ONESIGNAL_FORCE_OPTOUT_KEY = 'kalanera_onesignal_force_optout';
-
-let oneSignalPermissionsState = null;
-let oneSignalPermissionWatchBound = false;
-
-function isOneSignalTesterEnabled() {
+/** Unregister leftover OneSignal worker from earlier tester builds. */
+function unregisterLegacyOneSignalWorker() {
     try {
-        const q = new URLSearchParams(window.location.search || '');
-        const flag = String(q.get('onesignal') || '').trim().toLowerCase();
-        if (flag === '1' || flag === 'true' || flag === 'on') {
-            localStorage.setItem(ONESIGNAL_TEST_STORAGE_KEY, '1');
-            return true;
-        }
-        if (flag === '0' || flag === 'false' || flag === 'off') {
-            localStorage.removeItem(ONESIGNAL_TEST_STORAGE_KEY);
-            return false;
-        }
-        return localStorage.getItem(ONESIGNAL_TEST_STORAGE_KEY) === '1';
-    } catch {
-        return false;
-    }
-}
-
-function onesignalLiveHost() {
-    return isKalaneraProductionOrigin();
-}
-
-function isOneSignalPrivacyPage() {
-    return /privacy(?:-el)?\.html$/i.test(window.location.pathname || '');
-}
-
-/** Tester-gate + live origin. Bezoekers zonder ?onesignal=1 zien geen SDK en geen UI. */
-function isOneSignalCustomUiEnabled() {
-    return isOneSignalTesterEnabled() && onesignalLiveHost() && !isOneSignalPrivacyPage();
-}
-
-let kalaneraOneSignal = null;
-
-function getOneSignalUiCopy() {
-    const isEl = (document.documentElement.lang || '').toLowerCase().startsWith('el');
-    return isEl ? {
-        section: 'Ειδοποιήσεις',
-        title: 'Ειδοποιήσεις',
-        on: 'Ενεργές',
-        off: 'Ανενεργές',
-        blocked: 'Μπλοκαρισμένες',
-        loading: '…',
-        blockedHint: 'Επιτρέψτε τις ειδοποιήσεις στις ρυθμίσεις του προγράμματος περιήγησης.',
-        bannerMsg: 'Εκδηλώσεις και νέα από τα Καλά Νερά;',
-        allow: 'Αποδοχή',
-        notNow: 'Όχι τώρα',
-    } : {
-        section: 'Notifications',
-        title: 'Notifications',
-        on: 'On',
-        off: 'Off',
-        blocked: 'Blocked',
-        loading: '…',
-        blockedHint: 'Allow notifications in your browser settings.',
-        bannerMsg: 'Events & news from Kala Nera?',
-        allow: 'Allow',
-        notNow: 'Not now',
-    };
-}
-
-function getBrowserNotificationPermission() {
-    try {
-        const n = (typeof Notification !== 'undefined' && Notification.permission) || 'default';
-        const q = oneSignalPermissionsState;
-        if (n === 'denied' || q === 'denied') return 'denied';
-        if (q === 'prompt') return 'default';
-        if (n === 'granted') return 'granted';
-        return 'default';
-    } catch {
-        return 'default';
-    }
-}
-
-async function refreshBrowserNotificationPermissionCache() {
-    try {
-        if (!navigator.permissions || !navigator.permissions.query) return;
-        const status = await navigator.permissions.query({ name: 'notifications' });
-        oneSignalPermissionsState = status.state || null;
-        if (!oneSignalPermissionWatchBound && status && typeof status.addEventListener === 'function') {
-            oneSignalPermissionWatchBound = true;
-            status.addEventListener('change', () => {
-                oneSignalPermissionsState = status.state || null;
-                refreshOneSignalCustomUi();
-            });
-        }
-    } catch { /* Edge/Safari zonder Notifications-permission query */ }
-}
-
-function getOneSignalUiState() {
-    if (!kalaneraOneSignal) return 'loading';
-    try {
-        const browserPerm = getBrowserNotificationPermission();
-        if (browserPerm === 'denied') return 'blocked';
-        const optedIn = !!(kalaneraOneSignal.User && kalaneraOneSignal.User.PushSubscription
-            && kalaneraOneSignal.User.PushSubscription.optedIn);
-        if (browserPerm === 'granted' && optedIn) return 'on';
-        return 'off';
-    } catch {
-        return 'off';
-    }
-}
-
-function getOneSignalUiStatusLabel() {
-    const copy = getOneSignalUiCopy();
-    const state = getOneSignalUiState();
-    if (state === 'on') return copy.on;
-    if (state === 'blocked') return copy.blocked;
-    if (state === 'loading') return copy.loading;
-    return copy.off;
-}
-
-function hideOneSignalVendorChrome() {
-    if (document.getElementById('kalanera-onesignal-hide-bell')) return;
-    const style = document.createElement('style');
-    style.id = 'kalanera-onesignal-hide-bell';
-    style.textContent = [
-        '#onesignal-bell-container,.onesignal-bell-launcher,#onesignal-slidedown-container',
-        '{display:none !important;visibility:hidden !important;pointer-events:none !important}',
-    ].join('');
-    document.head.appendChild(style);
-}
-
-function getMoreNotificationsSectionHtml() {
-    if (!isOneSignalCustomUiEnabled()) return '';
-    const copy = getOneSignalUiCopy();
-    return `
-        <section class="more-section more-section--push">
-            <h3>${copy.section}</h3>
-            <div class="more-links">
-                <button type="button" id="kalanera-push-more-btn">
-                    <span class="more-link-leading"><i class="fa-solid fa-bell"></i><span class="more-link-label">${copy.title}</span></span>
-                    <small id="kalanera-push-more-status">${getOneSignalUiStatusLabel()}</small>
-                </button>
-            </div>
-        </section>`;
-}
-
-function bindOneSignalMoreButton() {
-    const btn = document.getElementById('kalanera-push-more-btn');
-    if (!btn || btn.dataset.bound === '1') return;
-    btn.dataset.bound = '1';
-    btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        void handleOneSignalUiToggle();
-    });
-}
-
-function injectOneSignalFooterLink() {
-    if (!isOneSignalCustomUiEnabled()) return;
-    if (document.getElementById('kalanera-push-footer-item')) {
-        refreshOneSignalCustomUi();
-        return;
-    }
-    const privacyA = document.querySelector('footer.site-footer a[href*="privacy"]');
-    const privacyLi = privacyA && privacyA.closest('li');
-    if (!privacyLi || !privacyLi.parentElement) return;
-    const copy = getOneSignalUiCopy();
-    const li = document.createElement('li');
-    li.id = 'kalanera-push-footer-item';
-    const a = document.createElement('a');
-    a.href = '#';
-    a.id = 'kalanera-push-footer-link';
-    a.innerHTML = `<i class="fa-solid fa-bell" aria-hidden="true"></i> ${copy.title}`;
-    a.addEventListener('click', (e) => {
-        e.preventDefault();
-        void handleOneSignalUiToggle();
-    });
-    li.appendChild(a);
-    privacyLi.insertAdjacentElement('afterend', li);
-    refreshOneSignalCustomUi();
-}
-
-function refreshOneSignalCustomUi() {
-    const copy = getOneSignalUiCopy();
-    const state = getOneSignalUiState();
-    const status = getOneSignalUiStatusLabel();
-    const moreStatus = document.getElementById('kalanera-push-more-status');
-    if (moreStatus) moreStatus.textContent = status;
-    const moreBtn = document.getElementById('kalanera-push-more-btn');
-    if (moreBtn) {
-        moreBtn.disabled = !kalaneraOneSignal;
-        moreBtn.title = state === 'blocked' ? copy.blockedHint : '';
-        moreBtn.setAttribute('aria-pressed', state === 'on' ? 'true' : 'false');
-    }
-    const footerLink = document.getElementById('kalanera-push-footer-link');
-    if (footerLink) {
-        footerLink.innerHTML = `<i class="fa-solid fa-bell" aria-hidden="true"></i> ${copy.title} · ${status}`;
-        footerLink.title = state === 'blocked' ? copy.blockedHint : '';
-        footerLink.setAttribute('aria-pressed', state === 'on' ? 'true' : 'false');
-    }
-    if (state === 'on' || state === 'blocked') {
-        hideOneSignalPushBanner();
-    } else if (oneSignalBannerDelayDone) {
-        syncOneSignalPushBanner();
-    }
-}
-
-let oneSignalBannerDelayDone = false;
-
-function readOneSignalBannerDismiss() {
-    try {
-        const raw = localStorage.getItem(ONESIGNAL_BANNER_DISMISS_KEY);
-        if (!raw) return { ts: 0, count: 0 };
-        const o = JSON.parse(raw);
-        const ts = Number(o && o.ts) || 0;
-        const count = Number(o && o.count) || 0;
-        return { ts, count };
-    } catch {
-        return { ts: 0, count: 0 };
-    }
-}
-
-function consumeOneSignalBannerQuery() {
-    try {
-        const q = new URLSearchParams(window.location.search || '');
-        const flag = String(q.get('onesignal_banner') || '').trim().toLowerCase();
-        if (flag === 'reset' || flag === '1') {
-            localStorage.removeItem(ONESIGNAL_BANNER_DISMISS_KEY);
-            sessionStorage.removeItem(ONESIGNAL_BANNER_SESSION_KEY);
-            sessionStorage.setItem(ONESIGNAL_FORCE_OPTOUT_KEY, '1');
-        }
-    } catch { /* ignore */ }
-}
-
-function isInstallBannerVisible() {
-    const el = document.getElementById('install-banner');
-    return !!(el && !el.hidden && el.classList.contains('is-visible'));
-}
-
-function isOneSignalPushBannerVisible() {
-    const el = document.getElementById('kalanera-push-banner');
-    return !!(el && !el.hidden && el.classList.contains('is-visible'));
-}
-
-function shouldShowOneSignalPushBanner() {
-    if (!isOneSignalCustomUiEnabled() || !kalaneraOneSignal) return false;
-    if (getOneSignalUiState() !== 'off') return false;
-    if (isInstallBannerVisible()) return false;
-    try {
-        if (sessionStorage.getItem(ONESIGNAL_BANNER_SESSION_KEY) === '1') return false;
-    } catch { /* ignore */ }
-    const rec = readOneSignalBannerDismiss();
-    if (rec.count >= ONESIGNAL_BANNER_MAX_DISMISSES) return false;
-    if (rec.ts && (Date.now() - rec.ts) < ONESIGNAL_BANNER_SNOOZE_MS) return false;
-    return true;
-}
-
-function hideOneSignalPushBanner() {
-    const el = document.getElementById('kalanera-push-banner');
-    if (!el) return;
-    el.hidden = true;
-    el.classList.remove('is-visible');
-}
-
-function markOneSignalBannerSessionSeen() {
-    try {
-        sessionStorage.setItem(ONESIGNAL_BANNER_SESSION_KEY, '1');
-    } catch { /* ignore */ }
-}
-
-function dismissOneSignalPushBanner() {
-    hideOneSignalPushBanner();
-    markOneSignalBannerSessionSeen();
-    const rec = readOneSignalBannerDismiss();
-    try {
-        localStorage.setItem(ONESIGNAL_BANNER_DISMISS_KEY, JSON.stringify({
-            ts: Date.now(),
-            count: rec.count + 1,
-        }));
-    } catch { /* ignore */ }
-}
-
-function ensureOneSignalPushBanner() {
-    let el = document.getElementById('kalanera-push-banner');
-    if (el) return el;
-    const copy = getOneSignalUiCopy();
-    el = document.createElement('div');
-    el.id = 'kalanera-push-banner';
-    el.hidden = true;
-    el.setAttribute('role', 'dialog');
-    el.setAttribute('aria-labelledby', 'kalanera-push-banner-msg');
-    el.innerHTML = `
-        <p id="kalanera-push-banner-msg">${copy.bannerMsg}</p>
-        <div class="banner-buttons">
-            <button type="button" id="kalanera-push-banner-allow" class="location-btn" style="margin:0;">${copy.allow}</button>
-            <button type="button" id="kalanera-push-banner-later" style="background:none;border:none;color:var(--muted);cursor:pointer;">${copy.notNow}</button>
-        </div>`;
-    document.body.appendChild(el);
-    const allowBtn = document.getElementById('kalanera-push-banner-allow');
-    const laterBtn = document.getElementById('kalanera-push-banner-later');
-    if (allowBtn) {
-        allowBtn.addEventListener('click', () => {
-            void handleOneSignalUiToggle();
-            markOneSignalBannerSessionSeen();
-            hideOneSignalPushBanner();
-        });
-    }
-    if (laterBtn) {
-        laterBtn.addEventListener('click', () => dismissOneSignalPushBanner());
-    }
-    return el;
-}
-
-function syncOneSignalPushBanner() {
-    if (!isOneSignalCustomUiEnabled() || getOneSignalUiState() === 'on' || getOneSignalUiState() === 'blocked') {
-        hideOneSignalPushBanner();
-        return;
-    }
-    if (isOneSignalPushBannerVisible()) return;
-    if (!shouldShowOneSignalPushBanner()) return;
-    const el = ensureOneSignalPushBanner();
-    const copy = getOneSignalUiCopy();
-    const msg = document.getElementById('kalanera-push-banner-msg');
-    const allowBtn = document.getElementById('kalanera-push-banner-allow');
-    const laterBtn = document.getElementById('kalanera-push-banner-later');
-    if (msg) msg.textContent = copy.bannerMsg;
-    if (allowBtn) allowBtn.textContent = copy.allow;
-    if (laterBtn) laterBtn.textContent = copy.notNow;
-    el.hidden = false;
-    el.classList.add('is-visible');
-    markOneSignalBannerSessionSeen();
-}
-
-function scheduleOneSignalPushBanner() {
-    if (oneSignalBannerDelayDone) {
-        syncOneSignalPushBanner();
-        return;
-    }
-    window.setTimeout(() => {
-        oneSignalBannerDelayDone = true;
-        syncOneSignalPushBanner();
-    }, 1200);
-}
-
-async function requestBrowserNotificationPermissionNow() {
-    if (typeof Notification === 'undefined') return 'denied';
-    const current = Notification.permission || 'default';
-    if (current === 'granted' || current === 'denied') return current;
-    try {
-        return await Notification.requestPermission();
-    } catch (e) {
-        console.warn('[Kalanera] Notification.requestPermission mislukt', e);
-        return Notification.permission || 'default';
-    }
-}
-
-async function handleOneSignalUiToggle() {
-    const os = kalaneraOneSignal;
-    if (!os) return;
-    const state = getOneSignalUiState();
-    try {
-        if (state === 'on') {
-            await os.User.PushSubscription.optOut();
-            refreshOneSignalCustomUi();
-            return;
-        }
-        if (state === 'blocked') {
-            console.warn('[Kalanera] OneSignal: meldingen geblokkeerd in de browser.');
-            refreshOneSignalCustomUi();
-            return;
-        }
-        const perm = await requestBrowserNotificationPermissionNow();
-        await refreshBrowserNotificationPermissionCache();
-        if (perm === 'granted') {
-            await os.User.PushSubscription.optIn();
-        } else {
-            console.info('[Kalanera] Browsertoestemming na Allow:', perm);
-        }
-    } catch (e) {
-        console.warn('[Kalanera] OneSignal toggle mislukt', e);
-    }
-    refreshOneSignalCustomUi();
-}
-
-function initOneSignalWebPush() {
-    if (!isOneSignalTesterEnabled()) return;
-    if (isOneSignalPrivacyPage()) return;
-    if (!onesignalLiveHost()) {
-        console.warn('[Kalanera] OneSignal-test: alleen op kalanera.gr / www.kalanera.gr.');
-        return;
-    }
-    if (!('serviceWorker' in navigator)) return;
-
-    hideOneSignalVendorChrome();
-    consumeOneSignalBannerQuery();
-    injectOneSignalFooterLink();
-
-    window.OneSignalDeferred = window.OneSignalDeferred || [];
-    window.OneSignalDeferred.push(async function (OneSignal) {
-        try {
-            await OneSignal.init({
-                appId: ONESIGNAL_APP_ID,
-                serviceWorkerPath: 'push/onesignal/OneSignalSDKWorker.js',
-                serviceWorkerParam: { scope: '/push/onesignal/' },
-                notifyButton: { enable: false },
-                autoResubscribe: false,
-            });
-            kalaneraOneSignal = OneSignal;
-            hideOneSignalVendorChrome();
-            await refreshBrowserNotificationPermissionCache();
-            try {
-                OneSignal.User.PushSubscription.addEventListener('change', () => {
-                    refreshOneSignalCustomUi();
-                });
-            } catch { /* oudere SDK zonder listener */ }
-            try {
-                OneSignal.Notifications.addEventListener('permissionChange', () => {
-                    void refreshBrowserNotificationPermissionCache().then(() => {
-                        refreshOneSignalCustomUi();
-                        scheduleOneSignalPushBanner();
-                    });
-                });
-            } catch { /* oudere SDK zonder listener */ }
-            const forceOptOut = (() => {
-                try {
-                    return sessionStorage.getItem(ONESIGNAL_FORCE_OPTOUT_KEY) === '1';
-                } catch {
-                    return false;
+        const sw = navigator.serviceWorker;
+        if (!sw || typeof sw.getRegistrations !== 'function') return;
+        sw.getRegistrations().then((regs) => {
+            regs.forEach((reg) => {
+                const url = (reg.active && reg.active.scriptURL)
+                    || (reg.waiting && reg.waiting.scriptURL)
+                    || (reg.installing && reg.installing.scriptURL)
+                    || '';
+                const scope = reg.scope || '';
+                if (/onesignal/i.test(url) || /\/push\/onesignal/i.test(scope)) {
+                    void reg.unregister();
                 }
-            })();
-            if (forceOptOut) {
-                try { sessionStorage.removeItem(ONESIGNAL_FORCE_OPTOUT_KEY); } catch { /* ignore */ }
-            }
-            const shouldOptOut = forceOptOut || getBrowserNotificationPermission() !== 'granted';
-            if (shouldOptOut) {
-                try {
-                    if (OneSignal.User && OneSignal.User.PushSubscription
-                        && OneSignal.User.PushSubscription.optedIn) {
-                        await OneSignal.User.PushSubscription.optOut();
-                    }
-                } catch { /* ignore */ }
-            }
-            injectOneSignalFooterLink();
-            refreshOneSignalCustomUi();
-            scheduleOneSignalPushBanner();
-        } catch (e) {
-            console.warn('[Kalanera] OneSignal.init mislukt', e);
-        }
-    });
-
-    if (document.querySelector('script[src*="OneSignalSDK.page.js"]')) return;
-    const script = document.createElement('script');
-    script.src = ONESIGNAL_SDK_SRC;
-    script.async = true;
-    script.onerror = function () {
-        console.warn('[Kalanera] OneSignal SDK geblokkeerd (Edge Tracking Prevention / adblocker?).');
-    };
-    document.head.appendChild(script);
+            });
+        }).catch(() => {});
+    } catch { /* insecure origin (LAN HTTP) has no SW */ }
 }
-
-initOneSignalWebPush();
 
 // --- INITIALISATIE ---
 async function init() {
@@ -3296,6 +2843,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 3b. Mobile "More" tab (bottom nav)
     initMoreTab();
+    unregisterLegacyOneSignalWorker();
 
     // 3c. Business detail: smart crop + enlarge photo on tap
     initSmartCropForBizDetail();
@@ -6880,8 +6428,6 @@ async function openMoreSheet() {
         await refreshInstallSituation();
     }
 
-    await refreshBrowserNotificationPermissionCache();
-
     // Keep tip until visitor taps a New-marked item (see acknowledgeMoreWhatsNewForLink).
     renderMoreSheetContent({ showWhatsNewLabels: isMoreWhatsNewUnread() });
     updateMoreWhatsNewBadge();
@@ -7038,8 +6584,6 @@ function renderMoreSheetContent(options) {
 
         ${getMoreInstallSectionHtml()}
 
-        ${getMoreNotificationsSectionHtml()}
-
         <section class="more-section more-about">
             <h3>${labels.about}</h3>
             <div class="more-links">
@@ -7073,7 +6617,6 @@ function renderMoreSheetContent(options) {
             </div>
         </section>
     `;
-    bindOneSignalMoreButton();
 }
 
 function getFooterAboutText() {
