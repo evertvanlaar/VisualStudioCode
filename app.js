@@ -792,7 +792,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.144'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.145'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -3127,7 +3127,7 @@ function busDaysLabel(daysValue) {
     if (!raw) return '';
 
     const key = raw.toLowerCase();
-    // Huidige sheet: weekdays | daily | weekend
+    // Huidige sheet: weekdays | daily | weekend | saturday
     if (key === 'daily') {
         return busText('runs_daily', { en: 'Daily', nl: 'Dagelijks', el: 'Καθημερινά' });
     }
@@ -3136,6 +3136,9 @@ function busDaysLabel(daysValue) {
     }
     if (key === 'weekend') {
         return busText('runs_weekend', { en: 'Weekend', nl: 'Weekend', el: 'Σαβ–Κυρ' });
+    }
+    if (key === 'saturday' || key === 'sat') {
+        return busText('runs_saturday', { en: 'Saturday', nl: 'Zaterdag', el: 'Σάββατο' });
     }
     // Legacy patronen
     if (raw === '1-7') {
@@ -3164,17 +3167,21 @@ function busFrequencyLabel(freqValue) {
     if (v === 'ma-vr' || v === 'ma–vr') return busText('freq_mon_fri', { en: 'Mon–Fri', nl: 'Ma–Vr', el: 'Δευ–Παρ' });
     if (v === 'ma-za' || v === 'ma–za') return busText('freq_mon_sat', { en: 'Mon–Sat', nl: 'Ma–Za', el: 'Δευ–Σαβ' });
     if (v === 'zo' || v === 'zondag') return busText('freq_sun', { en: 'Sun', nl: 'Zo', el: 'Κυρ' });
+    if (v === 'za' || v === 'zat' || v === 'zaterdag' || v === 'saturday') {
+        return busText('freq_saturday', { en: 'Saturday', nl: 'Zaterdag', el: 'Σάββατο' });
+    }
 
     // Fallback: show as-is
     return raw;
 }
 
-/** Font Awesome (solid) icoon voor patronen uit de sheet — Daily / Mon–Fri / weekend (legenda bus.html · bus-el.html). */
+/** Font Awesome (solid) icoon voor patronen uit de sheet — Daily / Mon–Fri / weekend / Saturday. */
 function busScheduleFaIconClass(pattern) {
     const p = String(pattern || '').toLowerCase();
     if (p === 'daily') return 'fa-arrows-rotate';
     if (p === 'weekdays') return 'fa-briefcase';
     if (p === 'weekend') return 'fa-umbrella-beach';
+    if (p === 'saturday') return 'fa-calendar-day';
     return '';
 }
 
@@ -3191,6 +3198,7 @@ function busNormalizeSchedulePattern(daysRaw) {
     if (key === 'daily' || raw === '1-7') return 'daily';
     if (key === 'weekdays' || raw === '1-5') return 'weekdays';
     if (key === 'weekend') return 'weekend';
+    if (key === 'saturday' || key === 'sat') return 'saturday';
     if (raw === '1-6') return 'mon_sat';
     if (raw === '7') return 'sun';
     return '';
@@ -3204,6 +3212,8 @@ function busScheduleShortLabel(pattern) {
             return busText('runs_short_weekdays', { en: 'Mon–Fri', nl: 'Ma–vr', el: 'Δευ–Παρ' });
         case 'weekend':
             return busText('runs_short_weekend', { en: 'Sat–Sun', nl: 'Za–zo', el: 'Σαβ–Κυρ' });
+        case 'saturday':
+            return busText('runs_short_saturday', { en: 'Saturdays', nl: 'Alleen za', el: 'Σάββατα' });
         case 'mon_sat':
             return busText('runs_short_mon_sat', { en: 'Mon–Sat', nl: 'Ma–za', el: 'Δευ–Σαβ' });
         case 'sun':
@@ -3232,6 +3242,12 @@ function busScheduleLongPlain(pattern) {
                 en: 'Saturday and Sunday',
                 nl: 'Zaterdag en zondag',
                 el: 'Σάββατο και Κυριακή',
+            });
+        case 'saturday':
+            return busText('sched_plain_saturday', {
+                en: 'Saturdays only',
+                nl: 'Alleen op zaterdag',
+                el: 'Μόνο τα Σάββατα',
             });
         case 'mon_sat':
             return busText('sched_plain_mon_sat', {
@@ -6283,15 +6299,15 @@ function initPhotoGalleryReveal(items) {
  *
  * Control (edit only this object, then bump asset-version):
  * - `id`     — change this to re-show the tip for everyone who already dismissed it
- * - `keys`   — which More rows get a New label (`beaches`, `walking`, …)
+ * - `keys`   — which More rows get a New label (`bus`, `beaches`, `walking`, `gallery`)
  * - `until`  — optional last day (DD-MM-YYYY / YYYY-MM-DD, Athens). After that: no tip.
  *
  * The tip stays until the visitor taps a New-marked item (not merely opening More).
  * Local retest: localStorage.removeItem('kn_more_whats_new_seen')
  */
 const MORE_WHATS_NEW = {
-    id: '2026-08-gallery-beaches-v1',
-    keys: ['gallery', 'beaches'],
+    id: '2026-09-bus-v1',
+    keys: ['bus'],
     until: '30-09-2026',
 };
 const MORE_WHATS_NEW_STORAGE_KEY = 'kn_more_whats_new_seen';
@@ -6299,6 +6315,7 @@ const MORE_WHATS_NEW_LINK_KEYS = {
     beachatlas: 'beaches',
     walking_pelion: 'walking',
     gallery: 'gallery',
+    bus: 'bus',
 };
 
 function trackExternalGuideClick(linkId, source) {
@@ -6489,9 +6506,11 @@ function renderMoreSheetContent(options) {
     const newBeaches = showWhatsNewLabels && isMoreWhatsNewKey('beaches');
     const newWalking = showWhatsNewLabels && isMoreWhatsNewKey('walking');
     const newGallery = showWhatsNewLabels && isMoreWhatsNewKey('gallery');
+    const newBus = showWhatsNewLabels && isMoreWhatsNewKey('bus');
     const beachesAside = `${moreNewLabelHtml(isEl, newBeaches)}<span class="more-link-aside-meta">${labels.travelExternal}</span>`;
     const walkingAside = `${moreNewLabelHtml(isEl, newWalking)}<span class="more-link-aside-meta">${labels.travelExternal}</span>`;
     const galleryAside = `${moreNewLabelHtml(isEl, newGallery)}<span class="more-link-aside-meta">${labels.travelGallerySub}</span>`;
+    const busAside = `${moreNewLabelHtml(isEl, newBus)}<span class="more-link-aside-meta">${labels.travelBusSub}</span>`;
 
     const fb = getFooterFacebookLink();
     const fbHref = (fb && fb.href) ? fb.href : 'https://www.facebook.com/kalanera.info';
@@ -6575,9 +6594,9 @@ function renderMoreSheetContent(options) {
                     <span class="more-link-leading"><i class="fa-solid fa-phone"></i><span class="more-link-label">${labels.travelNumbers}</span></span>
                     <small>${labels.travelNumbersSub}</small>
                 </a>
-                <a href="${pathPrefix}${busHref}">
+                <a href="${pathPrefix}${busHref}" onclick="acknowledgeMoreWhatsNewForLink('bus')">
                     <span class="more-link-leading"><i class="fa-solid fa-bus"></i><span class="more-link-label">${labels.travelBus}</span></span>
-                    <small>${labels.travelBusSub}</small>
+                    <small class="more-link-aside">${busAside}</small>
                 </a>
             </div>
         </section>
