@@ -792,7 +792,7 @@ function rewriteDomPixImagesToSameOrigin(root = document) {
 }
 
 // --- STAP 2: VERSIE-BEHEER (SLECHTS OP 1 PLEK AANPASSEN) ---
-const APP_VERSION = '3.1.145'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
+const APP_VERSION = '3.1.146'; // <--- Pas VOORTAAN alleen nog maar dit getal aan!
 let CURRENT_APP_VERSION = APP_VERSION; 
 
 if ('serviceWorker' in navigator) {
@@ -6614,9 +6614,9 @@ function renderMoreSheetContent(options) {
                     <span class="more-link-leading"><i class="fab fa-facebook-f"></i><span class="more-link-label">${fbLabel}</span></span>
                     <small>Facebook</small>
                 </a>
-                <a href="mailto:info@spiti.tech?">
+                <a href="mailto:info@kanteklik.nl?">
                     <span class="more-link-leading"><i class="fa-solid fa-envelope"></i><span class="more-link-label">${labels.contact}</span></span>
-                    <small>info@spiti.tech</small>
+                    <small>info@kanteklik.nl</small>
                 </a>
                 <a href="${pathPrefix}${privacyHref}">
                     <span class="more-link-leading"><i class="fa-solid fa-user-shield"></i><span class="more-link-label">${labels.privacy}</span></span>
